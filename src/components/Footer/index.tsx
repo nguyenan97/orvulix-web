@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 
 const links = [
   { label: 'About', path: '/about' },
+  { label: 'Roadmap', path: '/roadmap' },
   { label: 'Contact', path: '/contact' },
   { label: 'Privacy', path: '/privacy' },
   { label: 'Terms', path: '/terms' }
