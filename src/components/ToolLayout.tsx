@@ -1,6 +1,7 @@
 import { Box } from '@mui/material';
 import React, { ReactNode } from 'react';
 import { Helmet } from 'react-helmet';
+import { brand } from '../brand/config';
 import ToolHeader from './ToolHeader';
 import Separator from './Separator';
 import AllTools from './allTools/AllTools';
@@ -62,7 +63,12 @@ export default function ToolLayout({
       sx={{ backgroundColor: 'background.default' }}
     >
       <Helmet>
-        <title>{`${toolTitle} - OmniTools`}</title>
+        <title>{`${toolTitle} - ${brand.name}`}</title>
+        <meta name="description" content={`${toolDescription} - Free online ${toolTitle.toLowerCase()} tool on ${brand.name}.`} />
+        <link rel="canonical" href={`https://orvulix-web.netlify.app/${fullPath}`} />
+        <meta property="og:title" content={`${toolTitle} - ${brand.name}`} />
+        <meta property="og:description" content={toolDescription} />
+        <meta property="og:url" content={`https://orvulix-web.netlify.app/${fullPath}`} />
       </Helmet>
       <Box width={'85%'}>
         <ToolHeader
