@@ -114,7 +114,7 @@ export default function ToolHeader({
       <Grid mt={1} container spacing={2}>
         <Grid item xs={12} md={8}>
           <Stack direction={'row'} spacing={2} alignItems={'center'}>
-            <Typography mb={2} fontSize={30} color={'primary'}>
+            <Typography component="h1" mb={2} fontSize={30} color={'primary'}>
               {title}
             </Typography>
             <IconButton
