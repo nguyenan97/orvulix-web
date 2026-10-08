@@ -10,6 +10,10 @@ Orvulix is an independently maintained, open-source fork of [OmniTools](https://
 - Repository: https://github.com/nguyenan97/orvulix-web
 - Contact: founder@orvulix.io.vn
 
+## Founder and current stage
+
+Orvulix is currently developed by a solo founder as an unincorporated, self-funded project. It has not received external investment. A Claude Console account has been created using the project-domain email, but the project has not claimed approval for Claude for Startups or receipt of API credits. Anthropic determines program eligibility, including how it treats unincorporated projects.
+
 ## Problem and product direction
 
 People routinely switch between small utilities to inspect, validate, convert, and explain data. Existing deterministic tools are useful for exact transformations; optional AI assistance could reduce the effort of understanding unfamiliar inputs, discovering the right tools, and preparing repeatable workflows. Orvulix aims to preserve free non-AI functionality and make AI use opt-in and transparent.
@@ -23,7 +27,7 @@ People routinely switch between small utilities to inspect, validate, convert, a
 | Regex Assistant | Regex patterns are difficult to create and debug | Generate examples, explain patterns, suggest test cases | Run regex tests locally and inspect edge cases |
 | AI Tool Finder | Users cannot find the right utility quickly | Recommend Orvulix tools from a natural-language goal | User selects and runs tools |
 
-**First proposed MVP:** JSON explanation + candidate schema generation + deterministic validation, behind an opt-in interface. This is a target, not an implemented feature.
+**First proposed MVP (highest priority):** JSON explanation + candidate schema generation + deterministic validation, behind an opt-in interface. A reproducible demonstration and test results are the intended evidence of progress. This is a target, not an implemented feature.
 
 ## Phase 2 — Documents and API workflows (planned)
 
@@ -73,4 +77,4 @@ These are research directions, not committed releases.
 
 ## Startup program transparency
 
-Orvulix may apply to Claude for Startups. This document **does not claim** a live Anthropic integration, revenue, customers, incorporation, external investment, approval, or API credits. Applications must reflect verifiable facts and current eligibility requirements. The program's eligibility and credit decisions are made by Anthropic.
+Orvulix intends to apply to Claude for Startups as an early-stage, solo-founder, pre-incorporation project. Lack of external funding alone does not establish eligibility, and acceptance of unincorporated projects must be confirmed by Anthropic. Do not substitute a project launch date for a legal incorporation date on an application. Orvulix may apply to Claude for Startups. This document **does not claim** a live Anthropic integration, revenue, customers, incorporation, external investment, approval, or API credits. Applications must reflect verifiable facts and current eligibility requirements. The program's eligibility and credit decisions are made by Anthropic.
