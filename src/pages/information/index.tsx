@@ -114,12 +114,31 @@ export default function InformationPage({ page }: { page: Page }) {
       </Helmet>
       <Stack spacing={3}>
         <Typography variant="h3" component="h1" fontWeight={800}>{details.title}</Typography>
-        {details.paragraphs.map((paragraph) => <Typography key={paragraph} variant="body1" sx={{ lineHeight: 1.9 }}>{paragraph}</Typography>)}
+        {details.paragraphs.map((paragraph, index) => {
+          const headings: Partial<Record<Page, string[]>> = {
+            about: ['What We Do', 'Our Mission', 'Our Approach', 'Building with Open Source', 'Exploring the Future of AI', 'Our Long-Term Vision', 'Help Us Build Something Useful'],
+            roadmap: ['1. Better everyday tools - Current focus', '2. Practical AI assistance - Planned', '3. Connected workflows - Exploring', '4. Open and sustainable growth - Ongoing', 'How we decide what comes next', 'What is next', 'Help shape Orvulix'],
+            contact: ['Get in Touch', 'Report an Issue', 'Suggest a Feature', 'Open-Source Contributions', 'Collaboration and Partnerships', 'Privacy and Responsible Communication', 'Response Expectations', 'Thank You for Being Part of Orvulix']
+          };
+          const isHeading = headings[page]?.includes(paragraph) ?? false;
+          const isTagline = index === 0 && (page === 'about' || page === 'roadmap' || page === 'contact');
+          return (
+            <Typography
+              key={paragraph}
+              component={isHeading ? 'h2' : 'p'}
+              variant={isHeading ? 'h5' : isTagline ? 'h6' : 'body1'}
+              fontWeight={isHeading ? 700 : isTagline ? 600 : 400}
+              sx={{ lineHeight: isHeading ? 1.4 : 1.9, mt: isHeading ? 2 : 0 }}
+            >
+              {paragraph}
+            </Typography>
+          );
+        })}
         {(page === 'about' || page === 'roadmap' || page === 'contact' || page === 'privacy') && (
           <MuiLink href="mailto:founder@orvulix.io.vn">founder@orvulix.io.vn</MuiLink>
         )}
         {page === 'roadmap' && (
-          <MuiLink href="https://github.com/nguyenan97/orvulix-web/blob/main/docs/PRODUCT_ROADMAP.md" target="_blank" rel="noopener noreferrer">Detailed roadmap and proposed technical architecture</MuiLink>
+          <MuiLink href="https://github.com/nguyenan97/orvulix-web/blob/main/docs/PRODUCT_ROADMAP.md" target="_blank" rel="noopener noreferrer">View the detailed product roadmap</MuiLink>
         )}
         {page === 'contact' && (
           <MuiLink href="https://github.com/nguyenan97/orvulix-web" target="_blank" rel="noopener noreferrer">Explore Orvulix on GitHub</MuiLink>
