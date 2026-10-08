@@ -1,80 +1,98 @@
-# Orvulix product roadmap
+# Orvulix Product Roadmap
 
-**Status:** Public planning document. Features marked planned or research are **not live**. Last updated: 2026-10-08.
+**Simple tools. Smarter workflows. Better productivity.**
 
-## Product today
+**Status:** Public roadmap. Planned and exploratory features are not available yet. Updated: October 2026.
 
-Orvulix is an independently maintained, open-source fork of [OmniTools](https://github.com/iib0011/omni-tools), providing free browser-based tools for JSON, text, PDF, images, and data conversion.
+Orvulix is an open-source workspace for useful browser-based tools. We want to help developers, students, creators, and everyday users work with data, documents, images, and text without unnecessary setup.
 
-- Website: https://orvulix.io.vn/
-- Repository: https://github.com/nguyenan97/orvulix-web
-- Contact: founder@orvulix.io.vn
+Our approach is to make existing tools better first, then explore new capabilities that solve meaningful problems. This roadmap describes priorities, not fixed delivery dates.
 
-## Founder and current stage
+## 1. Better everyday tools
 
-Orvulix is currently developed by a solo founder as an unincorporated, self-funded project. It has not received external investment. A Claude Console account has been created using the project-domain email, but the project has not claimed approval for Claude for Startups or receipt of API credits. Anthropic determines program eligibility, including how it treats unincorporated projects.
+**Current focus - Usability, performance, and reliability**
 
-## Problem and product direction
+- Improve loading speed and responsiveness across desktop and mobile.
+- Make tools easier to find through clearer categories, navigation, and search.
+- Add practical examples, instructions, and actionable error messages.
+- Strengthen accessibility, automated testing, and reliability.
+- Improve search visibility with helpful, original content for individual tools.
 
-People routinely switch between small utilities to inspect, validate, convert, and explain data. Existing deterministic tools are useful for exact transformations; optional AI assistance could reduce the effort of understanding unfamiliar inputs, discovering the right tools, and preparing repeatable workflows. Orvulix aims to preserve free non-AI functionality and make AI use opt-in and transparent.
+**Outcome we want:** People can find the right tool quickly, complete their task, and confidently return when they need it again.
 
-## Phase 1 — Focused developer AI (planned)
+## 2. Practical AI assistance
 
-| Concept | User problem | Proposed Claude capability | Human verification |
-| --- | --- | --- | --- |
-| AI JSON Assistant | Hard-to-understand nested payloads | Explain structure, infer candidate JSON Schema, suggest transformations | Validate JSON and schema deterministically |
-| Smart Data Converter | Mapping fields across JSON, CSV, YAML, XML | Propose editable field mappings and conversion steps | Preview, diff, and approve conversion |
-| Regex Assistant | Regex patterns are difficult to create and debug | Generate examples, explain patterns, suggest test cases | Run regex tests locally and inspect edge cases |
-| AI Tool Finder | Users cannot find the right utility quickly | Recommend Orvulix tools from a natural-language goal | User selects and runs tools |
+**Planned - One focused prototype before broader expansion**
 
-**First proposed MVP (highest priority):** JSON explanation + candidate schema generation + deterministic validation, behind an opt-in interface. A reproducible demonstration and test results are the intended evidence of progress. This is a target, not an implemented feature.
+Our first proposed AI feature is an **AI JSON Assistant**. It would help users understand unfamiliar JSON payloads, explain nested structures, propose candidate JSON schemas, and suggest transformations. Suggested schemas and outputs must be reviewed and validated with deterministic tools.
 
-## Phase 2 — Documents and API workflows (planned)
+Other ideas to evaluate after learning from the prototype:
 
-| Concept | Proposed value | Safeguards |
-| --- | --- | --- |
-| API Payload Inspector | Explain API requests/responses, compare payload versions, propose contract tests | Redact secrets, require consent, never send credentials |
-| PDF Document Assistant | Summarize selected text, identify document sections, extract draft structured fields | Explain data transfer, input limits, confirm extracted data |
-| Image Accessibility Assistant | Draft alt text and metadata for selected images | User review, size limits, supported media checks |
-| Text Transformation Assistant | Rewrite, summarize, translate, and restructure selected text | Preserve original, review before replacing |
+- **Smart Data Conversion:** propose editable mappings between JSON, CSV, YAML, and XML.
+- **Regex Assistance:** explain expressions, suggest patterns, and generate test cases.
+- **Document Assistance:** help summarize user-selected content and draft structured extraction results.
+- **Text Assistance:** help rewrite, translate, summarize, and organize selected text.
+- **Tool Discovery:** suggest the most relevant existing tool from a user's task description.
 
-## Phase 3 — Connected workflows (research)
+AI will be optional. Existing non-AI tools should remain usable without it. These features are proposals, not currently available.
 
-- **Visual AI workflow builder:** Chain existing utilities with explicit confirmation at each step.
-- **Structured extraction templates:** User-editable extraction schemas and reusable validation rules.
-- **Developer SDK and examples:** Reusable open-source components for AI-assisted utilities.
-- **Multilingual task guidance:** Help users discover and operate tools in multiple languages.
-- **Privacy-first processing controls:** Allow users to choose local deterministic processing instead of external AI whenever possible.
+**Outcome we want:** Reduce the effort of understanding and preparing complex inputs while keeping users in control of the results.
 
-These are research directions, not committed releases.
+## 3. Connected workflows
 
-## Proposed technical architecture (not implemented)
+**Exploring - Fewer repetitive steps**
 
-1. React/TypeScript UI collects only user-selected inputs with clear AI opt-in.
-2. Server-side Netlify Functions or an equivalent backend call the Anthropic Claude API; secrets stay server-side.
-3. Use structured responses and schema validation for machine-readable outputs.
-4. Enforce authentication or abuse controls where appropriate, rate limits, payload limits, timeouts, and a spending ceiling.
-5. Redact sensitive fields when feasible; show what will be transmitted before submission.
-6. Provide graceful failure paths and preserve deterministic non-AI tools.
-7. Publish provider/data-flow disclosures and update the privacy policy before release.
-8. Measure opt-in usage and costs without claiming metrics that have not been collected.
+Many tasks involve several tools. We want to explore simple ways to pass results between compatible utilities without repeated copying and pasting.
 
-## Proposed milestones and evidence
+Possible workflows include:
 
-- **M1 — Prototype:** one end-to-end JSON use case, reproducible test cases, documented cost assumptions.
-- **M2 — Private validation:** collect consent-based feedback on correctness, latency, usefulness, and failure cases.
-- **M3 — Public beta decision:** privacy review, rate limits, spending safeguards, reliability, and clear user-facing limitations.
-- **M4 — Expansion decision:** only prioritize additional assistants based on demonstrated demand and sustainable operating cost.
+- Inspect JSON, validate its structure, convert it to CSV, and download the output.
+- Prepare an image, adjust its dimensions, and export it in a suitable format.
+- Extract selected document content, review the result, and transform it into a useful format.
 
-## Search and accessibility improvements
+We will prioritize previewable changes, clear confirmation, and workflows that can be maintained reliably.
 
-- Audit crawlable HTML and per-route canonical URLs, titles, and descriptions.
-- Evaluate build-time static prerendering for key public pages and tool landing pages.
-- Add helpful, original instructions, examples, and limitations to individual tool pages.
-- Strengthen internal navigation between categories and related tools.
-- Review Search Console indexing and performance reports after each release.
-- Improve accessibility, mobile performance, and error-page HTTP behavior.
+**Outcome we want:** Help people complete a full task, not just one isolated operation.
 
-## Startup program transparency
+## 4. Open and sustainable growth
 
-Orvulix intends to apply to Claude for Startups as an early-stage, solo-founder, pre-incorporation project. Lack of external funding alone does not establish eligibility, and acceptance of unincorporated projects must be confirmed by Anthropic. Do not substitute a project launch date for a legal incorporation date on an application. Orvulix may apply to Claude for Startups. This document **does not claim** a live Anthropic integration, revenue, customers, incorporation, external investment, approval, or API credits. Applications must reflect verifiable facts and current eligibility requirements. The program's eligibility and credit decisions are made by Anthropic.
+**Ongoing - Community, privacy, and maintainability**
+
+- Keep core utilities free and accessible.
+- Welcome contributions, bug reports, documentation improvements, and suggestions.
+- Preserve attribution to the open-source projects and contributors we build upon.
+- Improve privacy disclosures and explain when external services may process inputs.
+- Explore multilingual support and accessibility improvements.
+- Use feedback and demonstrated needs to decide what to build next.
+
+**Outcome we want:** A useful platform that can grow sustainably without compromising trust.
+
+## How we prioritize
+
+1. **Strengthen the foundation:** improve existing tools and fix issues that affect everyday use.
+2. **Validate one idea:** build a small prototype with clear success criteria.
+3. **Learn from real use:** assess correctness, usability, feedback, and operating costs.
+4. **Expand thoughtfully:** release broader functionality only when it provides measurable value and can be maintained.
+
+We do not publish speculative release dates. Priorities may change as we learn from users and technical constraints.
+
+## First AI prototype - Technical considerations
+
+The JSON Assistant remains a proposed prototype, not a deployed integration. Before a public release, we intend to:
+
+- Require explicit user action before sending data to an AI provider.
+- Keep API credentials on the server, never in browser code.
+- Set request-size limits, rate limits, timeouts, and spending safeguards.
+- Clearly disclose what data is sent to external services.
+- Validate machine-readable outputs and let users review proposed changes.
+- Test accuracy, error handling, latency, and costs before considering wider availability.
+
+## Help shape Orvulix
+
+We welcome practical suggestions and contributions.
+
+- **Website:** https://orvulix.io.vn/
+- **Source and contributions:** https://github.com/nguyenan97/orvulix-web
+- **Contact:** founder@orvulix.io.vn
+
+Orvulix is independently maintained as a fork of [OmniTools](https://github.com/iib0011/omni-tools), with original attribution and licensing preserved.
