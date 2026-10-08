@@ -1,4 +1,5 @@
-import { Box, useTheme } from '@mui/material';
+import { Box, Container, Link as MuiLink, Typography, useTheme } from '@mui/material';
+import { Link } from 'react-router-dom';
 import Hero from 'components/Hero';
 import Categories from './Categories';
 import { brand } from '../../brand/config';
@@ -29,6 +30,7 @@ export default function Home() {
       <Helmet title={`${brand.name} - Free Online Tools for JSON, PDF, Images & More`}>
         <link rel="canonical" href="https://orvulix.io.vn/" />
         <meta property="og:url" content="https://orvulix.io.vn/" />
+        <meta name="description" content="Free online tools for JSON formatting, PDF tasks, images, text, data conversion and developer workflows. Explore Orvulix in your browser." />
       </Helmet>
       <Hero />
       <Box my={3}>
@@ -38,6 +40,16 @@ export default function Home() {
         />
       </Box>
       <Categories />
+      <Container maxWidth="md" sx={{ mt: 6, mb: 3, textAlign: 'center' }}>
+        <Typography variant="h5" component="h2" gutterBottom>Free browser-based tools for everyday tasks</Typography>
+        <Typography variant="body1" color="text.secondary" sx={{ lineHeight: 1.8 }}>
+          Orvulix brings JSON utilities, document tools, image tools, text processing, and data conversion into one place. Browse the tool categories above to choose the right utility for your task. Features and file handling vary by tool; review each tool before using sensitive information.
+        </Typography>
+        <Typography variant="body2" sx={{ mt: 2 }}>
+          Curious about upcoming developer features?{' '}
+          <MuiLink component={Link} to="/roadmap">Explore the Orvulix AI product roadmap</MuiLink>.
+        </Typography>
+      </Container>
     </Box>
   );
 }
