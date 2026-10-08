@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://orvulix-web.netlify.app/sitemap.xml
+Sitemap: https://orvulix.io.vn/sitemap.xml
