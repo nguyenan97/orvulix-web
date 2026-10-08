@@ -27,8 +27,8 @@ export default function Home() {
       width={'100%'}
     >
       <Helmet title={`${brand.name} - Free Online Tools for JSON, PDF, Images & More`}>
-        <link rel="canonical" href="https://orvulix-web.netlify.app/" />
-        <meta property="og:url" content="https://orvulix-web.netlify.app/" />
+        <link rel="canonical" href="https://orvulix.io.vn/" />
+        <meta property="og:url" content="https://orvulix.io.vn/" />
       </Helmet>
       <Hero />
       <Box my={3}>
