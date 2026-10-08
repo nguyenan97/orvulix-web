@@ -78,7 +78,9 @@ export default function InformationPage({ page }: { page: Page }) {
       <Helmet>
         <title>{details.title} - {brand.name}</title>
         <meta name="description" content={page === 'roadmap' ? 'Explore planned Claude-powered AI tools for JSON, data conversion, API debugging, PDF understanding, regex, and developer workflows at Orvulix.' : details.paragraphs[0]} />
-        {page === 'not-found' ? <meta name="robots" content="noindex" /> : <link rel="canonical" href={url} />}
+        {page === 'not-found' ? <meta name="robots" content="noindex, nofollow" /> : <link rel="canonical" href={url} />}
+        {page === 'roadmap' && <meta property="og:title" content="Orvulix AI Product Roadmap" />}
+        {page === 'roadmap' && <meta property="og:description" content="Planned Claude-powered developer tools, product milestones, and privacy-conscious AI architecture." />}
       </Helmet>
       <Stack spacing={3}>
         <Typography variant="h3" component="h1" fontWeight={800}>{details.title}</Typography>
