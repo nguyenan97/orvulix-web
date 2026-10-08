@@ -26,7 +26,10 @@ export default function Home() {
       justifyContent={'center'}
       width={'100%'}
     >
-      <Helmet title={`${brand.name} - ${brand.tagline}`} />
+      <Helmet title={`${brand.name} - Free Online Tools for JSON, PDF, Images & More`}>
+        <link rel="canonical" href="https://orvulix-web.netlify.app/" />
+        <meta property="og:url" content="https://orvulix-web.netlify.app/" />
+      </Helmet>
       <Hero />
       <Box my={3}>
         <UserTypeFilter
