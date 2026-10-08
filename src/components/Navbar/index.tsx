@@ -5,10 +5,10 @@ import Button from '@mui/material/Button';
 import IconButton from '@mui/material/IconButton';
 import MenuIcon from '@mui/icons-material/Menu';
 import { Link, useNavigate } from 'react-router-dom';
-import logo from 'assets/logo.png';
-import logoWhite from 'assets/logo-white.png';
+import { brand } from '../../brand/config';
 import {
   Drawer,
+  Box,
   List,
   ListItem,
   ListItemButton,
@@ -47,7 +47,7 @@ const Navbar: React.FC<NavbarProps> = ({
   mode,
   onChangeMode: onChangeMode
 }) => {
-  const { t, i18n } = useTranslation();
+  const { i18n } = useTranslation();
   const navigate = useNavigate();
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
@@ -113,42 +113,7 @@ const Navbar: React.FC<NavbarProps> = ({
             : 'ic:round-contrast'
       }
     />,
-    <Icon
-      key="discord"
-      onClick={() => window.open('https://discord.gg/SDbbn3hT4b', '_blank')}
-      style={{ cursor: 'pointer' }}
-      fontSize={30}
-      icon={'ic:baseline-discord'}
-    />,
-    <iframe
-      key="github-star"
-      src="https://ghbtns.com/github-btn.html?user=iib0011&repo=omni-tools&type=star&count=true&size=large"
-      frameBorder="0"
-      scrolling="0"
-      width="150"
-      height="30"
-      title="GitHub"
-    ></iframe>,
-    <Button
-      key="translate"
-      onClick={() => {
-        window.open(
-          'https://www.locize.app/register?invitation=YOIH0Dyz3KHh3uQFCGYe9v1QOUoq8W5ySgmlwjX9cSypeJmt8F40brDtVbXb71fK',
-          '_blank'
-        );
-      }}
-      sx={{ borderRadius: '100px' }}
-      variant={'contained'}
-      startIcon={
-        <Icon
-          style={{ cursor: 'pointer' }}
-          fontSize={25}
-          icon={'ix:language-filled'}
-        />
-      }
-    >
-      {t('navbar.helpTranslate')}
-    </Button>
+    <Button key="github" size="small" href="https://github.com/nguyenan97/toolora-web" target="_blank" rel="noopener noreferrer" variant="outlined" sx={{ borderRadius: '12px' }}>GitHub</Button>
   ];
   const drawerList = (
     <List>
@@ -173,44 +138,29 @@ const Navbar: React.FC<NavbarProps> = ({
         background: 'transparent',
         boxShadow: 'none',
         color: 'text.primary',
-        pt: 2
+        py: 1.5,
+        borderBottom: '1px solid',
+        borderColor: 'divider',
+        backdropFilter: 'blur(16px)'
       }}
     >
       <Toolbar
         sx={{
           justifyContent: 'space-between',
           alignItems: 'center',
-          mx: { md: '50px', lg: '150px' }
+          mx: { md: '32px', lg: 'auto' },
+          width: '100%',
+          maxWidth: '1320px'
         }}
       >
         <Stack direction="row" spacing={1.5} alignItems="center">
           <Link to="/">
-            <img
-              src={theme.palette.mode === 'light' ? logo : logoWhite}
-              width={isMobile ? '120px' : '200px'}
-            />
+            <Stack direction="row" spacing={1} alignItems="center">
+              <Box sx={{ width: 38, height: 38, borderRadius: '12px', background: 'linear-gradient(135deg, #0F766E, #2DD4BF)', color: 'white', display: 'grid', placeItems: 'center', fontWeight: 900, fontSize: 22 }}>T</Box>
+              <Typography sx={{ fontSize: { xs: 21, md: 25 }, fontWeight: 800, letterSpacing: '-0.04em', color: 'text.primary' }}>{brand.name}</Typography>
+            </Stack>
           </Link>
-          <Typography
-            component="span"
-            variant="caption"
-            sx={{
-              color: 'text.secondary',
-              fontWeight: 600,
-              whiteSpace: 'nowrap'
-            }}
-          >
-            v{__APP_VERSION__} (
-            <a
-              href={`https://github.com/iib0011/omni-tools/tree/${__COMMIT_HASH__}`}
-              target="_blank"
-              rel="noopener noreferrer"
-              style={{ color: 'inherit' }}
-            >
-              {__COMMIT_HASH__}
-            </a>
-            )
-          </Typography>
-        </Stack>
+          </Stack>
         {isMobile ? (
           <>
             <IconButton

@@ -1,6 +1,7 @@
 import { Box, useTheme } from '@mui/material';
 import Hero from 'components/Hero';
 import Categories from './Categories';
+import { brand } from '../../brand/config';
 import { Helmet } from 'react-helmet';
 import { useUserTypeFilter } from 'providers/UserTypeFilterProvider';
 import UserTypeFilter from '@components/UserTypeFilter';
@@ -16,11 +17,7 @@ export default function Home() {
         lg: 5
       }}
       sx={{
-        background: `url(/assets/${
-          theme.palette.mode === 'dark'
-            ? 'background-dark.png'
-            : 'background.svg'
-        })`,
+        background: theme.palette.mode === 'dark' ? 'radial-gradient(ellipse at 50% 0%, #153E3D 0%, #101A23 55%)' : 'radial-gradient(ellipse at 50% 0%, #D7F7ED 0%, #F8FAFC 60%)',
         backgroundColor: 'background.default'
       }}
       display={'flex'}
@@ -29,7 +26,7 @@ export default function Home() {
       justifyContent={'center'}
       width={'100%'}
     >
-      <Helmet title={'OmniTools'} />
+      <Helmet title={`${brand.name} — ${brand.tagline}`} />
       <Hero />
       <Box my={3}>
         <UserTypeFilter

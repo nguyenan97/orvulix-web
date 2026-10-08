@@ -1,11 +1,3 @@
-a {
-  color: #1c76ce;
-}
-
-a:hover {
-  color: #030362;
-}
-
-* {
-  font-family: Quicksand,sans-serif!important;
-}
+a { color: #0F766E; }
+a:hover { color: #115E59; }
+* { font-family: Quicksand, sans-serif !important; }

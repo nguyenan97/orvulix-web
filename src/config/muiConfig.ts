@@ -1,6 +1,7 @@
 import { createTheme, ThemeOptions } from '@mui/material';
 
 const sharedThemeOptions: ThemeOptions = {
+  shape: { borderRadius: 14 },
   typography: {
     button: {
       textTransform: 'none'
@@ -11,8 +12,9 @@ const sharedThemeOptions: ThemeOptions = {
 export const lightTheme = createTheme({
   ...sharedThemeOptions,
   palette: {
+    primary: { main: '#0F766E' },
     background: {
-      default: '#F5F5FA',
+      default: '#F8FAFC',
       hover: '#FAFAFD',
       lightSecondary: '#EBF5FF',
       darkSecondary: '#5581b5'
@@ -21,7 +23,7 @@ export const lightTheme = createTheme({
   components: {
     MuiButton: {
       styleOverrides: {
-        contained: { color: '#ffffff', backgroundColor: '#1976d2' }
+        contained: { color: '#ffffff', backgroundColor: '#0F766E' }
       }
     }
   }
@@ -31,6 +33,7 @@ export const darkTheme = createTheme({
   ...sharedThemeOptions,
   palette: {
     mode: 'dark',
+    primary: { main: '#2DD4BF' },
     background: {
       default: '#1C1F20',
       paper: '#181a1b',
@@ -43,7 +46,7 @@ export const darkTheme = createTheme({
   components: {
     MuiButton: {
       styleOverrides: {
-        contained: { color: '#ffffff', backgroundColor: '#145ea8' }
+        contained: { color: '#ffffff', backgroundColor: '#0F766E' }
       }
     }
   }
