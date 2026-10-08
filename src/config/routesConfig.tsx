@@ -9,6 +9,7 @@ const routes: RouteObject[] = [
   { path: '/', element: <Home /> },
   { path: '/categories/:categoryName', element: <ToolsByCategory /> },
   { path: '/about', element: <InformationPage page="about" /> },
+  { path: '/roadmap', element: <InformationPage page="roadmap" /> },
   { path: '/contact', element: <InformationPage page="contact" /> },
   { path: '/privacy', element: <InformationPage page="privacy" /> },
   { path: '/terms', element: <InformationPage page="terms" /> },
