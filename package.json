@@ -1,6 +1,6 @@
 {
-  "name": "omni-tools",
-  "description": "This project offers a variety of online tools to help with everyday tasks, \nall available for free and open for community contributions",
+  "name": "orvulix-web",
+  "description": "Orvulix - free online tools for developers, documents, images, and everyday tasks.",
   "version": "0.6.0",
   "private": true,
   "author": {

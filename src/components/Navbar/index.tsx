@@ -155,7 +155,7 @@ const Navbar: React.FC<NavbarProps> = ({
         <Stack direction="row" spacing={1.5} alignItems="center">
           <Link to="/">
             <Stack direction="row" spacing={1} alignItems="center">
-              <Box sx={{ width: 38, height: 38, borderRadius: '12px', background: 'linear-gradient(135deg, #0F766E, #2DD4BF)', color: 'white', display: 'grid', placeItems: 'center', fontWeight: 900, fontSize: 22 }}>T</Box>
+              <Box sx={{ width: 38, height: 38, borderRadius: '12px', background: 'linear-gradient(135deg, #0F766E, #2DD4BF)', color: 'white', display: 'grid', placeItems: 'center', fontWeight: 900, fontSize: 22 }}>O</Box>
               <Typography sx={{ fontSize: { xs: 21, md: 25 }, fontWeight: 800, letterSpacing: '-0.04em', color: 'text.primary' }}>{brand.name}</Typography>
             </Stack>
           </Link>
