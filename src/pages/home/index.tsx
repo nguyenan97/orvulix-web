@@ -26,7 +26,7 @@ export default function Home() {
       justifyContent={'center'}
       width={'100%'}
     >
-      <Helmet title={`${brand.name} — ${brand.tagline}`} />
+      <Helmet title={`${brand.name} - ${brand.tagline}`} />
       <Hero />
       <Box my={3}>
         <UserTypeFilter
