@@ -87,7 +87,7 @@ export default function ToolsByCategory() {
             <IconButton onClick={() => navigate('/')}>
               <ArrowBackIcon color={'primary'} />
             </IconButton>
-            <Typography fontSize={22} color={theme.palette.primary.main}>
+            <Typography component="h1" fontSize={22} color={theme.palette.primary.main}>
               {t('translation:toolLayout.allToolsTitle', { type: rawTitle })}
             </Typography>
           </Stack>
