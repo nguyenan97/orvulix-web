@@ -112,8 +112,7 @@ const Navbar: React.FC<NavbarProps> = ({
             ? 'ic:round-light-mode'
             : 'ic:round-contrast'
       }
-    />,
-    <Button key="github" size="small" href="https://github.com/nguyenan97/toolora-web" target="_blank" rel="noopener noreferrer" variant="outlined" sx={{ borderRadius: '12px' }}>GitHub</Button>
+    />
   ];
   const drawerList = (
     <List>
