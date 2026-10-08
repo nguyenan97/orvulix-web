@@ -13,7 +13,7 @@
 
 Orvulix is an independently maintained fork of [OmniTools](https://github.com/iib0011/omni-tools), originally created by Ibrahima Gaye Coulibaly. We are grateful to the original author and contributors. The original MIT copyright notice is retained in [LICENSE](LICENSE).
 
-Orvulix is currently offered as a free, non-commercial public utility project. The repository is public, licensed under MIT, and welcomes community contributions. Orvulix is not affiliated with or endorsed by the original OmniTools maintainers.
+Orvulix is currently an early-stage, independently developed project maintained by a solo founder. It is not incorporated and has not received external investment. The public utilities are currently offered free of charge and the project is non-commercial at this stage. The repository is public, licensed under MIT, and welcomes community contributions. Orvulix is not affiliated with or endorsed by the original OmniTools maintainers.
 
 ## Features
 
@@ -59,6 +59,12 @@ For public contributions, open a pull request on GitHub. Security-sensitive repo
 ## Deployment
 
 Production deployments are manually controlled. Confirm Netlify Git Integration automatic builds are disabled before merging; merge and verify CI before running a controlled Netlify deploy. Do not enable automatic deployment unless intentionally changing this release policy.
+
+## Product direction and Claude for Startups
+
+Orvulix is exploring an optional Claude-powered developer workflow, beginning with an AI JSON Assistant that explains unfamiliar JSON payloads, proposes candidate JSON Schema, and uses deterministic validation to verify results. The first milestone is a working, cost-controlled prototype; this integration is **not yet available**.
+
+The founder has created a Claude Console account using the project-domain email. This does not mean Orvulix has been approved for any Anthropic startup program or awarded credits. As an unincorporated solo-founder project, eligibility is subject to Anthropic's current terms and review; the project does not claim to be a registered company.
 
 ## Roadmap
 
