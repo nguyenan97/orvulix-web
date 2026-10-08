@@ -62,7 +62,7 @@ export default function InformationPage({ page }: { page: Page }) {
       <Stack spacing={3}>
         <Typography variant="h3" component="h1" fontWeight={800}>{details.title}</Typography>
         {details.paragraphs.map((paragraph) => <Typography key={paragraph} variant="body1" sx={{ lineHeight: 1.9 }}>{paragraph}</Typography>)}
-        {(page === 'contact' || page === 'privacy') && (
+        {(page === 'about' || page === 'contact' || page === 'privacy') && (
           <MuiLink href="mailto:founder@orvulix.io.vn">founder@orvulix.io.vn</MuiLink>
         )}
         {(page === 'contact' || page === 'privacy') && (
