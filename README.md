@@ -4,7 +4,7 @@
 
 Orvulix is a privacy-first, browser-based collection of utilities. Many tools process data locally in your browser. Check individual tools before using sensitive data.
 
-Live site (until the Netlify project is renamed): https://toolora-web.netlify.app/
+Live site: https://orvulix-web.netlify.app/
 
 ## Project information
 
