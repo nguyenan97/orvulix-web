@@ -3,7 +3,7 @@ import { Link, useLocation } from 'react-router-dom';
 import { Helmet } from 'react-helmet';
 import { brand } from '../../brand/config';
 
-type Page = 'about' | 'contact' | 'privacy' | 'terms' | 'not-found';
+type Page = 'about' | 'roadmap' | 'contact' | 'privacy' | 'terms' | 'not-found';
 const content: Record<Page, { title: string; paragraphs: string[] }> = {
   about: {
     title: 'About Orvulix',
@@ -13,6 +13,16 @@ const content: Record<Page, { title: string; paragraphs: string[] }> = {
       'Our focus is making frequently used utilities accessible without unnecessary setup. Tool behavior and data processing can vary; check individual tools before entering sensitive information.',
       'Product roadmap: we are exploring optional AI-assisted workflows for explaining, transforming, and validating user-provided content. These capabilities are planned, not currently available as a Claude integration.',
       'For product inquiries, feedback, or partnership discussions, email founder@orvulix.io.vn.'
+    ]
+  },
+  roadmap: {
+    title: 'Product Roadmap',
+    paragraphs: [
+      'Orvulix is developing a collection of free online utilities for developers and everyday users. This roadmap describes planned work and does not promise release dates.',
+      'Planned AI JSON Assistant: an optional Claude-powered feature to explain JSON structures, provide plain-language validation guidance, and suggest transformations. This feature is not implemented or available today.',
+      'Before any AI release, we plan to add explicit user consent before sending inputs to an external AI provider, server-side API access, input limits, abuse protection, cost controls, and an updated privacy notice.',
+      'Other priorities include improving accessibility, mobile usability, discoverability, and reliability of existing tools.',
+      'We welcome product feedback at founder@orvulix.io.vn.'
     ]
   },
   contact: {
@@ -62,7 +72,7 @@ export default function InformationPage({ page }: { page: Page }) {
       <Stack spacing={3}>
         <Typography variant="h3" component="h1" fontWeight={800}>{details.title}</Typography>
         {details.paragraphs.map((paragraph) => <Typography key={paragraph} variant="body1" sx={{ lineHeight: 1.9 }}>{paragraph}</Typography>)}
-        {(page === 'about' || page === 'contact' || page === 'privacy') && (
+        {(page === 'about' || page === 'roadmap' || page === 'contact' || page === 'privacy') && (
           <MuiLink href="mailto:founder@orvulix.io.vn">founder@orvulix.io.vn</MuiLink>
         )}
         {(page === 'contact' || page === 'privacy') && (
