@@ -4,13 +4,11 @@
   "version": "0.6.0",
   "private": true,
   "author": {
-    "name": "Ibrahima Gaye Coulibaly",
-    "email": "ibracool99@gmail.com",
-    "url": "https://github.com/iib0011"
+    "name": "Orvulix contributors",
+    "url": "https://github.com/nguyenan97/orvulix-web"
   },
   "bugs": {
-    "url": "https://github.com/iib0011/omni-tools/issues",
-    "email": "ibracool99@gmail.com"
+    "url": "https://github.com/nguyenan97/orvulix-web/issues"
   },
   "scripts": {
     "dev": "vite",
