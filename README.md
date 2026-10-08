@@ -41,6 +41,10 @@ The production build generates `public/sitemap.xml` from tool metadata, then bui
 
 Production deployments are manual. Confirm Netlify Git Integration automatic builds are disabled before merging; merge and verify CI before running a controlled Netlify deploy. Do not enable automatic deployment unless intentionally changing this release policy.
 
+## Product roadmap
+
+See [Product roadmap](docs/PRODUCT_ROADMAP.md) and the website's `/roadmap` page. The Claude-powered AI JSON Assistant is a **planned feature only**; there is no live Claude API integration.
+
 ## Attribution and license
 
 This project is based on an open-source MIT-licensed project. The original copyright holder is Ibrahima Gaye Coulibaly. Preserve the original MIT license notice in [LICENSE](LICENSE).
