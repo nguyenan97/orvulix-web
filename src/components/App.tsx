@@ -1,6 +1,7 @@
 import { BrowserRouter, useRoutes } from 'react-router-dom';
 import routesConfig from '../config/routesConfig';
 import Navbar from './Navbar';
+import Footer from './Footer';
 import { Suspense, useState, useEffect } from 'react';
 import Loading from './Loading';
 import { CssBaseline, Theme, ThemeProvider } from '@mui/material';
@@ -70,6 +71,7 @@ function App() {
                 <Suspense fallback={<Loading />}>
                   <AppRoutes />
                 </Suspense>
+                <Footer />
               </BrowserRouter>
             </UserTypeFilterProvider>
           </CustomSnackBarProvider>

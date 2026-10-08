@@ -4,17 +4,15 @@
   "version": "0.6.0",
   "private": true,
   "author": {
-    "name": "Ibrahima Gaye Coulibaly",
-    "email": "ibracool99@gmail.com",
-    "url": "https://github.com/iib0011"
+    "name": "Orvulix contributors",
+    "url": "https://github.com/nguyenan97/orvulix-web"
   },
   "bugs": {
-    "url": "https://github.com/iib0011/omni-tools/issues",
-    "email": "ibracool99@gmail.com"
+    "url": "https://github.com/nguyenan97/orvulix-web/issues"
   },
   "scripts": {
     "dev": "vite",
-    "build": "tsc && vite build",
+    "build": "node scripts/generate-sitemap.mjs && node scripts/validate-sitemap.mjs && tsc && vite build",
     "serve": "vite preview",
     "test": "vitest",
     "test:e2e": "playwright test",
@@ -22,9 +20,7 @@
     "script:create:tool": "node scripts/create-tool.mjs",
     "lint": "eslint src --max-warnings=0 --fix",
     "typecheck": "tsc --project tsconfig.json --noEmit",
-    "prepare": "husky install",
-    "i18n:pull": "locize download --project-id e7156a3e-66fb-4035-a0f0-cebf1c63a3ba --path ./public/locales",
-    "i18n:sync": "locize sync --project-id e7156a3e-66fb-4035-a0f0-cebf1c63a3ba --path ./public/locales --update-values true --reference-language-only false -compare-modification-time true"
+    "prepare": "husky install"
   },
   "dependencies": {
     "@emotion/react": "^11.11.4",

@@ -3,3 +3,16 @@
   publish = "dist"
 [build.environment]
   NODE_VERSION = "20"
+
+# Serve client-side React Router paths on direct visits and refreshes.
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
+
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+    X-Frame-Options = "SAMEORIGIN"

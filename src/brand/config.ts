@@ -1,8 +1,8 @@
 export const brand = {
   name: 'Orvulix',
-  company: 'Orvulix Labs',
+  company: 'Orvulix',
   tagline: 'Everyday tools. Everywhere.',
-  description: 'Free, privacy-first online tools for everyday tasks.',
+  description: 'Free browser-based online tools for everyday tasks.',
   defaultLocale: 'en',
   targetLocales: ['en', 'hi', 'id', 'pt', 'es', 'vi']
 } as const;
