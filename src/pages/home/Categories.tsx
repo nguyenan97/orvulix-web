@@ -52,7 +52,12 @@ const SingleCategory = function ({
       <Card
         sx={{
           height: '100%',
-          backgroundColor: hovered ? 'background.hover' : 'background.paper'
+          borderRadius: '20px',
+          border: '1px solid',
+          borderColor: hovered ? 'primary.main' : 'divider',
+          boxShadow: hovered ? '0 12px 32px rgba(15,118,110,0.10)' : '0 4px 16px rgba(15,23,42,0.04)',
+          transition: 'all 180ms ease',
+          backgroundColor: 'background.paper'
         }}
       >
         <CardContent sx={{ height: '100%' }}>
@@ -119,7 +124,7 @@ export default function Categories() {
   const categories = getToolsByCategory(selectedUserTypes, t);
 
   return (
-    <Grid width={'80%'} container spacing={2}>
+    <Grid width={'100%'} maxWidth={'1200px'} container spacing={3}>
       {categories.map((category, index) => (
         <SingleCategory key={category.type} category={category} index={index} />
       ))}
