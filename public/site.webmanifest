@@ -1,6 +1,6 @@
 {
-  "name": "OmniTools",
-  "short_name": "OmniTools",
+  "name": "Toolora",
+  "short_name": "Toolora",
   "icons": [
     {
       "src": "/web-app-manifest-192x192.png",
@@ -15,7 +15,7 @@
       "purpose": "maskable"
     }
   ],
-  "theme_color": "#ffffff",
+  "theme_color": "#142C3E",
   "background_color": "#ffffff",
   "display": "standalone"
 }
