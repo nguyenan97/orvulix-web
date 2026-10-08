@@ -16,8 +16,7 @@ const content: Record<Page, { title: string; paragraphs: string[] }> = {
   contact: {
     title: 'Contact',
     paragraphs: [
-      'Questions, feedback or a bug report? You can reach the project through its public GitHub repository.',
-      'A dedicated Orvulix email address will be published after the domain and mail service are configured.'
+      'Questions, feedback or a bug report? Email founder@orvulix.io.vn or open an issue on our public GitHub repository.'
     ]
   },
   privacy: {
@@ -27,7 +26,7 @@ const content: Record<Page, { title: string; paragraphs: string[] }> = {
       'Do not enter confidential, sensitive or regulated information unless you have verified how the particular tool processes it.',
       'The site may store interface preferences, such as theme and language, in browser local storage.',
       'Hosting infrastructure may process technical request data such as IP addresses and browser information. Refer to the hosting provider’s privacy documentation for its processing practices.',
-      'We do not currently offer user accounts or a dedicated privacy request form. For privacy questions, contact us using the project repository linked below.',
+      'We do not currently offer user accounts or a dedicated privacy request form. For privacy questions, email founder@orvulix.io.vn.',
       'This policy may be updated as features and integrations change. Last updated: October 8, 2026.'
     ]
   },
@@ -50,7 +49,7 @@ const content: Record<Page, { title: string; paragraphs: string[] }> = {
 export default function InformationPage({ page }: { page: Page }) {
   const { pathname } = useLocation();
   const details = content[page];
-  const url = 'https://orvulix-web.netlify.app' + pathname;
+  const url = 'https://orvulix.io.vn' + pathname;
   return (
     <Container maxWidth="md" sx={{ py: { xs: 5, md: 9 }, minHeight: '65vh' }}>
       <Helmet>
@@ -61,6 +60,9 @@ export default function InformationPage({ page }: { page: Page }) {
       <Stack spacing={3}>
         <Typography variant="h3" component="h1" fontWeight={800}>{details.title}</Typography>
         {details.paragraphs.map((paragraph) => <Typography key={paragraph} variant="body1" sx={{ lineHeight: 1.9 }}>{paragraph}</Typography>)}
+        {(page === 'contact' || page === 'privacy') && (
+          <MuiLink href="mailto:founder@orvulix.io.vn">founder@orvulix.io.vn</MuiLink>
+        )}
         {(page === 'contact' || page === 'privacy') && (
           <MuiLink href="https://github.com/nguyenan97/orvulix-web/issues" target="_blank" rel="noopener noreferrer">Contact through GitHub Issues</MuiLink>
         )}
