@@ -22,6 +22,7 @@ import IconButton from '@mui/material/IconButton';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import SearchIcon from '@mui/icons-material/Search';
 import { Helmet } from 'react-helmet';
+import { brand } from '../../brand/config';
 import UserTypeFilter from '@components/UserTypeFilter';
 import { useTranslation } from 'react-i18next';
 import { I18nNamespaces, validNamespaces } from '../../i18n';
@@ -64,7 +65,10 @@ export default function ToolsByCategory() {
   return (
     <Box sx={{ backgroundColor: 'background.default' }}>
       <Helmet>
-        <title>{rawTitle}</title>
+        <title>{`${rawTitle} Tools - ${brand.name}`}</title>
+        <meta name="description" content={`Browse free ${rawTitle} tools on ${brand.name}. Use online utilities directly in your browser.`} />
+        <link rel="canonical" href={`https://orvulix-web.netlify.app/categories/${categoryName}`} />
+        <meta property="og:url" content={`https://orvulix-web.netlify.app/categories/${categoryName}`} />
       </Helmet>
       <Box
         padding={{ xs: 1, md: 3, lg: 5 }}
