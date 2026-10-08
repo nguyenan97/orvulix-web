@@ -8,9 +8,11 @@ const content: Record<Page, { title: string; paragraphs: string[] }> = {
   about: {
     title: 'About Orvulix',
     paragraphs: [
-      'Orvulix is an independent project building accessible online utilities for developers and everyday tasks.',
-      'Our goal is to make common tasks simpler, with useful browser-based tools for text, JSON, PDFs, images and more.',
-      'We are exploring practical AI-assisted tools as a future addition. Features that use external services will be identified clearly.'
+      'Orvulix is an independently developed online tools project, available at orvulix.io.vn.',
+      'The product brings practical browser-based utilities for developers and everyday users into one place, including tools for JSON, text, PDF documents, images, and data conversion.',
+      'Our focus is making frequently used utilities accessible without unnecessary setup. Tool behavior and data processing can vary; check individual tools before entering sensitive information.',
+      'Product roadmap: we are exploring optional AI-assisted workflows for explaining, transforming, and validating user-provided content. These capabilities are planned, not currently available as a Claude integration.',
+      'For product inquiries, feedback, or partnership discussions, email founder@orvulix.io.vn.'
     ]
   },
   contact: {
