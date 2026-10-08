@@ -1,6 +1,6 @@
 export const brand = {
-  name: 'Toolora',
-  company: 'Toolora Labs',
+  name: 'Orvulix',
+  company: 'Orvulix Labs',
   tagline: 'Everyday tools. Everywhere.',
   description: 'Free, privacy-first online tools for everyday tasks.',
   defaultLocale: 'en',
