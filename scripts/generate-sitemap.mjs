@@ -2,7 +2,7 @@ import { readdir, readFile, writeFile } from 'node:fs/promises';
 import { join } from 'node:path';
 
 const baseUrl = 'https://orvulix.io.vn';
-const pages = new Set(['/', '/about', '/contact', '/privacy', '/terms']);
+const pages = new Set(['/', '/about', '/roadmap', '/contact', '/privacy', '/terms']);
 const categories = new Set();
 
 async function scan(dir) {
