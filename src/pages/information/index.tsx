@@ -38,6 +38,8 @@ const content: Record<Page, { title: string; paragraphs: string[] }> = {
       'Do not enter confidential, sensitive or regulated information unless you have verified how the particular tool processes it.',
       'The site may store interface preferences, such as theme and language, in browser local storage.',
       'Hosting infrastructure may process technical request data such as IP addresses and browser information. Refer to the hosting provider’s privacy documentation for its processing practices.',
+      'Some utilities may load third-party scripts, libraries, models, or other resources. Data processing and network behavior may differ between tools; review the specific tool and avoid sensitive inputs unless you understand its behavior.',
+      'The planned AI JSON Assistant is not currently available. If introduced, its data processing and external AI provider disclosures will be published before launch.',
       'We do not currently offer user accounts or a dedicated privacy request form. For privacy questions, email founder@orvulix.io.vn.',
       'This policy may be updated as features and integrations change. Last updated: October 8, 2026.'
     ]
