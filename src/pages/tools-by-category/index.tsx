@@ -67,8 +67,8 @@ export default function ToolsByCategory() {
       <Helmet>
         <title>{`${rawTitle} Tools - ${brand.name}`}</title>
         <meta name="description" content={`Browse free ${rawTitle} tools on ${brand.name}. Use online utilities directly in your browser.`} />
-        <link rel="canonical" href={`https://orvulix-web.netlify.app/categories/${categoryName}`} />
-        <meta property="og:url" content={`https://orvulix-web.netlify.app/categories/${categoryName}`} />
+        <link rel="canonical" href={`https://orvulix.io.vn/categories/${categoryName}`} />
+        <meta property="og:url" content={`https://orvulix.io.vn/categories/${categoryName}`} />
       </Helmet>
       <Box
         padding={{ xs: 1, md: 3, lg: 5 }}
