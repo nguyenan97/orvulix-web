@@ -8,10 +8,10 @@ const content: Record<Page, { title: string; paragraphs: string[] }> = {
   about: {
     title: 'About Orvulix',
     paragraphs: [
-      'Orvulix is an independently developed online tools project, available at orvulix.io.vn.',
+      'Orvulix is an early-stage, independently maintained project developed by a solo founder, available at orvulix.io.vn. The project is not incorporated and has not received external investment.',
       'The product brings practical browser-based utilities for developers and everyday users into one place, including tools for JSON, text, PDF documents, images, and data conversion.',
-      'Our focus is making frequently used utilities accessible without unnecessary setup. Tool behavior and data processing can vary; check individual tools before entering sensitive information.',
-      'Product roadmap: we are exploring optional AI-assisted workflows for explaining, transforming, and validating user-provided content. These capabilities are planned, not currently available as a Claude integration.',
+      'Our focus is making frequently used utilities accessible without unnecessary setup. Orvulix is currently free and non-commercial. Tool behavior and data processing can vary; check individual tools before entering sensitive information.',
+      'Our first proposed AI milestone is a Claude-powered JSON Assistant to explain API payloads and propose schemas, with deterministic validation. This is a planned prototype, not a live Claude integration.',
       'For product inquiries, feedback, or partnership discussions, email founder@orvulix.io.vn.'
     ]
   },
@@ -30,7 +30,7 @@ const content: Record<Page, { title: string; paragraphs: string[] }> = {
       'Phase 3 — AI Tool Discovery (research): recommend the most relevant existing Orvulix tool based on a natural-language task, without claiming actions have been performed.',
       'Phase 3 — Open-source Developer SDK (research): provide documented APIs or reusable components for building privacy-conscious AI-assisted utilities.',
       'Proposed Claude architecture: explicit user opt-in; Netlify Functions or another server-side service to call the Anthropic API; no browser-exposed API keys; input size and rate limits; spending caps; privacy notices; and human confirmation for suggested changes.',
-      'Delivery priorities: prototype one narrow JSON workflow first, validate usefulness and operating cost, then consider additional tools. This roadmap does not indicate a live Claude integration, customer traction, funding, or acceptance into any startup program.',
+      'Delivery priorities: build a working, cost-controlled JSON prototype first; test output correctness and privacy safeguards; collect feedback before expanding. Orvulix is a solo-founder, pre-incorporation project without external funding. This roadmap does not indicate a live Claude integration, verified traction, or acceptance into any startup program.',
       'Community contributions and feature feedback are welcome through the Orvulix GitHub repository or founder@orvulix.io.vn.'
     ]
   },
