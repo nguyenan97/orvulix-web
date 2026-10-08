@@ -63,8 +63,9 @@ const Navbar: React.FC<NavbarProps> = ({
   };
 
   const navItems: { label: string; path: string }[] = [
-    // { label: 'Features', path: '/features' }
-    // { label: 'About Us', path: '/about-us' }
+    { label: 'About', path: '/about' },
+    { label: 'Roadmap', path: '/roadmap' },
+    { label: 'Contact', path: '/contact' }
   ];
 
   const languageSelector = (
@@ -119,7 +120,7 @@ const Navbar: React.FC<NavbarProps> = ({
       {navItems.map((navItem) => (
         <ListItemButton
           key={navItem.path}
-          onClick={() => navigate(navItem.path)}
+          onClick={() => { navigate(navItem.path); setDrawerOpen(false); }}
         >
           <ListItemText primary={navItem.label} />
         </ListItemButton>
