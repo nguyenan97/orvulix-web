@@ -1,36 +1,17 @@
-<div align="center">
-        <img src="src/assets/logo.png" width="220" />
-        <br /><br />
-<a href="https://trendshift.io/repositories/13055" target="_blank"><img src="https://trendshift.io/api/badge/repositories/13055" alt="iib0011%2Fomni-tools | Trendshift" style="width: 200px;" width="200"/></a>
-   <br /><br />
-<a href="https://github.com/iib0011/omni-tools/releases">
-          <img src="https://img.shields.io/badge/version-0.6.0-blue?style=for-the-badge" />
-        </a>
-        <a href="https://hub.docker.com/r/iib0011/omni-tools">
-          <img src="https://img.shields.io/docker/pulls/iib0011/omni-tools?style=for-the-badge&logo=docker" />
-        </a>
-        <a href="https://github.com/iib0011">
-          <img src="https://img.shields.io/github/stars/iib0011/omni-tools?style=for-the-badge&logo=github" />
-        </a>
-        <a href="https://github.com/iib0011/omni-tools/blob/main/LICENSE">
-          <img src="https://img.shields.io/github/license/iib0011/omni-tools?style=for-the-badge" />
-        </a>
-        <a href="https://discord.gg/SDbbn3hT4b">
-          <img src="https://img.shields.io/discord/1342971141823664179?label=Discord&style=for-the-badge" />
-        </a>
-        <br /><br />
-</div>
+# Orvulix
 
-Welcome to OmniTools, a self-hosted web app offering a variety of online tools to simplify everyday tasks.
-Whether you are coding, manipulating images/videos, PDFs or crunching numbers, OmniTools has you covered. Please don't
-forget to
-star the repo to support us.
-Here is the [demo](https://omnitools.app) website.
+**Free online tools for developers, documents, images, and everyday tasks.**
 
-All files are processed entirely on the client side: nothing ever leaves your device.
-Plus, the Docker image is super lightweight at just 28MB, making it fast to deploy and easy to self-host.
+Orvulix is a privacy-first, browser-based collection of utilities. Many tools process data locally in your browser. Check individual tools before using sensitive data.
 
-![img.png](docs-images/img.png)
+Live site (until the Netlify project is renamed): https://toolora-web.netlify.app/
+
+## Project information
+
+- Frontend: React, TypeScript, Vite
+- Hosting: Netlify (manual production deployment)
+- Build: `npm run build` (output: `dist`)
+- Origin: Forked from [iib0011/omni-tools](https://github.com/iib0011/omni-tools). Original authorship, copyright, and license notices remain attributed to the upstream project.
 
 ## Table of Contents
 
