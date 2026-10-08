@@ -8,36 +8,43 @@ const content: Record<Page, { title: string; paragraphs: string[] }> = {
   about: {
     title: 'About Orvulix',
     paragraphs: [
-      'Orvulix is an early-stage, independently maintained project developed by a solo founder, available at orvulix.io.vn. The project is not incorporated and has not received external investment.',
-      'The product brings practical browser-based utilities for developers and everyday users into one place, including tools for JSON, text, PDF documents, images, and data conversion.',
-      'Our focus is making frequently used utilities accessible without unnecessary setup. Orvulix is currently free and non-commercial. Tool behavior and data processing can vary; check individual tools before entering sensitive information.',
-      'Our first proposed AI milestone is a Claude-powered JSON Assistant to explain API payloads and propose schemas, with deterministic validation. This is a planned prototype, not a live Claude integration.',
-      'For product inquiries, feedback, or partnership discussions, email founder@orvulix.io.vn.'
+      'Orvulix brings practical online tools together in one simple workspace. Whether you are formatting JSON, converting data, working with documents, editing images, or preparing text, our goal is to help you finish everyday tasks with less friction.',
+      'Built for developers, students, creators, and anyone who needs reliable utilities, Orvulix focuses on straightforward workflows, clear results, and tools that are easy to access without unnecessary setup.',
+      'Our priorities are to improve the tools already available, make the experience faster and more accessible across devices, and help people find the right tool for the job. We want the platform to earn repeat visits by being genuinely useful.',
+      'Orvulix is independently maintained as an open-source project based on OmniTools, with credit to the original contributors. Core utilities are currently free, and community feedback helps guide improvements.',
+      'We are exploring optional AI assistance for tasks where it can make a meaningful difference, starting with a proposed JSON Assistant. AI features are not yet available, and any future integration will be designed around clear user consent, output review, and transparent data handling.',
+      'Explore our product roadmap to see what we are improving and what we are considering next.'
     ]
   },
   roadmap: {
-    title: 'Orvulix AI Product Roadmap',
+    title: 'Orvulix Product Roadmap',
     paragraphs: [
-      'Orvulix is an open-source collection of free online tools for JSON, PDF, images, text, and developer workflows. We are exploring optional AI features powered by Claude to help users understand and transform complex content. All AI initiatives below are proposals, not released features.',
-      'Phase 1 — AI JSON Assistant (planned): explain nested JSON, identify likely schema issues, propose JSON Schema, and suggest safe transformations. Deterministic formatting and validation remain available without AI.',
-      'Phase 1 — Smart Data Converter (planned): generate editable mappings between JSON, CSV, YAML, and XML; explain field mismatches and preview transformations before applying them.',
-      'Phase 1 — Regex and Developer Assistant (planned): translate plain-language requirements into regex examples, explain existing patterns, generate test cases, and highlight potentially expensive patterns.',
-      'Phase 2 — API Payload Inspector (planned): explain HTTP requests and responses, compare API payload versions, suggest contract tests, and produce human-readable change summaries.',
-      'Phase 2 — Document Understanding (planned): summarize user-selected PDF text, extract structured fields with confirmation, and help compare document revisions. Support will depend on file handling, privacy, and cost constraints.',
-      'Phase 2 — Image Accessibility Assistant (planned): propose descriptive alt text and useful image metadata for user-selected images, with human review before publication.',
-      'Phase 2 — AI Text Transformation (planned): rewrite, translate, summarize, and structure user-selected text while preserving user control over the final output.',
-      'Phase 3 — Workflow Builder (research): connect multiple tools into opt-in, reviewable workflows; for example, parse a JSON response, validate its schema, generate a CSV mapping, and export a report.',
-      'Phase 3 — AI Tool Discovery (research): recommend the most relevant existing Orvulix tool based on a natural-language task, without claiming actions have been performed.',
-      'Phase 3 — Open-source Developer SDK (research): provide documented APIs or reusable components for building privacy-conscious AI-assisted utilities.',
-      'Proposed Claude architecture: explicit user opt-in; Netlify Functions or another server-side service to call the Anthropic API; no browser-exposed API keys; input size and rate limits; spending caps; privacy notices; and human confirmation for suggested changes.',
-      'Delivery priorities: build a working, cost-controlled JSON prototype first; test output correctness and privacy safeguards; collect feedback before expanding. Orvulix is a solo-founder, pre-incorporation project without external funding. This roadmap does not indicate a live Claude integration, verified traction, or acceptance into any startup program.',
-      'Community contributions and feature feedback are welcome through the Orvulix GitHub repository or founder@orvulix.io.vn.'
+      'Simple tools. Smarter workflows. Better productivity.',
+      'Orvulix brings useful browser-based tools together in one accessible workspace. Our roadmap focuses on making everyday tasks easier, improving the tools people already use, and exploring thoughtful ways to connect them. We prioritize real usefulness over the number of features shipped.',
+      '1. Better everyday tools - Current focus',
+      'We are improving speed, mobile usability, accessibility, navigation, and reliability. Clearer instructions, practical examples, and helpful error messages will make it easier to choose a tool and complete a task with confidence.',
+      '2. Practical AI assistance - Planned',
+      'Our first proposed AI prototype is a JSON Assistant that explains complex payloads, suggests candidate JSON schemas, and helps users understand possible transformations. Outputs would be reviewed and validated using deterministic tools. Depending on feedback, we may explore assisted data conversion, regex, document, and text workflows.',
+      '3. Connected workflows - Exploring',
+      'Many tasks involve several steps. We want to explore ways to move between compatible tools with less copying and pasting, including previewable conversions and reusable workflows. One possible flow is to inspect JSON, validate it, convert it to CSV, and export the result.',
+      '4. Open and sustainable growth - Ongoing',
+      'We plan to keep core utilities free, welcome contributions, improve documentation, and prioritize feedback from people using the tools. Privacy, accessibility, maintenance effort, and operating costs will shape what we build.',
+      'How we decide what comes next',
+      'First, strengthen existing tools. Next, prototype one focused improvement, test it with real use cases, and gather feedback. Expand only when the feature is useful, reliable, and practical to maintain. We are not committing to release dates before those conditions are met.',
+      'What is next',
+      'Our immediate focus is the existing Orvulix experience and an initial AI JSON Assistant prototype. AI assistance and connected workflows described here are plans, not released features. Follow our public roadmap for more detailed milestones and technical considerations.',
+      'Help shape Orvulix',
+      'Ideas, bug reports, documentation improvements, and contributions are welcome. Contact founder@orvulix.io.vn or explore the public GitHub repository.'
     ]
   },
   contact: {
-    title: 'Contact',
+    title: 'Contact Orvulix',
     paragraphs: [
-      'Questions, feedback or a bug report? Email founder@orvulix.io.vn or open an issue on our public GitHub repository.'
+      'Have a question, an idea for a tool, or feedback about your experience? We would like to hear from you.',
+      'For general questions, feature suggestions, accessibility feedback, or collaboration inquiries, email founder@orvulix.io.vn. Please include the tool name or page URL when your message relates to a specific feature.',
+      'Found a bug? Tell us what you were trying to do, what happened, and how to reproduce the issue. Browser and device details can help us investigate. Please do not include passwords, API keys, or sensitive files.',
+      'Orvulix is independently maintained, so response times may vary. We read feedback and use it to guide improvements, but cannot promise a specific response or delivery date.',
+      'Interested in contributing? Visit our GitHub repository for source code, contribution guidelines, and the product roadmap.'
     ]
   },
   privacy: {
@@ -77,10 +84,10 @@ export default function InformationPage({ page }: { page: Page }) {
     <Container maxWidth="md" sx={{ py: { xs: 5, md: 9 }, minHeight: '65vh' }}>
       <Helmet>
         <title>{details.title} - {brand.name}</title>
-        <meta name="description" content={page === 'roadmap' ? 'Explore planned Claude-powered AI tools for JSON, data conversion, API debugging, PDF understanding, regex, and developer workflows at Orvulix.' : details.paragraphs[0]} />
+        <meta name="description" content={page === 'roadmap' ? 'Explore the Orvulix product roadmap: better everyday tools, practical AI assistance, connected workflows, and open-source improvements.' : page === 'about' ? 'Learn about Orvulix, a free open-source workspace for browser-based JSON, PDF, image, text, and data tools.' : page === 'contact' ? 'Contact Orvulix with feedback, feature suggestions, bug reports, and collaboration inquiries.' : details.paragraphs[0]} />
         {page === 'not-found' ? <meta name="robots" content="noindex, nofollow" /> : <link rel="canonical" href={url} />}
-        {page === 'roadmap' && <meta property="og:title" content="Orvulix AI Product Roadmap" />}
-        {page === 'roadmap' && <meta property="og:description" content="Planned Claude-powered developer tools, product milestones, and privacy-conscious AI architecture." />}
+        {page === 'roadmap' && <meta property="og:title" content="Orvulix Product Roadmap" />}
+        {page === 'roadmap' && <meta property="og:description" content="Our plans for more reliable online tools, optional AI assistance, connected workflows, and community-driven improvements." />}
       </Helmet>
       <Stack spacing={3}>
         <Typography variant="h3" component="h1" fontWeight={800}>{details.title}</Typography>
@@ -91,8 +98,8 @@ export default function InformationPage({ page }: { page: Page }) {
         {page === 'roadmap' && (
           <MuiLink href="https://github.com/nguyenan97/orvulix-web/blob/main/docs/PRODUCT_ROADMAP.md" target="_blank" rel="noopener noreferrer">Detailed roadmap and proposed technical architecture</MuiLink>
         )}
-        {(page === 'contact' || page === 'privacy') && (
-          <MuiLink href="https://github.com/nguyenan97/orvulix-web/issues" target="_blank" rel="noopener noreferrer">Contact through GitHub Issues</MuiLink>
+        {page === 'contact' && (
+          <MuiLink href="https://github.com/nguyenan97/orvulix-web" target="_blank" rel="noopener noreferrer">Explore Orvulix on GitHub</MuiLink>
         )}
         <Box><Link to="/">Back to Orvulix home</Link></Box>
       </Stack>
