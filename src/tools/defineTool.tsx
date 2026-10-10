@@ -3,6 +3,7 @@ import React, { JSXElementConstructor, LazyExoticComponent } from 'react';
 import { IconifyIcon } from '@iconify/react';
 import { FullI18nKey, validNamespaces } from '../i18n';
 import { useTranslation } from 'react-i18next';
+import SeoContent from '../seo/SeoContent'; // ORVULIX-SEO
 
 export type UserType = 'generalUsers' | 'developers';
 
@@ -83,6 +84,8 @@ export const defineTool = (
               i18n.longDescription ? t(i18n.longDescription) : undefined
             }
           />
+          {/* ORVULIX-SEO */}
+          <SeoContent path={`${basePath}/${path}`} toolName={t(i18n.name)} />
         </ToolLayout>
       );
     }
