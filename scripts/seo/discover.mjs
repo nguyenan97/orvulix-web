@@ -151,7 +151,8 @@ async function readGeneratedTools(file, source, category, root) {
       category,
       path: `${category}/${prefix}${paths[0]}`,
       keys: readI18nBlock(itemSource),
-      sources: [relative(root, itemFile)]
+      sources: [relative(root, itemFile)],
+      contentPaths: [relative(root, listFile), relative(root, itemFile)]
     });
   }
   return tools;
@@ -210,9 +211,22 @@ export async function discoverTools(root = process.cwd()) {
           category,
           path: `${category}/${paths[0]}`,
           keys: readI18nBlock(source),
-          sources: []
+          sources: [],
+          contentPaths: [relative(root, dirname(absolute))]
         }
       ];
+    }
+    if (
+      entries.some(
+        (entry) =>
+          !entry.contentPaths.includes(relative(root, dirname(absolute)))
+      )
+    ) {
+      // Generated tools share the generator's own files (not other entries' data).
+      const shared = (await readdir(dirname(absolute), { withFileTypes: true }))
+        .filter((item) => item.isFile())
+        .map((item) => relative(root, join(dirname(absolute), item.name)));
+      for (const entry of entries) entry.contentPaths.unshift(...shared);
     }
     for (const entry of entries) {
       const route = `/${entry.path}`;
@@ -261,7 +275,9 @@ export async function discoverTools(root = process.cwd()) {
         descriptionKey: entry.keys.description,
         shortDescriptionKey: entry.keys.shortDescription,
         metaFile: file,
-        sources: [file, ...entry.sources]
+        sources: [file, ...entry.sources],
+        /** Files whose history defines the tool page's last modification. */
+        contentPaths: entry.contentPaths
       });
     }
   }
