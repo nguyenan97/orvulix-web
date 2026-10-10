@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 import { readdir, readFile } from 'node:fs/promises';
 import { join, relative, resolve } from 'node:path';
+import { fileURLToPath } from 'node:url';
 import { NOT_FOUND_FILE, htmlFileForPath, loadSeoSite } from './prerender.mjs';
 import { validateCacheHeaders } from './validate-headers.mjs';
 import { validateRouteHtml } from './validate-html.mjs';
@@ -204,7 +205,11 @@ export async function validateDist() {
   }
 
   for (const file of await listHtml(DIST)) {
-    if (file !== NOT_FOUND_FILE && !expected.has(file)) {
+    // HTML copied unchanged from public/ (e.g. a Search Console verification
+    // file) is not a route.
+    const fromPublic =
+      (await readOrNull(join('public', relative(DIST, file)))) !== null;
+    if (file !== NOT_FOUND_FILE && !fromPublic && !expected.has(file)) {
       problems.push(`Unexpected HTML file ${relative(process.cwd(), file)}.`);
     }
   }
@@ -228,7 +233,7 @@ export async function validateDist() {
 
 if (
   process.argv[1] &&
-  resolve(process.argv[1]) === resolve(new URL(import.meta.url).pathname)
+  resolve(process.argv[1]) === fileURLToPath(import.meta.url)
 ) {
   const { problems, site } = await validateDist();
   if (problems.length) {

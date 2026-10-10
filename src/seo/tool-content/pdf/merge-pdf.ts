@@ -41,7 +41,7 @@ const content: ToolSeoOverride = {
     {
       question: 'In what order are the PDFs merged?',
       answer:
-        'In the order they appear in the input list, which is the order you added them. To change the order, press Clear and add the files again in the sequence you want.'
+        'In the order they appear in the input list, which is the order you added them. There is no reorder control; to use a different order, reload the page and add the files again in the sequence you want.'
     },
     {
       question: 'Can I merge password-protected PDFs?',

@@ -108,17 +108,23 @@ export const renderDocument = (template: string, page: SeoPage): string => {
   let html = template;
   for (const pattern of MANAGED_TEMPLATE_PATTERNS)
     html = html.replace(pattern, '');
-  html = html.replace(
-    /<html\b[^>]*>/i,
-    `<html lang="${escapeHtml(page.language)}">`
-  );
-  html = html.replace(
-    /<\/head>/i,
-    `  ${renderHeadTags(getHeadTags(page))}\n  ${STATIC_STYLE}\n</head>`
-  );
-  html = html.replace(
-    ROOT_ELEMENT,
-    `${renderNoscript(page)}\n<div id="root">${renderStaticRoot(page)}</div>`
-  );
+  // Function replacers insert page text literally ($&, $$ and $' are not
+  // treated as replacement patterns).
+  // Only the lang attribute is set; other <html> attributes are kept.
+  const lang = (tag: string) => {
+    const value = `lang="${escapeHtml(page.language)}"`;
+    return /\slang="[^"]*"/i.test(tag)
+      ? tag.replace(/\slang="[^"]*"/i, () => ` ${value}`)
+      : tag.replace(/^<html/i, () => `<html ${value}`);
+  };
+  const head = `  ${renderHeadTags(
+    getHeadTags(page)
+  )}\n  ${STATIC_STYLE}\n</head>`;
+  const root = `${renderNoscript(page)}\n<div id="root">${renderStaticRoot(
+    page
+  )}</div>`;
+  html = html.replace(/<html\b[^>]*>/i, (tag) => lang(tag));
+  html = html.replace(/<\/head>/i, () => head);
+  html = html.replace(ROOT_ELEMENT, () => root);
   return html;
 };

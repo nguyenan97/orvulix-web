@@ -1,4 +1,4 @@
-import { readFile, readdir } from 'node:fs/promises';
+import { readFile, readdir, stat } from 'node:fs/promises';
 import { join, relative } from 'node:path';
 import { loadSeoSite } from './seo/prerender.mjs';
 
@@ -11,7 +11,10 @@ const indexable = site.pages.filter((page) => page.indexable);
 const expected = new Set(indexable.map((page) => page.path));
 const categories = new Set(tools.map((tool) => tool.category));
 
-// Route HTML files actually written to dist/ (404.html excluded).
+// Route HTML files actually written to dist/. 404.html and HTML files copied
+// unchanged from public/ (e.g. a Search Console verification file) are not routes.
+const fromPublic = (file) =>
+  stat(join('public', file)).then(() => true, () => false);
 async function htmlRoutes(directory) {
   const routes = [];
   for (const entry of await readdir(directory, { withFileTypes: true })) {
@@ -19,7 +22,7 @@ async function htmlRoutes(directory) {
     if (entry.isDirectory()) routes.push(...(await htmlRoutes(path)));
     else if (entry.name.endsWith('.html')) {
       const file = relative(dist, path);
-      if (file === '404.html') continue;
+      if (file === '404.html' || (await fromPublic(file))) continue;
       routes.push(file === 'index.html' ? '/' : `/${file.slice(0, -'.html'.length)}`);
     }
   }

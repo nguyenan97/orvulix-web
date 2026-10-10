@@ -52,7 +52,7 @@ const content: ToolSeoOverride = {
     {
       question: 'Can I stretch an image to exact dimensions?',
       answer:
-        'Yes. Uncheck Maintain Aspect Ratio and enter both Width and Height. The image is drawn at exactly those dimensions, even if that changes its proportions.'
+        'Yes for JPG, PNG, WebP and GIF images: uncheck Maintain Aspect Ratio and enter both Width and Height, and the image is drawn at exactly those dimensions. SVG files get the new width and height but keep their proportions inside them.'
     },
     {
       question: 'Does resizing an SVG reduce its quality?',

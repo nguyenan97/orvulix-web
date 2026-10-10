@@ -45,7 +45,10 @@ export async function pageSources(site, tools) {
         { file: localeFile('translation'), path: ['categories'] }
       );
     } else if (page.kind === 'info') {
-      files.push('src/pages/information/index.tsx');
+      // All info pages share src/pages/information/index.tsx, so a change to
+      // one page cannot be told apart from a change to another: no lastmod.
+      sources.set(page.path, { untracked: true });
+      continue;
     } else if (page.kind === 'category') {
       const category = page.path.split('/').pop();
       keys.push({
@@ -86,7 +89,14 @@ export async function resolveLastmod(site, tools) {
     for (const page of site.pages) result.set(page.path, null);
     return { dates: result, shallow: false, git: false };
   }
-  for (const [path, { files, keys }] of await pageSources(site, tools)) {
+  for (const [path, { files, keys, untracked }] of await pageSources(
+    site,
+    tools
+  )) {
+    if (untracked) {
+      result.set(path, null);
+      continue;
+    }
     const byFile = new Map();
     for (const key of keys) {
       if (!byFile.has(key.file)) byFile.set(key.file, []);
@@ -128,18 +138,22 @@ export async function writeSitemap() {
     .map((page) => ({ loc: page.canonical, lastmod: dates.get(page.path) }));
   await writeFile(SITEMAP_FILE, renderSitemap(entries));
   const withDate = entries.filter((entry) => entry.lastmod).length;
-  if (withDate < entries.length) {
+  const untracked = site.pages.filter((page) => page.kind === 'info').length;
+  if (withDate < entries.length - untracked) {
     const reason = !git
       ? 'Git history is not available'
       : shallow
         ? 'the clone is shallow or some sources have uncommitted changes'
         : 'some sources have uncommitted changes or unreadable history';
     console.warn(
-      `[seo] lastmod omitted for ${entries.length - withDate} of ${
+      `[seo] lastmod omitted for ${entries.length - untracked - withDate} of ${
         entries.length
       } URLs because ${reason}.`
     );
   }
+  console.log(
+    `[seo] lastmod is not tracked for the ${untracked} info pages (they share one source file).`
+  );
   if (await exists('public/sitemap.xml')) {
     console.warn(
       '[seo] public/sitemap.xml is no longer generated or used; the build writes dist/sitemap.xml. Remove the stale file.'

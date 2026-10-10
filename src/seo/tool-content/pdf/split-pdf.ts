@@ -39,7 +39,7 @@ const content: ToolSeoOverride = {
     }
   ],
   notes: [
-    'The result is a single PDF named after the original with .pdf replaced by -extracted.pdf (report.pdf becomes report-extracted.pdf).',
+    'The result is a single PDF. A file name containing a lowercase .pdf gets -extracted.pdf (report.pdf becomes report-extracted.pdf); other names, such as SCAN.PDF, get no suffix.',
     'Selected pages are always output in ascending order, and duplicate entries are removed.',
     'Page numbers outside the document and non-numeric entries are ignored; ranges are clipped to the page count.',
     "Encrypted PDFs are rejected by pdf-lib's default loader, so they cannot be split.",

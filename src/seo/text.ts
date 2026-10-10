@@ -58,7 +58,8 @@ export const splitSentences = (value: string): string[] => {
       .slice(start, match.index)
       .split(' ')
       .pop()
-      ?.toLowerCase();
+      ?.replace(/^[(["'\u201c\u2018]+/, '')
+      .toLowerCase();
     if (previousWord && ABBREVIATIONS.has(previousWord)) continue;
     sentences.push(text.slice(start, end));
     start = match.index + match[0].length;

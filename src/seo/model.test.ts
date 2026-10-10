@@ -177,6 +177,79 @@ describe('SEO model', () => {
     expect(tool.sections).toEqual([]);
   });
 
+  it('builds client metadata without issues for every UI language', async () => {
+    const { tools: discovered } = await discoverTools();
+    const english = englishResources();
+    for (const language of readdirSync('public/locales')) {
+      const resources = Object.fromEntries(
+        readdirSync(`public/locales/${language}`)
+          .filter((file) => file.endsWith('.json'))
+          .map((file) => [
+            file.slice(0, -5),
+            JSON.parse(
+              readFileSync(`public/locales/${language}/${file}`, 'utf8')
+            )
+          ])
+      );
+      const instance = i18next.createInstance();
+      await instance.init({
+        lng: language,
+        fallbackLng: 'en',
+        ns: Object.keys(english),
+        resources: { en: english, [language]: resources },
+        interpolation: { escapeValue: false }
+      });
+      const t = instance.getFixedT(language) as unknown as (
+        key: string
+      ) => string;
+      const { issues, site } = buildSeoSite({
+        tools: discovered,
+        translate: (key) =>
+          instance.exists(key, { lng: language }) ? t(key) : undefined,
+        language,
+        overrides: TOOL_OVERRIDES
+      });
+      expect(issues, language).toEqual([]);
+      expect(
+        site.pages.every((page) => page.title && page.description),
+        language
+      ).toBe(true);
+    }
+  });
+
+  it('falls back to generic wording when a category title has no "Tools" suffix', () => {
+    const strings: Record<string, string> = {
+      'xml:x.title': 'XML Formatter',
+      'xml:x.description':
+        'Format and indent XML documents for easier reading.',
+      'xml:x.short': 'Format XML',
+      'translation:categories.xml.title': 'XML Utilities',
+      'translation:categories.xml.description':
+        'Utilities for working with XML documents, from formatting and validation to conversion between XML and other data formats.'
+    };
+    const { site, issues } = buildSeoSite({
+      tools: [
+        {
+          category: 'xml',
+          path: 'xml/x',
+          nameKey: 'xml:x.title',
+          descriptionKey: 'xml:x.description',
+          shortDescriptionKey: 'xml:x.short'
+        }
+      ],
+      translate: (key) => strings[key],
+      language: 'en',
+      overrides: {}
+    });
+    expect(issues).toEqual([]);
+    expect(resolveSeoPage(site, '/xml/x').title).toBe(
+      'XML Formatter - Free Online Tool | Orvulix'
+    );
+    expect(resolveSeoPage(site, '/xml/x').description).toMatch(
+      /^Format and indent XML documents for easier reading\. A free online tool from Orvulix/
+    );
+  });
+
   it('resolves location paths to canonical routes', async () => {
     const { site } = await buildTimeSite();
     const tool = site.pages.find((page) => page.kind === 'tool')!;
@@ -237,6 +310,41 @@ describe('SEO HTML rendering', () => {
     expect(html).not.toContain('example.com');
     expect(html).toContain('<html lang="en">');
     expect(html.match(/<h1>/g)).toHaveLength(1);
+  });
+
+  it('inserts text containing replacement patterns literally', () => {
+    const page = {
+      ...hostile,
+      intro: "Costs $& or $$ and $' or $`",
+      sections: [
+        { heading: 'Price $&', kind: 'list' as const, items: ["$' and $$"] }
+      ],
+      jsonLd: { name: "$& $' $$" }
+    };
+    const html = renderDocument(template, page);
+    expect(html).toContain('<p>Costs $&amp; or $$ and $&#39; or $`</p>');
+    expect(html).toContain('<h2>Price $&amp;</h2>');
+    expect(html).toContain('<li>$&#39; and $$</li>');
+    expect(html).toContain('"name":"$\\u0026 $\' $$"');
+    expect(html.match(/<div id="root">/g)).toHaveLength(1);
+  });
+
+  it('keeps other attributes of the template <html> element', () => {
+    const html = renderDocument(
+      template.replace(
+        '<html lang="xx">',
+        '<html class="notranslate" translate="no" lang="xx">'
+      ),
+      hostile
+    );
+    expect(html).toContain(
+      '<html class="notranslate" translate="no" lang="en">'
+    );
+    const withoutLang = renderDocument(
+      template.replace('<html lang="xx">', '<html translate="no">'),
+      hostile
+    );
+    expect(withoutLang).toContain('<html lang="en" translate="no">');
   });
 
   it('rejects templates without a single empty root element', () => {

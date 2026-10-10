@@ -83,12 +83,18 @@ export async function createGitDates(root = process.cwd()) {
   } catch {
     // not a shallow clone
   }
-  const dirty = new Set(
-    (await git(['status', '--porcelain', '--untracked-files=all']))
-      .split('\n')
-      .filter(Boolean)
-      .map((line) => line.slice(3))
-  );
+  // -z keeps paths with spaces unquoted and lists both sides of renames.
+  const status = (
+    await git(['status', '--porcelain', '-z', '--untracked-files=all'])
+  )
+    .split('\0')
+    .filter(Boolean);
+  const dirty = new Set();
+  for (let index = 0; index < status.length; index += 1) {
+    const entry = status[index];
+    dirty.add(entry.slice(3));
+    if (/^[RC]/.test(entry)) dirty.add(status[(index += 1)]);
+  }
   const isDirty = (paths) =>
     [...dirty].some((file) =>
       paths.some((path) => file === path || file.startsWith(`${path}/`))
@@ -98,7 +104,14 @@ export async function createGitDates(root = process.cwd()) {
   const pathDate = async (paths) => {
     if (!paths.length || isDirty(paths)) return null;
     const line = (
-      await git(['log', '-1', '--format=%H %cI', '--', ...paths])
+      await git([
+        'log',
+        '-1',
+        '--first-parent',
+        '--format=%H %cI',
+        '--',
+        ...paths
+      ])
     ).trim();
     if (!line) return null;
     const [sha, date] = line.split(' ');
@@ -112,7 +125,9 @@ export async function createGitDates(root = process.cwd()) {
       jsonHistories.set(
         file,
         (async () => {
-          const commits = (await git(['log', '--format=%H %cI', '--', file]))
+          const commits = (
+            await git(['log', '--first-parent', '--format=%H %cI', '--', file])
+          )
             .split('\n')
             .filter(Boolean)
             .map((line) => {

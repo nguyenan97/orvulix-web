@@ -144,7 +144,7 @@ export function validateRouteHtml(html, page, site, at) {
     return found[0]?.content;
   };
 
-  const lang = /<html lang="([^"]*)"/.exec(html)?.[1];
+  const lang = /<html\b[^>]*\blang="([^"]*)"/.exec(html)?.[1];
   if (lang !== page.language)
     problems.push(`${at}: html lang must be "${page.language}".`);
   const titles = [...headHtml.matchAll(/<title>([^<]*)<\/title>/g)].map(

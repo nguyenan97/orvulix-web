@@ -158,6 +158,91 @@ async function readGeneratedTools(file, source, category, root) {
   return tools;
 }
 
+export const REGISTRY_FILE = 'src/tools/index.ts';
+
+const stripComments = (source) =>
+  source.replace(/\/\*[\s\S]*?\*\//g, '').replace(/(^|[^:])\/\/.*$/gm, '$1');
+
+async function resolveRegistryModule(fromFile, specifier, root) {
+  const base = specifier.startsWith('.')
+    ? specifier
+    : join(root, 'src', specifier.replace(/^@tools\//, 'tools/'));
+  return resolveModule(fromFile, base);
+}
+
+/**
+ * Meta files of the tools the app actually registers, read from
+ * src/tools/index.ts and the category index files it spreads (identifiers
+ * commented out of an array are not registered). Throws on shapes that
+ * cannot be resolved.
+ */
+export async function discoverRegistry(root = process.cwd()) {
+  const registered = new Set();
+  const visiting = new Set();
+
+  async function arrayEntries(file, name) {
+    const key = `${file}#${name}`;
+    if (visiting.has(key))
+      throw new Error(`circular registry reference ${key}`);
+    visiting.add(key);
+    const source = stripComments(await readFile(file, 'utf8'));
+    const declaration = new RegExp(
+      `export\\s+const\\s+${name}\\b[^=]*=\\s*\\[([\\s\\S]*?)\\]\\s*;?`
+    ).exec(source);
+    if (!declaration) {
+      throw new Error(
+        `${relative(root, file)} does not export an array "${name}"`
+      );
+    }
+    const imports = new Map();
+    for (const [, names, from] of source.matchAll(
+      /import\s*\{([^}]*)\}\s*from\s*'([^']+)'/g
+    )) {
+      for (const spec of names
+        .split(',')
+        .map((item) => item.trim())
+        .filter(Boolean)) {
+        const [imported, local = imported] = spec
+          .split(/\s+as\s+/)
+          .map((item) => item.trim());
+        imports.set(local, { imported, from });
+      }
+    }
+    for (const element of declaration[1]
+      .split(',')
+      .map((item) => item.trim())
+      .filter(Boolean)) {
+      const identifier = element.replace(/^\.\.\./, '');
+      if (!/^\w+$/.test(identifier)) {
+        throw new Error(
+          `${relative(root, file)}: unsupported registry entry "${element}"`
+        );
+      }
+      const entry = imports.get(identifier);
+      if (!entry) {
+        throw new Error(
+          `${relative(root, file)}: "${identifier}" is not imported`
+        );
+      }
+      const target = await resolveRegistryModule(file, entry.from, root);
+      if (!target) {
+        throw new Error(
+          `${relative(root, file)}: cannot resolve '${entry.from}'`
+        );
+      }
+      if (META_FILE.test(target.split(/[\\/]/).pop())) {
+        registered.add(relative(root, target));
+      } else {
+        await arrayEntries(target, entry.imported);
+      }
+    }
+    visiting.delete(key);
+  }
+
+  await arrayEntries(join(root, REGISTRY_FILE), 'tools');
+  return registered;
+}
+
 /**
  * Discovers every tool route from tool metadata and validates its slug,
  * category and English locale keys. Throws DiscoveryError listing every
@@ -282,8 +367,30 @@ export async function discoverTools(root = process.cwd()) {
     }
   }
 
+  let registered = null;
+  try {
+    registered = await discoverRegistry(root);
+  } catch (error) {
+    problems.push(
+      `Cannot read the tool registry (${REGISTRY_FILE}): ${error.message}.`
+    );
+  }
+  const unregistered = registered
+    ? tools.filter((tool) => !registered.has(tool.metaFile))
+    : [];
+  const registeredTools = registered
+    ? tools.filter((tool) => registered.has(tool.metaFile))
+    : tools;
+  for (const metaFile of registered ?? []) {
+    if (!tools.some((tool) => tool.metaFile === metaFile)) {
+      problems.push(
+        `${metaFile} is registered in the app but was not discovered.`
+      );
+    }
+  }
+
   const seen = new Map();
-  for (const tool of tools) {
+  for (const tool of registeredTools) {
     if (seen.has(tool.path)) {
       problems.push(
         `Duplicate route /${tool.path} in ${tool.metaFile} and ${seen.get(
@@ -294,7 +401,7 @@ export async function discoverTools(root = process.cwd()) {
     seen.set(tool.path, tool.metaFile);
   }
   if (problems.length) throw new DiscoveryError([...new Set(problems)]);
-  return { tools, translate, namespaces };
+  return { tools: registeredTools, unregistered, translate, namespaces };
 }
 
 /** Literal route paths declared in routesConfig.tsx. */

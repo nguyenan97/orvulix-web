@@ -103,6 +103,35 @@ describe('Git-based lastmod', () => {
     expect(latestDate([null, DATES.c5])).toBeNull();
   });
 
+  it('dates changes by when they reached the main line, not the side-branch commit', async () => {
+    const main = mkdtempSync(join(tmpdir(), 'seo-lastmod-merge-'));
+    git(main, ['init', '-q', '-b', 'main']);
+    const write = (file: string, content: string) => {
+      mkdirSync(join(main, file, '..'), { recursive: true });
+      writeFileSync(join(main, file), content);
+    };
+    write('tool/a.ts', '1');
+    write('en.json', '{"a":{"t":"1"}}');
+    git(main, ['add', '-A']);
+    git(main, ['commit', '-q', '-m', 'base'], DATES.c1);
+    git(main, ['checkout', '-q', '-b', 'feature']);
+    write('tool/a.ts', '2');
+    write('en.json', '{"a":{"t":"2"}}');
+    git(main, ['commit', '-q', '-am', 'feature change'], DATES.c2);
+    git(main, ['checkout', '-q', 'main']);
+    write('other.ts', 'x');
+    git(main, ['add', '-A']);
+    git(main, ['commit', '-q', '-m', 'main work'], DATES.c3);
+    git(
+      main,
+      ['merge', '-q', '--no-ff', '-m', 'merge feature', 'feature'],
+      DATES.c4
+    );
+    const dates = (await createGitDates(main))!;
+    expect(await dates.pathDate(['tool'])).toBe(DATES.c4);
+    expect(await dates.jsonKeyDate('en.json', [['a']])).toBe(DATES.c4);
+  });
+
   it('returns null outside a Git repository', async () => {
     expect(
       await createGitDates(mkdtempSync(join(tmpdir(), 'seo-no-git-')))

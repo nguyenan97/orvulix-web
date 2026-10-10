@@ -1,4 +1,4 @@
-import { useEffect, useMemo } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Helmet } from 'react-helmet';
 import { useTranslation } from 'react-i18next';
 import { useLocation } from 'react-router-dom';
@@ -29,6 +29,14 @@ export default function RouteSeo() {
   });
   const overrides = useToolOverrides();
   const language = i18n.resolvedLanguage ?? i18n.language;
+  // Rebuild when translations arrive later (e.g. the English fallback for a
+  // non-English UI), since `ready` can be true before they are loaded.
+  const [resourcesVersion, setResourcesVersion] = useState(0);
+  useEffect(() => {
+    const onAdded = () => setResourcesVersion((version) => version + 1);
+    i18n.store.on('added', onAdded);
+    return () => i18n.store.off('added', onAdded);
+  }, [i18n]);
 
   const site = useMemo(() => {
     if (!ready || !overrides) return null;
@@ -37,9 +45,18 @@ export default function RouteSeo() {
     const t = i18n.getFixedT(language) as unknown as (key: string) => string;
     const translate = (key: string) =>
       i18n.exists(key, { lng: language }) ? t(key) : undefined;
-    return buildSeoSite({ tools: records, translate, language, overrides })
-      .site;
-  }, [ready, overrides, language, i18n]);
+    const { site, missingText } = buildSeoSite({
+      tools: records,
+      translate,
+      language,
+      overrides
+    });
+    // Missing strings (e.g. a translation file that failed to load) must not
+    // replace the prerendered or last valid metadata.
+    return missingText.length ? null : site;
+    // resourcesVersion is a dependency so the model is rebuilt on new strings.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [ready, overrides, language, i18n, resourcesVersion]);
 
   useEffect(() => {
     if (!site) return;

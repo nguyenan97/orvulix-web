@@ -1,7 +1,12 @@
 import { LIMITS, SITE, absoluteUrl } from './config';
 import { buildToolSections } from './content';
 import { categoryJsonLd, homeJsonLd, infoJsonLd, toolJsonLd } from './jsonld';
-import { HOME_SEO, INFO_PAGES_SEO, NOT_FOUND_SEO } from './pages';
+import {
+  CATEGORY_SEO_OVERRIDES,
+  HOME_SEO,
+  INFO_PAGES_SEO,
+  NOT_FOUND_SEO
+} from './pages';
 import {
   categorySubject,
   composeDescription,
@@ -19,6 +24,10 @@ import type {
   Translate
 } from './types';
 
+/** Locale-independent ordering, identical in Node and every browser. */
+const compareText = (a: string, b: string): number =>
+  a < b ? -1 : a > b ? 1 : 0;
+
 export interface SeoInput {
   tools: ToolRecord[];
   translate: Translate;
@@ -30,6 +39,8 @@ export interface SeoBuildResult {
   site: SeoSite;
   /** Problems that make the metadata invalid; the build must fail on any. */
   issues: string[];
+  /** The subset of issues caused by missing strings (e.g. a failed load). */
+  missingText: string[];
 }
 
 const categoryTitleKey = (category: string) =>
@@ -47,18 +58,42 @@ export const normalizePath = (pathname: string): string => {
   return trimmed || '/';
 };
 
-const toolSuffixes = (subject: string) => [
-  `A free online ${subject} tool from Orvulix, available in your web browser with no account or installation required.`,
-  `A free online ${subject} tool from Orvulix with no account or installation required.`,
-  `Free online ${subject} tool from Orvulix, no sign-up required.`,
-  `Free online ${subject} tool from Orvulix.`
+/** "text " for a known category subject, empty otherwise. */
+const subjectWord = (subject?: string) => (subject ? `${subject} ` : '');
+
+const toolSuffixes = (subject?: string) => [
+  `A free online ${subjectWord(
+    subject
+  )}tool from Orvulix, available in your web browser with no account or installation required.`,
+  `A free online ${subjectWord(
+    subject
+  )}tool from Orvulix with no account or installation required.`,
+  `Free online ${subjectWord(subject)}tool from Orvulix, no sign-up required.`,
+  `Free online ${subjectWord(subject)}tool from Orvulix.`
 ];
 
-const categorySuffixes = (subject: string) => [
-  `Browse free online ${subject} tools from Orvulix, available in your web browser with no account or installation required.`,
-  `Browse free online ${subject} tools from Orvulix with no account required.`,
-  `Free online ${subject} tools from Orvulix.`
+const categorySuffixes = (subject?: string) => [
+  `Browse free online ${subjectWord(
+    subject
+  )}tools from Orvulix, available in your web browser with no account or installation required.`,
+  `Browse free online ${subjectWord(
+    subject
+  )}tools from Orvulix with no account required.`,
+  `Free online ${subjectWord(subject)}tools from Orvulix.`
 ];
+
+/**
+ * Description for non-English client metadata: whole leading sentences or
+ * the full text. Editorial limits only apply to the indexed English HTML.
+ */
+const localDescription = (...texts: string[]): string => {
+  for (const text of texts) {
+    const sentence = ensureSentence(text);
+    if (sentence)
+      return leadingSentences(sentence, LIMITS.descriptionMax) || sentence;
+  }
+  return '';
+};
 
 const basePage = (
   page: Omit<SeoPage, 'robots' | 'indexable' | 'canonical'> & {
@@ -79,11 +114,14 @@ export const buildSeoSite = (input: SeoInput): SeoBuildResult => {
   const { language, translate, overrides } = input;
   const english = language === SITE.language;
   const issues: string[] = [];
+  const missingText: string[] = [];
 
   const text = (key: string, route: string): string => {
     const value = translate(key);
     if (typeof value !== 'string' || !normalizeWhitespace(value)) {
-      issues.push(`Missing text for i18n key "${key}" (route ${route}).`);
+      const issue = `Missing text for i18n key "${key}" (route ${route}).`;
+      issues.push(issue);
+      missingText.push(issue);
       return '';
     }
     return normalizeWhitespace(value);
@@ -92,7 +130,7 @@ export const buildSeoSite = (input: SeoInput): SeoBuildResult => {
   const home: SeoLink = { name: SITE.name, path: '/' };
   const pages: SeoPage[] = [];
 
-  const tools = [...input.tools].sort((a, b) => a.path.localeCompare(b.path));
+  const tools = [...input.tools].sort((a, b) => compareText(a.path, b.path));
   const seenPaths = new Set<string>();
   for (const tool of tools) {
     if (seenPaths.has(tool.path)) {
@@ -107,18 +145,20 @@ export const buildSeoSite = (input: SeoInput): SeoBuildResult => {
   }
 
   const categories = [...new Set(tools.map((tool) => tool.category))].sort();
+  for (const category of Object.keys(CATEGORY_SEO_OVERRIDES)) {
+    if (!categories.includes(category)) {
+      issues.push(
+        `Category SEO override "${category}" does not match any category.`
+      );
+    }
+  }
   const categoryInfo = new Map(
     categories.map((category) => {
       const route = categoryPath(category);
       const title = text(categoryTitleKey(category), route);
-      const subject = categorySubject(title);
-      if (english && !subject) {
-        issues.push(
-          `Category title "${title}" (${categoryTitleKey(
-            category
-          )}) must end with "Tools".`
-        );
-      }
+      // Subject words ("Text" from "Text Tools") enrich English templates;
+      // titles without the "Tools" suffix fall back to generic wording.
+      const subject = english ? categorySubject(title) : null;
       return [
         category,
         {
@@ -144,26 +184,37 @@ export const buildSeoSite = (input: SeoInput): SeoBuildResult => {
     const info = categoryInfo.get(category)!;
     const path = categoryPath(category);
     const url = absoluteUrl(path);
-    const title = composeTitle(
-      english
-        ? [
+    const override = english ? CATEGORY_SEO_OVERRIDES[category] : undefined;
+    const title = override?.title
+      ? normalizeWhitespace(override.title)
+      : english
+        ? composeTitle([
             `Free Online ${info.title} | ${SITE.name}`,
             `${info.title} | ${SITE.name}`
-          ]
-        : [`${info.title} | ${SITE.name}`]
-    );
-    const description = english
-      ? composeDescription(
-          [info.description],
-          categorySuffixes(info.subject?.lower ?? '')
-        )
-      : leadingSentences(info.description, LIMITS.descriptionMax) || null;
-    if (!title) issues.push(`Cannot build a title for ${path}.`);
-    if (!description) issues.push(`Cannot build a description for ${path}.`);
+          ])
+        : `${info.title} | ${SITE.name}`;
+    const description = override?.description
+      ? normalizeWhitespace(override.description)
+      : english
+        ? composeDescription(
+            [info.description],
+            categorySuffixes(info.subject?.lower)
+          )
+        : localDescription(info.description);
+    if (!title) {
+      issues.push(
+        `Cannot build a title within ${LIMITS.titleMax} characters for ${path}; add a category override in src/seo/pages.ts.`
+      );
+    }
+    if (!description) {
+      issues.push(
+        `Cannot build a description of ${LIMITS.descriptionMin}-${LIMITS.descriptionMax} characters for ${path}; add a category override in src/seo/pages.ts.`
+      );
+    }
     const links = toolLinks
       .filter(({ tool }) => tool.category === category)
       .map(({ link }) => link)
-      .sort((a, b) => a.name.localeCompare(b.name));
+      .sort((a, b) => compareText(a.name, b.name));
     const breadcrumbs = [home, { name: info.title, path }];
     homeLinks.push({ name: info.title, path, description: info.description });
     pages.push(
@@ -201,27 +252,29 @@ export const buildSeoSite = (input: SeoInput): SeoBuildResult => {
     const override = english ? overrides[tool.path] : undefined;
     const title = override
       ? normalizeWhitespace(override.title)
-      : composeTitle(
-          english && subject
-            ? [
-                `${link.name} - Free Online ${subject.title} Tool | ${SITE.name}`,
-                `${link.name} - Free ${subject.title} Tool | ${SITE.name}`,
-                `${link.name} | ${SITE.name}`
-              ]
-            : [
-                `${link.name} - ${info.title} | ${SITE.name}`,
-                `${link.name} | ${SITE.name}`
-              ]
-        );
+      : english
+        ? composeTitle(
+            subject
+              ? [
+                  `${link.name} - Free Online ${subject.title} Tool | ${SITE.name}`,
+                  `${link.name} - Free ${subject.title} Tool | ${SITE.name}`,
+                  `${link.name} | ${SITE.name}`
+                ]
+              : [
+                  `${link.name} - Free Online Tool | ${SITE.name}`,
+                  `${link.name} | ${SITE.name}`
+                ]
+          )
+        : composeTitle([`${link.name} - ${info.title} | ${SITE.name}`]) ??
+          `${link.name} | ${SITE.name}`;
     const description = override
       ? normalizeWhitespace(override.description)
       : english
         ? composeDescription(
             [fullDescription, link.description ?? ''],
-            toolSuffixes(subject?.lower ?? '')
+            toolSuffixes(subject?.lower)
           )
-        : leadingSentences(fullDescription, LIMITS.descriptionMax) ||
-          ensureSentence(link.description ?? '');
+        : localDescription(fullDescription, link.description ?? '');
     if (!title)
       issues.push(
         `Cannot build a title within ${LIMITS.titleMax} characters for ${path}; add an SEO override.`
@@ -253,7 +306,7 @@ export const buildSeoSite = (input: SeoInput): SeoBuildResult => {
               other.tool.category === tool.category && other.tool !== tool
           )
           .map((other) => other.link)
-          .sort((a, b) => a.name.localeCompare(b.name)),
+          .sort((a, b) => compareText(a.name, b.name)),
         sections: override ? buildToolSections(link.name, override) : [],
         jsonLd: toolJsonLd({
           url,
@@ -330,8 +383,8 @@ export const buildSeoSite = (input: SeoInput): SeoBuildResult => {
     jsonLd: null
   });
 
-  pages.sort((a, b) => a.path.localeCompare(b.path));
-  return { site: { language, pages, notFound }, issues };
+  pages.sort((a, b) => compareText(a.path, b.path));
+  return { site: { language, pages, notFound }, issues, missingText };
 };
 
 /** Finds the SEO page for a location pathname, falling back to not-found. */

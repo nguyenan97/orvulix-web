@@ -14,13 +14,24 @@ export interface StaticPageSeo {
   schemaType: 'WebPage' | 'AboutPage' | 'ContactPage';
 }
 
+/**
+ * Optional title/description overrides for category pages, keyed by
+ * category (e.g. `json`). Use them when the English category strings from
+ * upstream cannot produce a title of at most 60 characters or a description
+ * of 120-155 whole-sentence characters (the build reports which one).
+ */
+export const CATEGORY_SEO_OVERRIDES: Record<
+  string,
+  { title?: string; description?: string }
+> = {};
+
 export const HOME_SEO = {
   title: 'Orvulix - Free Online Tools for JSON, PDF, Images & More',
   description:
     'Free online tools for JSON formatting, PDF tasks, images, text, data conversion and developer workflows. Explore Orvulix in your browser.',
   heading: 'Everyday tools. Everywhere.',
   intro:
-    'Orvulix brings JSON utilities, document tools, image tools, text processing and data conversion into one place. Browse the categories below to choose the right tool for your task.',
+    'Orvulix brings JSON utilities, document tools, image tools, text processing, and data conversion into one place. Features and file handling vary by tool; review each tool before using sensitive information.',
   linksHeading: 'Tool categories'
 } as const;
 

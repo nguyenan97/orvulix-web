@@ -5,7 +5,7 @@
  * - src/utils/json.ts lines 28-70
  * - src/pages/tools/json/minify/index.tsx lines 57-69
  * - src/pages/tools/json/minify/index.tsx lines 55, 62, 82-88; src/components/result/ToolCodeResult.tsx lines 18, 40-56; src/components/result/ResultFooter.tsx
- * - Verified with Node.js: JSON.stringify(JSON.parse('{"s":"é \/ x","n":1.0,"e":1e2}')) -> {"s":"é / x","n":1,"e":100}; parseJsonInput('{ "a" : 1 }\n\n{ "b" : [ 1, 2 ] }') -> jsonl [{"a":1},{"b":[1,2]}]
+ * - Verified with Node.js: JSON.stringify(JSON.parse('{"s":"\u00e9 \/ x","n":1.0,"e":1e2}')) -> {"s":"é / x","n":1,"e":100}; parseJsonInput('{ "a" : 1 }\n\n{ "b" : [ 1, 2 ] }') -> jsonl [{"a":1},{"b":[1,2]}]
  * - ECMAScript JSON.parse/stringify behavior as used in src/pages/tools/json/minify/service.ts; verified with Node v22
  * - src/pages/tools/json/minify/index.tsx lines 15-27
  * - public/locales/en/json.json minify.inputTitle/resultTitle; public/locales/en/translation.json inputFooter.importFromFile; src/components/ToolContent.tsx lines 26-33
@@ -36,7 +36,7 @@ const content: ToolSeoOverride = {
     }
   ],
   notes: [
-    'Standard JSON is parsed with JSON.parse and written back with JSON.stringify. This removes all whitespace between tokens. String values keep their content, but escape sequences such as é or \\/ are written out as plain characters.',
+    'Standard JSON is parsed with JSON.parse and written back with JSON.stringify. This removes all whitespace between tokens. String values keep their content, but escape sequences such as \\u00e9 or \\/ are written out as plain characters.',
     'If the input is not a single JSON document but every non-blank line is valid JSON, it is treated as JSON Lines. Each record is minified onto its own line and blank lines are dropped.',
     'Values are re-serialized by JavaScript. Integers larger than 9007199254740991 can lose precision, numbers are rewritten in JavaScript form (1.0 becomes 1, 1e2 becomes 100), and if a key appears twice in the same object only its last value is kept.',
     'Invalid input is not minified. The Minified JSON panel shows the parser error instead, starting with Invalid JSON, or with Invalid JSON at line N when the input has more than one non-blank line.',

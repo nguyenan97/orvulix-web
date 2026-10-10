@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 import { mkdir, readFile, stat, writeFile } from 'node:fs/promises';
 import { dirname, join, relative, resolve, sep } from 'node:path';
+import { fileURLToPath } from 'node:url';
 import {
   checkStaticRoutes,
   discoverStaticRoutes,
@@ -40,7 +41,16 @@ const exists = async (path) => {
 /** Builds and validates the SEO model shared by the build scripts. */
 export async function loadSeoSite() {
   const core = await loadSeoCore();
-  const { tools, translate } = await discoverTools();
+  const { tools, translate, unregistered } = await discoverTools();
+  if (unregistered.length) {
+    console.warn(
+      `[seo] Skipping ${
+        unregistered.length
+      } tool(s) whose meta file is not registered in src/tools/index.ts: ${unregistered
+        .map((tool) => `/${tool.path}`)
+        .join(', ')}`
+    );
+  }
   const routeProblems = checkStaticRoutes(
     await discoverStaticRoutes(),
     Object.keys(core.INFO_PAGES_SEO)
@@ -119,7 +129,7 @@ async function main() {
 
 if (
   process.argv[1] &&
-  resolve(process.argv[1]) === resolve(new URL(import.meta.url).pathname)
+  resolve(process.argv[1]) === fileURLToPath(import.meta.url)
 ) {
   await main();
 }

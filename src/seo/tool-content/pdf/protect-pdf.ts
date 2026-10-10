@@ -14,7 +14,7 @@ import type { ToolSeoOverride } from '../../types';
 const content: ToolSeoOverride = {
   title: 'Protect PDF - Add a Password to a PDF File | Orvulix',
   description:
-    'Add a password to a PDF so it must be entered to open the file. Type the password twice, and the encrypted copy is saved as yourfile-protected.pdf.',
+    'Add a password to a PDF so it must be entered to open the file. Type the password twice, then download the encrypted copy of your document.',
   howTo: [
     'Click the "Input PDF" box or drag a PDF file onto it.',
     'Under "Password Settings", type a password in the "Password" field.',
@@ -32,7 +32,7 @@ const content: ToolSeoOverride = {
     "The PDF is rewritten by Ghostscript's pdfwrite device (WebAssembly, in a Web Worker) with PDF 1.4 compatibility, using your password as both the user (open) password and the owner password.",
     'Both fields must match and cannot be empty; otherwise the tool shows "Passwords do not match" or "Password cannot be empty".',
     'If you edit the password after a file was produced, the previous result stays in place until both fields match again.',
-    'The output name is the original name with .pdf replaced by -protected.pdf.',
+    'A file name containing a lowercase .pdf gets -protected.pdf (report.pdf becomes report-protected.pdf); other names, such as SCAN.PDF, get no suffix.',
     'The Ghostscript WebAssembly binary is requested from cdn-wasm.b-cdn.net when processing starts; the PDF and password are passed to the worker locally, and the worker makes no other network request.'
   ],
   faq: [
