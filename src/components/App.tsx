@@ -14,6 +14,7 @@ import ScrollToTopButton from './ScrollToTopButton';
 import { I18nextProvider } from 'react-i18next';
 import i18n from '../i18n';
 import { UserTypeFilterProvider } from 'providers/UserTypeFilterProvider';
+import RouteSeo from '../seo/RouteSeo'; // ORVULIX-SEO
 
 export type Mode = 'dark' | 'light' | 'system';
 
@@ -61,6 +62,8 @@ function App() {
           <CustomSnackBarProvider>
             <UserTypeFilterProvider>
               <BrowserRouter>
+                {/* ORVULIX-SEO */}
+                <RouteSeo />
                 <Navbar
                   mode={mode}
                   onChangeMode={() => {
