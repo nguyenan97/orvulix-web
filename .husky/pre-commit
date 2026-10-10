@@ -1,1 +1,4 @@
-npx lint-staged
+sh scripts/check-development-branch.sh
+if git diff --cached --name-only --diff-filter=ACMR | grep -Eq '\.(ts|tsx|js|jsx|json)$'; then
+  npx lint-staged
+fi
