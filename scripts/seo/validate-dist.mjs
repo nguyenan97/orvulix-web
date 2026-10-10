@@ -2,10 +2,12 @@
 import { readdir, readFile } from 'node:fs/promises';
 import { join, relative, resolve } from 'node:path';
 import { NOT_FOUND_FILE, htmlFileForPath, loadSeoSite } from './prerender.mjs';
+import { validateCacheHeaders } from './validate-headers.mjs';
 
 /**
- * Validates the generated dist/ output: route coverage, 404 handling and
- * Netlify routing. Prints every problem and exits non-zero on failure.
+ * Validates the generated dist/ output: route coverage, 404 handling,
+ * Netlify routing and cache headers, and the font preload. Prints every
+ * problem and exits non-zero on failure.
  */
 
 const DIST = resolve('dist');
@@ -63,6 +65,50 @@ async function validateSocialImage(core) {
   if (!origin.startsWith('https://'))
     return ['Social image URL must use HTTPS.'];
   return [];
+}
+
+/**
+ * The font preload must point to a file that exists and that the font
+ * stylesheet uses for normal text, with the attributes browsers need to
+ * reuse the preloaded response.
+ */
+export async function validateFontPreload(html, distDir = DIST) {
+  const problems = [];
+  const preloads = [
+    ...html.matchAll(/<link\b[^>]*rel="preload"[^>]*as="font"[^>]*>/g)
+  ].map((match) => match[0]);
+  if (preloads.length !== 1)
+    return [`Expected one font preload, found ${preloads.length}.`];
+  const tag = preloads[0];
+  const href = /href="([^"]+)"/.exec(tag)?.[1] ?? '';
+  if (!/\bcrossorigin\b/.test(tag))
+    problems.push('Font preload needs crossorigin.');
+  if (!/type="font\/(ttf|woff2?|otf)"/.test(tag))
+    problems.push('Font preload needs a font type.');
+  if ((await readOrNull(join(distDir, href))) === null) {
+    problems.push(`Preloaded font ${href} does not exist in dist/.`);
+  }
+  const stylesheets = [
+    ...html.matchAll(
+      /<link\b[^>]*href="([^"]+\.css)"[^>]*rel="stylesheet"[^>]*>/g
+    )
+  ];
+  let used = false;
+  for (const [, cssHref] of stylesheets) {
+    const css = await readOrNull(join(distDir, cssHref));
+    if (!css) continue;
+    for (const face of css.match(/@font-face\s*{[^}]*}/g) ?? []) {
+      const url = /url\("?([^")]+)"?\)/.exec(face)?.[1];
+      if (!url || /font-style:\s*italic/.test(face)) continue;
+      const resolved = new URL(url, `https://x${cssHref}`).pathname;
+      if (resolved === href) used = true;
+    }
+  }
+  if (!used)
+    problems.push(
+      `Preloaded font ${href} is not used by a normal-style @font-face.`
+    );
+  return problems;
 }
 
 /** Catch-all rewrites would turn unknown paths into soft 404s. */
@@ -142,6 +188,14 @@ export async function validateDist() {
       problems.push(`Unexpected HTML file ${relative(process.cwd(), file)}.`);
     }
   }
+
+  const netlifyToml = (await readOrNull('netlify.toml')) ?? '';
+  problems.push(...(await validateCacheHeaders(netlifyToml)));
+  problems.push(
+    ...(await validateFontPreload(
+      (await readOrNull(join(DIST, 'index.html'))) ?? ''
+    ))
+  );
 
   problems.push(
     ...findCatchAllRewrites(
