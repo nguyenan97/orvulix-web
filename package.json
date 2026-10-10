@@ -12,7 +12,7 @@
   },
   "scripts": {
     "dev": "vite",
-    "build": "node scripts/generate-sitemap.mjs && node scripts/validate-sitemap.mjs && tsc && vite build && node scripts/seo/prerender.mjs",
+    "build": "node scripts/generate-sitemap.mjs && node scripts/validate-sitemap.mjs && tsc && vite build && node scripts/seo/prerender.mjs && node scripts/seo/validate-dist.mjs",
     "serve": "vite preview",
     "test": "vitest",
     "test:e2e": "playwright test",
