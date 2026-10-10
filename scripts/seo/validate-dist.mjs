@@ -30,6 +30,41 @@ const readOrNull = async (path) => {
 
 const count = (html, pattern) => (html.match(pattern) ?? []).length;
 
+/** Width and height from a PNG file's IHDR chunk, or null if not a PNG. */
+export function pngSize(buffer) {
+  const signature = '89504e470d0a1a0a';
+  if (
+    buffer.length < 24 ||
+    buffer.subarray(0, 8).toString('hex') !== signature
+  ) {
+    return null;
+  }
+  return { width: buffer.readUInt32BE(16), height: buffer.readUInt32BE(20) };
+}
+
+async function validateSocialImage(core) {
+  const { image, origin } = core.SITE;
+  const file = join(DIST, ...image.path.slice(1).split('/'));
+  let buffer;
+  try {
+    buffer = await readFile(file);
+  } catch {
+    return [`Social image ${image.path} is missing from dist/.`];
+  }
+  const size = pngSize(buffer);
+  if (image.type !== 'image/png' || !size) {
+    return [`Social image ${image.path} must be a PNG declared as image/png.`];
+  }
+  if (size.width !== image.width || size.height !== image.height) {
+    return [
+      `Social image ${image.path} is ${size.width}x${size.height}, but metadata declares ${image.width}x${image.height}.`
+    ];
+  }
+  if (!origin.startsWith('https://'))
+    return ['Social image URL must use HTTPS.'];
+  return [];
+}
+
 /** Catch-all rewrites would turn unknown paths into soft 404s. */
 export function findCatchAllRewrites(redirectsFile, netlifyToml) {
   const problems = [];
@@ -54,7 +89,8 @@ export function findCatchAllRewrites(redirectsFile, netlifyToml) {
 
 export async function validateDist() {
   const problems = [];
-  const { site } = await loadSeoSite();
+  const { core, site } = await loadSeoSite();
+  problems.push(...(await validateSocialImage(core)));
   const expected = new Map(
     site.pages.map((page) => [htmlFileForPath(page.path), page])
   );

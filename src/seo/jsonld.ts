@@ -41,6 +41,7 @@ export const homeJsonLd = (description: string, language: string) =>
       '@id': ORGANIZATION_ID,
       name: SITE.name,
       url: absoluteUrl('/'),
+      logo: absoluteUrl(SITE.logoPath),
       email: SITE.contactEmail,
       sameAs: [SITE.repositoryUrl]
     }

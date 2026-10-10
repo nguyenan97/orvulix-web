@@ -12,8 +12,18 @@ export const SITE = {
   language: 'en',
   contactEmail: 'founder@orvulix.io.vn',
   repositoryUrl: 'https://github.com/nguyenan97/orvulix-web',
+  /** Brand mark used as the Organization logo (the PNG icons are not Orvulix-branded). */
+  logoPath: '/favicon.svg',
   robotsIndex: 'index, follow, max-image-preview:large',
-  robotsNoIndex: 'noindex, follow'
+  robotsNoIndex: 'noindex, follow',
+  /** Default social image (public/og-default.png). */
+  image: {
+    path: '/og-default.png',
+    width: 1200,
+    height: 630,
+    type: 'image/png',
+    alt: 'Orvulix logo with the text: Everyday tools. Everywhere. Free online tools for JSON, PDF, images, text and more.'
+  }
 } as const;
 
 /** Editorial limits used by the project (not a Google display guarantee). */

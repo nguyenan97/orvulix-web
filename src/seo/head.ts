@@ -1,4 +1,4 @@
-import { SITE } from './config';
+import { SITE, absoluteUrl } from './config';
 import { escapeHtml, serializeJsonLd } from './text';
 import type { HeadTag, SeoPage } from './types';
 
@@ -25,6 +25,8 @@ const meta = (attrs: Record<string, string>): HeadTag => ({
   attrs: { ...attrs, [SEO_ATTRIBUTE]: '' }
 });
 
+const imageUrl = absoluteUrl(SITE.image.path);
+
 /** Head elements for a page, in document order (title first). */
 export const getHeadTags = (page: SeoPage): HeadTag[] => {
   const tags: HeadTag[] = [
@@ -43,9 +45,16 @@ export const getHeadTags = (page: SeoPage): HeadTag[] => {
       meta({ property: 'og:title', content: page.title }),
       meta({ property: 'og:description', content: page.description }),
       meta({ property: 'og:url', content: page.canonical }),
-      meta({ name: 'twitter:card', content: 'summary' }),
+      meta({ property: 'og:image', content: imageUrl }),
+      meta({ property: 'og:image:width', content: String(SITE.image.width) }),
+      meta({ property: 'og:image:height', content: String(SITE.image.height) }),
+      meta({ property: 'og:image:type', content: SITE.image.type }),
+      meta({ property: 'og:image:alt', content: SITE.image.alt }),
+      meta({ name: 'twitter:card', content: 'summary_large_image' }),
       meta({ name: 'twitter:title', content: page.title }),
-      meta({ name: 'twitter:description', content: page.description })
+      meta({ name: 'twitter:description', content: page.description }),
+      meta({ name: 'twitter:image', content: imageUrl }),
+      meta({ name: 'twitter:image:alt', content: SITE.image.alt })
     );
   }
   if (page.jsonLd) {
