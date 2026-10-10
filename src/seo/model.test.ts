@@ -144,6 +144,39 @@ describe('SEO model', () => {
     );
   });
 
+  it('does not mix English template words into other languages', () => {
+    const german: Record<string, string> = {
+      'string:x.title': 'Großbuchstaben',
+      'string:x.description': 'Text in Großbuchstaben umwandeln.',
+      'string:x.short': 'In Großbuchstaben umwandeln',
+      'translation:categories.string.title': 'Text-Werkzeuge',
+      'translation:categories.string.description': 'Werkzeuge für Text.'
+    };
+    const { site } = buildSeoSite({
+      tools: [
+        {
+          category: 'string',
+          path: 'string/x',
+          nameKey: 'string:x.title',
+          descriptionKey: 'string:x.description',
+          shortDescriptionKey: 'string:x.short'
+        }
+      ],
+      translate: (key) => german[key],
+      language: 'de',
+      overrides: TOOL_OVERRIDES
+    });
+    const category = resolveSeoPage(site, '/categories/string');
+    const tool = resolveSeoPage(site, '/string/x');
+    expect(category.title).toBe('Text-Werkzeuge | Orvulix');
+    expect(tool.title).toBe('Großbuchstaben - Text-Werkzeuge | Orvulix');
+    expect(`${category.title} ${tool.title} ${tool.description}`).not.toMatch(
+      /Free Online|no sign-up|no account/
+    );
+    expect(tool.language).toBe('de');
+    expect(tool.sections).toEqual([]);
+  });
+
   it('resolves location paths to canonical routes', async () => {
     const { site } = await buildTimeSite();
     const tool = site.pages.find((page) => page.kind === 'tool')!;

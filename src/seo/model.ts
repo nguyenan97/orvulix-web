@@ -144,10 +144,14 @@ export const buildSeoSite = (input: SeoInput): SeoBuildResult => {
     const info = categoryInfo.get(category)!;
     const path = categoryPath(category);
     const url = absoluteUrl(path);
-    const title = composeTitle([
-      `Free Online ${info.title} | ${SITE.name}`,
-      `${info.title} | ${SITE.name}`
-    ]);
+    const title = composeTitle(
+      english
+        ? [
+            `Free Online ${info.title} | ${SITE.name}`,
+            `${info.title} | ${SITE.name}`
+          ]
+        : [`${info.title} | ${SITE.name}`]
+    );
     const description = english
       ? composeDescription(
           [info.description],

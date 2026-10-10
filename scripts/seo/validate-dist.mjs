@@ -3,6 +3,7 @@ import { readdir, readFile } from 'node:fs/promises';
 import { join, relative, resolve } from 'node:path';
 import { NOT_FOUND_FILE, htmlFileForPath, loadSeoSite } from './prerender.mjs';
 import { validateCacheHeaders } from './validate-headers.mjs';
+import { validateRouteHtml } from './validate-html.mjs';
 
 /**
  * Validates the generated dist/ output: route coverage, 404 handling,
@@ -141,6 +142,8 @@ export async function validateDist() {
     site.pages.map((page) => [htmlFileForPath(page.path), page])
   );
 
+  const seenTitles = new Map();
+  const seenDescriptions = new Map();
   for (const [file, page] of expected) {
     const html = await readOrNull(file);
     const at = `${relative(process.cwd(), file)} (route ${page.path})`;
@@ -148,6 +151,20 @@ export async function validateDist() {
       problems.push(`Missing ${at}.`);
       continue;
     }
+    problems.push(...validateRouteHtml(html, page, core.SITE, at));
+    const title = /<title>([^<]*)<\/title>/.exec(html)?.[1];
+    const description = /<meta name="description" content="([^"]*)"/.exec(
+      html
+    )?.[1];
+    if (seenTitles.has(title))
+      problems.push(`${at}: title duplicates ${seenTitles.get(title)}.`);
+    if (seenDescriptions.has(description)) {
+      problems.push(
+        `${at}: description duplicates ${seenDescriptions.get(description)}.`
+      );
+    }
+    seenTitles.set(title, page.path);
+    seenDescriptions.set(description, page.path);
     if (count(html, /<title>/g) !== 1)
       problems.push(`${at}: expected one <title>.`);
     if (count(html, /rel="canonical"/g) !== 1) {
@@ -175,6 +192,9 @@ export async function validateDist() {
   const notFound = await readOrNull(NOT_FOUND_FILE);
   if (notFound === null) problems.push('Missing dist/404.html.');
   else {
+    problems.push(
+      ...validateRouteHtml(notFound, site.notFound, core.SITE, 'dist/404.html')
+    );
     if (!/<meta name="robots" content="noindex[^"]*"/.test(notFound)) {
       problems.push('dist/404.html must have a robots noindex meta tag.');
     }
