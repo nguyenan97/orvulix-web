@@ -6,6 +6,7 @@
  */
 
 import { DEMO_HEADING, DEMO_INTRO } from '../ai/json-assistant/copy';
+import { REGEX_HEADING, REGEX_INTRO } from '../ai/regex-assistant/copy';
 
 export interface StaticPageSeo {
   title: string;
@@ -39,6 +40,14 @@ export const HOME_SEO = {
 
 /** Keyed by route path as declared in routesConfig. */
 export const INFO_PAGES_SEO: Record<string, StaticPageSeo> = {
+  '/regex-assistant': {
+    title: 'Regex Assistant Demo - Local Regex Testing | Orvulix',
+    description:
+      'Explore authored regex examples and test custom expressions locally with matches, capture groups and a worker timeout. No Claude API is connected.',
+    heading: REGEX_HEADING,
+    intro: REGEX_INTRO,
+    schemaType: 'WebPage'
+  },
   '/json-assistant': {
     title: 'JSON Assistant Demo - Local Schema Tools | Orvulix',
     description:

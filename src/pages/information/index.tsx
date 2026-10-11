@@ -25,7 +25,7 @@ const content: Record<Page, { title: string; paragraphs: string[] }> = {
       'Building with Open Source',
       'Orvulix is independently maintained as an open-source project based on OmniTools. We appreciate the original author and contributors, preserve the original licensing and attribution, and welcome improvements from the community. Open source supports transparency, collaboration, learning, and continuous improvement. Core utilities are currently available free of charge.',
       'Exploring the Future of AI',
-      'We are exploring ways AI could complement traditional tools rather than replace them. Our first proposed initiative is a JSON Assistant to help users understand complex data structures, generate candidate schemas, and explore transformations. Additional ideas include data conversion, document understanding, and connected workflows. These AI features are not currently available. Any future integration should emphasize accuracy, transparency, privacy, and user control.',
+      'Local JSON Assistant and Regex Assistant demos illustrate possible future assistant workflows. Explanations and suggestions are authored samples, not AI-generated. JSON schema validation and regex testing run locally; a live Claude integration is not available. Future AI assistance should emphasize accuracy, transparency, privacy, and user control.',
       'Our Long-Term Vision',
       'We aim to make Orvulix a dependable destination for everyday digital productivity. Our priorities will evolve through practical experimentation, technical improvements, and user feedback. We value sustainable progress over unnecessary complexity and meaningful improvements over feature count.',
       'Help Us Build Something Useful',
@@ -48,7 +48,7 @@ const content: Record<Page, { title: string; paragraphs: string[] }> = {
       'How we decide what comes next',
       'First, strengthen existing tools. Next, prototype one focused improvement, test it with real use cases, and gather feedback. Expand only when the feature is useful, reliable, and practical to maintain. We are not committing to release dates before those conditions are met.',
       'What is next',
-      'Our immediate focus is the existing Orvulix experience and an initial AI JSON Assistant prototype. AI assistance and connected workflows described here are plans, not released features. Follow our public roadmap for more detailed milestones and technical considerations.',
+      'Local JSON Assistant and Regex Assistant demos are implemented with authored examples and deterministic processing. Live Claude assistance and connected workflows remain plans. Follow our public roadmap for milestones and technical considerations.',
       'Help shape Orvulix',
       'Ideas, bug reports, documentation improvements, and contributions are welcome. Contact founder@orvulix.io.vn or explore the public GitHub repository.'
     ]
@@ -85,9 +85,9 @@ const content: Record<Page, { title: string; paragraphs: string[] }> = {
       'Hosting infrastructure may process technical request data such as IP addresses and browser information. Refer to the hosting provider’s privacy documentation for its processing practices.',
       'Some utilities may load third-party scripts, libraries, models, or other resources. Data processing and network behavior may differ between tools; review the specific tool and avoid sensitive inputs unless you understand its behavior.',
       'Downloading a library, worker or model from a third-party CDN is different from uploading your input. Those providers may receive technical request data when resources are fetched; whether your content leaves the browser depends on the specific tool and must be checked separately.',
-      'The local JSON Assistant demo keeps input in page memory, does not persist it to browser storage, and does not send it to an AI provider. Its sample explanations are authored, not AI-generated. A live Claude integration is not available; any future provider connection will require separate disclosures and consent before sending data.',
+      'The local JSON Assistant and Regex Assistant demos keep input in page memory and, for regex testing, a local worker. They do not persist inputs to browser storage or send them to an AI provider. Sample explanations and suggestions are authored, not AI-generated. A live Claude integration is not available; any future provider connection will require separate disclosures and consent before sending data.',
       'We do not currently offer user accounts or a dedicated privacy request form. For privacy questions, email founder@orvulix.io.vn.',
-      'This policy may be updated as features and integrations change. Last updated: October 8, 2026.'
+      'This policy may be updated as features and integrations change. Last updated: October 11, 2026.'
     ]
   },
   terms: {
@@ -207,6 +207,11 @@ export default function InformationPage({ page }: { page: Page }) {
         {page === 'roadmap' && (
           <MuiLink component={Link} to="/json-assistant">
             Try the local JSON Assistant demo
+          </MuiLink>
+        )}
+        {page === 'roadmap' && (
+          <MuiLink component={Link} to="/regex-assistant">
+            Try the local Regex Assistant demo
           </MuiLink>
         )}
         {page === 'roadmap' && (

@@ -75,6 +75,8 @@ Orvulix is exploring an optional Claude-powered developer workflow. This branch 
 
 The founder has created a Claude Console account using the project-domain email. This does not mean Orvulix has been approved for any Anthropic startup program or awarded credits. As an unincorporated solo-founder project, eligibility is subject to Anthropic's current terms and review; the project does not claim to be a registered company.
 
+The [Regex Assistant demo](docs/REGEX_ASSISTANT.md) at `/regex-assistant` adds authored hashtag, date-shape and log-level examples, plus real local regex testing with match ranges, captures and a disposable worker timeout. It uses no Claude API, API key or paid inference. Custom expressions get local test results, not fabricated explanations.
+
 ## Roadmap
 
 See [Product roadmap](docs/PRODUCT_ROADMAP.md) and the website's `/roadmap` page. The Claude-powered AI JSON Assistant is a **planned feature only**; there is no live Claude API integration.

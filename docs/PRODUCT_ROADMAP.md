@@ -22,11 +22,13 @@ Our approach is to make existing tools better first, then explore new capabiliti
 
 ## 2. Practical AI assistance
 
-**Local demo implemented - Live Claude integration planned**
+**Local demos implemented - Live Claude integration planned**
 
 The `/json-assistant` route implements a local prototype with authored explanations for three fixtures and deterministic schema inference/validation for custom JSON. This is not a live AI feature: no provider request, API key, SDK or paid inference is used. See [demo architecture and limits](JSON_ASSISTANT.md). A future Claude-powered assistant could explain unfamiliar payloads and suggest transformations; outputs would need review and validation.
 
-Other ideas to evaluate after learning from the prototype:
+A second local prototype, [Regex Assistant](REGEX_ASSISTANT.md), is implemented at `/regex-assistant`. It combines authored examples with real JavaScript regex testing in a disposable timed worker. A Claude-powered regex generator remains planned; the local demo does not generate AI suggestions.
+
+Other ideas to evaluate after learning from the prototypes:
 
 - **Smart Data Conversion:** propose editable mappings between JSON, CSV, YAML, and XML.
 - **Regex Assistance:** explain expressions, suggest patterns, and generate test cases.
