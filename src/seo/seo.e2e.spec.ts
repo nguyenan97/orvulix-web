@@ -1,4 +1,10 @@
 import { expect, test, type Page } from '@playwright/test';
+import {
+  PLANNED_FEATURES,
+  ROADMAP_BACKLOG_NOTICE,
+  ROADMAP_BACKLOG_URL,
+  plannedFeatureSummary
+} from './roadmap';
 
 /**
  * End-to-end SEO checks against the production build (`npm run build &&
@@ -8,6 +14,54 @@ import { expect, test, type Page } from '@playwright/test';
 
 const MANAGED =
   'meta[name="description"],meta[name="robots"],link[rel="canonical"],meta[property^="og:"],meta[name^="twitter:"],script[type="application/ld+json"]';
+
+test('roadmap shows planned features in static HTML and after React renders', async ({
+  page,
+  browser
+}) => {
+  const noJs = await browser.newContext({ javaScriptEnabled: false });
+  try {
+    const staticPage = await noJs.newPage();
+    await staticPage.goto('http://localhost:4173/roadmap');
+    await expect(
+      staticPage.getByText(ROADMAP_BACKLOG_NOTICE, { exact: true })
+    ).toBeVisible();
+    await page.goto('/roadmap');
+    const section = page.getByRole('region', { name: 'Planned features' });
+    await expect(section).toBeVisible();
+    await expect(section.getByRole('listitem')).toHaveCount(12);
+    await expect(
+      section.getByText(ROADMAP_BACKLOG_NOTICE, { exact: true })
+    ).toBeVisible();
+    for (const [index, feature] of PLANNED_FEATURES.entries()) {
+      await expect(
+        section.getByRole('heading', { name: feature.title, exact: true })
+      ).toBeVisible();
+      await expect(
+        staticPage.getByRole('heading', { name: feature.title, exact: true })
+      ).toBeVisible();
+      const summary = plannedFeatureSummary(feature.benefit, index);
+      await expect(section.getByText(summary, { exact: true })).toBeVisible();
+      await expect(
+        staticPage.getByText(summary, { exact: true })
+      ).toBeVisible();
+    }
+    await expect(
+      section.getByRole('link', {
+        name: 'View the technical backlog on GitHub'
+      })
+    ).toHaveAttribute('href', ROADMAP_BACKLOG_URL);
+    await page.goto('/about');
+    await expect(
+      page.getByRole('heading', { name: 'About Orvulix', exact: true })
+    ).toBeVisible();
+    await expect(
+      page.getByRole('region', { name: 'Planned features' })
+    ).toHaveCount(0);
+  } finally {
+    await noJs.close();
+  }
+});
 
 const headState = (page: Page) =>
   page.evaluate((selector) => {
