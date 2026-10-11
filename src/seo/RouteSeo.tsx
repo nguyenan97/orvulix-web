@@ -6,6 +6,7 @@ import { tools } from '@tools/index';
 import { validNamespaces } from '../i18n';
 import { applyHeadTags } from './dom';
 import { getHeadTags } from './head';
+import { developmentHeadTags } from './pages-dev';
 import { buildSeoSite, resolveSeoPage } from './model';
 import { toolRecordsFromRegistry } from './records';
 import { useToolOverrides } from './useToolOverrides';
@@ -61,7 +62,14 @@ export default function RouteSeo() {
   useEffect(() => {
     if (!site) return;
     const page = resolveSeoPage(site, pathname);
-    applyHeadTags(document, getHeadTags(page), page.language);
+    const tags = getHeadTags(page);
+    applyHeadTags(
+      document,
+      import.meta.env.VITE_PAGES_DEV === 'true'
+        ? developmentHeadTags(tags)
+        : tags,
+      page.language
+    );
   }, [site, pathname]);
 
   return null;

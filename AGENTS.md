@@ -4,7 +4,7 @@ These rules apply to every agent working anywhere in this repository.
 Before editing, committing, pushing, opening a PR, or deploying, read and follow
 `.agents/skills/development-workflow/SKILL.md`.
 
-- Develop on `develop` or `feature/*` created from `develop`. Never develop or commit on `main`, a detached HEAD, or an unrelated branch.
+- Create `feature/*` from `develop` for new tasks and open PRs only into `develop`; do not push task changes directly to `develop`. Never develop or commit on `main`, a detached HEAD, or an unrelated branch.
 - Feature PRs target `develop`. Only an explicit user request to release authorizes a `develop` -> `main` release PR and merge.
 - A request to fix, implement, commit, or push is NOT permission to release.
 - Never push directly to `main`, force-push shared branches, or bypass Git hooks or branch protections.
@@ -16,6 +16,14 @@ Before editing, committing, pushing, opening a PR, or deploying, read and follow
 Netlify configuration: production branch `main`; branch deploys production-only;
 Deploy Previews disabled; builds Active. Dashboard settings are external and must
 not be assumed to be enforced by this file.
+
+Development environment: https://nguyenan97.github.io/orvulix-web/ on GitHub
+Pages, built from `develop` by `.github/workflows/pages-dev.yml`. Feature PRs
+into `develop` run checks without publishing; pushes after merging into
+`develop` publish the dev site once the Pages environment allows this branch.
+Keep the dev site's `noindex` and repository base path. Never use the production
+domain as a Pages custom domain or change production settings to test dev work.
+GitHub Pages does not execute Netlify Functions, redirects, or response headers.
 
 Git hooks are local safeguards, not a security boundary. GitHub must protect `main`
 with required PRs and no direct-push bypass for server-side enforcement.

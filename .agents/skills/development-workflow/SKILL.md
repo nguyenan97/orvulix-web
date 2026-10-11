@@ -7,7 +7,7 @@ description: Mandatory Git and Netlify workflow for every development, commit, p
 
 1. Read root `AGENTS.md`. Run `git status --short --branch`, inspect the current
    branch and upstream, and preserve existing changes.
-2. Work on `develop` or `feature/*` based on `develop`. If on another branch,
+2. For new tasks, work on `feature/*` based on `develop`, not directly on `develop`. If on another branch,
    safely move task changes to an allowed branch before editing. Do not discard,
    stash, or commit unrelated user work to make a checkout possible.
 3. For a feature branch, start from updated `develop` when the working tree permits:
@@ -19,6 +19,11 @@ description: Mandatory Git and Netlify workflow for every development, commit, p
 5. Commit only task files on the allowed branch. Push to the matching remote
    branch. Feature PRs must target `develop`, never `main`.
 6. Stop after development delivery. Do not release as an implicit final step.
+   Development hosting is GitHub Pages at
+   https://nguyenan97.github.io/orvulix-web/, built from `develop`. Feature PRs
+   only run checks; merging into `develop` triggers the Pages dev deployment
+   when its environment allows `develop`. Preserve dev `noindex` and the
+   repository URL prefix. Netlify from `main` is production, not dev hosting.
 7. Only when the user explicitly asks to release: review the full `develop` vs
    `main` diff, run appropriate checks and local build, and use a PR from
    `develop` to `main`. Merge only within the user's authorized release scope.
