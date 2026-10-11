@@ -263,6 +263,9 @@ export default function JsonAssistantDemo() {
           credentials, rate limits and spending controls.
         </Typography>
         <Stack direction="row" spacing={2} flexWrap="wrap">
+          <MuiLink component={Link} to="/regex-assistant">
+            Regex Assistant demo
+          </MuiLink>
           <MuiLink component={Link} to="/json/prettify">
             JSON formatter
           </MuiLink>
