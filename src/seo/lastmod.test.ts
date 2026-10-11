@@ -17,6 +17,15 @@ const DATES = {
   c5: '2024-05-01T10:00:00+00:00'
 };
 
+// Git versions can represent UTC as either Z or +00:00. Compare the exact
+// timestamp while retaining the checks for unverifiable/shallow history.
+const expectDate = (actual: string | null, expected: string) => {
+  expect(actual).not.toBeNull();
+  expect(new Date(actual!).toISOString()).toBe(
+    new Date(expected).toISOString()
+  );
+};
+
 const git = (cwd: string, args: string[], date?: string) =>
   execFileSync('git', args, {
     cwd,
@@ -66,17 +75,17 @@ beforeAll(() => {
 describe('Git-based lastmod', () => {
   it('dates JSON keys by the change of their values, not of the file', async () => {
     const dates = (await createGitDates(repo))!;
-    expect(await dates.jsonKeyDate('en.json', [['a']])).toBe(DATES.c1);
-    expect(await dates.jsonKeyDate('en.json', [['b']])).toBe(DATES.c2);
-    expect(await dates.jsonKeyDate('en.json', [['c']])).toBe(DATES.c4);
-    expect(await dates.jsonKeyDate('en.json', [['a'], ['b']])).toBe(DATES.c2);
+    expectDate(await dates.jsonKeyDate('en.json', [['a']]), DATES.c1);
+    expectDate(await dates.jsonKeyDate('en.json', [['b']]), DATES.c2);
+    expectDate(await dates.jsonKeyDate('en.json', [['c']]), DATES.c4);
+    expectDate(await dates.jsonKeyDate('en.json', [['a'], ['b']]), DATES.c2);
   });
 
   it('dates files by their latest commit', async () => {
     const dates = (await createGitDates(repo))!;
-    expect(await dates.pathDate(['src/x.ts'])).toBe(DATES.c5);
-    expect(await dates.pathDate(['src'])).toBe(DATES.c5);
-    expect(await dates.pathDate(['en.json'])).toBe(DATES.c4);
+    expectDate(await dates.pathDate(['src/x.ts']), DATES.c5);
+    expectDate(await dates.pathDate(['src']), DATES.c5);
+    expectDate(await dates.pathDate(['en.json']), DATES.c4);
   });
 
   it('marks history beyond a shallow clone as older instead of inventing a date', async () => {
@@ -84,7 +93,7 @@ describe('Git-based lastmod', () => {
     git(clone, ['clone', '-q', '--depth', '2', `file://${repo}`, '.']);
     const dates = (await createGitDates(clone))!;
     expect(dates.shallow).toBe(true);
-    expect(await dates.pathDate(['src/x.ts'])).toBe(DATES.c5);
+    expectDate(await dates.pathDate(['src/x.ts']), DATES.c5);
     expect(await dates.jsonKeyDate('en.json', [['a']])).toBe(OLDER);
     expect(latestDate([OLDER, DATES.c5])).toBe(DATES.c5);
     expect(latestDate([OLDER])).toBeNull();
@@ -128,8 +137,8 @@ describe('Git-based lastmod', () => {
       DATES.c4
     );
     const dates = (await createGitDates(main))!;
-    expect(await dates.pathDate(['tool'])).toBe(DATES.c4);
-    expect(await dates.jsonKeyDate('en.json', [['a']])).toBe(DATES.c4);
+    expectDate(await dates.pathDate(['tool']), DATES.c4);
+    expectDate(await dates.jsonKeyDate('en.json', [['a']]), DATES.c4);
   });
 
   it('returns null outside a Git repository', async () => {
