@@ -126,11 +126,50 @@ export default function Hero() {
       : exampleTools;
 
   return (
-    <Box width={{ xs: '94%', md: '82%', lg: '72%' }} sx={{ maxWidth: 950, py: { xs: 5, md: 9 } }}>
+    <Box
+      width={{ xs: '94%', md: '82%', lg: '72%' }}
+      sx={{ maxWidth: 950, py: { xs: 5, md: 9 } }}
+    >
       <Stack alignItems="center" spacing={2} sx={{ mb: 5 }}>
-        <Typography sx={{ px: 2, py: 0.8, borderRadius: 99, border: '1px solid', borderColor: 'primary.light', color: 'primary.main', fontSize: 12, fontWeight: 800, letterSpacing: '0.08em', textTransform: 'uppercase' }}>Private by design · Free to use</Typography>
-        <Typography component="h1" sx={{ fontSize: { xs: 38, md: 64 }, fontWeight: 900, letterSpacing: '-0.055em', lineHeight: 1.08, textAlign: 'center', maxWidth: 780 }}>{brand.tagline}</Typography>
-        <Typography sx={{ textAlign: 'center', fontSize: { xs: 16, md: 20 }, color: 'text.secondary', maxWidth: 680 }}>{brand.description} Find the right tool, get it done, and keep your files on your device.</Typography>
+        <Typography
+          sx={{
+            px: 2,
+            py: 0.8,
+            borderRadius: 99,
+            border: '1px solid',
+            borderColor: 'primary.light',
+            color: 'primary.main',
+            fontSize: 12,
+            fontWeight: 800,
+            letterSpacing: '0.08em',
+            textTransform: 'uppercase'
+          }}
+        >
+          {brand.heroBadge}
+        </Typography>
+        <Typography
+          component="h1"
+          sx={{
+            fontSize: { xs: 38, md: 64 },
+            fontWeight: 900,
+            letterSpacing: '-0.055em',
+            lineHeight: 1.08,
+            textAlign: 'center',
+            maxWidth: 780
+          }}
+        >
+          {brand.tagline}
+        </Typography>
+        <Typography
+          sx={{
+            textAlign: 'center',
+            fontSize: { xs: 16, md: 20 },
+            color: 'text.secondary',
+            maxWidth: 680
+          }}
+        >
+          {brand.description} {brand.processingNotice}
+        </Typography>
       </Stack>
       <Autocomplete
         sx={{ mb: 2 }}

@@ -235,9 +235,8 @@ Found while implementing this and left unchanged (upstream-owned files):
   blank page); it is now served with HTTP 404, but the page itself still
   crashes.
 - Category pages render two `<h1>` elements (Hero and the category title).
-- `favicon.ico`, `favicon.png`, `favicon-96x96.png`, `apple-touch-icon.png`
-  and the manifest PNG icons still show the previous OmniTools mark; only
-  `favicon.svg` is Orvulix-branded.
+- Brand PNG/ICO assets are rasterized from the existing Orvulix `favicon.svg`
+  with `node scripts/brand-icons.mjs`; keep that SVG and its URL stable.
 - `README.md` still says the build writes `public/sitemap.xml`; it is now
   `dist/sitemap.xml`.
 

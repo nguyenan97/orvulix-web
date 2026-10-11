@@ -1,4 +1,5 @@
 import { Box } from '@mui/material';
+import { brand } from '../../../../../brand/config'; // ORVULIX-BRAND
 import React, { useState, useContext } from 'react';
 import * as Yup from 'yup';
 import ToolMultipleImageInput, {
@@ -20,7 +21,7 @@ import { getFileExtension } from '@utils/file';
 
 const initialValues: InitialValuesType = {
   filename: true,
-  watermark: 'OMNITOOLS',
+  watermark: brand.watermark,
   watermarkOpacity: 0.35,
   fontSize: 32,
   position: 'bottom-right',

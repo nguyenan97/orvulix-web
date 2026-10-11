@@ -1,6 +1,7 @@
 import * as pdfjsLib from 'pdfjs-dist';
 import pdfjsWorker from 'pdfjs-dist/build/pdf.worker.min?url';
 import JSZip from 'jszip';
+import { brand } from '../../../../brand/config'; // ORVULIX-BRAND
 
 // Set worker source for PDF.js
 pdfjsLib.GlobalWorkerOptions.workerSrc = pdfjsWorker;
@@ -54,7 +55,7 @@ export async function convertPdfToEpub(pdfFile: File): Promise<File> {
 <package xmlns="http://www.idpf.org/2007/opf" unique-identifier="bookid" version="2.0">
   <metadata xmlns:dc="http://purl.org/dc/elements/1.1/">
     <dc:title>${bookTitle}</dc:title>
-    <dc:creator>Converted by omni-tools</dc:creator>
+    <dc:creator>Converted by ${brand.name}</dc:creator>
     <dc:identifier id="bookid">${Date.now()}</dc:identifier>
     <dc:language>en</dc:language>
   </metadata>
