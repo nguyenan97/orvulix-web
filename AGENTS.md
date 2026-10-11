@@ -28,3 +28,9 @@ GitHub Pages does not execute Netlify Functions, redirects, or response headers.
 
 Git hooks are local safeguards, not a security boundary. GitHub must protect `main`
 with required PRs and no direct-push bypass for server-side enforcement.
+
+## Text style
+
+Never use em dashes (Unicode U+2014). Use regular hyphens (-) instead in code,
+UI copy, documentation and translations. Run `node scripts/check-text-style.mjs`
+before committing. Preserve upstream file formatting when replacing punctuation.

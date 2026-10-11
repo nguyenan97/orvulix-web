@@ -73,3 +73,9 @@ disallowed remote branch names (including deletion of `main`). Hooks cannot
 enforce PR merges through GitHub or prevent a user from disabling them. Require
 GitHub branch protection/rulesets for `main`, required PRs and disabled bypasses.
 Do not claim an instruction file can guarantee all agents or clients obey.
+
+# Text style check
+
+Use regular hyphens (-), never Unicode U+2014, in code, UI copy, documentation
+and translations. Run `node scripts/check-text-style.mjs` before committing;
+CI checks tracked UTF-8 text. Do not bulk-format inherited files to fix punctuation.

@@ -16,7 +16,7 @@
   },
   "jsonToCsv": {
     "delimiterOption": "Delimiter",
-    "description": "Convert JSON data to CSV format. Supports nested objects and arrays, automatic header detection, and configurable delimiters and quoting — ready for Excel, Google Sheets, or any spreadsheet application.",
+    "description": "Convert JSON data to CSV format. Supports nested objects and arrays, automatic header detection, and configurable delimiters and quoting - ready for Excel, Google Sheets, or any spreadsheet application.",
     "headerOption": "Headers",
     "inputTitle": "Input JSON",
     "options": {

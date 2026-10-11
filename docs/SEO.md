@@ -17,16 +17,16 @@ renders React.
 
 `npm run build` runs:
 
-1. `tsc` — typecheck.
-2. `vite build` — the SPA bundle and `dist/index.html` (used as the template).
-3. `scripts/seo/prerender.mjs` — discovers routes, builds and validates the SEO
+1. `tsc` - typecheck.
+2. `vite build` - the SPA bundle and `dist/index.html` (used as the template).
+3. `scripts/seo/prerender.mjs` - discovers routes, builds and validates the SEO
    model, writes `dist/<route>.html`, `dist/index.html` (home) and
    `dist/404.html`.
-4. `scripts/generate-sitemap.mjs` — writes `dist/sitemap.xml` with Git-based
+4. `scripts/generate-sitemap.mjs` - writes `dist/sitemap.xml` with Git-based
    `lastmod`.
-5. `scripts/validate-sitemap.mjs` — the sitemap URL set must equal the
+5. `scripts/validate-sitemap.mjs` - the sitemap URL set must equal the
    indexable model routes **and** the set of generated route HTML files.
-6. `scripts/seo/validate-dist.mjs` — validates every generated document
+6. `scripts/seo/validate-dist.mjs` - validates every generated document
    (independently of the renderer), `404.html`, the social image, Netlify
    routing, cache headers and the font preload.
 
@@ -163,7 +163,7 @@ fails when:
   ones and does nothing when the head already matches the prerendered HTML.
 - Pages still contain `<Helmet>` blocks from upstream; `RouteSeo` sets
   `Helmet.canUseDOM = false` so they cannot write to the document. Their
-  values are ignored — change metadata in `src/seo`, not in page components.
+  values are ignored - change metadata in `src/seo`, not in page components.
 - Correct direct-load metadata is preserved while resources load. Client
   navigation immediately clears a stale route identity and asynchronously uses
   the local English fallback if needed; cancelled navigations cannot write late

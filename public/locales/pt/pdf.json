@@ -64,7 +64,7 @@
   },
   "pdfToPng": {
     "description": "Transforme documentos PDF em painéis PNG.",
-    "longDescription": "Carregue um PDF e converta cada página em uma imagem PNG de alta qualidade diretamente no seu navegador. Esta ferramenta é ideal para extrair conteúdo visual ou compartilhar páginas individuais. Nenhum dado é carregado — tudo é executado localmente.",
+    "longDescription": "Carregue um PDF e converta cada página em uma imagem PNG de alta qualidade diretamente no seu navegador. Esta ferramenta é ideal para extrair conteúdo visual ou compartilhar páginas individuais. Nenhum dado é carregado - tudo é executado localmente.",
     "shortDescription": "Converter PDF em imagens PNG",
     "title": "PDF para PNG"
   },

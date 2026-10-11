@@ -69,6 +69,13 @@ We will prioritize previewable changes, clear confirmation, and workflows that c
 
 **Outcome we want:** A useful platform that can grow sustainably without compromising trust.
 
+## Issue-backed implementation backlog
+
+See [the prioritized upstream issue backlog](FEATURE_BACKLOG.md) for MVP scope,
+acceptance criteria and upstream PRs to review before implementation. These items
+are planned, not shipped. Each implementation uses a feature branch from `develop`
+and a PR into `develop`; production releases require separate authorization.
+
 ## How we prioritize
 
 1. **Strengthen the foundation:** improve existing tools and fix issues that affect everyday use.
