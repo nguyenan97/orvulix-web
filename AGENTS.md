@@ -6,6 +6,7 @@ Before editing, committing, pushing, opening a PR, or deploying, read and follow
 
 - Create `feature/*` from `develop` for new tasks and open PRs only into `develop`; do not push task changes directly to `develop`. Never develop or commit on `main`, a detached HEAD, or an unrelated branch.
 - Feature PRs target `develop`. Only an explicit user request to release authorizes a `develop` -> `main` release PR and merge.
+- After an authorized PR merge, verify the merged head and delete its completed task branch from GitHub and, when safe, locally. Follow the skill's cleanup checks; always retain `main`, `develop`, and necessary long-lived branches. Cleanup never authorizes a merge.
 - A request to fix, implement, commit, or push is NOT permission to release.
 - Never push directly to `main`, force-push shared branches, or bypass Git hooks or branch protections.
 - Never run production deploys, trigger Netlify build hooks, or enable branch deploys/Deploy Previews without an explicit user request for that action.
