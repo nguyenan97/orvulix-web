@@ -29,6 +29,31 @@ description: Mandatory Git and Netlify workflow for every development, commit, p
    `develop` to `main`. Merge only within the user's authorized release scope.
    This can trigger a production deploy costing 15 credits under the current plan.
    Never push directly to `main`, including during a release.
+8. After an authorized merge, clean up the completed task branch using the
+   checks below. Do not leave merged feature/bug-fix branches indefinitely.
+
+# Post-merge branch cleanup
+
+- This rule authorizes cleanup of the completed task branch after its PR is
+  merged; it does not authorize merging a PR or bulk-deleting other branches.
+- Always keep `main` and `develop`. Keep protected, release, staging, upstream
+  tracking, or other long-lived branches when still needed or explicitly retained.
+- Verify the PR state is **merged**, its merge commit is reachable from the
+  target branch, and the remote branch head still equals the PR's merged head.
+  Squash/rebase merges may not preserve ancestry of the original branch: use
+  PR metadata and the resulting changes, not only `git branch --merged`.
+- Check that no other open PR depends on the branch as a head or base and that
+  it has no post-merge commits or ongoing work. If uncertain, retain it and
+  report the reason. A closed but unmerged PR is not enough to delete a branch.
+- Delete only the verified task branch on GitHub, then refresh/prune remote
+  tracking refs. For local cleanup, first move to `develop` or another retained
+  branch without discarding work; keep any local branch with unpushed commits
+  or changes in an attached worktree. Never use a destructive checkout/reset.
+- Use normal GitHub merged-branch deletion or an authorized API operation.
+  Never disable hooks/protection, force-push, or force-delete local branches to
+  get around a failed safety check. Local deletion may be deferred after a
+  squash merge; report retained branches and why.
+- Report the deleted branches and any necessary branches retained.
 
 # Forbidden shortcuts
 
