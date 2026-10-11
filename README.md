@@ -3,6 +3,7 @@
 **Orvulix** is a free, community-oriented, open-source collection of browser-based utilities for developers and everyday tasks, including JSON, PDF, image, and text tools.
 
 - **Website:** https://orvulix.io.vn/
+- **Website dev:** https://nguyenan97.github.io/orvulix-web/ — GitHub Pages, built from `develop`.
 - **Source code:** https://github.com/nguyenan97/orvulix-web
 - **License:** [MIT](LICENSE)
 - **Roadmap:** [Product roadmap](docs/PRODUCT_ROADMAP.md)
@@ -38,7 +39,7 @@ npm run build
 npm run test -- --run
 ```
 
-The production build generates `public/sitemap.xml` from tool metadata, then builds into `dist/`. Verify generated URLs match actual application routes before publishing.
+The production build generates route HTML and `dist/sitemap.xml` from tool metadata. Verify generated URLs match actual application routes before publishing.
 
 ## Contributing and community
 
@@ -58,7 +59,9 @@ For public contributions, open a pull request on GitHub. Security-sensitive repo
 
 ## Deployment
 
-Production deployments are manually controlled. Confirm Netlify Git Integration automatic builds are disabled before merging; merge and verify CI before running a controlled Netlify deploy. Do not enable automatic deployment unless intentionally changing this release policy.
+The development website runs on GitHub Pages from `develop`; production runs on Netlify from `main`. Create `feature/*` branches from `develop` and target development PRs only at `develop`. After the Pages workflow is merged and its environment permits `develop`, pushes to `develop` deploy the dev website. See [GitHub Pages dev setup](docs/GITHUB_PAGES_DEV.md).
+
+Only an explicit release request authorizes a `develop` → `main` PR and merge. Merging into `main` triggers the configured Netlify production build and can consume production deployment credits. Do not create release PRs, merge into `main`, or deploy production as part of routine development.
 
 ## Product direction and Claude for Startups
 
@@ -74,4 +77,4 @@ See [Product roadmap](docs/PRODUCT_ROADMAP.md) and the website's `/roadmap` page
 
 Licensed under the [MIT License](LICENSE). The original copyright holder is Ibrahima Gaye Coulibaly. Preserve the original license notice in redistributed copies or substantial portions of the inherited software. See [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md) for project-origin attribution and licensing guidance.
 
-The website is hosted on [Netlify](https://www.netlify.com/).
+Production is hosted on [Netlify](https://www.netlify.com/); the development environment is hosted on GitHub Pages.
