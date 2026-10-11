@@ -20,6 +20,12 @@ Orvulix is currently an early-stage, independently developed project maintained 
 
 The website provides web-based tools for working with JSON and other data formats, documents, images, text, and common developer workflows. See the live website for the currently available tools.
 
+### Inherited functionality and Orvulix additions
+
+The utility implementations originate from OmniTools; Orvulix does not claim to have built them from scratch. Orvulix additions include its branding and domain, product information pages, shared route SEO and static HTML generation, verified guides for selected tools, and separate GitHub Pages development and Netlify production workflows. These are project adaptations, not evidence of customers, revenue or startup-program approval. Original licensing and attribution remain in place.
+
+Tools differ in how they handle data. Some run locally while downloading libraries, models or workers from third-party CDNs; downloading those resources does not itself mean an input file is uploaded. Check the individual tool's guidance and [privacy policy](https://orvulix.io.vn/privacy) before using sensitive data. A planned Claude integration must not be confused with existing browser-based machine-learning tools such as background removal.
+
 ## Development
 
 Prerequisites: Node.js and npm.

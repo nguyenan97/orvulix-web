@@ -3,6 +3,7 @@ import React, { useContext } from 'react';
 import { CustomSnackBarContext } from '../../contexts/CustomSnackBarContext';
 import InputHeader from '../InputHeader';
 import ResultFooter from './ResultFooter';
+import { brand } from '../../brand/config'; // ORVULIX-BRAND
 import { replaceSpecialCharacters } from '@utils/string';
 import mime from 'mime';
 import { globalInputHeight } from '../../config/uiConfig';
@@ -32,7 +33,7 @@ export default function ToolTextResult({
       });
   };
   const handleDownload = () => {
-    const filename = `output-omni-tools.${extension}`;
+    const filename = `${brand.downloadPrefix}.${extension}`;
 
     const mimeType = mime.getType(extension) || 'text/plain';
 

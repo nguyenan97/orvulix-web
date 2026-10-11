@@ -3,6 +3,7 @@ import React, { useContext } from 'react';
 import { CustomSnackBarContext } from '../../contexts/CustomSnackBarContext';
 import InputHeader from '../InputHeader';
 import ResultFooter from './ResultFooter';
+import { brand } from '../../brand/config'; // ORVULIX-BRAND
 import { useTranslation } from 'react-i18next';
 import Editor from '@monaco-editor/react';
 import mime from 'mime';
@@ -38,7 +39,7 @@ export default function ToolCodeResult({
   };
 
   const handleDownload = () => {
-    const filename = `output-omni-tools.${extension}`;
+    const filename = `${brand.downloadPrefix}.${extension}`;
 
     const mimeType = mime.getType(extension) || 'text/plain';
 
