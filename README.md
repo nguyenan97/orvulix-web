@@ -3,10 +3,11 @@
 **Orvulix** is a free, community-oriented, open-source collection of browser-based utilities for developers and everyday tasks, including JSON, PDF, image, and text tools.
 
 - **Website:** https://orvulix.io.vn/
-- **Website dev:** https://nguyenan97.github.io/orvulix-web/ — GitHub Pages, built from `develop`.
+- **Website dev:** https://nguyenan97.github.io/orvulix-web/ - GitHub Pages, built from `develop`.
 - **Source code:** https://github.com/nguyenan97/orvulix-web
 - **License:** [MIT](LICENSE)
 - **Roadmap:** [Product roadmap](docs/PRODUCT_ROADMAP.md)
+- **Planned features:** [Issue-backed backlog](docs/FEATURE_BACKLOG.md)
 - **Community guidelines:** [Code of Conduct](CODE_OF_CONDUCT.md)
 - **Contributing:** [Contribution guide](CONTRIBUTING.md)
 

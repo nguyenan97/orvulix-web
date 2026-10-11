@@ -32,7 +32,7 @@ const exampleCards: CardExampleType<InitialValuesType>[] = [
   {
     title: 'Convert multiple datetimes',
     description:
-      'In this example, we convert multiple datetimes at once — one per line. Blank lines are preserved in the output. Each valid datetime is converted to a Discord timestamp using the Short Date & Time format (f).',
+      'In this example, we convert multiple datetimes at once - one per line. Blank lines are preserved in the output. Each valid datetime is converted to a Discord timestamp using the Short Date & Time format (f).',
     sampleText: `2025-03-15T10:00:00
 2025-07-20T18:45:00
 
@@ -49,7 +49,7 @@ const exampleCards: CardExampleType<InitialValuesType>[] = [
   {
     title: 'Relative timestamps',
     description:
-      'In this example, we use the Relative format (R) which displays how long ago or how far in the future a datetime is — for example "2 hours ago" or "in 3 days". This format is useful for countdowns or activity feeds and updates dynamically in Discord.',
+      'In this example, we use the Relative format (R) which displays how long ago or how far in the future a datetime is - for example "2 hours ago" or "in 3 days". This format is useful for countdowns or activity feeds and updates dynamically in Discord.',
     sampleText: `2025-03-15T10:00:00
 2025-07-20T18:45:00
 2025-11-05T08:15:00`,

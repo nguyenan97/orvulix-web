@@ -61,7 +61,7 @@
     "inputTitle": "Images Input",
     "maxFileSizeDescription": "Maximum output file size per image in megabytes",
     "originalSize": "Total original size",
-    "qualityDescription": "Image quality percentage — lower value means smaller file size",
+    "qualityDescription": "Image quality percentage - lower value means smaller file size",
     "resultTitle": "Compressed images",
     "shortDescription": "Compress one or multiple images at once.",
     "someFailedToCompress": "Some images could not be compressed and were skipped.",
