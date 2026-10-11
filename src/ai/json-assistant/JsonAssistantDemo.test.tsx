@@ -1,8 +1,21 @@
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
-import { describe, expect, it, vi } from 'vitest';
+import { afterAll, beforeAll, describe, expect, it, vi } from 'vitest';
 import JsonAssistantDemo from './JsonAssistantDemo';
 import { sampleProvider, type AssistantResult } from './provider';
+
+// MUI cancels its initial -1 frame sentinel. Browsers ignore it, but happy-dom
+// 12 passes it to Node 20 clearImmediate, which throws. Keep real frame
+// cancellation and emulate only the browser's no-op for that invalid sentinel.
+const cancelFrame = globalThis.cancelAnimationFrame;
+beforeAll(() => {
+  vi.stubGlobal('cancelAnimationFrame', (handle: number) => {
+    if (handle !== -1) cancelFrame(handle);
+  });
+});
+afterAll(() => {
+  vi.unstubAllGlobals();
+});
 
 const mount = () =>
   render(
