@@ -16,7 +16,7 @@ test.describe('Convert JPG to PNG tool', () => {
 
     // Click on download
     const downloadPromise = page.waitForEvent('download');
-    await page.getByText('Download').click();
+    await page.getByRole('button', { name: 'Download', exact: true }).click();
 
     // Intercept and read downloaded PNG
     const download = await downloadPromise;
@@ -50,7 +50,7 @@ test.describe('Convert JPG to PNG tool', () => {
 
     // Click on download
     const downloadPromise = page.waitForEvent('download');
-    await page.getByText('Download').click();
+    await page.getByRole('button', { name: 'Download', exact: true }).click();
 
     // Intercept and read downloaded PNG
     const download = await downloadPromise;

@@ -96,6 +96,25 @@ export function inferSchema(value: JsonValue): Schema {
   };
 }
 
+/** Return a candidate that the same local validator can consume. */
+export function createCandidateSchema(input: string): string {
+  const schema = {
+    $schema: 'http://json-schema.org/draft-07/schema#',
+    ...inferSchema(parseJson(input))
+  };
+  let candidate = JSON.stringify(schema, null, 2);
+  if (new TextEncoder().encode(candidate).length > SCHEMA_LIMIT)
+    candidate = JSON.stringify(schema);
+  try {
+    parseSchema(candidate);
+  } catch {
+    throw new Error(
+      'The inferred schema exceeds local validation limits. Reduce the input size or complexity and try again.'
+    );
+  }
+  return candidate;
+}
+
 /** Validate a deliberately small, documented JSON Schema subset; reject all
  * unsupported keywords rather than silently reporting that a schema passed. */
 export function parseSchema(text: string): Schema {

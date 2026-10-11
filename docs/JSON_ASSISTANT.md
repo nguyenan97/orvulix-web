@@ -24,7 +24,10 @@ only after an explicitly authorized `develop` -> `main` release.
 
 Input: 16 KiB UTF-8, at most 20 nesting levels and 2,000 values. Schema:
 64 KiB, 60 levels and 12,000 values to accommodate wrapper objects. Invalid
-JSON and non-finite numbers are rejected. Supported keywords: `type` (one type),
+JSON and non-finite numbers are rejected. Generated candidates use compact JSON
+when indentation would exceed the schema byte limit. Generation checks the same
+validator limits before displaying a candidate; inputs whose schema still exceeds
+the budget receive an explicit error instead of an unusable candidate. Supported keywords: `type` (one type),
 `properties`, `required`, boolean `additionalProperties`, `items` (one schema),
 and standalone `anyOf`; an optional draft-07 declaration is accepted at root.
 Unsupported keywords and malformed schemas fail explicitly. This is a documented

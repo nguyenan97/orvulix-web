@@ -35,15 +35,42 @@ test('demo acknowledgement, sample output and local validation without sending p
   await page.getByRole('button', { name: 'Validate JSON locally' }).click();
   await expect(page.getByText(/Input matches the supported/)).toBeVisible();
   await expect(page.getByRole('checkbox')).not.toBeChecked();
-  // Scrolling can load the existing site's "back to top" Iconify resource.
+  // Scrolling can load the existing site's "back to top" icon via Iconify's
+  // primary API or its two built-in fallback APIs; no payload is allowed.
+  const iconUrls = new Set(
+    ['api.iconify.design', 'api.simplesvg.com', 'api.unisvg.com'].map(
+      (host) => `https://${host}/mdi.json?icons=arrow-up`
+    )
+  );
   const inputRequests = requests.filter(
     (request) =>
       !(
         request.method === 'GET' &&
         request.body === null &&
-        request.url === 'https://api.iconify.design/mdi.json?icons=arrow-up'
+        iconUrls.has(request.url)
       )
   );
   expect(inputRequests).toEqual([]);
   expect(JSON.stringify(requests)).not.toContain('local_only');
+});
+
+test('a wide accepted payload produces a candidate usable by local validation', async ({
+  page
+}) => {
+  await page.goto('/json-assistant');
+  const input = JSON.stringify(
+    Object.fromEntries(
+      Array.from({ length: 1600 }, (_, i) => [
+        `k${String(i).padStart(4, '0')}`,
+        1
+      ])
+    )
+  );
+  await page.getByLabel('JSON input', { exact: true }).fill(input);
+  await page
+    .getByRole('button', { name: 'Infer candidate schema locally' })
+    .click();
+  await page.getByRole('button', { name: 'Validate JSON locally' }).click();
+  await expect(page.getByText(/Input matches the supported/)).toBeVisible();
+  await expect(page.getByText(/exceeds the 64 KB limit/)).not.toBeVisible();
 });

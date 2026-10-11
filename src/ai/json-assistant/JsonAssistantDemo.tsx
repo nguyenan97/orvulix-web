@@ -14,7 +14,7 @@ import {
 } from '@mui/material';
 import { Link } from 'react-router-dom';
 import {
-  inferSchema,
+  createCandidateSchema,
   parseJson,
   parseSchema,
   validateJson,
@@ -80,16 +80,7 @@ export default function JsonAssistantDemo() {
     setError('');
     setValidation(null);
     try {
-      setSchema(
-        JSON.stringify(
-          {
-            $schema: 'http://json-schema.org/draft-07/schema#',
-            ...inferSchema(parseJson(input))
-          },
-          null,
-          2
-        )
-      );
+      setSchema(createCandidateSchema(input));
     } catch (reason) {
       setSchema('');
       setError((reason as Error).message);

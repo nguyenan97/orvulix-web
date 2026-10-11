@@ -169,7 +169,7 @@ test('the active tool receives local English fallback after its translation requ
 }) => {
   await page.route('**/locales/en/string.json', (route) => route.abort());
   await page.goto('/about');
-  await expect(page).toHaveTitle(/About Orvulix/);
+  await waitForApp(page, 'About Orvulix');
   await page.evaluate(() => {
     window.history.pushState({}, '', '/string/uppercase');
     window.dispatchEvent(new PopStateEvent('popstate'));

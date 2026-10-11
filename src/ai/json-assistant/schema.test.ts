@@ -1,10 +1,12 @@
 import { describe, expect, it } from 'vitest';
 import {
+  createCandidateSchema,
   inferSchema,
   parseJson,
   parseSchema,
   validateJson,
-  INPUT_LIMIT
+  INPUT_LIMIT,
+  SCHEMA_LIMIT
 } from './schema';
 
 describe('bounded local structural validation', () => {
@@ -73,6 +75,38 @@ describe('bounded local structural validation', () => {
     expect(
       validateJson(value, parseSchema(JSON.stringify(inferSchema(value))))
     ).toEqual([]);
+  });
+  it('compacts a wide candidate so accepted input can be validated again', () => {
+    const input = JSON.stringify(
+      Object.fromEntries(
+        Array.from({ length: 1600 }, (_, i) => [
+          `k${String(i).padStart(4, '0')}`,
+          1
+        ])
+      )
+    );
+    const value = parseJson(input);
+    expect(
+      new TextEncoder().encode(JSON.stringify(inferSchema(value), null, 2))
+        .length
+    ).toBeGreaterThan(SCHEMA_LIMIT);
+    const candidate = createCandidateSchema(input);
+    expect(new TextEncoder().encode(candidate).length).toBeLessThanOrEqual(
+      SCHEMA_LIMIT
+    );
+    expect(validateJson(value, parseSchema(candidate))).toEqual([]);
+    expect(candidate).not.toContain('\n');
+  });
+  it('keeps small candidates readable and rejects unusable generated candidates', () => {
+    expect(createCandidateSchema('{"x":1}')).toContain('\n');
+    // Distinct array shapes expand far beyond the schema budget despite valid input.
+    const input = JSON.stringify(
+      Array.from({ length: 700 }, (_, i) => ({ [String(i)]: 1 }))
+    );
+    expect(() => parseJson(input)).not.toThrow();
+    expect(() => createCandidateSchema(input)).toThrow(
+      /inferred schema exceeds/
+    );
   });
   it('treats prototype-named keys as data without prototype pollution', () => {
     const value = parseJson('{"__proto__":{"polluted":true},"constructor":1}');
