@@ -61,7 +61,9 @@ function App() {
         >
           <CustomSnackBarProvider>
             <UserTypeFilterProvider>
-              <BrowserRouter>
+              <BrowserRouter basename={import.meta.env.BASE_URL}>
+                {' '}
+                {/* ORVULIX-PAGES */}
                 {/* ORVULIX-SEO */}
                 <RouteSeo />
                 <Navbar
