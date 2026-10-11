@@ -22,6 +22,12 @@ describe('static page copy matches what React renders', () => {
       readFileSync('src/pages/information/index.tsx', 'utf8')
     );
     for (const [path, page] of Object.entries(INFO_PAGES_SEO)) {
+      if (path === '/json-assistant') {
+        const demo = readFileSync('src/ai/json-assistant/copy.ts', 'utf8');
+        expect(demo).toContain(page.heading);
+        expect(demo).toContain(page.intro);
+        continue;
+      }
       expect(info, path).toContain(`'${page.heading}'`);
       expect(info, path).toContain(page.intro);
     }

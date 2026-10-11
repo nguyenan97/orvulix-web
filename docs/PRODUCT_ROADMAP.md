@@ -22,9 +22,9 @@ Our approach is to make existing tools better first, then explore new capabiliti
 
 ## 2. Practical AI assistance
 
-**Planned - One focused prototype before broader expansion**
+**Local demo implemented - Live Claude integration planned**
 
-Our first proposed AI feature is an **AI JSON Assistant**. It would help users understand unfamiliar JSON payloads, explain nested structures, propose candidate JSON schemas, and suggest transformations. Suggested schemas and outputs must be reviewed and validated with deterministic tools.
+The `/json-assistant` route implements a local prototype with authored explanations for three fixtures and deterministic schema inference/validation for custom JSON. This is not a live AI feature: no provider request, API key, SDK or paid inference is used. See [demo architecture and limits](JSON_ASSISTANT.md). A future Claude-powered assistant could explain unfamiliar payloads and suggest transformations; outputs would need review and validation.
 
 Other ideas to evaluate after learning from the prototype:
 
@@ -78,7 +78,7 @@ We do not publish speculative release dates. Priorities may change as we learn f
 
 ## First AI prototype - Technical considerations
 
-The JSON Assistant remains a proposed prototype, not a deployed integration. Before a public release, we intend to:
+The local demo is implemented in development; publication follows the normal feature-to-develop and authorized develop-to-main workflow. A live Claude integration remains planned. Before connecting a provider, we intend to:
 
 - Require explicit user action before sending data to an AI provider.
 - Keep API credentials on the server, never in browser code.

@@ -71,7 +71,7 @@ Only an explicit release request authorizes a `develop` → `main` PR and merge.
 
 ## Product direction and Claude for Startups
 
-Orvulix is exploring an optional Claude-powered developer workflow, beginning with an AI JSON Assistant that explains unfamiliar JSON payloads, proposes candidate JSON Schema, and uses deterministic validation to verify results. The first milestone is a working, cost-controlled prototype; this integration is **not yet available**.
+Orvulix is exploring an optional Claude-powered developer workflow. This branch includes a [local JSON Assistant demo](docs/JSON_ASSISTANT.md) at `/json-assistant`: three authored sample explanations, candidate schema inference, and deterministic structural validation. It uses no Claude API, API key, paid inference or AI SDK. A live Claude integration is **not yet available**; the demo is not evidence of model accuracy or startup-program eligibility.
 
 The founder has created a Claude Console account using the project-domain email. This does not mean Orvulix has been approved for any Anthropic startup program or awarded credits. As an unincorporated solo-founder project, eligibility is subject to Anthropic's current terms and review; the project does not claim to be a registered company.
 

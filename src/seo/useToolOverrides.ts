@@ -21,9 +21,13 @@ export const useToolOverrides = (): Overrides | undefined => {
   useEffect(() => {
     if (overrides) return;
     let active = true;
-    loadToolOverrides().then((loaded) => {
-      if (active) setOverrides(loaded);
-    });
+    loadToolOverrides()
+      .then((loaded) => {
+        if (active) setOverrides(loaded);
+      })
+      .catch(() => {
+        /* RouteSeo can still use default metadata if this optional chunk fails. */
+      });
     return () => {
       active = false;
     };

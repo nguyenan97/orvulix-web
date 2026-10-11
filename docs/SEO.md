@@ -74,8 +74,8 @@ a test asserts that build-time and client output are identical.
   `CATEGORY_SEO_OVERRIDES` entry in `src/seo/pages.ts`.
 - These limits only apply to the indexed English HTML. For other UI languages
   the client uses the localized name and whole leading sentences without the
-  English suffixes; a translation that fails to load leaves the existing head
-  untouched.
+  English suffixes. Missing active-route strings use a lazy bundled English
+  fallback; unrelated failed namespaces do not block the active page.
 
 These limits are project conventions, not a promise of how Google displays
 results. Titles and descriptions must be unique across all indexable pages.
@@ -164,6 +164,11 @@ fails when:
 - Pages still contain `<Helmet>` blocks from upstream; `RouteSeo` sets
   `Helmet.canUseDOM = false` so they cannot write to the document. Their
   values are ignored — change metadata in `src/seo`, not in page components.
+- Correct direct-load metadata is preserved while resources load. Client
+  navigation immediately clears a stale route identity and asynchronously uses
+  the local English fallback if needed; cancelled navigations cannot write late
+  metadata for an old route. If the fallback chunk also fails, a neutral head
+  remains rather than retaining another route's canonical.
 - Only the `lang` attribute of `<html>` is set by the generator; other
   attributes in `index.html` are kept.
 - Static body content (breadcrumbs, tool guidance, related links) is placed

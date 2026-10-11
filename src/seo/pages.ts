@@ -5,6 +5,8 @@
  * state facts that the corresponding page states.
  */
 
+import { DEMO_HEADING, DEMO_INTRO } from '../ai/json-assistant/copy';
+
 export interface StaticPageSeo {
   title: string;
   description: string;
@@ -37,6 +39,14 @@ export const HOME_SEO = {
 
 /** Keyed by route path as declared in routesConfig. */
 export const INFO_PAGES_SEO: Record<string, StaticPageSeo> = {
+  '/json-assistant': {
+    title: 'JSON Assistant Demo - Local Schema Tools | Orvulix',
+    description:
+      'Explore a local JSON Assistant demo with authored sample explanations, candidate schemas and structural validation. No Claude API is connected.',
+    heading: DEMO_HEADING,
+    intro: DEMO_INTRO,
+    schemaType: 'WebPage'
+  },
   '/about': {
     title: 'About Orvulix - Free Open-Source Online Tools',
     description:

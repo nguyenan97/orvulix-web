@@ -40,7 +40,7 @@ const content: Record<Page, { title: string; paragraphs: string[] }> = {
       '1. Better everyday tools - Current focus',
       'We are improving speed, mobile usability, accessibility, navigation, and reliability. Clearer instructions, practical examples, and helpful error messages will make it easier to choose a tool and complete a task with confidence.',
       '2. Practical AI assistance - Planned',
-      'Our first proposed AI prototype is a JSON Assistant that explains complex payloads, suggests candidate JSON schemas, and helps users understand possible transformations. Outputs would be reviewed and validated using deterministic tools. Depending on feedback, we may explore assisted data conversion, regex, document, and text workflows.',
+      'The JSON Assistant demo provides authored explanations for three samples and local candidate schema inference and structural validation. It does not call Claude or generate AI responses. A live AI assistant remains planned, with review and deterministic validation of proposed outputs. Depending on feedback, we may explore assisted data conversion, regex, document, and text workflows.',
       '3. Connected workflows - Exploring',
       'Many tasks involve several steps. We want to explore ways to move between compatible tools with less copying and pasting, including previewable conversions and reusable workflows. One possible flow is to inspect JSON, validate it, convert it to CSV, and export the result.',
       '4. Open and sustainable growth - Ongoing',
@@ -85,7 +85,7 @@ const content: Record<Page, { title: string; paragraphs: string[] }> = {
       'Hosting infrastructure may process technical request data such as IP addresses and browser information. Refer to the hosting provider’s privacy documentation for its processing practices.',
       'Some utilities may load third-party scripts, libraries, models, or other resources. Data processing and network behavior may differ between tools; review the specific tool and avoid sensitive inputs unless you understand its behavior.',
       'Downloading a library, worker or model from a third-party CDN is different from uploading your input. Those providers may receive technical request data when resources are fetched; whether your content leaves the browser depends on the specific tool and must be checked separately.',
-      'The planned AI JSON Assistant is not currently available. If introduced, its data processing and external AI provider disclosures will be published before launch.',
+      'The local JSON Assistant demo keeps input in page memory, does not persist it to browser storage, and does not send it to an AI provider. Its sample explanations are authored, not AI-generated. A live Claude integration is not available; any future provider connection will require separate disclosures and consent before sending data.',
       'We do not currently offer user accounts or a dedicated privacy request form. For privacy questions, email founder@orvulix.io.vn.',
       'This policy may be updated as features and integrations change. Last updated: October 8, 2026.'
     ]
@@ -202,6 +202,11 @@ export default function InformationPage({ page }: { page: Page }) {
           page === 'privacy') && (
           <MuiLink href="mailto:founder@orvulix.io.vn">
             founder@orvulix.io.vn
+          </MuiLink>
+        )}
+        {page === 'roadmap' && (
+          <MuiLink component={Link} to="/json-assistant">
+            Try the local JSON Assistant demo
           </MuiLink>
         )}
         {page === 'roadmap' && (
