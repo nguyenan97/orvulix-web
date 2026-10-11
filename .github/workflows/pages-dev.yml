@@ -34,8 +34,8 @@ jobs:
         run: npm run build
       - name: Install focused browser
         run: npx playwright install --with-deps chromium
-      - name: Verify SEO navigation and the local demo
-        run: npx playwright test src/seo/seo.e2e.spec.ts src/ai/json-assistant/json-assistant.e2e.spec.ts src/ai/regex-assistant/regex-assistant.e2e.spec.ts --project=chromium
+      - name: Verify SEO navigation, local demos and image downloads
+        run: npx playwright test src/seo/seo.e2e.spec.ts src/ai/json-assistant/json-assistant.e2e.spec.ts src/ai/regex-assistant/regex-assistant.e2e.spec.ts src/pages/tools/image/png/convert-jgp-to-png/convert-jgp-to-png.e2e.spec.ts --project=chromium
         env:
           PLAYWRIGHT_USE_EXISTING_BUILD: 'true'
       - name: Build development site
