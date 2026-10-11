@@ -7,9 +7,11 @@ import { validNamespaces } from '../i18n';
 import { applyHeadTags } from './dom';
 import { getHeadTags } from './head';
 import { developmentHeadTags } from './pages-dev';
-import { buildSeoSite, resolveSeoPage } from './model';
+import { normalizePath, resolveSeoPage } from './model';
+import { availableClientPage } from './client-page';
+import { SITE, absoluteUrl } from './config';
 import { toolRecordsFromRegistry } from './records';
-import { useToolOverrides } from './useToolOverrides';
+import { loadToolOverrides, useToolOverrides } from './useToolOverrides';
 
 // Head metadata is owned by RouteSeo (see docs/SEO.md). Pages may still
 // render <Helmet>; disabling its DOM writes keeps those tags from replacing
@@ -20,12 +22,12 @@ const records = toolRecordsFromRegistry(tools);
 
 /**
  * Keeps <head> metadata in sync with the current route on the client using
- * the same model as the build-time HTML. Until translations and overrides
- * are available it changes nothing, so prerendered metadata stays in place.
+ * the same model as the build-time HTML. Unavailable translations use a lazy
+ * local English fallback; unrelated namespaces never block the active route.
  */
 export default function RouteSeo() {
   const { pathname } = useLocation();
-  const { i18n, ready } = useTranslation(validNamespaces, {
+  const { i18n } = useTranslation(validNamespaces, {
     useSuspense: false
   });
   const overrides = useToolOverrides();
@@ -39,38 +41,86 @@ export default function RouteSeo() {
     return () => i18n.store.off('added', onAdded);
   }, [i18n]);
 
-  const site = useMemo(() => {
-    if (!ready || !overrides) return null;
+  const page = useMemo(() => {
     // Keys come from tool metadata at runtime, so the typed key union of
     // react-i18next does not apply here.
     const t = i18n.getFixedT(language) as unknown as (key: string) => string;
     const translate = (key: string) =>
       i18n.exists(key, { lng: language }) ? t(key) : undefined;
-    const { site, missingText } = buildSeoSite({
-      tools: records,
-      translate,
-      language,
-      overrides
-    });
-    // Missing strings (e.g. a translation file that failed to load) must not
-    // replace the prerendered or last valid metadata.
-    return missingText.length ? null : site;
+    const current = availableClientPage(
+      {
+        tools: records,
+        translate,
+        language,
+        overrides: overrides ?? {}
+      },
+      pathname
+    );
+    return current?.kind === 'tool' && !overrides ? null : current;
     // resourcesVersion is a dependency so the model is rebuilt on new strings.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [ready, overrides, language, i18n, resourcesVersion]);
+  }, [overrides, language, i18n, resourcesVersion, pathname]);
 
   useEffect(() => {
-    if (!site) return;
-    const page = resolveSeoPage(site, pathname);
-    const tags = getHeadTags(page);
-    applyHeadTags(
-      document,
-      import.meta.env.VITE_PAGES_DEV === 'true'
-        ? developmentHeadTags(tags)
-        : tags,
-      page.language
-    );
-  }, [site, pathname]);
+    let active = true;
+    const apply = (value: NonNullable<typeof page>) => {
+      if (!active) return;
+      const tags = getHeadTags(value);
+      applyHeadTags(
+        document,
+        import.meta.env.VITE_PAGES_DEV === 'true'
+          ? developmentHeadTags(tags)
+          : tags,
+        value.language
+      );
+    };
+    if (page) apply(page);
+    else {
+      // Keep correct prerendered metadata on direct load. On navigation,
+      // remove the old identity immediately while the local fallback loads.
+      const path = normalizePath(pathname);
+      const canonical = document
+        .querySelector('link[rel="canonical"]')
+        ?.getAttribute('href');
+      if (canonical !== absoluteUrl(path)) {
+        applyHeadTags(
+          document,
+          [
+            { tag: 'title', attrs: {}, text: SITE.name },
+            {
+              tag: 'meta',
+              attrs: {
+                name: 'robots',
+                content:
+                  import.meta.env.VITE_PAGES_DEV === 'true'
+                    ? 'noindex, follow'
+                    : SITE.robotsIndex
+              }
+            }
+          ],
+          SITE.language
+        );
+      }
+      Promise.all([
+        import('./english-fallback'),
+        loadToolOverrides().catch(() => ({}))
+      ])
+        .then(([fallback, loaded]) =>
+          apply(
+            resolveSeoPage(
+              fallback.englishFallbackSite(records, loaded),
+              pathname
+            )
+          )
+        )
+        .catch(() => {
+          /* Correct initial metadata or neutral head is retained; never reuse another route. */
+        });
+    }
+    return () => {
+      active = false;
+    };
+  }, [page, pathname]);
 
   return null;
 }

@@ -95,3 +95,34 @@ test('client navigation replaces metadata of the previous route', async ({
   expect(missing.tags.join('\n')).toContain('noindex');
   expect(missing.tags.join('\n')).not.toMatch(/og:|twitter:|ld\+json/);
 });
+
+test('an unrelated translation failure cannot retain a previous canonical', async ({
+  page
+}) => {
+  await page.route('**/locales/en/audio.json', (route) => route.abort());
+  await page.goto('/');
+  await waitForApp(page, 'Everyday tools. Everywhere.');
+  await page.locator('a[href="/about"]').first().click();
+  await expect(page).toHaveTitle(/About Orvulix/);
+  await expect(page.locator('link[rel="canonical"]')).toHaveAttribute(
+    'href',
+    'https://orvulix.io.vn/about'
+  );
+});
+
+test('the active tool receives local English fallback after its translation request fails', async ({
+  page
+}) => {
+  await page.route('**/locales/en/string.json', (route) => route.abort());
+  await page.goto('/about');
+  await expect(page).toHaveTitle(/About Orvulix/);
+  await page.evaluate(() => {
+    window.history.pushState({}, '', '/string/uppercase');
+    window.dispatchEvent(new PopStateEvent('popstate'));
+  });
+  await expect(page.locator('link[rel="canonical"]')).toHaveAttribute(
+    'href',
+    'https://orvulix.io.vn/string/uppercase'
+  );
+  await expect(page).toHaveTitle(/Uppercase/);
+});
