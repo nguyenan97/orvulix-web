@@ -58,7 +58,7 @@ test('authored suggestions, consent, custom matches and stale-output clearing', 
   expect(requests.join('\n')).not.toContain('private_sample');
 });
 
-test('real catastrophic backtracking times out off-thread and recovers', async ({
+test('a catastrophic expression stays off-thread and recovers across engines', async ({
   page
 }) => {
   await page.goto('/regex-assistant');
@@ -70,10 +70,43 @@ test('real catastrophic backtracking times out off-thread and recovers', async (
   await page.getByRole('checkbox').check();
   await page.getByRole('button', { name: 'Test regex locally' }).click();
   expect(await page.evaluate(() => 1 + 1)).toBe(2);
+  // Engines may bound backtracking internally and finish with no match before
+  // our deadline. Both bounded completion and worker timeout are valid here.
+  await expect(
+    page.getByText(/Regex test timed out|^0 match\(es\) found\.$/)
+  ).toBeVisible({ timeout: 10000 });
+  await page.getByLabel('Regex pattern', { exact: true }).fill('^ok$');
+  await page.getByLabel('Test text', { exact: true }).fill('ok');
+  await page.getByRole('checkbox').check();
+  await page.getByRole('button', { name: 'Test regex locally' }).click();
+  await expect(
+    page.getByText('1 match(es) found.', { exact: true })
+  ).toBeVisible();
+});
+
+test('a genuinely stuck worker times out without blocking the page and a fresh run succeeds', async ({
+  page
+}) => {
+  const workerScript = '**/assets/regex.worker-*.js';
+  await page.route(workerScript, (route) =>
+    route.fulfill({
+      contentType: 'application/javascript',
+      body: 'self.onmessage = () => { while (true) {} };'
+    })
+  );
+  await page.goto('/regex-assistant');
+  await page.getByRole('checkbox').check();
+  await page.getByRole('button', { name: 'Test regex locally' }).click();
+  expect(await page.evaluate(() => 1 + 1)).toBe(2);
   await expect(page.getByText(/Regex test timed out/)).toBeVisible({
     timeout: 10000
   });
+  await expect(
+    page.getByRole('button', { name: 'Cancel test' })
+  ).toBeDisabled();
+  await page.unroute(workerScript);
   await page.getByLabel('Regex pattern', { exact: true }).fill('^ok$');
+  await page.getByLabel('Regex flags', { exact: true }).fill('');
   await page.getByLabel('Test text', { exact: true }).fill('ok');
   await page.getByRole('checkbox').check();
   await page.getByRole('button', { name: 'Test regex locally' }).click();
