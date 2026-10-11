@@ -1,5 +1,6 @@
 import { LIMITS, SITE, absoluteUrl } from './config';
 import { buildToolSections } from './content';
+import { roadmapSections } from './roadmap';
 import { categoryJsonLd, homeJsonLd, infoJsonLd, toolJsonLd } from './jsonld';
 import {
   CATEGORY_SEO_OVERRIDES,
@@ -336,7 +337,7 @@ export const buildSeoSite = (input: SeoInput): SeoBuildResult => {
         breadcrumbs,
         linksHeading: '',
         links: [],
-        sections: [],
+        sections: path === '/roadmap' ? roadmapSections() : [],
         jsonLd: infoJsonLd({
           schemaType: seo.schemaType,
           url,

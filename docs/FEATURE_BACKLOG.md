@@ -8,6 +8,10 @@ Issue/PR states are a dated snapshot, not proof that a fix is complete or suitab
 Recheck upstream before starting each item. Priorities are relative; no delivery
 dates, adoption metrics or Claude program approval are promised.
 
+The `/roadmap` page shows user-facing summaries, proposed priority and Planned
+status. Copy lives in `src/seo/roadmap.ts`, shared by React and static prerender;
+update it alongside this ordered plan. Technical criteria stay in this document.
+
 ## Delivery rules
 
 - Start from updated `develop`, implement on `feature/*`, and open PRs into

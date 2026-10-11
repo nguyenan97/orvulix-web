@@ -8,6 +8,7 @@ import {
 import { Link, useLocation } from 'react-router-dom';
 import { Helmet } from 'react-helmet';
 import { brand } from '../../brand/config';
+import RoadmapBacklog from '../../seo/RoadmapBacklog'; // ORVULIX-ROADMAP
 
 type Page = 'about' | 'roadmap' | 'contact' | 'privacy' | 'terms' | 'not-found';
 const content: Record<Page, { title: string; paragraphs: string[] }> = {
@@ -196,6 +197,7 @@ export default function InformationPage({ page }: { page: Page }) {
             </Typography>
           );
         })}
+        {page === 'roadmap' && <RoadmapBacklog />} {/* ORVULIX-ROADMAP */}
         {(page === 'about' ||
           page === 'roadmap' ||
           page === 'contact' ||

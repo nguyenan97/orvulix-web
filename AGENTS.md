@@ -3,6 +3,8 @@
 These rules apply to every agent working anywhere in this repository.
 Before editing, committing, pushing, opening a PR, or deploying, read and follow
 `.agents/skills/development-workflow/SKILL.md`.
+Read `.agents/skills/project-communication/SKILL.md` for project context,
+communication, technical recommendations and review standards on every task.
 
 - Create `feature/*` from `develop` for new tasks and open PRs only into `develop`; do not push task changes directly to `develop`. Never develop or commit on `main`, a detached HEAD, or an unrelated branch.
 - Feature PRs target `develop`. Only an explicit user request to release authorizes a `develop` -> `main` release PR and merge.
