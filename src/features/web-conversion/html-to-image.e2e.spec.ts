@@ -1,5 +1,6 @@
 import { expect, test, type Page } from '@playwright/test';
 import { readFile } from 'node:fs/promises';
+import { RASTER_FIXTURES } from './assets.fixtures';
 
 async function decode(page: Page, bytes: Buffer) {
   return page.evaluate(async (base64) => {
@@ -176,4 +177,136 @@ test('dark mode does not leak into the image and 2x scale changes actual pixels'
   expect(result.corner).toEqual([255, 255, 255, 255]);
   await page.goto('/');
   await expect(page.locator('iframe[data-html-renderer]')).toHaveCount(0);
+});
+
+for (const [format, source] of Object.entries(RASTER_FIXTURES)) {
+  test(`embedded ${format}: preview and download include actual raster pixels`, async ({
+    page
+  }) => {
+    await page.goto('/image-generic/html-to-image');
+    await page
+      .getByLabel('HTML markup')
+      .fill(
+        `<img src="${source}" alt="Embedded red logo" width="32" height="32" style="display:block"><p>Invoice with logo</p>`
+      );
+    await page.getByRole('button', { name: 'Preview', exact: true }).click();
+    await expect(
+      page
+        .frameLocator('iframe[title="Sanitized HTML preview"]')
+        .getByAltText('Embedded red logo')
+    ).toHaveJSProperty('naturalWidth', 16);
+    if (format === 'jpeg') {
+      await page.getByLabel('Format', { exact: true }).click();
+      await page.getByRole('option', { name: 'JPEG' }).click();
+    }
+    await page.getByRole('button', { name: 'Convert to image' }).click();
+    const downloaded = page.waitForEvent('download');
+    await page
+      .getByRole('link', {
+        name: format === 'png' ? 'Download PNG' : 'Download JPEG'
+      })
+      .click();
+    const bytes = await readFile((await (await downloaded).path())!);
+    expect(bytes[0]).toBe(format === 'png' ? 137 : 255);
+    const image = await decode(page, bytes);
+    expect(image.interior[0]).toBeGreaterThan(240);
+    expect(image.interior[1]).toBeLessThan(20);
+    expect(image.interior[2]).toBeLessThan(20);
+    expect(image.interior[3]).toBe(255);
+    await expect(page.locator('iframe[data-html-renderer]')).toHaveCount(0);
+  });
+}
+
+test('rejects image pixel bombs before native decode and blocks external/srcset/SVG assets', async ({
+  page
+}) => {
+  await page.addInitScript(() => {
+    const original = window.createImageBitmap.bind(window);
+    Reflect.set(window, '__bitmapCalls', 0);
+    window.createImageBitmap = ((source: ImageBitmapSource) => {
+      Reflect.set(
+        window,
+        '__bitmapCalls',
+        Reflect.get(window, '__bitmapCalls') + 1
+      );
+      return original(source);
+    }) as typeof createImageBitmap;
+  });
+  const requests: string[] = [];
+  page.on('request', (r) => {
+    if (r.url().includes('blocked.test')) requests.push(r.url());
+  });
+  await page.goto('/image-generic/html-to-image');
+  const bomb = Buffer.from(RASTER_FIXTURES.png.split(',')[1], 'base64');
+  bomb.writeUInt32BE(100000, 16);
+  await page
+    .getByLabel('HTML markup')
+    .fill(
+      `<img src="data:image/png;base64,${bomb.toString(
+        'base64'
+      )}"><p>Bad image</p>`
+    );
+  await page.getByRole('button', { name: 'Preview', exact: true }).click();
+  await expect(
+    page.getByText(
+      'Embedded images must be at most 1024 px per side and 500000 pixels each.'
+    )
+  ).toBeVisible();
+  expect(await page.evaluate(() => Reflect.get(window, '__bitmapCalls'))).toBe(
+    0
+  );
+  await expect(
+    page.locator('iframe[title="Sanitized HTML preview"]')
+  ).toHaveCount(0);
+  await page
+    .getByLabel('HTML markup')
+    .fill(
+      `<img src="https://blocked.test/logo"><img src="data:image/svg+xml;base64,PHN2Zy8+"><img src="${RASTER_FIXTURES.png}" alt="Safe logo" srcset="https://blocked.test/large 2x" onerror="parent.__assetAttack=true" width="32" height="32" style="display:block">`
+    );
+  await page.getByRole('button', { name: 'Convert to image' }).click();
+  await expect(page.getByRole('link', { name: 'Download PNG' })).toBeVisible();
+  const preview = page.frameLocator('iframe[title="Sanitized HTML preview"]');
+  await expect(preview.locator('img')).toHaveCount(1);
+  await expect(preview.locator('[srcset],[onerror]')).toHaveCount(0);
+  expect(requests).toEqual([]);
+  expect(
+    await page.evaluate(() => Reflect.get(window, '__assetAttack'))
+  ).toBeUndefined();
+});
+
+test('stalled native image decode times out, cancels, stays responsive and recovers', async ({
+  page
+}) => {
+  await page.addInitScript(() => {
+    const original = window.createImageBitmap.bind(window);
+    Reflect.set(window, '__stallNextBitmap', true);
+    window.createImageBitmap = ((source: ImageBitmapSource) => {
+      if (Reflect.get(window, '__stallNextBitmap')) {
+        Reflect.set(window, '__stallNextBitmap', false);
+        return new Promise<ImageBitmap>(() => {});
+      }
+      return original(source);
+    }) as typeof createImageBitmap;
+  });
+  await page.goto('/image-generic/html-to-image');
+  await page.getByRole('button', { name: 'Load example' }).click();
+  await page.getByRole('button', { name: 'Convert to image' }).click();
+  expect(await page.evaluate(() => 1 + 1)).toBe(2);
+  await expect(
+    page.getByText('Embedded image decoding timed out. Use smaller images.')
+  ).toBeVisible({ timeout: 8000 });
+  await page.getByRole('button', { name: 'Convert to image' }).click();
+  await expect(page.getByRole('link', { name: 'Download PNG' })).toBeVisible();
+  await page.evaluate(() => Reflect.set(window, '__stallNextBitmap', true));
+  await page.getByRole('button', { name: 'Convert to image' }).click();
+  await page
+    .getByRole('button', { name: 'Cancel', exact: true })
+    .press('Enter');
+  await expect(
+    page.getByText('Conversion cancelled. Edit or convert again to retry.')
+  ).toBeVisible();
+  await expect(page.getByRole('link', { name: 'Download PNG' })).toHaveCount(0);
+  await expect(page.locator('iframe[data-html-renderer]')).toHaveCount(0);
+  await page.getByRole('button', { name: 'Convert to image' }).click();
+  await expect(page.getByRole('link', { name: 'Download PNG' })).toBeVisible();
 });

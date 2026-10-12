@@ -7,6 +7,7 @@ import {
   validateOptions
 } from './model';
 import { frameDocument, type PreparedHtml } from './sanitize';
+import { validateEmbeddedImages } from './assets';
 
 export async function captureHtml(
   prepared: PreparedHtml,
@@ -14,6 +15,9 @@ export async function captureHtml(
   signal: AbortSignal
 ): Promise<File> {
   validateOptions(options);
+  checkAbort(signal);
+  if (prepared.assets.length)
+    await validateEmbeddedImages(prepared.assets, signal);
   checkAbort(signal);
   const frame = document.createElement('iframe');
   frame.title = 'Temporary image renderer';

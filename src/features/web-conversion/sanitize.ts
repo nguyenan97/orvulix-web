@@ -1,5 +1,10 @@
 import DOMPurify from 'dompurify';
 import { LIMITS, validateInput } from './model';
+import {
+  readEmbeddedImage,
+  checkAssetTotals,
+  type EmbeddedImage
+} from './assets';
 
 const tags = [
   'div',
@@ -32,7 +37,8 @@ const tags = [
   'tr',
   'th',
   'td',
-  'caption'
+  'caption',
+  'img'
 ];
 const enums: Record<string, readonly string[]> = {
   display: [
@@ -92,6 +98,7 @@ function allowedStyle(property: string, value: string) {
 export interface PreparedHtml {
   markup: string;
   notices: string[];
+  assets: EmbeddedImage[];
 }
 /** Only inert text/table markup and a small, network-free inline CSS subset. */
 export function prepareHtml(input: string): PreparedHtml {
@@ -101,6 +108,7 @@ export function prepareHtml(input: string): PreparedHtml {
   const template = document.createElement('template');
   template.innerHTML = input;
   const notices = new Set<string>();
+  const assets: EmbeddedImage[] = [];
   const container = document.createElement('div');
   let count = 0;
   const copy = (node: Node, target: Node, depth: number) => {
@@ -115,9 +123,7 @@ export function prepareHtml(input: string): PreparedHtml {
       !tags.includes(node.localName) ||
       node.namespaceURI !== 'http://www.w3.org/1999/xhtml'
     ) {
-      notices.add(
-        'Unsupported markup, scripts, images or attributes were removed.'
-      );
+      notices.add('Unsupported markup, scripts or attributes were removed.');
       // Preserve text from ordinary link/structural wrappers, never active content.
       if (
         [
@@ -135,15 +141,42 @@ export function prepareHtml(input: string): PreparedHtml {
           copy(child, target, depth + 1);
       return;
     }
+    const image =
+      node.localName === 'img'
+        ? readEmbeddedImage(node.getAttribute('src') || '')
+        : null;
+    if (node.localName === 'img' && !image) {
+      notices.add(
+        'External, SVG and unsupported images were removed. Embed PNG/JPEG using base64 data URLs.'
+      );
+      return;
+    }
+    if (image) {
+      assets.push(image);
+      checkAssetTotals(assets);
+    }
     const safeNode = document.createElement(node.localName);
+    if (image) {
+      safeNode.setAttribute('src', image.dataUrl);
+      safeNode.setAttribute(
+        'alt',
+        (node.getAttribute('alt') || 'Embedded image').slice(0, 160)
+      );
+      for (const key of ['width', 'height']) {
+        const value = Number(node.getAttribute(key));
+        if (Number.isInteger(value) && value > 0 && value <= 1280)
+          safeNode.setAttribute(key, String(value));
+      }
+    }
+    const attributes = image
+      ? ['style', 'src', 'alt', 'width', 'height']
+      : ['style', 'colspan', 'rowspan'];
     if (
       Array.from(node.attributes).some(
-        (attr) => !['style', 'colspan', 'rowspan'].includes(attr.name)
+        (attr) => !attributes.includes(attr.name)
       )
     )
-      notices.add(
-        'Unsupported markup, scripts, images or attributes were removed.'
-      );
+      notices.add('Unsupported markup, scripts or attributes were removed.');
     const raw = node.getAttribute('style');
     if (raw) {
       const parsed = document.createElement('div').style;
@@ -170,19 +203,27 @@ export function prepareHtml(input: string): PreparedHtml {
   };
   for (const node of Array.from(template.content.childNodes))
     copy(node, container, 1);
-  if (!container.textContent?.trim())
+  if (!container.textContent?.trim() && !assets.length)
     throw Error(
-      'No supported text content remains. Use static text, lists or tables.'
+      'No supported content remains. Use text, lists, tables or embedded PNG/JPEG images.'
     );
   const markup = DOMPurify.sanitize(container.innerHTML, {
     ALLOWED_TAGS: tags,
-    ALLOWED_ATTR: ['style', 'colspan', 'rowspan'],
+    ALLOWED_ATTR: [
+      'style',
+      'colspan',
+      'rowspan',
+      'src',
+      'alt',
+      'width',
+      'height'
+    ],
     ALLOW_DATA_ATTR: false,
     ALLOW_ARIA_ATTR: false
   });
   if (!markup) throw Error('The browser could not safely parse this HTML.');
-  return { markup, notices: [...notices] };
+  return { markup, notices: [...notices], assets };
 }
 export function frameDocument(prepared: PreparedHtml) {
-  return `<!doctype html><html><head><meta charset="utf-8"><meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'none'; style-src 'unsafe-inline'; img-src 'none'; font-src 'none'; connect-src 'none'; frame-src 'none'; object-src 'none'; base-uri 'none'; form-action 'none'"><style>html,body{margin:0;color:#111827;background:transparent;font:16px Arial,sans-serif}body{overflow:hidden;overflow-wrap:anywhere}*,*::before,*::after{box-sizing:border-box}table{border-collapse:collapse;max-width:100%}th,td{padding:8px;border:1px solid #d1d5db}pre{white-space:pre-wrap}</style></head><body>${prepared.markup}</body></html>`;
+  return `<!doctype html><html><head><meta charset="utf-8"><meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'none'; style-src 'unsafe-inline'; img-src data:; font-src 'none'; connect-src 'none'; frame-src 'none'; object-src 'none'; base-uri 'none'; form-action 'none'"><style>html,body{margin:0;color:#111827;background:transparent;font:16px Arial,sans-serif}body{overflow:hidden;overflow-wrap:anywhere}*,*::before,*::after{box-sizing:border-box}table{border-collapse:collapse;max-width:100%}th,td{padding:8px;border:1px solid #d1d5db}pre{white-space:pre-wrap}img{max-width:100%;max-height:1080px}</style></head><body>${prepared.markup}</body></html>`;
 }

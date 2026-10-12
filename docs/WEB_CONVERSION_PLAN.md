@@ -45,8 +45,8 @@ Do not merge or release implicitly. Follow AGENTS.md for branch cleanup.
 
 | Step | Scope | Acceptance gate | Status |
 | --- | --- | --- | --- |
-| 1 | Local engine/isolation and HTML to Image MVP | Real images on all 3 engines, no script/network leak, bounded inputs and recovery | In progress on feature/html-to-image |
-| 2 | Local assets/fonts/break-aware refinement | Explicit supported asset policy, decoding limits, fidelity fixtures | Planned |
+| 1 | Local engine/isolation and HTML to Image MVP | Real images on all 3 engines, no script/network leak, bounded inputs and recovery | Implemented on feature/html-to-image, not merged |
+| 2 | Local assets/fonts/break-aware refinement | Explicit supported asset policy, decoding limits, fidelity fixtures | Embedded PNG/JPEG implemented on branch; fonts/pagination planned |
 | 3 | Targeted PDF dependency/security baseline | Patched supported versions, existing image-to-PDF regression tests | Required before HTML/PDF |
 | 4 | HTML to PDF snapshot | Page count/size/margins/ranges verified on downloaded PDFs; raster label | Planned |
 | 5 | Remote service spike | Measured latency/resource budgets, funding/hosting plan, isolation/egress policy | Planned |
@@ -161,8 +161,9 @@ by real-browser output tests, not a claim of universal CSS fidelity.
 
 Current budgets: 64 KiB UTF-8 input, 1000 processed nodes, depth 24, dimensions
 320..1280 by 100..1080, scale 1/2, 2 MP output, 8 MiB encoded result. Input styles
-are rebuilt from a small allowlist in an inert template before DOMPurify. Images,
-style blocks, imports, active markup and network assets are removed. The source
+are rebuilt from a small allowlist in an inert template before DOMPurify. Only
+base64 data-URL PNG/JPEG images are accepted; SVG/GIF/APNG, style blocks, imports,
+active markup and external assets are removed or rejected. The source
 document uses system fonts; the app keeps its existing Quicksand/MUI theme.
 
 DOMPurify was updated from 3.4.2 to pinned 3.4.16 because the feature uses it
@@ -176,12 +177,25 @@ Renderer frames use allow-same-origin without allow-scripts. The deadline is a
 10-second asynchronous wait bound, not a hard CPU quota. Abort removes the owned
 frame, discards late output, and zeros a late canvas; it cannot interrupt an
 in-progress synchronous layout or encoding. Output is fixed-size and cropped.
-HTML/PDF and URL conversion are still planned; jsPDF upgrade remains a PDF gate.
+Embedded images are limited to 4, 48 KiB combined compressed data, 1024 px per
+side, 500000 pixels per image and 1000000 pixels combined. PNG chunk bounds/CRC
+and JPEG frame/segment bounds are checked before assigning a source or native
+decode. PNG permits 1/2/4/8-bit static files and a small metadata allowlist;
+compressed metadata and unknown chunks are rejected. JPEG permits single-frame
+8-bit baseline/progressive files. Browser decoding verifies header dimensions
+before preview/export. A 5-second asynchronous validation deadline and abort
+discard late results; every resolved bitmap is closed, including late results.
+Native decode itself cannot be preempted and these checks are not hard memory
+quotas. The capture CSP permits only data images; scripts and network remain
+blocked. Fonts/full-page refinement, HTML/PDF and URL conversion are still
+planned; jsPDF upgrade remains a PDF gate.
 
 Validation evidence and the exact CI head are recorded in the feature PR. Tests
 decode actual PNG/JPEG bytes and verify dimensions, transparency, colors and
 scale; browser tests also cover hostile content/network isolation and dark/mobile
-flows. Unit sanitizer tests use normal attribute names because happy-dom 12 has
+flows. Embedded PNG/JPEG fixtures verify actual raster pixels in preview and
+download, oversized headers fail before native decode, and stalled decode tests
+verify timeout/cancel/recovery. Unit sanitizer tests use normal attribute names because happy-dom 12 has
 a parser error for id=constructor; the exact DOM-clobbering payload is tested in
 real Chromium/Firefox/WebKit without removing the security assertion.
 

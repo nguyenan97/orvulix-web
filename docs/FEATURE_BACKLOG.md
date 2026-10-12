@@ -44,8 +44,9 @@ Owner-requested Web/HTML conversion has a separate phased
 [research and implementation plan](WEB_CONVERSION_PLAN.md). HTML to Image is implemented on
 feature/html-to-image for review: static text/table/list HTML, safe inline styles,
 PNG/JPEG, bounded dimensions/scale, transparency, upload/preview/download and
-cancellation. Scripts, images, stylesheet blocks and external resources are
-removed; output is cropped. HTML/PDF and URL conversion remain planned. This
+cancellation. Embedded PNG/JPEG data URLs have header checks, byte/pixel budgets
+and native decode validation; external images, SVG/APNG, scripts and stylesheet
+blocks remain blocked. Output is cropped. HTML/PDF and URL conversion remain planned. This
 request does not imply acceptance by upstream or completion of PDF privacy work.
 
 Difficulty is relative implementation risk, not an estimate of calendar time.

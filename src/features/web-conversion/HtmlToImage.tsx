@@ -12,8 +12,11 @@ import {
 } from '@mui/material';
 import { DEFAULT_OPTIONS, type ImageOptions, validateOptions } from './model';
 import { frameDocument, prepareHtml, type PreparedHtml } from './sanitize';
+import { validateEmbeddedImages } from './assets';
+import { SAMPLE_LOGO } from './sample-logo';
 
 export const SAMPLE = `<div style="padding:24px;background-color:#f0fdfa">
+  <img src="${SAMPLE_LOGO}" alt="Example logo" width="32" height="32">
   <h1 style="color:#0f766e">Orvulix invoice</h1>
   <p>Static HTML example - Nguyễn An</p>
   <table style="width:100%"><thead><tr><th>Item</th><th>Amount</th></tr></thead>
@@ -67,20 +70,35 @@ export default function HtmlToImage() {
     invalidate();
     setOptions(next);
   };
-  const prepare = () => {
+  const prepare = async (controller: AbortController) => {
     validateOptions(options);
     const prepared = prepareHtml(html);
+    if (prepared.assets.length)
+      await validateEmbeddedImages(prepared.assets, controller.signal);
+    if (job.current !== controller || controller.signal.aborted)
+      throw new DOMException('Conversion cancelled.', 'AbortError');
     setNotices(prepared.notices);
     setPreview(prepared);
     return prepared;
   };
-  const showPreview = () => {
+  const showPreview = async () => {
+    if (job.current) return;
+    const controller = new AbortController();
+    job.current = controller;
+    setBusy(true);
     setError('');
     try {
-      prepare();
+      await prepare(controller);
     } catch (reason) {
-      setPreview(null);
-      setError(reason instanceof Error ? reason.message : 'Preview failed.');
+      if (job.current === controller) {
+        setPreview(null);
+        setError(reason instanceof Error ? reason.message : 'Preview failed.');
+      }
+    } finally {
+      if (job.current === controller) {
+        job.current = null;
+        setBusy(false);
+      }
     }
   };
   const convert = async () => {
@@ -91,7 +109,7 @@ export default function HtmlToImage() {
     setError('');
     setFile(null);
     try {
-      const prepared = prepare();
+      const prepared = await prepare(controller);
       const { captureHtml } = await import('./renderer');
       const output = await captureHtml(
         prepared,
@@ -136,9 +154,10 @@ export default function HtmlToImage() {
   return (
     <Stack spacing={2} id="tool">
       <Alert severity="info">
-        Local static HTML only. Scripts, images, stylesheet blocks and external
-        resources are removed. Simple inline styles are supported. Output is
-        cropped to the selected dimensions.
+        Local static HTML with simple inline styles and embedded PNG/JPEG data
+        URLs. Scripts, SVG, stylesheet blocks and external resources are
+        removed. Output is cropped to the selected dimensions. Up to 4 images,
+        48 KiB combined image data and 1 megapixel of source images.
       </Alert>
       <Box
         sx={{
@@ -197,7 +216,7 @@ export default function HtmlToImage() {
               <Stack direction="row" spacing={1}>
                 <Button
                   variant="outlined"
-                  onClick={showPreview}
+                  onClick={() => void showPreview()}
                   disabled={busy}
                 >
                   Preview

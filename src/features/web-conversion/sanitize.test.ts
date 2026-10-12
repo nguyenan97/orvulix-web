@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { frameDocument, prepareHtml } from './sanitize';
+import { RASTER_FIXTURES } from './assets.fixtures';
 describe('static HTML policy', () => {
   it('preserves Vietnamese text, tables and safe inline styles', () => {
     const result = prepareHtml(
@@ -31,9 +32,9 @@ describe('static HTML policy', () => {
     expect(result.notices.length).toBeGreaterThan(0);
   });
   it('rejects unsupported-only content', () =>
-    expect(() => prepareHtml('<img src="data:image/png;base64,a">')).toThrow(
-      /No supported/
-    ));
+    expect(() =>
+      prepareHtml('<img src="https://blocked.test/logo.png">')
+    ).toThrow(/No supported/));
   it('rejects deep and numerous nodes', () => {
     expect(() =>
       prepareHtml('<div>'.repeat(25) + 'hello' + '</div>'.repeat(25))
@@ -51,7 +52,17 @@ describe('static HTML policy', () => {
     expect(result.indexOf('Content-Security-Policy')).toBeLessThan(
       result.indexOf('<body>')
     );
-    expect(result).toContain("img-src 'none'");
+    expect(result).toContain('img-src data:');
     expect(result).toContain("script-src 'none'");
   });
+});
+
+it('keeps raster headers and alt/dimensions but removes srcset and handlers', () => {
+  const result = prepareHtml(
+    `<img src="${RASTER_FIXTURES.png}" alt="Logo" width="32" height="32" srcset="https://blocked.test/hi.png 2x" onerror="alert(1)">`
+  );
+  expect(result.assets).toHaveLength(1);
+  expect(result.markup).toContain('alt="Logo"');
+  expect(result.markup).toContain('width="32"');
+  expect(result.markup).not.toMatch(/srcset|onerror|blocked\.test/);
 });

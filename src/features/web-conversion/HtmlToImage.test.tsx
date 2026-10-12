@@ -10,6 +10,11 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import HtmlToImage from './HtmlToImage';
 import { captureHtml } from './renderer';
 vi.mock('./renderer', () => ({ captureHtml: vi.fn() }));
+// Native raster decode is covered separately with injectable decoders and real browsers.
+vi.mock('./assets', async (original) => ({
+  ...(await original<typeof import('./assets')>()),
+  validateEmbeddedImages: vi.fn(async () => {})
+}));
 beforeEach(() => {
   // happy-dom 12 passes MUI's sentinel -1 to Node clearImmediate. Use a
   // browser-like RAF pair; real rendering is separately tested in Playwright.
@@ -53,12 +58,14 @@ describe('explicit HTML conversion lifecycle', () => {
     );
     expect(URL.createObjectURL).not.toHaveBeenCalled();
   });
-  it('does not capture on input edits or preview', () => {
+  it('does not capture on input edits or preview', async () => {
     render(<HtmlToImage />);
     fireEvent.click(screen.getByText('Load example'));
     fireEvent.click(screen.getByRole('button', { name: 'Preview' }));
     expect(captureHtml).not.toHaveBeenCalled();
-    expect(screen.getByTitle('Sanitized HTML preview')).toBeInTheDocument();
+    expect(
+      await screen.findByTitle('Sanitized HTML preview')
+    ).toBeInTheDocument();
   });
   it('aborts edits, ignores late result, recovers and revokes result URLs', async () => {
     const pending: ((v: File) => void)[] = [];

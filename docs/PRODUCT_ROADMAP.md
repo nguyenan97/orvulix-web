@@ -22,7 +22,9 @@ Our approach is to make existing tools better first, then explore new capabiliti
 - Improve search visibility with helpful, original content for individual tools.
 - Web/HTML conversion follows a [separate phased plan](WEB_CONVERSION_PLAN.md).
   HTML to Image is implemented on feature/html-to-image for review, with local
-  static text/table/list rendering and PNG/JPEG export. HTML/PDF and URL rendering
+  static text/table/list rendering, bounded embedded PNG/JPEG and PNG/JPEG export.
+  External resources/scripts are blocked; fonts and full-page refinement remain
+  planned. HTML/PDF and URL rendering
   are planned, with PDF dependency review and remote isolation gates.
 
 **Outcome we want:** People can find the right tool quickly, complete their task, and confidently return when they need it again.
