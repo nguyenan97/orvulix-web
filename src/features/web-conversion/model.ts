@@ -59,16 +59,28 @@ export function validateOptions(options: ImageOptions) {
   )
     throw Error('JPEG quality must be from 0.1 to 1.');
 }
-export function safeFilename(name: string, format: ImageOptions['format']) {
-  const cleaned = name
+export function safeFilename(
+  name: string,
+  format: ImageOptions['format'] | 'pdf'
+) {
+  const input =
+    format === 'pdf'
+      ? name.replace(
+          /[\u0080-\u009f\u061c\u200e\u200f\u2028-\u202e\u2066-\u2069\ufeff]/g,
+          '-'
+        )
+      : name;
+  const cleaned = input
     .replace(/[\u0000-\u001f\u007f<>:"/\\|?*]/g, '-')
-    .replace(/\.(png|jpe?g)$/i, '')
+    .replace(format === 'pdf' ? /\.(pdf|png|jpe?g)$/i : /\.(png|jpe?g)$/i, '')
     .replace(/^[.\s]+|[.\s]+$/g, '')
     .slice(0, 80);
   const stem = /^(con|prn|aux|nul|com[1-9]|lpt[1-9])(?:\.|$)/i.test(cleaned)
-    ? `image-${cleaned}`
+    ? `${format === 'pdf' ? 'pdf' : 'image'}-${cleaned}`
     : cleaned;
-  return `${stem || 'html-image'}.${format === 'jpeg' ? 'jpg' : 'png'}`;
+  return `${stem || (format === 'pdf' ? 'html-pdf' : 'html-image')}.${
+    format === 'jpeg' ? 'jpg' : format
+  }`;
 }
 export function abortError() {
   return new DOMException('Conversion cancelled.', 'AbortError');

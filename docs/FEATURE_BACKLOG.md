@@ -49,7 +49,9 @@ and native decode validation; external images, SVG/APNG, scripts and stylesheet
 blocks remain blocked. Safe system font stacks, overflow/split-row warnings and
 optional strict crop rejection are implemented. Output is one fixed-size image;
 multi-page pagination belongs to the gated PDF phase. jsPDF is upgraded to 4.2.1 on the branch with real PDF regression coverage;
-61 inherited audit findings remain. HTML/PDF and URL conversion remain planned. This
+61 inherited audit findings remain. One-page HTML to PDF is implemented on the branch with A4/Letter, orientation,
+margins, aspect-preserving fit, strict crop handling and a raster-text label.
+Multi-page pagination/ranges and URL conversion remain planned. This
 request does not imply acceptance by upstream or completion of PDF privacy work.
 
 Difficulty is relative implementation risk, not an estimate of calendar time.

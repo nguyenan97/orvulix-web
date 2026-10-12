@@ -25,8 +25,8 @@ Our approach is to make existing tools better first, then explore new capabiliti
   static text/table/list rendering, bounded embedded PNG/JPEG and PNG/JPEG export.
   External resources/scripts are blocked. Safe system font stacks and crop/row
   boundary warnings with strict rejection are implemented. Embedded fonts and
-  full-page capture remain outside the local-image contract. HTML/PDF and URL rendering
-  are planned. The targeted jsPDF 4.2.1 dependency baseline is implemented on the
+  full-page capture remain outside the local-image contract. One-page HTML to PDF is implemented on the branch with A4/Letter, margins and
+  an explicit raster-text label; multi-page PDF and URL rendering remain planned. The targeted jsPDF 4.2.1 dependency baseline is implemented on the
   feature branch for review; remaining legacy PDF limits and remote isolation
   need separate scope.
 

@@ -48,7 +48,8 @@ Do not merge or release implicitly. Follow AGENTS.md for branch cleanup.
 | 1 | Local engine/isolation and HTML to Image MVP | Real images on all 3 engines, no script/network leak, bounded inputs and recovery | Implemented on feature/html-to-image, not merged |
 | 2 | Local assets/system fonts/single-image boundary refinement | Asset limits, safe font stacks, crop/row warnings and strict export with fidelity fixtures | Implemented on feature/html-to-image, not merged; multi-page pagination belongs to step 4 |
 | 3 | Targeted PDF dependency/security baseline | Patched supported versions, existing image-to-PDF regression tests | jsPDF 4.2.1 and regression coverage implemented on branch, not merged |
-| 4 | HTML to PDF snapshot | Page count/size/margins/ranges verified on downloaded PDFs; raster label | Planned |
+| 4 | One-page HTML to PDF raster | Actual page size, margins, image placement/pixels and raster label | Implemented on feature/html-to-image, not merged |
+| 4b | Multi-page PDF pagination/ranges | Explicit break/oversized-row/header policy and actual multi-page PDF assertions | Planned |
 | 5 | Remote service spike | Measured latency/resource budgets, funding/hosting plan, isolation/egress policy | Planned |
 | 6 | Web to Image | Real gateway-renderer-download tests, SSRF/cancel/quota coverage | Planned |
 | 7 | Web to PDF | Native text extraction, print/screen styles, paper/margins/ranges | Planned |
@@ -172,7 +173,8 @@ directly. Baseline develop had 63 audit findings; the final lockfile has 62
 html-to-image. The targeted jsPDF upgrade subsequently reduced this to 61
 (6 critical, 37 high, 16 moderate, 2 low), with no jsPDF finding. Remaining
 advisories are inherited and not resolved by this PR.
-The broad dependency/security task remains necessary, especially before PDF work.
+The broad dependency/security task remains separate backlog work; the targeted
+jsPDF gate described below is narrower.
 Tool UI copy is English; existing metadata uses the project's English fallback.
 
 Renderer frames use allow-same-origin without allow-scripts. The deadline is a
@@ -189,7 +191,8 @@ before preview/export. A 5-second asynchronous validation deadline and abort
 discard late results; every resolved bitmap is closed, including late results.
 Native decode itself cannot be preempted and these checks are not hard memory
 quotas. The capture CSP permits only data images; scripts and network remain
-blocked. HTML/PDF and URL conversion are still planned; the narrow jsPDF dependency
+blocked. One-page HTML/PDF is implemented on branch; multi-page and URL conversion remain
+planned. The narrow jsPDF dependency
 gate is implemented on branch, subject to exact-head CI and review. Embedded/custom fonts and full-page capture are outside the current
 local-image contract.
 
@@ -254,7 +257,8 @@ release lists no other breaking change. Browser consumers need no API migration.
 Do not enable allowFsRead. [v4.0.0](https://github.com/parallax/jsPDF/releases/tag/v4.0.0),
 [v4.2.1](https://github.com/parallax/jsPDF/releases/tag/v4.2.1).
 
-The only runtime jsPDF import is pdf/convert-to-pdf/service.ts: constructor,
+At the dependency baseline phase, the only runtime jsPDF import was
+pdf/convert-to-pdf/service.ts: constructor,
 setDisplayMode, addPage, pageSize getters, addImage and output('blob'). It accepts
 browser image elements, not filesystem paths. Split Image to Pages uses pdf-lib
 1.17.1 and stays unchanged. No new HTML, annotations, AcroForm, addJS or metadata
@@ -297,17 +301,84 @@ or generation-token cancellation. Split Image to Pages does not fully guard
 invalid numeric options/resource expansion. These inherited reliability gaps need
 separate scope; jsPDF's 14400-point page ceiling is not an input or memory quota.
 HEIC/WebP/GIF conversions are not covered by the new PNG/JPEG fidelity fixtures.
-The dependency/API baseline gate is narrow, not an approval to ship HTML/PDF.
+The dependency/API baseline gate is narrow, not proof that all legacy PDF
+consumers have resource quotas or cancellation.
 
-Next proposed scope: local raster HTML to PDF in the isolated conversion module,
+The following planned scope is now implemented for one page on the branch:
+local raster HTML to PDF in the isolated conversion module,
 with explicit page-size/orientation/margins, bounded page/pixel/output counts,
 strict option validation, safe static assets and existing job cancellation. Label
 text as non-searchable/non-selectable. Start with one-page fidelity and actual
 PDF.js raster assertions; ranges, multi-page splitting, repeated headers and
 oversized-row behavior require explicit acceptance criteria before implementation.
-Do not use jsPDF.html or expand remote rendering in this baseline task.
+The new implementation uses addImage and blob output; no jsPDF.html or remote
+rendering has been added.
 
 Sync hotspots added by this baseline: package/lock, the two existing Images to
 PDF files (decode cleanup and local error/clear handling), one focused CI command
 and these docs. Test helpers stay under the isolated module; no tool registry,
 locale, Netlify, route or production policy changes.
+
+## One-page HTML to PDF contract
+
+Implemented on feature/html-to-image, not merged: /pdf/html-to-pdf. The shared
+HTML conversion UI has an explicit PDF adapter; image mode keeps its existing
+controls and outputs. The same sanitizer, embedded asset policy, capture frame,
+CSP, crop inspection, jobs and resource cleanup are reused. PDF.js is used in
+tests through the existing PDF to PNG tool, not in the PDF export runtime.
+
+A4 is 210 x 297 mm; Letter is 215.9 x 279.4 mm. Orientation swaps page dimensions.
+Each margin accepts finite decimal values from 0 to 100 mm; the printable area
+must be positive. These paper/margin bounds also keep printable sides above
+zero. Out-of-budget margins that would collapse the page are rejected before
+capture. Viewport width/height remain 320..1280 / 100..1080 CSS px. Scale is 1/2.
+
+Fit coefficient = min(printableWidth / viewportWidth, printableHeight /
+viewportHeight), in mm per CSS pixel. Keep aspect ratio, center inside printable
+space, and convert mm to PDF points using 72 / 25.4. Scale multiplies raster
+pixels only; page geometry and placement do not change. The preview displays a
+white paper board at 2 CSS px/mm with the same fit/offsets, in a scrollable panel.
+It is a supported-layout preview, not a native PDF viewer or a glyph-identical
+promise across operating systems. Cropping applies to the fixed HTML viewport;
+strict mode rejects viewport overflow before image capture. No full-page capture,
+automatic pagination, page ranges, repeated headers or page-break CSS support.
+
+Input/DOM/assets retain existing limits: 64 KiB UTF-8, 1000 nodes, depth 24,
+4 embedded PNG/JPEG images, 48 KiB combined file data and 1 MP combined source
+pixels. Capture is at most 2 MP and 8 MiB PNG; PDF output is one page and at most
+8 MiB. PNG headers/dimensions are checked again before jsPDF assembly. PNG input
+at this stage is owned renderer output, not an arbitrary user-uploaded PNG API.
+PNG alpha is kept as a PDF soft mask; PDF paper and the preview board are white.
+Unused font resources are omitted. Text is raster, not searchable/selectable.
+Default OpenAction is jsPDF's local FitH page destination, not executable code;
+no JavaScript actions, annotations, external resources or custom metadata APIs
+are introduced.
+
+Asset validation retains its 5-second async deadline. Capture retains its
+10-second async deadline; PDF assembly has its own 10-second async deadline
+covering byte reading/module loading, with elapsed-clock checks before/after
+synchronous work to discard late output even if a timer callback was delayed.
+Check abort/ownership before and after
+asynchronous boundaries and before/after synchronous encoding; reject late
+outputs/errors. DOM layout, native decode and synchronous jsPDF/PNG work cannot
+be interrupted by a timer and have no hard CPU/memory quota. Input/options edits,
+reset and unmount abort owned jobs. Owned frames, bitmaps, listeners, timers,
+canvases and result blob URLs follow the existing cleanup. Encoding arrays and
+jsPDF objects are local and released for garbage collection, not explicit disposals.
+
+Tests use real jsPDF bytes with read-only pdf-lib metadata inspection, verify
+geometry, draw matrices, alpha, safe catalog/view resources, page count and
+filenames, including ASCII/C1/bidi control filtering for PDF downloads. Real UI flows download and rasterize with PDF.js, checking paper
+margins, logo/text/table ink, embedded PNG/JPEG, transparency and 2x resolution.
+Security cases include preview/capture network/script/navigation isolation.
+Deferred unit promises exercise double-submit, margin/input edits, late errors,
+encoding timeout/cancel, unmount, reset and recovery. Browser flows also compare preview bounds/offsets against the downloaded PDF
+draw matrix and exercise client-side route unmount during a pending job. They
+cover invalid HTML/options, strict crossing rows, unsupported native decode, mobile/dark and
+keyboard conversion. Exact run/head results belong in the PR.
+
+New sync hotspots: two lines in the PDF tool registry, related English PDF locale
+key, two SEO override lines, focused CI command and small shared converter/model
+integration. Core and test additions remain under src/features/web-conversion/;
+new page/meta/content adapters follow existing conventions. Netlify settings,
+production policy, unrelated services/locales and directory structure are unchanged.
