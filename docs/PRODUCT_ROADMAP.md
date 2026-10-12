@@ -20,6 +20,10 @@ Our approach is to make existing tools better first, then explore new capabiliti
   [bounded workers](BOUNDED_LIST_REGEX.md), with numeric guards for Group and Duplicate
   and preflight checks for Group padding separator expansion.
 - Improve search visibility with helpful, original content for individual tools.
+- Web/HTML conversion follows a [separate phased plan](WEB_CONVERSION_PLAN.md).
+  HTML to Image is implemented on feature/html-to-image for review, with local
+  static text/table/list rendering and PNG/JPEG export. HTML/PDF and URL rendering
+  are planned, with PDF dependency review and remote isolation gates.
 
 **Outcome we want:** People can find the right tool quickly, complete their task, and confidently return when they need it again.
 

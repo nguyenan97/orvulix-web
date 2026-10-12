@@ -58,8 +58,9 @@ Current jsPDF lock version 3.0.3 falls in an official vulnerable range. Review
 [GHSA-wfv2-pwc8-crg5](https://github.com/parallax/jsPDF/security/advisories/GHSA-wfv2-pwc8-crg5)
 and all other current advisories; this advisory fixes output HTML injection in
 >=4.2.1. Do not claim current output(blob) usage is proven exploited. No new
-jsPDF usage is needed for HTML to Image. npm audit research attempt did not finish;
-do not present it as a fresh complete audit. Do not bulk-update dependencies.
+jsPDF usage is needed for HTML to Image. The initial research audit request did
+not finish; implementation later verified the baseline and final registry reports.
+Do not bulk-update dependencies.
 
 ## First MVP contract
 
@@ -89,7 +90,7 @@ policy must also apply to the cloned document. DOMPurify alone is not a CSS or
 network policy. Test scripts, handlers, base/meta, srcset, SVG, CSS import/url/font,
 forms and navigation. [MDN iframe](https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/iframe).
 
-html2canvas is a DOM renderer, not a native browser screenshot or a real worker.
+These local capture engines are DOM renderers, not native browser screenshots or real workers.
 Use safe supported CSS, bounds and a single job; cancellation cannot preempt a
 synchronous browser layout. Abort removes owned resources and discards late
 results. Do not advertise hard CPU/memory quotas. [Limitations](https://html2canvas.hertzen.com/documentation/).
@@ -150,7 +151,43 @@ bounded DOM/fonts/images/selector checks, not endless networkidle waits.
 
 ## Completion evidence
 
-Update this section after implementation and validation, distinguishing local
-results, CI head and merged state. Engine spike failure is a reason to reduce
-scope or change adapter, not to ship misleading controls. Do not mark all four
-converters complete after one mocked successful download.
+HTML to Image is implemented on feature/html-to-image, not merged. Engine spike
+found html2canvas stuck in WebKit's script-disabled sandbox clone. The selected
+adapter uses html-to-image 1.11.13 (MIT, no runtime dependencies), lazy-loaded only
+when converting. Existing html2canvas remains an optional dependency of jsPDF;
+no direct html2canvas dependency was added. Its scripts remain disabled; no unsafe
+fallback or longer deadline was used. This is a compatibility decision supported
+by real-browser output tests, not a claim of universal CSS fidelity.
+
+Current budgets: 64 KiB UTF-8 input, 1000 processed nodes, depth 24, dimensions
+320..1280 by 100..1080, scale 1/2, 2 MP output, 8 MiB encoded result. Input styles
+are rebuilt from a small allowlist in an inert template before DOMPurify. Images,
+style blocks, imports, active markup and network assets are removed. The source
+document uses system fonts; the app keeps its existing Quicksand/MUI theme.
+
+DOMPurify was updated from 3.4.2 to pinned 3.4.16 because the feature uses it
+directly. Baseline develop had 63 audit findings; the final lockfile has 62
+(7 critical, 37 high, 16 moderate, 2 low), with no finding for DOMPurify or
+html-to-image. Remaining advisories are inherited and not resolved by this PR.
+The broad dependency/security task remains necessary, especially before PDF work.
+Tool UI copy is English; existing metadata uses the project's English fallback.
+
+Renderer frames use allow-same-origin without allow-scripts. The deadline is a
+10-second asynchronous wait bound, not a hard CPU quota. Abort removes the owned
+frame, discards late output, and zeros a late canvas; it cannot interrupt an
+in-progress synchronous layout or encoding. Output is fixed-size and cropped.
+HTML/PDF and URL conversion are still planned; jsPDF upgrade remains a PDF gate.
+
+Validation evidence and the exact CI head are recorded in the feature PR. Tests
+decode actual PNG/JPEG bytes and verify dimensions, transparency, colors and
+scale; browser tests also cover hostile content/network isolation and dark/mobile
+flows. Unit sanitizer tests use normal attribute names because happy-dom 12 has
+a parser error for id=constructor; the exact DOM-clobbering payload is tested in
+real Chromium/Firefox/WebKit without removing the security assertion.
+
+Sync hotspots: image generic registry (2 lines), English image metadata (new key),
+SEO override registry (2 lines), focused Pages CI (one command), package/lock and
+the isolated new module/page/SEO files. Existing tool services, Netlify settings,
+SSR/routing and other locales are untouched. License notice is shipped under
+public/licenses/html-to-image.txt. More assets/full-page/PDF support needs separate
+scope and tests; do not mark all four converters complete from this MVP.
