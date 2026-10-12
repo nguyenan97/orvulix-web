@@ -7,7 +7,7 @@ import SimpleRadio from '@components/options/SimpleRadio';
 import TextFieldWithDesc from '@components/options/TextFieldWithDesc';
 import CheckboxWithDesc from '@components/options/CheckboxWithDesc';
 import SelectWithDesc from '@components/options/SelectWithDesc';
-import ToolContent from '@components/ToolContent';
+import ToolContent from '../../../../workers/list-regex/BoundedListContent'; // ORVULIX-RELIABILITY
 import { ToolComponentProps } from '@tools/defineTool';
 import { useTranslation } from 'react-i18next';
 
@@ -68,6 +68,8 @@ export default function SortList({ title }: ToolComponentProps) {
 
   return (
     <ToolContent
+      workerOperation="sort"
+      setResult={setResult} // ORVULIX-RELIABILITY
       title={title}
       input={input}
       inputComponent={

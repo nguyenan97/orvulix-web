@@ -1,3 +1,4 @@
+import { LIST_LIMITS } from '../../../../workers/list-regex/limits'; // ORVULIX-RELIABILITY
 export type SplitOperatorType = 'symbol' | 'regex';
 
 function interweave(array1: string[], array2: string[]) {
@@ -64,6 +65,11 @@ export function duplicateList(
   reverse: boolean,
   copy?: number
 ): string {
+  if (
+    copy !== undefined &&
+    (!Number.isFinite(copy) || copy > LIST_LIMITS.copies)
+  )
+    throw new Error('Copies must be finite and at most 1000.'); // ORVULIX-RELIABILITY
   let array: string[];
   let result: string[];
   switch (splitOperatorType) {
