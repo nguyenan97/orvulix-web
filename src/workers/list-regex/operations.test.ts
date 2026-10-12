@@ -5,6 +5,7 @@ import { executeList } from './execute';
 import { chunkList } from '../../pages/tools/list/group/service';
 import { duplicateList } from '../../pages/tools/list/duplicate/service';
 import { isNumber, itemCounter, specialCharMap } from './pure-string';
+import { checkRequest } from './model';
 describe('extended typed list adapters', () => {
   for (const fixture of fixtures) {
     it(`${fixture.operation}: preserves formatting and option mapping`, () => {
@@ -111,6 +112,39 @@ describe('extended typed list adapters', () => {
         )
       )
     ).toThrow(/Potential/);
+  });
+  it('rejects Group padding separator amplification before service execution', () => {
+    const f = fixtures.find((f) => f.operation === 'group')!;
+    expect(() =>
+      checkRequest(
+        createRequest(
+          'group',
+          {
+            ...f.values,
+            groupNumber: 4096,
+            padNonFullGroup: true,
+            paddingChar: '',
+            itemSeparator: ';'.repeat(2048)
+          },
+          'a'
+        )
+      )
+    ).toThrow(/Potential split output/);
+    expect(
+      executeList(
+        createRequest(
+          'group',
+          {
+            ...f.values,
+            groupNumber: 4,
+            padNonFullGroup: true,
+            paddingChar: '',
+            itemSeparator: '::'
+          },
+          'a'
+        )
+      )
+    ).toBe('[a::::::]');
   });
   it.each([0, -1, 0.5, Infinity, NaN, 4097])(
     'rejects unsafe Group size %s in either mode',

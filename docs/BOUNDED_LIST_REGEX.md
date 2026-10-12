@@ -40,7 +40,8 @@ and a 512 KiB final output. A cheap preflight estimate also rejects obviously
 expansive configurations; it may reject patterns whose actual output would be
 smaller. Parenthesis counting deliberately overestimates possible captures.
 Each extra text option is capped at 2 KiB. Preflight also estimates wrapper,
-padding, counting and duplication expansion. Group size is restricted to an
+padding (including separators between padded items), counting and duplication
+expansion. Group size is restricted to an
 integer from 1 to 4096; duplicate copies must be finite and at most 1000.
 Those two service guards also apply to symbol mode to prevent non-progressing
 loops or excessive allocation. Other symbol-mode transforms remain synchronous.

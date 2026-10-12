@@ -74,7 +74,9 @@ export function checkRequest(request: ListRequest) {
           request.options.rightWrap.length +
           request.options.itemSeparator.length) +
       (request.options.padNonFullGroup
-        ? request.options.groupNumber * request.options.paddingChar.length
+        ? request.options.groupNumber *
+          (request.options.paddingChar.length +
+            request.options.itemSeparator.length)
         : 0);
   if (request.operation === 'find-most-popular') decoration += parts * 32;
   if (
