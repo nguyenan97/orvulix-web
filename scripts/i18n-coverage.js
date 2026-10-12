@@ -119,6 +119,6 @@ console.log('README i18n coverage updated.');
 
 results.forEach((r) => {
   if (r.missingKeys.length) {
-    console.log(`\n${r.lang} — ${r.missing} missing key(s)`);
+    console.log(`\n${r.lang} - ${r.missing} missing key(s)`);
   }
 });

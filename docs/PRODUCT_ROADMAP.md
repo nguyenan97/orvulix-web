@@ -22,11 +22,13 @@ Our approach is to make existing tools better first, then explore new capabiliti
 
 ## 2. Practical AI assistance
 
-**Planned - One focused prototype before broader expansion**
+**Local demos implemented - Live Claude integration planned**
 
-Our first proposed AI feature is an **AI JSON Assistant**. It would help users understand unfamiliar JSON payloads, explain nested structures, propose candidate JSON schemas, and suggest transformations. Suggested schemas and outputs must be reviewed and validated with deterministic tools.
+The `/json-assistant` route implements a local prototype with authored explanations for three fixtures and deterministic schema inference/validation for custom JSON. This is not a live AI feature: no provider request, API key, SDK or paid inference is used. See [demo architecture and limits](JSON_ASSISTANT.md). A future Claude-powered assistant could explain unfamiliar payloads and suggest transformations; outputs would need review and validation.
 
-Other ideas to evaluate after learning from the prototype:
+A second local prototype, [Regex Assistant](REGEX_ASSISTANT.md), is implemented at `/regex-assistant`. It combines authored examples with real JavaScript regex testing in a disposable timed worker. A Claude-powered regex generator remains planned; the local demo does not generate AI suggestions.
+
+Other ideas to evaluate after learning from the prototypes:
 
 - **Smart Data Conversion:** propose editable mappings between JSON, CSV, YAML, and XML.
 - **Regex Assistance:** explain expressions, suggest patterns, and generate test cases.
@@ -67,6 +69,13 @@ We will prioritize previewable changes, clear confirmation, and workflows that c
 
 **Outcome we want:** A useful platform that can grow sustainably without compromising trust.
 
+## Issue-backed implementation backlog
+
+See [the prioritized upstream issue backlog](FEATURE_BACKLOG.md) for MVP scope,
+acceptance criteria and upstream PRs to review before implementation. These items
+are planned, not shipped. Each implementation uses a feature branch from `develop`
+and a PR into `develop`; production releases require separate authorization.
+
 ## How we prioritize
 
 1. **Strengthen the foundation:** improve existing tools and fix issues that affect everyday use.
@@ -78,7 +87,7 @@ We do not publish speculative release dates. Priorities may change as we learn f
 
 ## First AI prototype - Technical considerations
 
-The JSON Assistant remains a proposed prototype, not a deployed integration. Before a public release, we intend to:
+The local demo is implemented in development; publication follows the normal feature-to-develop and authorized develop-to-main workflow. A live Claude integration remains planned. Before connecting a provider, we intend to:
 
 - Require explicit user action before sending data to an AI provider.
 - Keep API credentials on the server, never in browser code.

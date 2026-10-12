@@ -1,0 +1,63 @@
+name: GitHub Pages Dev
+
+on:
+  push:
+    branches: [develop]
+  pull_request:
+    branches: [develop]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: pages-dev-${{ github.event_name == 'pull_request' && github.event.number || 'deploy' }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    if: github.event_name == 'pull_request' || github.ref == 'refs/heads/develop'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: npm
+      - run: node scripts/check-text-style.mjs
+      - run: npm ci
+      - run: npm run test -- --run
+      - run: node --test scripts/pages/prepare.test.mjs
+      - name: Verify production build without deploying
+        run: npm run build
+      - name: Install focused browser
+        run: npx playwright install --with-deps chromium
+      - name: Verify SEO navigation, local demos and image downloads
+        run: npx playwright test src/seo/seo.e2e.spec.ts src/ai/json-assistant/json-assistant.e2e.spec.ts src/ai/regex-assistant/regex-assistant.e2e.spec.ts src/pages/tools/image/png/convert-jgp-to-png/convert-jgp-to-png.e2e.spec.ts --project=chromium
+        env:
+          PLAYWRIGHT_USE_EXISTING_BUILD: 'true'
+      - name: Build development site
+        run: node scripts/pages/build.mjs
+        env:
+          PAGES_BASE_PATH: /${{ github.event.repository.name }}/
+      - uses: actions/upload-pages-artifact@v3
+        if: github.event_name != 'pull_request'
+        with:
+          path: pages-dist
+
+  deploy:
+    if: github.ref == 'refs/heads/develop' && github.event_name != 'pull_request'
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy development site
+        id: deployment
+        uses: actions/deploy-pages@v4

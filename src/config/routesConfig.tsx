@@ -4,6 +4,10 @@ import { lazy } from 'react';
 const Home = lazy(() => import('../pages/home'));
 const ToolsByCategory = lazy(() => import('../pages/tools-by-category'));
 const InformationPage = lazy(() => import('../pages/information'));
+const RegexDemo = lazy(() => import('../ai/regex-assistant')); // ORVULIX-DEMO
+const JsonAssistantDemo = lazy(
+  () => import('../ai/json-assistant/JsonAssistantDemo')
+); // ORVULIX-DEMO
 
 const routes: RouteObject[] = [
   { path: '/', element: <Home /> },
@@ -13,6 +17,8 @@ const routes: RouteObject[] = [
   { path: '/contact', element: <InformationPage page="contact" /> },
   { path: '/privacy', element: <InformationPage page="privacy" /> },
   { path: '/terms', element: <InformationPage page="terms" /> },
+  { path: '/json-assistant', element: <JsonAssistantDemo /> }, // ORVULIX-DEMO
+  { path: '/regex-assistant', element: <RegexDemo /> }, // ORVULIX-DEMO
   { path: '*', element: <InformationPage page="not-found" /> }
 ];
 

@@ -3,9 +3,11 @@
 **Orvulix** is a free, community-oriented, open-source collection of browser-based utilities for developers and everyday tasks, including JSON, PDF, image, and text tools.
 
 - **Website:** https://orvulix.io.vn/
+- **Website dev:** https://nguyenan97.github.io/orvulix-web/ - GitHub Pages, built from `develop`.
 - **Source code:** https://github.com/nguyenan97/orvulix-web
 - **License:** [MIT](LICENSE)
 - **Roadmap:** [Product roadmap](docs/PRODUCT_ROADMAP.md)
+- **Planned features:** [Issue-backed backlog](docs/FEATURE_BACKLOG.md)
 - **Community guidelines:** [Code of Conduct](CODE_OF_CONDUCT.md)
 - **Contributing:** [Contribution guide](CONTRIBUTING.md)
 
@@ -18,6 +20,12 @@ Orvulix is currently an early-stage, independently developed project maintained 
 ## Features
 
 The website provides web-based tools for working with JSON and other data formats, documents, images, text, and common developer workflows. See the live website for the currently available tools.
+
+### Inherited functionality and Orvulix additions
+
+The utility implementations originate from OmniTools; Orvulix does not claim to have built them from scratch. Orvulix additions include its branding and domain, product information pages, shared route SEO and static HTML generation, verified guides for selected tools, and separate GitHub Pages development and Netlify production workflows. These are project adaptations, not evidence of customers, revenue or startup-program approval. Original licensing and attribution remain in place.
+
+Tools differ in how they handle data. Some run locally while downloading libraries, models or workers from third-party CDNs; downloading those resources does not itself mean an input file is uploaded. Check the individual tool's guidance and [privacy policy](https://orvulix.io.vn/privacy) before using sensitive data. A planned Claude integration must not be confused with existing browser-based machine-learning tools such as background removal.
 
 ## Development
 
@@ -38,7 +46,7 @@ npm run build
 npm run test -- --run
 ```
 
-The production build generates `public/sitemap.xml` from tool metadata, then builds into `dist/`. Verify generated URLs match actual application routes before publishing.
+The production build generates route HTML and `dist/sitemap.xml` from tool metadata. Verify generated URLs match actual application routes before publishing.
 
 ## Contributing and community
 
@@ -58,13 +66,17 @@ For public contributions, open a pull request on GitHub. Security-sensitive repo
 
 ## Deployment
 
-Production deployments are manually controlled. Confirm Netlify Git Integration automatic builds are disabled before merging; merge and verify CI before running a controlled Netlify deploy. Do not enable automatic deployment unless intentionally changing this release policy.
+The development website runs on GitHub Pages from `develop`; production runs on Netlify from `main`. Create `feature/*` branches from `develop` and target development PRs only at `develop`. After the Pages workflow is merged and its environment permits `develop`, pushes to `develop` deploy the dev website. See [GitHub Pages dev setup](docs/GITHUB_PAGES_DEV.md).
+
+Only an explicit release request authorizes a `develop` → `main` PR and merge. Merging into `main` triggers the configured Netlify production build and can consume production deployment credits. Do not create release PRs, merge into `main`, or deploy production as part of routine development.
 
 ## Product direction and Claude for Startups
 
-Orvulix is exploring an optional Claude-powered developer workflow, beginning with an AI JSON Assistant that explains unfamiliar JSON payloads, proposes candidate JSON Schema, and uses deterministic validation to verify results. The first milestone is a working, cost-controlled prototype; this integration is **not yet available**.
+Orvulix is exploring an optional Claude-powered developer workflow. This branch includes a [local JSON Assistant demo](docs/JSON_ASSISTANT.md) at `/json-assistant`: three authored sample explanations, candidate schema inference, and deterministic structural validation. It uses no Claude API, API key, paid inference or AI SDK. A live Claude integration is **not yet available**; the demo is not evidence of model accuracy or startup-program eligibility.
 
 The founder has created a Claude Console account using the project-domain email. This does not mean Orvulix has been approved for any Anthropic startup program or awarded credits. As an unincorporated solo-founder project, eligibility is subject to Anthropic's current terms and review; the project does not claim to be a registered company.
+
+The [Regex Assistant demo](docs/REGEX_ASSISTANT.md) at `/regex-assistant` adds authored hashtag, date-shape and log-level examples, plus real local regex testing with match ranges, captures and a disposable worker timeout. It uses no Claude API, API key or paid inference. Custom expressions get local test results, not fabricated explanations.
 
 ## Roadmap
 
@@ -74,4 +86,4 @@ See [Product roadmap](docs/PRODUCT_ROADMAP.md) and the website's `/roadmap` page
 
 Licensed under the [MIT License](LICENSE). The original copyright holder is Ibrahima Gaye Coulibaly. Preserve the original license notice in redistributed copies or substantial portions of the inherited software. See [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md) for project-origin attribution and licensing guidance.
 
-The website is hosted on [Netlify](https://www.netlify.com/).
+Production is hosted on [Netlify](https://www.netlify.com/); the development environment is hosted on GitHub Pages.

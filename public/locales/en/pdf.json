@@ -84,7 +84,7 @@
   },
   "pdfToPng": {
     "description": "Transform PDF documents into PNG panels.",
-    "longDescription": "Upload a PDF and convert each page into a high-quality PNG image directly in your browser. This tool is ideal for extracting visual content or sharing individual pages. No data is uploaded — everything runs locally.",
+    "longDescription": "Upload a PDF and convert each page into a high-quality PNG image directly in your browser. This tool is ideal for extracting visual content or sharing individual pages. No data is uploaded - everything runs locally.",
     "shortDescription": "Convert PDF into PNG images",
     "title": "PDF to PNG"
   },

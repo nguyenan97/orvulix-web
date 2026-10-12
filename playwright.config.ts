@@ -11,7 +11,10 @@ export default defineConfig({
     trace: 'on-first-retry'
   },
   webServer: {
-    command: 'npm run build && npm run serve',
+    command:
+      process.env.PLAYWRIGHT_USE_EXISTING_BUILD === 'true'
+        ? 'npm run serve'
+        : 'npm run build && npm run serve', // ORVULIX-CI
     url: 'http://localhost:4173'
   },
   projects: [
