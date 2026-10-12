@@ -1,3 +1,4 @@
+import { LIST_LIMITS } from '../../../../workers/list-regex/limits'; // ORVULIX-RELIABILITY
 export type SplitOperatorType = 'symbol' | 'regex';
 
 // function that split the array into an array of subarray of desired length
@@ -53,6 +54,12 @@ export function chunkList(
   padNonFullChunk: boolean,
   paddingChar: string = ''
 ): string {
+  if (
+    !Number.isInteger(chunkNumber) ||
+    chunkNumber < 1 ||
+    chunkNumber > LIST_LIMITS.groupSize
+  )
+    throw new Error('Group size must be an integer from 1 to 4096.'); // ORVULIX-RELIABILITY
   if (!splitSeparator) return '';
 
   let array: string[];

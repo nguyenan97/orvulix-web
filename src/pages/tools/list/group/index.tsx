@@ -8,7 +8,7 @@ import TextFieldWithDesc from '@components/options/TextFieldWithDesc';
 import { CardExampleType } from '@components/examples/ToolExamples';
 import CheckboxWithDesc from '@components/options/CheckboxWithDesc';
 import { formatNumber } from '../../../../utils/number';
-import ToolContent from '@components/ToolContent';
+import ToolContent from '../../../../workers/list-regex/BoundedListContent'; // ORVULIX-RELIABILITY
 import { ToolComponentProps } from '@tools/defineTool';
 import { useTranslation } from 'react-i18next';
 
@@ -155,6 +155,8 @@ export default function ChunkList({ title }: ToolComponentProps) {
 
   return (
     <ToolContent
+      workerOperation="group"
+      setResult={setResult} // ORVULIX-RELIABILITY
       title={title}
       input={input}
       exampleCards={exampleCards}

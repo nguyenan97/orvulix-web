@@ -4,6 +4,7 @@ import type { FormikValues } from 'formik';
 import ToolContent from '../../components/ToolContent';
 import type { ListOperation } from './model';
 import { runList } from './runner';
+import { createRequest } from './request';
 
 type Props<T extends FormikValues> = ComponentProps<
   typeof ToolContent<T, string>
@@ -36,26 +37,24 @@ export default function BoundedListContent<T extends FormikValues>({
     setError('');
     setBusy(false);
     if (!input) return;
-    if (values.splitOperatorType !== 'regex') {
+    if ((values.splitOperatorType ?? values.splitSeparatorType) !== 'regex') {
       compute(values, input);
       return;
     }
     const controller = new AbortController();
     request.current = controller;
     setBusy(true);
-    runList(
-      {
-        operation: workerOperation,
-        input,
-        options: {
-          splitOperatorType: 'regex',
-          splitSeparator: values.splitSeparator,
-          joinSeparator: values.joinSeparator,
-          length: values.length
-        }
-      },
-      controller.signal
-    )
+    // Convert/validate the contract before starting a worker. Do not let parser
+    // errors escape Formik's sync catch while leaving the UI busy.
+    Promise.resolve()
+      .then(() => {
+        if (controller.signal.aborted)
+          throw new Error('List processing cancelled.');
+        return runList(
+          createRequest(workerOperation, values, input),
+          controller.signal
+        );
+      })
       .then((result) => {
         if (request.current === controller) setResult(result);
       })

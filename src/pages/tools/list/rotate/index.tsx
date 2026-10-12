@@ -6,7 +6,7 @@ import { rotateList, SplitOperatorType } from './service';
 import SimpleRadio from '@components/options/SimpleRadio';
 import TextFieldWithDesc from '@components/options/TextFieldWithDesc';
 import { formatNumber } from '../../../../utils/number';
-import ToolContent from '@components/ToolContent';
+import ToolContent from '../../../../workers/list-regex/BoundedListContent'; // ORVULIX-RELIABILITY
 import { ToolComponentProps } from '@tools/defineTool';
 
 const initialValues = {
@@ -73,6 +73,8 @@ export default function Rotate({ title }: ToolComponentProps) {
 
   return (
     <ToolContent
+      workerOperation="rotate"
+      setResult={setResult} // ORVULIX-RELIABILITY
       title={title}
       input={input}
       inputComponent={

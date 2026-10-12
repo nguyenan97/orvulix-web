@@ -1,7 +1,10 @@
 import { describe, expect, it, vi } from 'vitest';
 import { executeList } from './execute';
 import { checkRequest, LIST_LIMITS, type ListRequest } from './model';
-const make = (pattern: string, input = 'a,b;c'): ListRequest => ({
+const make = (
+  pattern: string,
+  input = 'a,b;c'
+): Extract<ListRequest, { operation: 'reverse' }> => ({
   operation: 'reverse',
   input,
   options: {
@@ -25,8 +28,10 @@ describe('bounded list service adapter', () => {
     }
   );
   it('keeps shuffle length handling and item membership', () => {
-    const request = make(',', 'a,b,c');
-    request.operation = 'shuffle';
+    const request: Extract<ListRequest, { operation: 'shuffle' }> = {
+      ...make(',', 'a,b,c'),
+      operation: 'shuffle'
+    };
     for (const length of ['', 'abc', '99']) {
       request.options.length = length;
       expect(executeList(request).split('|').sort()).toEqual(['a', 'b', 'c']);

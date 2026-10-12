@@ -1,4 +1,4 @@
-import { isNumber } from 'utils/string';
+import { isNumber } from '../../../../workers/list-regex/pure-string';
 
 export type SortingMethod = 'numeric' | 'alphabetic' | 'length';
 export type SplitOperatorType = 'symbol' | 'regex';

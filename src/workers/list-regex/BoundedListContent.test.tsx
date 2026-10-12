@@ -92,4 +92,70 @@ describe('list UI worker adapter', () => {
     render(view('', setResult));
     expect(runList).not.toHaveBeenCalled();
   });
+  it('intercepts splitSeparatorType in Sort without calling sync compute', async () => {
+    vi.mocked(runList).mockResolvedValue('a|b');
+    const compute = vi.fn(),
+      setResult = vi.fn();
+    render(
+      <BoundedListContent
+        workerOperation="sort"
+        setResult={setResult}
+        title="Sort"
+        initialValues={{
+          splitSeparatorType: 'regex',
+          splitSeparator: ',',
+          joinSeparator: '|',
+          sortingMethod: 'alphabetic',
+          increasing: true,
+          removeDuplicated: false,
+          caseSensitive: false
+        }}
+        input="b,a"
+        compute={compute}
+        getGroups={null}
+        resultComponent={<div>Output</div>}
+      />
+    );
+    await waitFor(() => expect(setResult).toHaveBeenCalledWith('a|b'));
+    expect(compute).not.toHaveBeenCalled();
+    expect(vi.mocked(runList).mock.calls[0][0].operation).toBe('sort');
+  });
+  it('clears busy after contract or startup failure with no synchronous fallback', async () => {
+    const compute = vi.fn(),
+      setResult = vi.fn();
+    const { unmount } = render(
+      <BoundedListContent
+        workerOperation="group"
+        setResult={setResult}
+        title="Group"
+        initialValues={{
+          splitOperatorType: 'regex',
+          splitSeparator: ',',
+          groupSeparator: ',',
+          groupNumber: NaN
+        }}
+        input="a,b"
+        compute={compute}
+        getGroups={null}
+        resultComponent={<div>Output</div>}
+      />
+    );
+    expect(await screen.findByRole('alert')).toHaveTextContent(
+      'Invalid groupNumber'
+    );
+    expect(
+      screen.queryByRole('button', { name: 'Cancel processing' })
+    ).not.toBeInTheDocument();
+    expect(runList).not.toHaveBeenCalled();
+    expect(compute).not.toHaveBeenCalled();
+    unmount();
+    vi.mocked(runList).mockRejectedValue(
+      new Error('Could not start the list worker.')
+    );
+    render(view('a,b', setResult, compute));
+    expect(await screen.findByRole('alert')).toHaveTextContent(
+      'Could not start'
+    );
+    expect(compute).not.toHaveBeenCalled();
+  });
 });

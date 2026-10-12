@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Box } from '@mui/material';
-import ToolContent from '@components/ToolContent';
+import ToolContent from '../../../../workers/list-regex/BoundedListContent'; // ORVULIX-RELIABILITY
 import ToolTextInput from '@components/input/ToolTextInput';
 import ToolTextResult from '@components/result/ToolTextResult';
 import { duplicateList, SplitOperatorType } from './service';
@@ -191,6 +191,8 @@ export default function Duplicate({ title }: ToolComponentProps) {
 
   return (
     <ToolContent
+      workerOperation="duplicate"
+      setResult={setResult} // ORVULIX-RELIABILITY
       title={title}
       inputComponent={
         <ToolTextInput
