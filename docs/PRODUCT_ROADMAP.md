@@ -16,8 +16,8 @@ Our approach is to make existing tools better first, then explore new capabiliti
 - Make tools easier to find through clearer categories, navigation, and search.
 - Add practical examples, instructions, and actionable error messages.
 - Strengthen accessibility, automated testing, and reliability.
-  This branch isolates regex splitting in List Shuffle and List Reverse with
-  [bounded workers](BOUNDED_LIST_REGEX.md); other list tools remain follow-up work.
+  This branch isolates regex splitting in all 11 list tools with
+  [bounded workers](BOUNDED_LIST_REGEX.md), with numeric guards for Group and Duplicate.
 - Improve search visibility with helpful, original content for individual tools.
 
 **Outcome we want:** People can find the right tool quickly, complete their task, and confidently return when they need it again.
