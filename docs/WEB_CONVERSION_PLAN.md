@@ -1,8 +1,8 @@
 # Web and HTML conversion plan
 
 Research snapshot: October 12, 2026. Base inspected: develop at 31fb8ac.
-This document plans delivery, not proof of completed capabilities. See
-[implementation prompt](WEB_CONVERSION_PROMPT.md) for agent execution rules.
+This document plans delivery, not proof of completed capabilities. Agent execution
+rules are defined in AGENTS.md and its required skills.
 
 ## Research and decisions
 

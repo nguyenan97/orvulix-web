@@ -41,8 +41,7 @@ update it alongside this ordered plan. Technical criteria stay in this document.
 ## Ordered feature plan
 
 Owner-requested Web/HTML conversion has a separate phased
-[research and implementation plan](WEB_CONVERSION_PLAN.md) and
-[agent prompt](WEB_CONVERSION_PROMPT.md). HTML to Image is implemented on
+[research and implementation plan](WEB_CONVERSION_PLAN.md). HTML to Image is implemented on
 feature/html-to-image for review: static text/table/list HTML, safe inline styles,
 PNG/JPEG, bounded dimensions/scale, transparency, upload/preview/download and
 cancellation. Scripts, images, stylesheet blocks and external resources are
