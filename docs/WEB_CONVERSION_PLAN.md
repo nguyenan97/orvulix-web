@@ -47,14 +47,14 @@ Do not merge or release implicitly. Follow AGENTS.md for branch cleanup.
 | --- | --- | --- | --- |
 | 1 | Local engine/isolation and HTML to Image MVP | Real images on all 3 engines, no script/network leak, bounded inputs and recovery | Implemented on feature/html-to-image, not merged |
 | 2 | Local assets/system fonts/single-image boundary refinement | Asset limits, safe font stacks, crop/row warnings and strict export with fidelity fixtures | Implemented on feature/html-to-image, not merged; multi-page pagination belongs to step 4 |
-| 3 | Targeted PDF dependency/security baseline | Patched supported versions, existing image-to-PDF regression tests | Required before HTML/PDF |
+| 3 | Targeted PDF dependency/security baseline | Patched supported versions, existing image-to-PDF regression tests | jsPDF 4.2.1 and regression coverage implemented on branch, not merged |
 | 4 | HTML to PDF snapshot | Page count/size/margins/ranges verified on downloaded PDFs; raster label | Planned |
 | 5 | Remote service spike | Measured latency/resource budgets, funding/hosting plan, isolation/egress policy | Planned |
 | 6 | Web to Image | Real gateway-renderer-download tests, SSRF/cancel/quota coverage | Planned |
 | 7 | Web to PDF | Native text extraction, print/screen styles, paper/margins/ranges | Planned |
 | 8 | Advanced controls individually | Lazy/fixed/cookie heuristics have bounds, explicit opt-in and fixtures | Planned |
 
-Current jsPDF lock version 3.0.3 falls in an official vulnerable range. Review
+The inspected develop baseline used jsPDF 3.0.3 in an official vulnerable range. Review
 [GHSA-wfv2-pwc8-crg5](https://github.com/parallax/jsPDF/security/advisories/GHSA-wfv2-pwc8-crg5)
 and all other current advisories; this advisory fixes output HTML injection in
 >=4.2.1. Do not claim current output(blob) usage is proven exploited. No new
@@ -169,7 +169,9 @@ document uses system fonts; the app keeps its existing Quicksand/MUI theme.
 DOMPurify was updated from 3.4.2 to pinned 3.4.16 because the feature uses it
 directly. Baseline develop had 63 audit findings; the final lockfile has 62
 (7 critical, 37 high, 16 moderate, 2 low), with no finding for DOMPurify or
-html-to-image. Remaining advisories are inherited and not resolved by this PR.
+html-to-image. The targeted jsPDF upgrade subsequently reduced this to 61
+(6 critical, 37 high, 16 moderate, 2 low), with no jsPDF finding. Remaining
+advisories are inherited and not resolved by this PR.
 The broad dependency/security task remains necessary, especially before PDF work.
 Tool UI copy is English; existing metadata uses the project's English fallback.
 
@@ -187,8 +189,8 @@ before preview/export. A 5-second asynchronous validation deadline and abort
 discard late results; every resolved bitmap is closed, including late results.
 Native decode itself cannot be preempted and these checks are not hard memory
 quotas. The capture CSP permits only data images; scripts and network remain
-blocked. HTML/PDF and URL conversion are still planned; jsPDF upgrade remains
-a PDF gate. Embedded/custom fonts and full-page capture are outside the current
+blocked. HTML/PDF and URL conversion are still planned; the narrow jsPDF dependency
+gate is implemented on branch, subject to exact-head CI and review. Embedded/custom fonts and full-page capture are outside the current
 local-image contract.
 
 Validation evidence and the exact CI head are recorded in the feature PR. Tests
@@ -241,3 +243,71 @@ explicit stop policy; page assembly must be tested against actual PDFs later.
 Regression fixtures cover exact/crossing/omitted rows, fixed-wrapper and horizontal
 overflow, unsupported fonts/breaks, 2x scale, preview/export color fidelity,
 repeated preview, strict rejection and successful recovery after resizing.
+
+## Targeted PDF baseline
+
+jsPDF is pinned from 3.0.3 to 4.2.1 (MIT), the official latest release checked on
+October 12, 2026. Only its required @babel/runtime changed (7.28.4 -> 7.29.10,
+meeting the new ^7.28.6 range); no bulk dependency update. DOMPurify remains
+3.4.16. v4.0.0 disables filesystem access by default in Node; the official
+release lists no other breaking change. Browser consumers need no API migration.
+Do not enable allowFsRead. [v4.0.0](https://github.com/parallax/jsPDF/releases/tag/v4.0.0),
+[v4.2.1](https://github.com/parallax/jsPDF/releases/tag/v4.2.1).
+
+The only runtime jsPDF import is pdf/convert-to-pdf/service.ts: constructor,
+setDisplayMode, addPage, pageSize getters, addImage and output('blob'). It accepts
+browser image elements, not filesystem paths. Split Image to Pages uses pdf-lib
+1.17.1 and stays unchanged. No new HTML, annotations, AcroForm, addJS or metadata
+API usage. Fix failed-image object-URL cleanup, show existing consumer failures
+through its snackbar and clear completed output on Clear. No consumer rewrite.
+
+Official advisories affecting 3.0.3 are patched by the selected release:
+
+| Advisory | Topic | Patched version in advisory metadata |
+| --- | --- | --- |
+| [GHSA-f8cm-6447-x5h2](https://github.com/parallax/jsPDF/security/advisories/GHSA-f8cm-6447-x5h2) | Node filesystem traversal | 4.0.0 |
+| [GHSA-cjw8-79x6-5cj4](https://github.com/parallax/jsPDF/security/advisories/GHSA-cjw8-79x6-5cj4) | addJS shared state | 4.0.1 |
+| [GHSA-pqxr-3g65-p328](https://github.com/parallax/jsPDF/security/advisories/GHSA-pqxr-3g65-p328) | AcroForm injection | 4.1.0 |
+| [GHSA-vm32-vv63-w422](https://github.com/parallax/jsPDF/security/advisories/GHSA-vm32-vv63-w422) | XMP metadata injection | 4.1.0 |
+| [GHSA-95fx-jjr5-f39c](https://github.com/parallax/jsPDF/security/advisories/GHSA-95fx-jjr5-f39c) | BMP dimensions DoS | 4.1.0 |
+| [GHSA-p5xg-68wr-hm3m](https://github.com/parallax/jsPDF/security/advisories/GHSA-p5xg-68wr-hm3m) | AcroForm radio children | 4.2.0 |
+| [GHSA-67pg-wm7f-q7fj](https://github.com/parallax/jsPDF/security/advisories/GHSA-67pg-wm7f-q7fj) | GIF dimensions DoS | 4.2.0 |
+| [GHSA-9vjf-qc39-jprp](https://github.com/parallax/jsPDF/security/advisories/GHSA-9vjf-qc39-jprp) | addJS PDF injection | 4.2.0 |
+| [GHSA-wfv2-pwc8-crg5](https://github.com/parallax/jsPDF/security/advisories/GHSA-wfv2-pwc8-crg5) | HTML output injection | 4.2.1 |
+| [GHSA-7x6v-j9x4-qf24](https://github.com/parallax/jsPDF/security/advisories/GHSA-7x6v-j9x4-qf24) | Annotation color injection | 4.2.1 |
+
+GHSA-cjw8 lists 4.0.1 as patched in advisory metadata while v4.1.0 release notes
+list its fix. The selected 4.2.1 exceeds both; do not assume the metadata proves
+a 4.0.1 release was published.
+
+Older GHSA-8mvj-3j78-4qmw and GHSA-w532-jxjh-hjhj were already patched before
+3.0.3. Advisories affect library API ranges; this is not evidence of exploitation
+of this app's blob output flow. npm audit reports 61 remaining package findings,
+including 6 critical. No claim of a clean repository or universal PDF security.
+
+Regression tests parse real jsPDF bytes for page count, portrait/landscape,
+full-size and A4 dimensions, PNG soft masks, page image references, centered
+scale/margins, Unicode filenames, failed decode cleanup, invalid/mixed input and
+recovery. Browser flows download actual PDFs and pass them through the existing
+PDF.js PNG tool to verify pixels and nonblank pages. The unchanged pdf-lib split
+flow has four-page/edge-padding regression coverage. No mock PDF encoder.
+
+Existing Images to PDF still auto-computes and has no hard input/batch/decode quota
+or generation-token cancellation. Split Image to Pages does not fully guard
+invalid numeric options/resource expansion. These inherited reliability gaps need
+separate scope; jsPDF's 14400-point page ceiling is not an input or memory quota.
+HEIC/WebP/GIF conversions are not covered by the new PNG/JPEG fidelity fixtures.
+The dependency/API baseline gate is narrow, not an approval to ship HTML/PDF.
+
+Next proposed scope: local raster HTML to PDF in the isolated conversion module,
+with explicit page-size/orientation/margins, bounded page/pixel/output counts,
+strict option validation, safe static assets and existing job cancellation. Label
+text as non-searchable/non-selectable. Start with one-page fidelity and actual
+PDF.js raster assertions; ranges, multi-page splitting, repeated headers and
+oversized-row behavior require explicit acceptance criteria before implementation.
+Do not use jsPDF.html or expand remote rendering in this baseline task.
+
+Sync hotspots added by this baseline: package/lock, the two existing Images to
+PDF files (decode cleanup and local error/clear handling), one focused CI command
+and these docs. Test helpers stay under the isolated module; no tool registry,
+locale, Netlify, route or production policy changes.

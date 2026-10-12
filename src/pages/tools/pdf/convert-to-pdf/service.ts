@@ -44,7 +44,12 @@ async function loadImage(file: File): Promise<LoadedImage> {
   const image = new Image();
   const objectUrl = URL.createObjectURL(processedFile);
   image.src = objectUrl;
-  await image.decode();
+  try {
+    await image.decode();
+  } catch (error) {
+    URL.revokeObjectURL(objectUrl);
+    throw error;
+  }
   return {
     image,
     objectUrl,

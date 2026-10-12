@@ -26,7 +26,9 @@ Our approach is to make existing tools better first, then explore new capabiliti
   External resources/scripts are blocked. Safe system font stacks and crop/row
   boundary warnings with strict rejection are implemented. Embedded fonts and
   full-page capture remain outside the local-image contract. HTML/PDF and URL rendering
-  are planned, with PDF dependency review and remote isolation gates.
+  are planned. The targeted jsPDF 4.2.1 dependency baseline is implemented on the
+  feature branch for review; remaining legacy PDF limits and remote isolation
+  need separate scope.
 
 **Outcome we want:** People can find the right tool quickly, complete their task, and confidently return when they need it again.
 
