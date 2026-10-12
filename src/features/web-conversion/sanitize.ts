@@ -61,9 +61,26 @@ const enums: Record<string, readonly string[]> = {
   'align-items': ['stretch', 'flex-start', 'center', 'flex-end'],
   'font-family': ['Arial', 'sans-serif', 'serif', 'monospace']
 };
+function systemFontStack(value: string) {
+  const families = value
+    .split(',')
+    .map((family) => family.trim().replace(/^(['"])(.*)\1$/, '$2'));
+  return (
+    families.length <= 4 &&
+    families.every((family) =>
+      ['arial', 'sans-serif', 'serif', 'monospace', 'system-ui'].includes(
+        family.toLowerCase()
+      )
+    )
+  );
+}
 function allowedStyle(property: string, value: string) {
+  if (property === 'font-family') return systemFontStack(value);
   if (enums[property]?.includes(value)) return true;
-  if (['color', 'background-color', 'border-color'].includes(property))
+  if (
+    ['color', 'background-color', 'border-color'].includes(property) ||
+    /^border-(top|right|bottom|left)-color$/.test(property)
+  )
     return /^(#[a-f0-9]{3,8}|[a-z]{1,20}|rgba?\([\d.,%\s]{1,50}\))$/i.test(
       value
     );
@@ -92,6 +109,11 @@ function allowedStyle(property: string, value: string) {
     return /^\dpx (solid|dashed|dotted) (#[a-f0-9]{3,8}|[a-z]{1,20})$/i.test(
       value
     );
+  // CSSOM expands border shorthand into longhands in real browsers.
+  if (/^border-(top|right|bottom|left)-width$/.test(property))
+    return /^\dpx$/.test(value);
+  if (/^border-(top|right|bottom|left)-style$/.test(property))
+    return ['none', 'solid', 'dashed', 'dotted'].includes(value);
   if (property === 'border-radius') return /^\d{1,2}px$/.test(value);
   return false;
 }

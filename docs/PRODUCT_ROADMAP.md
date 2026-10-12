@@ -23,8 +23,9 @@ Our approach is to make existing tools better first, then explore new capabiliti
 - Web/HTML conversion follows a [separate phased plan](WEB_CONVERSION_PLAN.md).
   HTML to Image is implemented on feature/html-to-image for review, with local
   static text/table/list rendering, bounded embedded PNG/JPEG and PNG/JPEG export.
-  External resources/scripts are blocked; fonts and full-page refinement remain
-  planned. HTML/PDF and URL rendering
+  External resources/scripts are blocked. Safe system font stacks and crop/row
+  boundary warnings with strict rejection are implemented. Embedded fonts and
+  full-page capture remain outside the local-image contract. HTML/PDF and URL rendering
   are planned, with PDF dependency review and remote isolation gates.
 
 **Outcome we want:** People can find the right tool quickly, complete their task, and confidently return when they need it again.

@@ -14,6 +14,7 @@ import { DEFAULT_OPTIONS, type ImageOptions, validateOptions } from './model';
 import { frameDocument, prepareHtml, type PreparedHtml } from './sanitize';
 import { validateEmbeddedImages } from './assets';
 import { SAMPLE_LOGO } from './sample-logo';
+import { inspectLayout } from './layout';
 
 export const SAMPLE = `<div style="padding:24px;background-color:#f0fdfa">
   <img src="${SAMPLE_LOGO}" alt="Example logo" width="32" height="32">
@@ -28,6 +29,8 @@ export default function HtmlToImage() {
   const [html, setHtml] = useState('');
   const [options, setOptions] = useState<ImageOptions>({ ...DEFAULT_OPTIONS });
   const [preview, setPreview] = useState<PreparedHtml | null>(null);
+  const previewSource = useRef<PreparedHtml | null>(null);
+  const [previewRun, setPreviewRun] = useState(0);
   const [notices, setNotices] = useState<string[]>([]);
   const [file, setFile] = useState<File | null>(null);
   const [url, setUrl] = useState('');
@@ -40,6 +43,7 @@ export default function HtmlToImage() {
       revision.current++;
       job.current?.abort();
       job.current = null;
+      previewSource.current = null;
     },
     []
   );
@@ -59,6 +63,7 @@ export default function HtmlToImage() {
     setBusy(false);
     setFile(null);
     setPreview(null);
+    previewSource.current = null;
     setNotices([]);
     setError('');
   };
@@ -78,6 +83,8 @@ export default function HtmlToImage() {
     if (job.current !== controller || controller.signal.aborted)
       throw new DOMException('Conversion cancelled.', 'AbortError');
     setNotices(prepared.notices);
+    previewSource.current = prepared;
+    setPreviewRun((run) => run + 1);
     setPreview(prepared);
     return prepared;
   };
@@ -114,7 +121,11 @@ export default function HtmlToImage() {
       const output = await captureHtml(
         prepared,
         { ...options },
-        controller.signal
+        controller.signal,
+        (report) => {
+          if (job.current === controller && !controller.signal.aborted)
+            setNotices([...prepared.notices, ...report.notices]);
+        }
       );
       if (job.current === controller) setFile(output);
     } catch (reason) {
@@ -328,6 +339,22 @@ export default function HtmlToImage() {
                 />
               )}
               <TextField
+                label="Overflow handling"
+                select
+                value={options.cropPolicy}
+                onChange={(e) =>
+                  editOptions({
+                    ...options,
+                    cropPolicy: e.target.value as ImageOptions['cropPolicy']
+                  })
+                }
+                helperText="One image only. Table rows and text are not moved onto another page."
+                fullWidth
+              >
+                <MenuItem value="crop">Allow cropping</MenuItem>
+                <MenuItem value="reject">Stop if content is cropped</MenuItem>
+              </TextField>
+              <TextField
                 label="Filename"
                 value={options.filename}
                 onChange={(e) =>
@@ -356,11 +383,21 @@ export default function HtmlToImage() {
             </Typography>
             <Box sx={{ overflow: 'auto', maxWidth: '100%', maxHeight: 500 }}>
               <iframe
+                key={previewRun}
                 title="Sanitized HTML preview"
                 sandbox="allow-same-origin"
                 srcDoc={frameDocument(preview)}
                 width={options.width}
                 height={options.height}
+                onLoad={(event) => {
+                  if (previewSource.current !== preview) return;
+                  const body = event.currentTarget.contentDocument?.body;
+                  if (body)
+                    setNotices([
+                      ...preview.notices,
+                      ...inspectLayout(body, options).notices
+                    ]);
+                }}
                 style={{
                   display: 'block',
                   border: 0,

@@ -21,6 +21,121 @@ async function decode(page: Page, bytes: Buffer) {
     return { width: canvas.width, height: canvas.height, corner, interior };
   }, bytes.toString('base64'));
 }
+test('warns for a crossing table row, preserves crop pixels and strict mode recovers after resizing', async ({
+  page
+}) => {
+  await page.goto('/image-generic/html-to-image');
+  await page
+    .getByLabel('HTML markup')
+    .fill(
+      '<div style="height:150px;background-color:#ff0000">Header</div><table style="width:100%"><tr><td style="height:100px;padding:0;border:0px solid white;background-color:#00ff00">Nguyễn An</td></tr></table>'
+    );
+  await page.getByLabel('Width (px)').fill('400');
+  await page.getByLabel('Height (px)').fill('200');
+  await page.getByRole('button', { name: 'Preview', exact: true }).click();
+  await expect(
+    page.getByText(/1 table row\(s\) cross the bottom/)
+  ).toBeVisible();
+  await page.getByRole('button', { name: 'Preview', exact: true }).click();
+  await expect(
+    page.getByText(/1 table row\(s\) cross the bottom/)
+  ).toBeVisible();
+  await page.getByRole('button', { name: 'Convert to image' }).click();
+  const downloaded = page.waitForEvent('download');
+  await page.getByRole('link', { name: 'Download PNG' }).click();
+  const pixels = await decode(
+    page,
+    await readFile((await (await downloaded).path())!)
+  );
+  expect(pixels.interior).toEqual([255, 0, 0, 255]);
+  expect(pixels.corner).toEqual([0, 255, 0, 255]);
+  await page.getByLabel('Overflow handling', { exact: true }).click();
+  await page
+    .getByRole('option', { name: 'Stop if content is cropped' })
+    .click();
+  await expect(page.getByRole('link', { name: 'Download PNG' })).toHaveCount(0);
+  await page.getByRole('button', { name: 'Convert to image' }).click();
+  await expect(
+    page.getByText(/Export stopped because content would be cropped/)
+  ).toBeVisible();
+  await expect(page.locator('iframe[data-html-renderer]')).toHaveCount(0);
+  await page.getByLabel('Height (px)').fill('300');
+  await page.getByRole('button', { name: 'Convert to image' }).click();
+  await expect(page.getByRole('link', { name: 'Download PNG' })).toBeVisible();
+  await expect(page.getByText(/table row\(s\) cross the bottom/)).toHaveCount(
+    0
+  );
+});
+test('exact table boundaries and safe font stacks match preview and 2x output', async ({
+  page
+}) => {
+  await page.goto('/image-generic/html-to-image');
+  await page
+    .getByLabel('HTML markup')
+    .fill(
+      '<table style="width:100%;font-family:Arial,sans-serif"><tr><td style="height:100px;padding:0;border:0px solid white;background-color:#ff0000">Nguyễn An</td></tr><tr><td style="height:100px;padding:0;border:0px solid white;background-color:#00ff00;font-family:system-ui,monospace">line 2</td></tr></table>'
+    );
+  await page.getByLabel('Width (px)').fill('400');
+  await page.getByLabel('Height (px)').fill('200');
+  await page.getByLabel('Scale', { exact: true }).click();
+  await page.getByRole('option', { name: '2x' }).click();
+  await page.getByLabel('Overflow handling', { exact: true }).click();
+  await page
+    .getByRole('option', { name: 'Stop if content is cropped' })
+    .click();
+  await page.getByRole('button', { name: 'Preview', exact: true }).click();
+  const table = page
+    .frameLocator('iframe[title="Sanitized HTML preview"]')
+    .locator('table');
+  await expect(table).toBeVisible();
+  expect(
+    await table.evaluate((node) => getComputedStyle(node).fontFamily)
+  ).toMatch(/Arial.*sans-serif/i);
+  await expect(
+    page.getByText(/Content exceeds|table row\(s\) cross/)
+  ).toHaveCount(0);
+  await page.getByRole('button', { name: 'Convert to image' }).click();
+  const downloaded = page.waitForEvent('download');
+  await page.getByRole('link', { name: 'Download PNG' }).click();
+  const image = await decode(
+    page,
+    await readFile((await (await downloaded).path())!)
+  );
+  expect([image.width, image.height]).toEqual([800, 400]);
+  expect(image.corner).toEqual([0, 255, 0, 255]);
+});
+test('horizontal overflow is explicit and unsupported custom fonts/page breaks stay blocked', async ({
+  page
+}) => {
+  await page.goto('/image-generic/html-to-image');
+  await page
+    .getByLabel('HTML markup')
+    .fill(
+      '<div style="width:1280px;font-family:CustomFont,serif;break-inside:avoid">Wide</div>'
+    );
+  await page.getByLabel('Width (px)').fill('400');
+  await page.getByRole('button', { name: 'Preview', exact: true }).click();
+  await expect(
+    page.getByText(/Content exceeds the image width\./)
+  ).toBeVisible();
+  await expect(
+    page.getByText(/Unsupported inline styles were removed/)
+  ).toBeVisible();
+  const content = page
+    .frameLocator('iframe[title="Sanitized HTML preview"]')
+    .locator('body > div');
+  expect(await content.getAttribute('style')).not.toMatch(
+    /CustomFont|break-inside/
+  );
+  await page.getByLabel('Overflow handling', { exact: true }).click();
+  await page
+    .getByRole('option', { name: 'Stop if content is cropped' })
+    .click();
+  await page.getByRole('button', { name: 'Convert to image' }).click();
+  await expect(page.getByText(/Export stopped/)).toBeVisible();
+  await page.getByRole('button', { name: 'Reset', exact: true }).click();
+  await expect(page.getByText(/Content exceeds|Export stopped/)).toHaveCount(0);
+});
 test('paste, preview and download a real PNG, then clear stale output on edit', async ({
   page
 }) => {

@@ -16,6 +16,27 @@ afterEach(() => {
     .forEach((node) => node.remove());
 });
 describe('owned render frame lifecycle', () => {
+  it('rejects clipped strict output before loading the capture engine and cleans the frame', async () => {
+    const onLayout = vi.fn();
+    const pending = captureHtml(
+      prepareHtml('<p>Long content</p>'),
+      { ...DEFAULT_OPTIONS, cropPolicy: 'reject' },
+      new AbortController().signal,
+      onLayout
+    );
+    const frame = document.querySelector('iframe[data-html-renderer]')!;
+    const content =
+      document.implementation.createHTMLDocument('Overflow fixture');
+    Object.defineProperty(content.body, 'scrollHeight', { value: 1000 });
+    Object.defineProperty(frame, 'contentDocument', { value: content });
+    frame.dispatchEvent(new Event('load'));
+    await expect(pending).rejects.toThrow(/Export stopped/);
+    expect(onLayout).toHaveBeenCalledWith(
+      expect.objectContaining({ clipped: true })
+    );
+    expect(toCanvas).not.toHaveBeenCalled();
+    expect(document.querySelector('[data-html-renderer]')).toBeNull();
+  });
   it('discards delayed encoding after cancellation and releases the canvas', async () => {
     const canvas = document.createElement('canvas');
     canvas.width = 800;

@@ -8,11 +8,13 @@ import {
 } from './model';
 import { frameDocument, type PreparedHtml } from './sanitize';
 import { validateEmbeddedImages } from './assets';
+import { inspectLayout, enforceCropPolicy, type LayoutReport } from './layout';
 
 export async function captureHtml(
   prepared: PreparedHtml,
   options: ImageOptions,
-  signal: AbortSignal
+  signal: AbortSignal,
+  onLayout?: (report: LayoutReport) => void
 ): Promise<File> {
   validateOptions(options);
   checkAbort(signal);
@@ -68,6 +70,9 @@ export async function captureHtml(
       const body = frame.contentDocument?.body;
       if (!body)
         throw Error('The browser blocked access to the HTML renderer.');
+      const report = inspectLayout(body, options);
+      onLayout?.(report);
+      enforceCropPolicy(report, options.cropPolicy);
       const { toCanvas } = await import('html-to-image');
       checkActive();
       const captured = await toCanvas(body, {

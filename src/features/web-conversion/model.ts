@@ -15,6 +15,7 @@ export interface ImageOptions {
   background: 'white' | 'transparent';
   quality: number;
   filename: string;
+  cropPolicy: 'crop' | 'reject';
 }
 export const DEFAULT_OPTIONS: ImageOptions = {
   width: 800,
@@ -23,7 +24,8 @@ export const DEFAULT_OPTIONS: ImageOptions = {
   format: 'png',
   background: 'white',
   quality: 0.9,
-  filename: 'html-image'
+  filename: 'html-image',
+  cropPolicy: 'crop'
 };
 export function validateInput(input: string) {
   if (!input.trim()) throw Error('Enter HTML or upload an HTML file.');
@@ -46,7 +48,8 @@ export function validateOptions(options: ImageOptions) {
     throw Error('Output exceeds 2 megapixels. Reduce dimensions or scale.');
   if (
     !['png', 'jpeg'].includes(options.format) ||
-    !['white', 'transparent'].includes(options.background)
+    !['white', 'transparent'].includes(options.background) ||
+    !['crop', 'reject'].includes(options.cropPolicy)
   )
     throw Error('Unsupported image options.');
   if (

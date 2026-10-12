@@ -4,7 +4,8 @@ import {
   LIMITS,
   safeFilename,
   validateInput,
-  validateOptions
+  validateOptions,
+  type ImageOptions
 } from './model';
 describe('HTML image bounds', () => {
   it.each(['', '   ', '\n\t'])('rejects blank input %j', (input) =>
@@ -41,6 +42,14 @@ describe('HTML image bounds', () => {
     expect(() =>
       validateOptions({ ...DEFAULT_OPTIONS, scale: 2 })
     ).not.toThrow();
+  });
+  it('rejects an untrusted unsupported crop policy', () => {
+    expect(() =>
+      validateOptions({
+        ...DEFAULT_OPTIONS,
+        cropPolicy: 'paginate'
+      } as unknown as ImageOptions)
+    ).toThrow(/Unsupported/);
   });
   it.each([
     ['../../bad.png', 'png', 'bad.png'],

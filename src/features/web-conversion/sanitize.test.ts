@@ -2,6 +2,27 @@ import { describe, expect, it } from 'vitest';
 import { frameDocument, prepareHtml } from './sanitize';
 import { RASTER_FIXTURES } from './assets.fixtures';
 describe('static HTML policy', () => {
+  it('preserves safe system font stacks but warns for unavailable custom fonts and page breaks', () => {
+    const safe = prepareHtml(
+      '<p style="font-family: Arial, sans-serif">Nguyễn An</p><pre style="font-family: system-ui, monospace">code</pre>'
+    );
+    expect(safe.markup).toContain('Arial, sans-serif');
+    expect(safe.markup).toContain('system-ui, monospace');
+    expect(safe.notices).toEqual([]);
+    const unsupported = prepareHtml(
+      '<p style="font-family: CustomFont, serif;break-inside:avoid">Text</p>'
+    );
+    expect(unsupported.markup).not.toMatch(/CustomFont|break-inside/);
+    expect(unsupported.notices.join(' ')).toMatch(/Unsupported inline styles/);
+  });
+  it('preserves bounded border longhands emitted by browser CSSOM', () => {
+    const result = prepareHtml(
+      '<p style="border-top-width:0px;border-top-style:solid;border-top-color:white;border-right-width:99px">Cell</p>'
+    );
+    expect(result.markup).toContain('border-top-width: 0px');
+    expect(result.markup).toContain('border-top-color: white');
+    expect(result.markup).not.toContain('99px');
+  });
   it('preserves Vietnamese text, tables and safe inline styles', () => {
     const result = prepareHtml(
       '<h1 style="color:#0f766e;font-size:24px">Nguyễn An</h1><table><tr><td colspan="2">Invoice</td></tr></table>'

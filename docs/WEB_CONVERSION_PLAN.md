@@ -46,7 +46,7 @@ Do not merge or release implicitly. Follow AGENTS.md for branch cleanup.
 | Step | Scope | Acceptance gate | Status |
 | --- | --- | --- | --- |
 | 1 | Local engine/isolation and HTML to Image MVP | Real images on all 3 engines, no script/network leak, bounded inputs and recovery | Implemented on feature/html-to-image, not merged |
-| 2 | Local assets/fonts/break-aware refinement | Explicit supported asset policy, decoding limits, fidelity fixtures | Embedded PNG/JPEG implemented on branch; fonts/pagination planned |
+| 2 | Local assets/system fonts/single-image boundary refinement | Asset limits, safe font stacks, crop/row warnings and strict export with fidelity fixtures | Implemented on feature/html-to-image, not merged; multi-page pagination belongs to step 4 |
 | 3 | Targeted PDF dependency/security baseline | Patched supported versions, existing image-to-PDF regression tests | Required before HTML/PDF |
 | 4 | HTML to PDF snapshot | Page count/size/margins/ranges verified on downloaded PDFs; raster label | Planned |
 | 5 | Remote service spike | Measured latency/resource budgets, funding/hosting plan, isolation/egress policy | Planned |
@@ -187,8 +187,9 @@ before preview/export. A 5-second asynchronous validation deadline and abort
 discard late results; every resolved bitmap is closed, including late results.
 Native decode itself cannot be preempted and these checks are not hard memory
 quotas. The capture CSP permits only data images; scripts and network remain
-blocked. Fonts/full-page refinement, HTML/PDF and URL conversion are still
-planned; jsPDF upgrade remains a PDF gate.
+blocked. HTML/PDF and URL conversion are still planned; jsPDF upgrade remains
+a PDF gate. Embedded/custom fonts and full-page capture are outside the current
+local-image contract.
 
 Validation evidence and the exact CI head are recorded in the feature PR. Tests
 decode actual PNG/JPEG bytes and verify dimensions, transparency, colors and
@@ -205,3 +206,38 @@ the isolated new module/page/SEO files. Existing tool services, Netlify settings
 SSR/routing and other locales are untouched. License notice is shipped under
 public/licenses/html-to-image.txt. More assets/full-page/PDF support needs separate
 scope and tests; do not mark all four converters complete from this MVP.
+
+## Single-image fidelity and boundaries
+
+Step 2 now covers the supported local-image contract: bounded PNG/JPEG assets,
+system font stacks and explicit crop boundaries. This is implemented on the
+feature branch, not merged. Safe stacks accept Arial, system-ui, serif,
+sans-serif and monospace, including comma-separated fallbacks and quoted names.
+Font appearance depends on the host OS; do not claim identical glyph metrics.
+Bounded border longhands are preserved because browser CSSOM expands shorthand
+borders; otherwise default table borders can change dimensions and boundary cuts.
+Custom/embedded fonts and external font requests remain unsupported. Unknown
+font families and page-break CSS are removed with the existing style warning.
+
+Preview and capture inspect the real script-disabled frame's layout, including
+descendants of fixed-height wrappers. Warn for horizontal/vertical overflow and
+table rows crossing the bottom edge; rows wholly below the edge cause overflow
+without being counted as split rows. Allow half a CSS pixel for rounding. Exact
+boundaries fit; output scale changes pixel count, not CSS layout boundaries.
+Each explicit preview reloads its frame and stale onload callbacks are ignored.
+
+Default Allow cropping preserves existing output. Stop if content is cropped
+rejects export before invoking the image engine, cleans the frame and lets users
+resize/shorten input or explicitly allow cropping. The preview remains available
+for inspection. This measures element/scroll boxes, not individual glyph outlines;
+subpixel rounding and platform font differences are not universal visual proofs.
+
+No automatic page splitting, break-inside handling or moving table rows is
+promised for one-image output. Multi-page pagination, repeated table headers and
+oversized-row policy belong to the PDF phase after its dependency/security gate.
+The original break-aware refinement goal is satisfied here by detection and an
+explicit stop policy; page assembly must be tested against actual PDFs later.
+
+Regression fixtures cover exact/crossing/omitted rows, fixed-wrapper and horizontal
+overflow, unsupported fonts/breaks, 2x scale, preview/export color fidelity,
+repeated preview, strict rejection and successful recovery after resizing.
