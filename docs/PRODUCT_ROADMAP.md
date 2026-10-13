@@ -124,11 +124,19 @@ PR20 pagination gate: implemented on feature/html-to-image, not merged. Explicit
 Paginated width-fit uses bounded sequential captures and protected block/row
 boundaries, rejecting oversized/unsafe layout. One page remains default. Review
 actual PDF bytes, cross-browser page seams, deadlines/cleanup and Pages smoke
-before merge; header repetition/custom fonts are separate next scopes.
+before merge; header repetition is implemented on the branch, not merged. Custom fonts remain deferred.
 
 
 Page ranges (PR20): implemented on feature/html-to-image, not merged. Explicit
 All pages/Custom ranges select original source pages without reflow or bypassing
 full-document limits. Invalid input is rejected, normalized selection is visible,
 selected capture is cancellable and PDF source/output order is tested with actual
-bytes/pixels. Repeated table headers/custom fonts/URL rendering remain planned.
+bytes/pixels. Repeated table headers are implemented on the branch, not merged. Custom fonts/URL rendering remain deferred.
+
+
+Local Web/HTML conversion MVP (PR20) is implemented and verified on the feature
+branch, not merged, including six option presets without content/settings storage.
+The full Web conversion feature remains incomplete. See the
+[deferred register](WEB_CONVERSION_DEFERRED.md) for font/security gates, remote
+service prerequisites and future URL outputs/automation. No backend or paid API
+is added by the local delivery.

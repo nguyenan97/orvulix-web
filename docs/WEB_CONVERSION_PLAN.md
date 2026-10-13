@@ -1,7 +1,10 @@
 # Web and HTML conversion plan
 
 Research snapshot: October 12, 2026. Base inspected: develop at 31fb8ac.
-This document plans delivery, not proof of completed capabilities. Agent execution
+Local conversion MVP is implemented and verified on feature/html-to-image in
+PR20, not merged. Full Web conversion remains incomplete: uploaded fonts and
+remote URL features are tracked in [the deferred register](WEB_CONVERSION_DEFERRED.md).
+This document distinguishes current local contracts from future delivery. Agent execution
 rules are defined in AGENTS.md and its required skills.
 
 ## Research and decisions
@@ -52,10 +55,11 @@ Do not merge or release implicitly. Follow AGENTS.md for branch cleanup.
 | 4b | Bounded multi-page raster PDF | Width-fit, atomic block/row rejection, sequential captures and actual PDF seam assertions | Implemented on feature/html-to-image, not merged |
 | 4c | PDF page ranges | Bounded syntax, source/output mapping and actual selected-page PDFs | Implemented on feature/html-to-image, not merged |
 | 4d | Repeated table headers | Header-aware bounded plans, locked columns and actual continuation-page PDF pixels | Implemented on feature/html-to-image, not merged |
-| 5 | Remote service spike | Measured latency/resource budgets, funding/hosting plan, isolation/egress policy | Planned |
-| 6 | Web to Image | Real gateway-renderer-download tests, SSRF/cancel/quota coverage | Planned |
-| 7 | Web to PDF | Native text extraction, print/screen styles, paper/margins/ranges | Planned |
-| 8 | Advanced controls individually | Lazy/fixed/cookie heuristics have bounds, explicit opt-in and fixtures | Planned |
+| 4e | Validated local option presets | Real PNG/JPEG/PDF outputs, preserved input/filename and cancelled stale work | Implemented on feature/html-to-image, not merged |
+| 5 | Remote service spike | Measured latency/resource budgets, funding/hosting plan, isolation/egress policy | Blocked - hosting/funding/operations authorization required; see WEB_CONVERSION_DEFERRED.md |
+| 6 | Web to Image | Real gateway-renderer-download tests, SSRF/cancel/quota coverage | Deferred - see WEB_CONVERSION_DEFERRED.md |
+| 7 | Web to PDF | Native text extraction, print/screen styles, paper/margins/ranges | Deferred - see WEB_CONVERSION_DEFERRED.md |
+| 8 | Advanced controls individually | Lazy/fixed/cookie heuristics have bounds, explicit opt-in and fixtures | Deferred - see WEB_CONVERSION_DEFERRED.md |
 
 The inspected develop baseline used jsPDF 3.0.3 in an official vulnerable range. Review
 [GHSA-wfv2-pwc8-crg5](https://github.com/parallax/jsPDF/security/advisories/GHSA-wfv2-pwc8-crg5)
@@ -610,4 +614,35 @@ Sync hotspots: existing feature planner/renderer, shared HTML/PDF UI and
 PaginatedPreview, related HTML/PDF SEO notes and focused Pages CI. New header
 model/DOM helpers/tests remain in src/features/web-conversion. Netlify settings,
 routing/canonical policies, upstream tool services and unrelated locales stay
-unchanged. Custom fonts and URL conversion remain planned.
+unchanged. Custom fonts and URL conversion remain deferred; see WEB_CONVERSION_DEFERRED.md.
+
+## Local completion and presets
+
+Local MVP is implemented and verified on the PR branch, not merged. This does not
+complete arbitrary Web/URL conversion. Review exact-head checks in PR20 and the
+[deferred register](WEB_CONVERSION_DEFERRED.md) before reopening another scope.
+
+Six built-in option presets: square PNG 640x640, wide JPEG 960x540, portrait PNG
+720x960, A4 portrait One page, A4 portrait Paginated and Letter landscape Paginated
+(width 640). All use scale 1 and existing default background/quality/crop contracts;
+PDF margins default to 10 mm. Templates contain options only, never HTML/assets/
+fonts/output. No persistence or storage dependency. Unknown/cross-output IDs reject
+without fallback. Existing validators run before application; image objects and
+PDF margins are fresh snapshots on every use. Current input/filename are retained.
+
+Applying a preset invalidates ownership/preview/output/URLs. PDF application
+resets ranges to All pages and repeated headers Off; users can then edit options
+explicitly. The selector is an action (Choose a preset), not a claim that subsequent
+manual edits still match a preset. Applying options never measures/renders content.
+Reset/default controls retain their existing behavior and budgets are unchanged.
+
+New tests cover preset contracts, isolation, unknown IDs and deferred ownership;
+browser flow decodes all image presets and actual A4/Letter PDFs, checks page
+geometry/colors/Unicode filenames, input preservation, mobile/dark/keyboard,
+held-capture cancellation and no auto conversion. Existing core/security tests
+remain required. No renderer/dependency or production/Pages policy changes.
+
+Sync hotspots for this phase: shared HtmlToImage UI, focused Pages CI and these
+docs. Preset templates/controls/tests stay in src/features/web-conversion. Fonts
+remain deferred pending validated local embedding; URL features are blocked on
+remote isolation/operations/funding, not replaced by a CORS proxy.

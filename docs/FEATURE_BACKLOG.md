@@ -132,3 +132,11 @@ rowspan/nesting/body colspan/caption/tfoot/flex tables reject with option On.
 Normal collapsed-border half-pixel row seams now progress instead of incorrectly
 retreating through the entire table. Real PDF/browser coverage and details are
 in WEB_CONVERSION_PLAN.md; custom fonts/URL conversion remain planned.
+
+
+PR20 local completion: local conversion MVP and six validated option presets are
+implemented on feature/html-to-image, not merged. Presets preserve HTML/filename,
+clear/cancel stale work and persist no content/settings. Full Web conversion is
+not complete. See [deferred work and reopening gates](WEB_CONVERSION_DEFERRED.md)
+for uploaded fonts, remote platform, URL outputs, automation and authenticated /
+batch jobs. These are not features shipped by the local MVP.
