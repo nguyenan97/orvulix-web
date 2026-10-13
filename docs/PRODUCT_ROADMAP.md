@@ -27,7 +27,8 @@ Our approach is to make existing tools better first, then explore new capabiliti
   boundary warnings with strict rejection are implemented. Embedded fonts and
   full-page capture remain outside the local-image contract. One-page HTML to PDF is implemented on the branch with A4/Letter, margins and
   an explicit raster-text label; bounded multi-page raster PDF is implemented on the branch, not merged; ranges,
-  repeated headers, custom fonts and URL rendering remain planned. The targeted jsPDF 4.2.1 dependency baseline is implemented on the
+  repeated headers, custom fonts and URL rendering remain planned; page ranges are
+  implemented on the branch, not merged. The targeted jsPDF 4.2.1 dependency baseline is implemented on the
   feature branch for review; remaining legacy PDF limits and remote isolation
   need separate scope.
 
@@ -124,4 +125,11 @@ PR20 pagination gate: implemented on feature/html-to-image, not merged. Explicit
 Paginated width-fit uses bounded sequential captures and protected block/row
 boundaries, rejecting oversized/unsafe layout. One page remains default. Review
 actual PDF bytes, cross-browser page seams, deadlines/cleanup and Pages smoke
-before merge; ranges/header repetition/custom fonts are separate next scopes.
+before merge; header repetition/custom fonts are separate next scopes.
+
+
+Page ranges (PR20): implemented on feature/html-to-image, not merged. Explicit
+All pages/Custom ranges select original source pages without reflow or bypassing
+full-document limits. Invalid input is rejected, normalized selection is visible,
+selected capture is cancellable and PDF source/output order is tested with actual
+bytes/pixels. Repeated table headers/custom fonts/URL rendering remain planned.

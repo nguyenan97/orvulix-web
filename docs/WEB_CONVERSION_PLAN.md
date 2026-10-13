@@ -50,7 +50,8 @@ Do not merge or release implicitly. Follow AGENTS.md for branch cleanup.
 | 3 | Targeted PDF dependency/security baseline | Patched supported versions, existing image-to-PDF regression tests | jsPDF 4.2.1 and regression coverage implemented on branch, not merged |
 | 4 | One-page HTML to PDF raster | Actual page size, margins, image placement/pixels and raster label | Implemented on feature/html-to-image, not merged |
 | 4b | Bounded multi-page raster PDF | Width-fit, atomic block/row rejection, sequential captures and actual PDF seam assertions | Implemented on feature/html-to-image, not merged |
-| 4c | PDF ranges/repeated headers | Separate range and header semantics/tests | Planned |
+| 4c | PDF page ranges | Bounded syntax, source/output mapping and actual selected-page PDFs | Implemented on feature/html-to-image, not merged |
+| 4d | Repeated table headers | Separate header semantics/tests | Planned |
 | 5 | Remote service spike | Measured latency/resource budgets, funding/hosting plan, isolation/egress policy | Planned |
 | 6 | Web to Image | Real gateway-renderer-download tests, SSRF/cancel/quota coverage | Planned |
 | 7 | Web to PDF | Native text extraction, print/screen styles, paper/margins/ranges | Planned |
@@ -192,8 +193,7 @@ before preview/export. A 5-second asynchronous validation deadline and abort
 discard late results; every resolved bitmap is closed, including late results.
 Native decode itself cannot be preempted and these checks are not hard memory
 quotas. The capture CSP permits only data images; scripts and network remain
-blocked. One-page and bounded multi-page HTML/PDF are implemented on branch; ranges,
-repeated headers and URL conversion remain planned. The narrow jsPDF dependency
+blocked. One-page and bounded multi-page HTML/PDF are implemented on branch; repeated headers and URL conversion remain planned; page ranges are implemented on branch. The narrow jsPDF dependency
 gate is implemented on branch, subject to exact-head CI and review. Embedded/custom fonts and full-page capture are outside the current
 local-image contract.
 
@@ -341,8 +341,7 @@ pixels only; page geometry and placement do not change. The preview displays a
 white paper board at 2 CSS px/mm with the same fit/offsets, in a scrollable panel.
 It is a supported-layout preview, not a native PDF viewer or a glyph-identical
 promise across operating systems. Cropping applies to the fixed HTML viewport;
-strict mode rejects viewport overflow before image capture. This One page mode does not paginate. Paginated mode is described below; page
-ranges, repeated headers and page-break CSS remain unsupported.
+strict mode rejects viewport overflow before image capture. This One page mode does not paginate. Paginated mode is described below; repeated headers and page-break CSS remain unsupported; ranges apply only to Paginated mode.
 
 Input/DOM/assets retain existing limits: 64 KiB UTF-8, 1000 nodes, depth 24,
 4 embedded PNG/JPEG images, 48 KiB combined file data and 1 MP combined source
@@ -419,7 +418,8 @@ with a shorten/increase printable height/use One page message. There is no
 explicit split option. Nested/flex layout fidelity is not universally promised.
 Existing sanitizer removes break-inside/page-break CSS with an unsupported-style
 warning; these properties are not silently interpreted as pagination commands.
-No repeated table headers, page ranges, custom fonts or remote URL rendering.
+No repeated table headers, custom fonts or remote URL rendering. Optional page
+ranges are described below.
 
 Budgets: 8 pages, 10000 CSS px measured source extent, 4 MP per captured page,
 16 MP cumulative raster pixels, 8 MiB cumulative PNG captures and 8 MiB actual
@@ -461,3 +461,60 @@ PDF and legacy PDF regressions. Exact checks/head and audit counts belong in PR2
 Sync hotspots: shared local HTML UI, the existing related English PDF description,
 SEO content, focused Pages CI and these docs. Core/planner/test additions stay in
 src/features/web-conversion; no deployment/routing policy or unrelated services.
+
+
+## Paginated page selection
+
+Implemented on feature/html-to-image, not merged. All pages is the default.
+Custom ranges refer to 1-based pages in the complete source plan: 1, 1-3 or
+1,3,5-7. Whitespace around tokens/dashes is accepted. Leading zeroes normalize
+to their positive integer page. Duplicate/overlapping/unsorted entries normalize
+to unique pages in ascending source order. Empty custom input, malformed tokens,
+zero/negative/decimal/nonfinite/unsafe numbers, decreasing ranges and pages outside
+the source document are errors; no clamp, dropped token or All pages fallback.
+
+Parser bounds are 128 UTF-8 bytes and 16 tokens. Endpoints must be safe integers
+1..8 before expansion, so a huge endpoint never controls allocation/iteration.
+The input keeps one over-limit character to report rejection rather than silently
+exporting a valid truncated prefix. Syntax is checked on explicit actions;
+actual source bounds are checked after the full immutable document is measured.
+Typing does not trigger measurement, capture or conversion.
+
+Full source/input/asset/page/pixel budgets still apply before selection. Selecting
+page 1 cannot bypass an oversized source or unselected raster-budget overflow.
+Only selected slices are captured sequentially; cumulative encoded PNG and actual
+PDF byte limits apply to those captures. Each slice keeps original source bounds,
+width-fit coefficient, margins and raster scale. Export page 1 can be source page 2
+without a leading blank page. No reflow, repagination, post-export deletePage or
+full-document canvas. All pages retains the original capture sequence/geometry.
+
+Preview reports total source pages, normalized selection and export count. Each
+paper is labelled with source number and output position; progress reports the
+same mapping. Range edits cancel the old job, clear plan/output/URLs and ignore
+late plans/progress/results/errors. No extra snapshot cache was introduced.
+One page hides and ignores range controls; Reset restores One page plus All pages.
+Restore default options clears custom ranges while retaining the chosen layout.
+
+Baseline review found an assembler validation defect: rebuilding artificial
+unbroken pages could exceed 4 MP even when protected breaks produced acceptable
+pages. Reproduced with width 1000, scale 2 and three 800-px blocks: each accepted
+slice is 3.2 MP, total 9.6 MP, while a natural unbroken page exceeds 4 MP.
+Geometry is now validated independently, followed by every original slice's
+continuity/capacity/source and pixel budgets before range resolution. Budgets are
+unchanged; this removes an incorrect rejection, not the planner's limits.
+
+Tests cover parser boundaries/invalid cases, full-plan quota enforcement before
+selection, actual jsPDF page matrices/dimensions/alpha/resources and decoded image
+streams matching selected source pages. Browser fixtures have four source pages
+with unique markers/color bands; downloaded PDFs are parsed and rasterized with
+PDF.js for single/nonconsecutive/inclusive/normalized/All selections. Cover
+A4/Letter/orientation/asymmetric margins/1x/2x, invalid ranges and recovery,
+selected capture edits/cancel, mobile/dark/keyboard, security isolation and SPA
+unmount/readiness. Exact-head counts and CI evidence belong in PR20.
+
+Sync hotspots: shared local HTML UI, PaginatedPreview, selected capture/assembly,
+related SEO copy and focused CI. New parser/control/tests stay in the existing
+feature module. No dependency, unrelated locale/service, deployment/routing,
+SSR or folder-structure changes. Repeated headers/custom fonts/URL conversion
+remain separate planned tasks. Native decode/layout/synchronous encoding retain
+the documented cancellation and CPU/memory limitations.
