@@ -449,9 +449,40 @@ test('script/network isolation in repeated clone, mobile/dark/keyboard, cancel/e
     .toBe(0);
   await expect(page.getByRole('link', { name: 'Download PDF' })).toHaveCount(0);
   await page.getByLabel('Repeat table headers', { exact: true }).check();
+  // Hold a real capture so Cancel cannot disappear as a fast job completes.
+  await page.evaluate(() => {
+    const original = HTMLCanvasElement.prototype.toBlob;
+    Reflect.set(window, '__cancelBlob', original);
+    HTMLCanvasElement.prototype.toBlob = function (callback, type, quality) {
+      const canvas = this;
+      Reflect.set(window, '__cancelCanvas', canvas);
+      Reflect.set(window, '__cancelRelease', () =>
+        original.call(canvas, callback, type, quality)
+      );
+    };
+  });
   await page.getByRole('button', { name: 'Convert to PDF' }).click();
+  await expect
+    .poll(() => page.evaluate(() => !!Reflect.get(window, '__cancelCanvas')))
+    .toBe(true);
+  expect(
+    await page.evaluate(() => document.documentElement.scrollWidth)
+  ).toBeLessThanOrEqual(391);
   await page.getByRole('button', { name: 'Cancel', exact: true }).click();
   await expect(page.getByText(/Conversion cancelled/)).toBeVisible();
+  await page.evaluate(() => {
+    Reflect.set(
+      HTMLCanvasElement.prototype,
+      'toBlob',
+      Reflect.get(window, '__cancelBlob')
+    );
+    Reflect.get(window, '__cancelRelease')();
+  });
+  await expect
+    .poll(() =>
+      page.evaluate(() => Reflect.get(window, '__cancelCanvas').width)
+    )
+    .toBe(0);
   await page.getByRole('button', { name: 'Convert to PDF' }).click();
   await page.locator('a[href="/"]').first().click();
   await page.goBack();
