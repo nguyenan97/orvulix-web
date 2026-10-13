@@ -18,11 +18,17 @@ export { SAMPLE } from './sample';
 import { inspectLayout } from './layout';
 import { DEFAULT_PDF_OPTIONS, pdfGeometry, type PdfOptions } from './pdf-model';
 import PdfOptionsFields from './PdfOptionsFields';
+import PaginatedPreview from './PaginatedPreview';
+import type { PaginationPlan } from './pagination';
 
 export default function HtmlToImage({
   output = 'image'
 }: { output?: 'image' | 'pdf'; title?: string } = {}) {
   const isPdf = output === 'pdf';
+  const [pdfMode, setPdfMode] = useState<'one' | 'paginated'>('one');
+  const paginated = isPdf && pdfMode === 'paginated';
+  const [pagePlan, setPagePlan] = useState<PaginationPlan | null>(null);
+  const [progress, setProgress] = useState('');
   const defaults = {
     ...DEFAULT_OPTIONS,
     filename: isPdf ? 'html-pdf' : DEFAULT_OPTIONS.filename
@@ -67,6 +73,8 @@ export default function HtmlToImage({
     job.current = null;
     setBusy(false);
     setFile(null);
+    setPagePlan(null);
+    setProgress('');
     setPreview(null);
     previewSource.current = null;
     setNotices([]);
@@ -81,8 +89,12 @@ export default function HtmlToImage({
     setOptions(next);
   };
   const prepare = async (controller: AbortController) => {
-    validateOptions(options);
-    if (isPdf) pdfGeometry(pdfOptions, options);
+    validateOptions(paginated ? { ...options, height: 100 } : options);
+    if (isPdf)
+      pdfGeometry(
+        pdfOptions,
+        paginated ? { ...options, height: 100 } : options
+      );
     const prepared = prepareHtml(html);
     if (prepared.assets.length)
       await validateEmbeddedImages(prepared.assets, controller.signal);
@@ -99,9 +111,16 @@ export default function HtmlToImage({
     const controller = new AbortController();
     job.current = controller;
     setBusy(true);
+    setProgress('');
     setError('');
     try {
-      await prepare(controller);
+      const prepared = await prepare(controller);
+      if (paginated) {
+        const { plan } = await (
+          await import('./paginated-renderer')
+        ).runPaginated(prepared, options, pdfOptions, controller.signal, false);
+        if (job.current === controller) setPagePlan(plan);
+      }
     } catch (reason) {
       if (job.current === controller) {
         setPreview(null);
@@ -119,6 +138,7 @@ export default function HtmlToImage({
     const controller = new AbortController();
     job.current = controller;
     setBusy(true);
+    setProgress('');
     setError('');
     setFile(null);
     try {
@@ -127,19 +147,47 @@ export default function HtmlToImage({
         if (job.current === controller && !controller.signal.aborted)
           setNotices([...prepared.notices, ...report.notices]);
       };
-      const output = isPdf
-        ? await (
-            await import('./pdf-renderer')
-          ).capturePdf(
-            prepared,
-            { ...options },
-            { ...pdfOptions, margins: { ...pdfOptions.margins } },
-            controller.signal,
-            report
-          )
-        : await (
-            await import('./renderer')
-          ).captureHtml(prepared, { ...options }, controller.signal, report);
+      let output: File;
+      if (paginated) {
+        const result = await (
+          await import('./paginated-renderer')
+        ).runPaginated(
+          prepared,
+          { ...options },
+          { ...pdfOptions, margins: { ...pdfOptions.margins } },
+          controller.signal,
+          true,
+          (plan) => {
+            if (job.current === controller) setPagePlan(plan);
+          },
+          (state) => {
+            if (job.current === controller)
+              setProgress(
+                state.stage === 'measuring'
+                  ? 'Measuring document...'
+                  : `${
+                      state.stage === 'capturing' ? 'Capturing' : 'Encoding'
+                    } page ${state.page} of ${state.total}`
+              );
+          }
+        );
+        if (!result.file) throw Error('PDF export did not produce a file.');
+        output = result.file;
+      } else if (isPdf) {
+        output = await (
+          await import('./pdf-renderer')
+        ).capturePdf(
+          prepared,
+          { ...options },
+          { ...pdfOptions, margins: { ...pdfOptions.margins } },
+          controller.signal,
+          report
+        );
+      } else {
+        output = await (
+          await import('./renderer')
+        ).captureHtml(prepared, { ...options }, controller.signal, report);
+      }
       if (job.current === controller) setFile(output);
     } catch (reason) {
       if (job.current === controller)
@@ -176,7 +224,7 @@ export default function HtmlToImage({
     }
   };
   let geometry: ReturnType<typeof pdfGeometry> | null = null;
-  if (isPdf) {
+  if (isPdf && !paginated) {
     try {
       geometry = pdfGeometry(pdfOptions, options);
     } catch {
@@ -188,14 +236,25 @@ export default function HtmlToImage({
       <Alert severity="info">
         Local static HTML with simple inline styles and embedded PNG/JPEG data
         URLs. Scripts, SVG, stylesheet blocks and external resources are
-        removed. Output is cropped to the selected dimensions. Up to 4 images,
-        48 KiB combined image data and 1 megapixel of source images.
+        removed.{' '}
+        {paginated
+          ? 'Paginated output keeps bounded source content.'
+          : 'Output is cropped to the selected dimensions.'}{' '}
+        Up to 4 images, 48 KiB combined image data and 1 megapixel of source
+        images.
       </Alert>
       {isPdf && (
         <Alert severity="info">
-          One-page raster PDF: text is not searchable or selectable. The HTML
-          viewport is fitted and centered inside the margins without stretching.
-          Scale changes raster resolution only. No pagination.
+          {paginated ? (
+            'Multi-page raster PDF: text is not searchable or selectable. Width-fit preserves aspect ratio; oversized blocks/rows stop export.'
+          ) : (
+            <>
+              One-page raster PDF: text is not searchable or selectable. The
+              HTML viewport is fitted and centered inside the margins without
+              stretching. Scale changes raster resolution only. Choose Paginated
+              for bounded multi-page output.
+            </>
+          )}
         </Alert>
       )}
       <Box
@@ -229,6 +288,7 @@ export default function HtmlToImage({
                   onClick={() => {
                     invalidate();
                     setHtml('');
+                    setPdfMode('one');
                     setOptions({ ...defaults });
                     setPdfOptions({
                       ...DEFAULT_PDF_OPTIONS,
@@ -275,7 +335,7 @@ export default function HtmlToImage({
               </Stack>
               {busy && (
                 <Typography role="status">
-                  Preparing and rendering locally...
+                  {progress || 'Preparing and rendering locally...'}
                 </Typography>
               )}
               {error && <Alert severity="error">{error}</Alert>}
@@ -293,6 +353,29 @@ export default function HtmlToImage({
               <Typography variant="h6">
                 {isPdf ? 'PDF options' : 'Image options'}
               </Typography>
+              {isPdf && (
+                <TextField
+                  label="PDF layout"
+                  select
+                  value={pdfMode}
+                  fullWidth
+                  onChange={(e) => {
+                    invalidate();
+                    setPdfMode(e.target.value as 'one' | 'paginated');
+                  }}
+                >
+                  <MenuItem value="one">One page</MenuItem>
+                  <MenuItem value="paginated">Paginated</MenuItem>
+                </TextField>
+              )}
+              {paginated && (
+                <Alert severity="info">
+                  Width-fit, up to 8 pages, 10000 CSS px source height, 4
+                  MP/page and 16 MP total. Oversized blocks/rows are rejected.
+                  No repeated headers or CSS page breaks. Viewport height and
+                  overflow handling apply only to One page.
+                </Alert>
+              )}
               {isPdf && (
                 <PdfOptionsFields
                   value={pdfOptions}
@@ -319,6 +402,7 @@ export default function HtmlToImage({
                   fullWidth
                 />
                 <TextField
+                  disabled={paginated}
                   label="Height (px)"
                   type="number"
                   value={options.height}
@@ -398,6 +482,7 @@ export default function HtmlToImage({
                 />
               )}
               <TextField
+                disabled={paginated}
                 label="Overflow handling"
                 select
                 value={options.cropPolicy}
@@ -426,12 +511,14 @@ export default function HtmlToImage({
                 inputProps={{ maxLength: 100 }}
                 fullWidth
               />
-              <Typography variant="body2">
-                Output: {options.width * options.scale} x{' '}
-                {options.height * options.scale} px. Maximum 2 megapixels and 8
-                MiB.
-              </Typography>
-              {isPdf && geometry && (
+              {!paginated && (
+                <Typography variant="body2">
+                  Output: {options.width * options.scale} x{' '}
+                  {options.height * options.scale} px. Maximum 2 megapixels and
+                  8 MiB.
+                </Typography>
+              )}
+              {isPdf && !paginated && geometry && (
                 <Typography variant="body2">
                   Page: {geometry.pageWidth} x {geometry.pageHeight} mm.
                   Viewport fits at {geometry.mmPerCssPixel.toFixed(3)} mm per
@@ -453,7 +540,18 @@ export default function HtmlToImage({
           </CardContent>
         </Card>
       </Box>
-      {preview && (
+      {preview && paginated && pagePlan && (
+        <Card variant="outlined">
+          <CardContent>
+            <PaginatedPreview
+              prepared={preview}
+              plan={pagePlan}
+              white={options.background === 'white'}
+            />
+          </CardContent>
+        </Card>
+      )}
+      {preview && !paginated && (
         <Card variant="outlined">
           <CardContent>
             <Typography variant="h6" gutterBottom>
