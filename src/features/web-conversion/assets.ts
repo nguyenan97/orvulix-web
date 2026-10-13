@@ -207,33 +207,37 @@ export async function validateEmbeddedImages(
     throw Error('This browser cannot safely decode embedded images.');
   let active = true,
     timer: ReturnType<typeof setTimeout> | undefined;
+  const deadline = performance.now() + ASSET_LIMITS.timeoutMs;
+  const timeoutError = () =>
+    Error('Embedded image decoding timed out. Use smaller images.');
+  const checkActive = () => {
+    checkAbort(signal);
+    if (!active) throw abortError();
+    if (performance.now() > deadline) throw timeoutError();
+  };
   let removeAbort = () => {};
   const interrupted = new Promise<never>((_, reject) => {
     const abort = () => reject(abortError());
     signal.addEventListener('abort', abort, { once: true });
     removeAbort = () => signal.removeEventListener('abort', abort);
-    timer = setTimeout(
-      () =>
-        reject(Error('Embedded image decoding timed out. Use smaller images.')),
-      ASSET_LIMITS.timeoutMs
-    );
+    timer = setTimeout(() => reject(timeoutError()), ASSET_LIMITS.timeoutMs);
   });
   const work = async () => {
     for (const asset of assets) {
-      checkAbort(signal);
+      checkActive();
       let bitmap: Bitmap;
       try {
         bitmap = await decoder(
           new Blob([new Uint8Array(asset.bytes).buffer], { type: asset.mime })
         );
       } catch {
+        checkActive();
         throw Error(
           'Embedded image could not be decoded. Use a valid PNG or JPEG.'
         );
       }
       try {
-        if (!active) throw abortError();
-        checkAbort(signal);
+        checkActive();
         dimensions(bitmap.width, bitmap.height);
         const expected =
           bitmap.width === asset.width && bitmap.height === asset.height;
@@ -247,6 +251,7 @@ export async function validateEmbeddedImages(
         bitmap.close();
       }
     }
+    checkActive();
   };
   try {
     await Promise.race([work(), interrupted]);

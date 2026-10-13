@@ -36,11 +36,15 @@ export async function captureHtml(
     border: '0'
   });
   let canvas: HTMLCanvasElement | undefined;
+  const deadline = performance.now() + LIMITS.timeoutMs;
+  const timeoutError = () =>
+    Error('Rendering took too long. Simplify your HTML.');
   let timer: ReturnType<typeof setTimeout> | undefined;
   let removeAbort = () => {};
   const checkActive = () => {
     checkAbort(signal);
     if (!frame.isConnected) throw abortError();
+    if (performance.now() > deadline) throw timeoutError();
   };
   // The owned frame isolates input styles; the engine serializes only its safe
   // DOM into an SVG/canvas. No application DOM or untrusted scripts are rendered.
@@ -59,7 +63,7 @@ export async function captureHtml(
       removeAbort = () => signal.removeEventListener('abort', abort);
       timer = setTimeout(() => {
         frame.remove();
-        reject(Error('Rendering took too long. Simplify your HTML.'));
+        reject(timeoutError());
       }, LIMITS.timeoutMs);
     });
     frame.srcdoc = frameDocument(prepared);
@@ -73,6 +77,7 @@ export async function captureHtml(
       const report = inspectLayout(body, options);
       onLayout?.(report);
       enforceCropPolicy(report, options.cropPolicy);
+      checkActive();
       const { toCanvas } = await import('html-to-image');
       checkActive();
       const captured = await toCanvas(body, {
@@ -109,9 +114,15 @@ export async function captureHtml(
         throw Error('Image exceeds the 8 MiB output limit.');
       if (blob.type !== `image/${options.format}`)
         throw Error('The requested image format is unavailable.');
-      return new File([blob], safeFilename(options.filename, options.format), {
-        type: blob.type
-      });
+      const file = new File(
+        [blob],
+        safeFilename(options.filename, options.format),
+        {
+          type: blob.type
+        }
+      );
+      checkActive();
+      return file;
     };
     return await Promise.race([render(), cancelled]);
   } finally {
