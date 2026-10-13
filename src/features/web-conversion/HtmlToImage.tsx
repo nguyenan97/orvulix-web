@@ -24,6 +24,8 @@ import PaginatedPreview from './PaginatedPreview';
 import type { PaginationPlan } from './pagination';
 import { ALL_PAGES, parsePageRanges, type PageSelection } from './page-ranges';
 import PageRangeFields from './PageRangeFields';
+import PresetFields from './PresetFields';
+import { resolvePreset } from './presets';
 
 export default function HtmlToImage({
   output = 'image'
@@ -93,6 +95,25 @@ export default function HtmlToImage({
   const editOptions = (next: ImageOptions) => {
     invalidate();
     setOptions(next);
+  };
+  const applyPreset = (id: string) => {
+    try {
+      const preset = resolvePreset(id, output, options.filename);
+      invalidate();
+      setOptions(preset.image);
+      if (preset.output === 'pdf') {
+        setPdfMode(preset.layout);
+        setPdfOptions(preset.pdf);
+        setSelection(ALL_PAGES);
+        setRepeatHeaders(false);
+      }
+    } catch (reason) {
+      setError(
+        reason instanceof Error
+          ? reason.message
+          : 'Preset could not be applied.'
+      );
+    }
   };
   const prepare = async (controller: AbortController) => {
     validateOptions(paginated ? { ...options, height: 100 } : options);
@@ -379,6 +400,7 @@ export default function HtmlToImage({
               <Typography variant="h6">
                 {isPdf ? 'PDF options' : 'Image options'}
               </Typography>
+              <PresetFields output={output} onApply={applyPreset} />
               {isPdf && (
                 <TextField
                   label="PDF layout"
