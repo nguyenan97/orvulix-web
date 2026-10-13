@@ -15,10 +15,17 @@ import {
 } from './pagination';
 import { paginatedDocument, measureDocument } from './pagination-layout';
 import { checkPdfOutput, validateCapturedPng } from './pdf-renderer';
+import {
+  ALL_PAGES,
+  selectedSourcePages,
+  parsePageRanges,
+  type PageSelection
+} from './page-ranges';
 
 export interface PaginationProgress {
   stage: 'measuring' | 'capturing' | 'encoding';
   page: number;
+  sourcePage?: number;
   total: number;
 }
 export async function runPaginated(
@@ -28,11 +35,15 @@ export async function runPaginated(
   signal: AbortSignal,
   exportPdf: boolean,
   onPlan?: (plan: PaginationPlan) => void,
-  onProgress?: (progress: PaginationProgress) => void
+  onProgress?: (progress: PaginationProgress) => void,
+  selection: PageSelection = ALL_PAGES
 ): Promise<{ plan: PaginationPlan; file?: File }> {
   // Reject invalid options before native decode/layout or module loading.
   planPagination({ height: 1, extent: 1, blocks: [] }, image, options);
   checkAbort(signal);
+  if (selection.mode === 'custom') parsePageRanges(selection.expression);
+  else if (selection.mode !== 'all')
+    throw Error('Unsupported page selection mode.');
   if (prepared.assets.length)
     await validateEmbeddedImages(prepared.assets, signal);
   checkAbort(signal);
@@ -102,7 +113,9 @@ export async function runPaginated(
         options
       );
       check();
+      const selected = selectedSourcePages(selection, plan.pages.length);
       onPlan?.(plan);
+      check();
       if (!exportPdf) return { plan };
       const { toCanvas } = await import('html-to-image');
       check();
@@ -111,12 +124,13 @@ export async function runPaginated(
         image,
         options,
         signal,
-        async (slice, index) => {
+        async (slice, index, sourcePage) => {
           check();
           onProgress?.({
             stage: 'capturing',
             page: index + 1,
-            total: plan.pages.length
+            sourcePage,
+            total: selected.length
           });
           const height = slice.end - slice.start;
           frame.style.height = `${height}px`;
@@ -154,13 +168,16 @@ export async function runPaginated(
           }
         },
         check,
-        (page, total) => onProgress?.({ stage: 'encoding', page, total })
+        (page, total, sourcePage) =>
+          onProgress?.({ stage: 'encoding', page, total, sourcePage }),
+        selection
       );
       check();
       onProgress?.({
         stage: 'encoding',
-        page: plan.pages.length,
-        total: plan.pages.length
+        page: selected.length,
+        sourcePage: selected[selected.length - 1],
+        total: selected.length
       });
       return { plan, file };
     };
@@ -183,10 +200,12 @@ export async function assemblePaginatedPdf(
   signal: AbortSignal,
   capture: (
     slice: import('./pagination').PageSlice,
-    index: number
+    index: number,
+    sourcePage: number
   ) => Promise<Blob>,
   checkDeadline: () => void = () => {},
-  onEncoding?: (page: number, total: number) => void
+  onEncoding?: (page: number, total: number, sourcePage: number) => void,
+  selection: PageSelection = ALL_PAGES
 ): Promise<File> {
   const deadline = performance.now() + PAGINATION_LIMITS.timeoutMs;
   const check = () => {
@@ -195,11 +214,12 @@ export async function assemblePaginatedPdf(
     if (performance.now() > deadline)
       throw Error('Pagination encoding timed out.');
   };
-  // Rebuild from trusted numeric bounds rather than accepting arbitrary placement.
+  // Check geometry without constructing artificial unbroken pages. The actual
+  // full-plan slices below must satisfy their original pixel/source budgets.
   const expected = planPagination(
     {
-      height: plan.pages[plan.pages.length - 1]?.end ?? 0,
-      extent: plan.pages[plan.pages.length - 1]?.end ?? 0,
+      height: 1,
+      extent: 1,
       blocks: []
     },
     image,
@@ -215,7 +235,9 @@ export async function assemblePaginatedPdf(
     plan.pageHeight !== expected.pageHeight ||
     plan.capacity !== expected.capacity ||
     !plan.pages.length ||
-    plan.pages.length > PAGINATION_LIMITS.pages
+    plan.pages.length > PAGINATION_LIMITS.pages ||
+    !Number.isInteger(plan.pages[plan.pages.length - 1]?.end) ||
+    plan.pages[plan.pages.length - 1].end > PAGINATION_LIMITS.documentHeight
   )
     throw Error('Invalid pagination plan.');
   let previous = 0,
@@ -239,6 +261,7 @@ export async function assemblePaginatedPdf(
       throw Error('Pagination raster budget exceeded.');
     previous = slice.end;
   }
+  const selected = selectedSourcePages(selection, plan.pages.length);
   check();
   const { default: jsPDF } = await import('jspdf');
   check();
@@ -250,9 +273,10 @@ export async function assemblePaginatedPdf(
     putOnlyUsedFonts: true
   });
   let pngBytes = 0;
-  for (const [index, slice] of plan.pages.entries()) {
+  for (const [index, sourcePage] of selected.entries()) {
+    const slice = plan.pages[sourcePage - 1];
     check();
-    const blob = await capture(slice, index);
+    const blob = await capture(slice, index, sourcePage);
     check();
     pngBytes += blob.size;
     if (
@@ -266,7 +290,7 @@ export async function assemblePaginatedPdf(
     const height = slice.end - slice.start;
     validateCapturedPng(bytes, { ...image, height });
     if (index) pdf.addPage(options.paper, options.orientation);
-    onEncoding?.(index + 1, plan.pages.length);
+    onEncoding?.(index + 1, selected.length, sourcePage);
     pdf.addImage(
       bytes,
       'PNG',

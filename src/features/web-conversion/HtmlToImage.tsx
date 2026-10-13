@@ -20,6 +20,8 @@ import { DEFAULT_PDF_OPTIONS, pdfGeometry, type PdfOptions } from './pdf-model';
 import PdfOptionsFields from './PdfOptionsFields';
 import PaginatedPreview from './PaginatedPreview';
 import type { PaginationPlan } from './pagination';
+import { ALL_PAGES, parsePageRanges, type PageSelection } from './page-ranges';
+import PageRangeFields from './PageRangeFields';
 
 export default function HtmlToImage({
   output = 'image'
@@ -29,6 +31,7 @@ export default function HtmlToImage({
   const paginated = isPdf && pdfMode === 'paginated';
   const [pagePlan, setPagePlan] = useState<PaginationPlan | null>(null);
   const [progress, setProgress] = useState('');
+  const [selection, setSelection] = useState<PageSelection>(ALL_PAGES);
   const defaults = {
     ...DEFAULT_OPTIONS,
     filename: isPdf ? 'html-pdf' : DEFAULT_OPTIONS.filename
@@ -95,6 +98,8 @@ export default function HtmlToImage({
         pdfOptions,
         paginated ? { ...options, height: 100 } : options
       );
+    if (paginated && selection.mode === 'custom')
+      parsePageRanges(selection.expression);
     const prepared = prepareHtml(html);
     if (prepared.assets.length)
       await validateEmbeddedImages(prepared.assets, controller.signal);
@@ -118,7 +123,16 @@ export default function HtmlToImage({
       if (paginated) {
         const { plan } = await (
           await import('./paginated-renderer')
-        ).runPaginated(prepared, options, pdfOptions, controller.signal, false);
+        ).runPaginated(
+          prepared,
+          options,
+          pdfOptions,
+          controller.signal,
+          false,
+          undefined,
+          undefined,
+          selection
+        );
         if (job.current === controller) setPagePlan(plan);
       }
     } catch (reason) {
@@ -167,9 +181,12 @@ export default function HtmlToImage({
                   ? 'Measuring document...'
                   : `${
                       state.stage === 'capturing' ? 'Capturing' : 'Encoding'
-                    } page ${state.page} of ${state.total}`
+                    } source page ${
+                      state.sourcePage ?? state.page
+                    } - output page ${state.page} of ${state.total}`
               );
-          }
+          },
+          selection
         );
         if (!result.file) throw Error('PDF export did not produce a file.');
         output = result.file;
@@ -289,6 +306,7 @@ export default function HtmlToImage({
                     invalidate();
                     setHtml('');
                     setPdfMode('one');
+                    setSelection(ALL_PAGES);
                     setOptions({ ...defaults });
                     setPdfOptions({
                       ...DEFAULT_PDF_OPTIONS,
@@ -375,6 +393,15 @@ export default function HtmlToImage({
                   No repeated headers or CSS page breaks. Viewport height and
                   overflow handling apply only to One page.
                 </Alert>
+              )}
+              {paginated && (
+                <PageRangeFields
+                  value={selection}
+                  onChange={(next) => {
+                    invalidate();
+                    setSelection(next);
+                  }}
+                />
               )}
               {isPdf && (
                 <PdfOptionsFields
@@ -528,6 +555,7 @@ export default function HtmlToImage({
               <Button
                 onClick={() => {
                   editOptions({ ...defaults });
+                  setSelection(ALL_PAGES);
                   setPdfOptions({
                     ...DEFAULT_PDF_OPTIONS,
                     margins: { ...DEFAULT_PDF_OPTIONS.margins }
@@ -546,6 +574,7 @@ export default function HtmlToImage({
             <PaginatedPreview
               prepared={preview}
               plan={pagePlan}
+              selection={selection}
               white={options.background === 'white'}
             />
           </CardContent>

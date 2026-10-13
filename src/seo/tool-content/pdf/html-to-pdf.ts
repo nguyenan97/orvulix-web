@@ -6,11 +6,11 @@ const content: ToolSeoOverride = {
   howTo: [
     'Paste or upload static HTML, or load the Vietnamese invoice example.',
     'Choose viewport dimensions, raster scale, A4 or Letter, orientation and margins.',
-    'Choose One page viewport fit or Paginated width-fit. Preview boundaries and resolve oversized blocks.',
+    'Choose One page viewport fit or Paginated width-fit. Preview boundaries, resolve oversized blocks and optionally select source page ranges.',
     'Click Convert to PDF and download the raster document.'
   ],
   notes: [
-    'PDF text is rasterized and is not searchable or selectable. Paginated mode supports up to 8 pages with bounded block/row breaks; no repeated headers or page ranges.',
+    'PDF text is rasterized and is not searchable or selectable. Paginated mode supports up to 8 pages with bounded block/row breaks; optional ranges select original source pages in ascending order; no repeated headers.',
     'In One page mode, the fixed HTML viewport is fitted and centered in the printable area with its aspect ratio preserved. Scale changes raster resolution, not placement. Margins must leave positive printable space.',
     'Only safe static HTML, system font stacks and bounded embedded PNG/JPEG images are supported. Scripts, external resources, SVG, stylesheet imports, custom fonts and page-break CSS are blocked or removed with warnings.',
     'Input is limited to 64 KiB, 1000 nodes and 24 levels. Raster capture is limited to 2 megapixels and 8 MiB; Paginated capture allows 4 MP/page, 16 MP total and 10000 CSS px source height. PDF output is limited to 8 MiB.',
