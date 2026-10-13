@@ -49,10 +49,10 @@ and native decode validation; external images, SVG/APNG, scripts and stylesheet
 blocks remain blocked. Safe system font stacks, overflow/split-row warnings and
 optional strict crop rejection are implemented. Output is one fixed-size image;
 bounded multi-page raster pagination is implemented on the branch, not merged.
-Ranges are implemented on the branch; repeated table headers are implemented on the branch; URL conversion remains planned. jsPDF is upgraded to 4.2.1 on the branch with real PDF regression coverage;
+Ranges are implemented on the branch; repeated table headers are implemented on the branch; URL conversion remains deferred. jsPDF is upgraded to 4.2.1 on the branch with real PDF regression coverage;
 61 inherited audit findings remain. One-page HTML to PDF is implemented on the branch with A4/Letter, orientation,
 margins, aspect-preserving fit, strict crop handling and a raster-text label.
-Page ranges are implemented on the branch; repeated table headers are implemented on the branch; URL conversion remains planned. This
+Page ranges are implemented on the branch; repeated table headers are implemented on the branch; URL conversion remains deferred. This
 request does not imply acceptance by upstream or completion of PDF privacy work.
 
 Difficulty is relative implementation risk, not an estimate of calendar time.
@@ -120,8 +120,7 @@ bounded 1-based custom syntax (128 UTF-8 bytes/16 tokens); normalize duplicates 
 ordering, reject invalid/out-of-source input. Full-plan budgets remain enforced,
 only selected pages are captured, original geometry stays intact and UI progress
 separates source number from output position. Fix the baseline assembler's false
-rejection of safe pre-broken plans. Custom fonts/URLs remain next
-scopes, after selected-page fidelity/lifecycle validation and review.
+rejection of safe pre-broken plans. Custom fonts/URLs remain deferred; see WEB_CONVERSION_DEFERRED.md for reopening gates.
 
 
 PR20 repeated table headers: implemented on feature/html-to-image, not merged.
@@ -131,7 +130,7 @@ against unchanged limits. Multi-row headers and header colspan are supported;
 rowspan/nesting/body colspan/caption/tfoot/flex tables reject with option On.
 Normal collapsed-border half-pixel row seams now progress instead of incorrectly
 retreating through the entire table. Real PDF/browser coverage and details are
-in WEB_CONVERSION_PLAN.md; custom fonts/URL conversion remain planned.
+in WEB_CONVERSION_PLAN.md; custom fonts/URL conversion remain deferred.
 
 
 PR20 local completion: local conversion MVP and six validated option presets are
@@ -140,3 +139,9 @@ clear/cancel stale work and persist no content/settings. Full Web conversion is
 not complete. See [deferred work and reopening gates](WEB_CONVERSION_DEFERRED.md)
 for uploaded fonts, remote platform, URL outputs, automation and authenticated /
 batch jobs. These are not features shipped by the local MVP.
+
+PR20 review corrections: capture/asset elapsed deadlines now reject completion
+past the budget before timer delivery, with late-resource cleanup and recovery
+regressions. The headers UI unit flow is split into independent lifecycle cases;
+FAQ describes the existing separate raster-PDF tool. Implemented on branch, not
+merged; full Web conversion and the deferred register remain unchanged.

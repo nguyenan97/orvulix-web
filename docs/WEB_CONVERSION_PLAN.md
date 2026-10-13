@@ -197,7 +197,7 @@ before preview/export. A 5-second asynchronous validation deadline and abort
 discard late results; every resolved bitmap is closed, including late results.
 Native decode itself cannot be preempted and these checks are not hard memory
 quotas. The capture CSP permits only data images; scripts and network remain
-blocked. One-page and bounded multi-page HTML/PDF are implemented on branch; repeated headers and page ranges are implemented on branch; URL conversion remains planned. The narrow jsPDF dependency
+blocked. One-page and bounded multi-page HTML/PDF are implemented on branch; repeated headers and page ranges are implemented on branch; URL conversion remains deferred. The narrow jsPDF dependency
 gate is implemented on branch, subject to exact-head CI and review. Embedded/custom fonts and full-page capture are outside the current
 local-image contract.
 
@@ -519,7 +519,7 @@ unmount/readiness. Exact-head counts and CI evidence belong in PR20.
 Sync hotspots: shared local HTML UI, PaginatedPreview, selected capture/assembly,
 related SEO copy and focused CI. New parser/control/tests stay in the existing
 feature module. No dependency, unrelated locale/service, deployment/routing,
-SSR or folder-structure changes. Repeated headers are described below; custom fonts/URL conversion remain planned. Native decode/layout/synchronous encoding retain
+SSR or folder-structure changes. Repeated headers are described below; custom fonts/URL conversion remain deferred. Native decode/layout/synchronous encoding retain
 the documented cancellation and CPU/memory limitations.
 
 
@@ -646,3 +646,38 @@ Sync hotspots for this phase: shared HtmlToImage UI, focused Pages CI and these
 docs. Preset templates/controls/tests stay in src/features/web-conversion. Fonts
 remain deferred pending validated local embedding; URL features are blocked on
 remote isolation/operations/funding, not replaced by a CORS proxy.
+
+## Review corrections: elapsed deadline acceptance
+
+Implemented on feature/html-to-image, not merged. Review reproduced timer-starved
+capture accepting a PNG after 10.3 seconds and native validation accepting preview
+after 5.24 seconds. These were controlled instrumentation probes, not untrusted
+HTML executing scripts. Capture now checks a monotonic deadline at preparation,
+module/capture/encoding boundaries and before returning a file. Native asset
+validation checks before/after each decode and before accepting the entire phase.
+Budgets stay 10 seconds for image capture and 5 seconds for shared asset validation;
+existing pagination/PDF assembly deadlines stay unchanged. Timers still reject
+stalled promises; elapsed checks reject late completion before timer delivery.
+An exact elapsed boundary is accepted only while the phase is still active and
+its timer has not fired; strictly greater elapsed time rejects. Timer delivery or
+abort ends ownership independently. This is not preemption or a hard quota.
+
+The captured canvas becomes owned before an elapsed check can throw. A canvas
+arriving after timeout/cancel is zeroed without encoding. Decoded bitmap checks
+run inside try/finally so every returned bitmap closes, including late results.
+New unit regressions cover exact/past boundaries, shared decode deadlines, stalled
+encoding, late canvas/bitmap cleanup and recovery. Real-browser regressions hold
+native completion, advance only the monotonic clock, verify no late output and
+then decode/download actual recovery images/PDFs on all three engines.
+
+The previous headers UI unit test combined several flows under one 5-second test
+budget and timed out in the default full run while passing isolated/serial runs.
+It is now four independent tests with explicit renderer-entry acknowledgements and
+semantic combobox lookup; no timeout/retry/global-worker settings are changed.
+This reduces contention sensitivity without claiming every source of flakiness is
+eliminated. HTML to Image FAQ now describes the existing separate raster-PDF tool,
+matching UI and prerendered HTML. Fonts/remote scope remains deferred.
+
+Sync hotspots for these corrections: existing feature capture/assets, header UI
+tests, related SEO FAQ, focused Pages CI and docs. No budgets, dependencies,
+sanitizer/CSP, deployment/routing policy or unrelated services/locales change.

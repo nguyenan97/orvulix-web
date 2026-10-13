@@ -27,7 +27,7 @@ Our approach is to make existing tools better first, then explore new capabiliti
   boundary warnings with strict rejection are implemented. Embedded fonts and
   full-page capture remain outside the local-image contract. One-page HTML to PDF is implemented on the branch with A4/Letter, margins and
   an explicit raster-text label; bounded multi-page raster PDF is implemented on the branch, not merged; source page ranges and optional repeated thead headers are implemented
-  on the branch, not merged. Custom fonts and URL rendering remain planned. The targeted jsPDF 4.2.1 dependency baseline is implemented on the
+  on the branch, not merged. Custom fonts and URL rendering remain deferred. The targeted jsPDF 4.2.1 dependency baseline is implemented on the
   feature branch for review; remaining legacy PDF limits and remote isolation
   need separate scope.
 
@@ -140,3 +140,9 @@ The full Web conversion feature remains incomplete. See the
 [deferred register](WEB_CONVERSION_DEFERRED.md) for font/security gates, remote
 service prerequisites and future URL outputs/automation. No backend or paid API
 is added by the local delivery.
+
+PR20 local reliability review: monotonic capture/asset acceptance deadlines and
+late-result cleanup regressions are implemented on the feature branch, not merged.
+The separate HTML to PDF tool is described as implemented raster output, while
+fonts, URL rendering and automation remain deferred. Release still follows the
+normal develop review and separately authorized main workflow.
