@@ -313,7 +313,11 @@ test('unsupported table policies, header+row overflow and no implicit header rec
     '<table><thead><tr><th>A</th></tr></thead><tbody><tr><td>B</td></tr></tbody><tfoot><tr><td>Footer</td></tr></tfoot></table>',
     '<div style="display:flex"><table><thead><tr><th>A</th></tr></thead><tbody><tr><td>B</td></tr></tbody></table></div>',
     '<table><thead><tr><th>A</th></tr></thead><tbody><tr><td><table><tr><td>Nested</td></tr></table></td></tr></tbody></table>',
-    '<table><thead><tr><th>A</th><th>B</th></tr></thead><tbody><tr><td colspan="2">Span</td></tr></tbody></table>'
+    '<table><thead><tr><th>A</th><th>B</th></tr></thead><tbody><tr><td colspan="2">Span</td></tr></tbody></table>',
+    `<table><thead><tr><th>${Array.from(
+      { length: 64 },
+      () => '<span>A </span>'
+    ).join('')}</th></tr></thead><tbody><tr><td>Body</td></tr></tbody></table>`
   ];
   for (const markup of tables) {
     await page.getByLabel('HTML markup').fill(markup);

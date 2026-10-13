@@ -22,6 +22,15 @@ export function cloneHeader(source: HTMLTableElement, model: TableHeader) {
     win = doc.defaultView;
   const head = source.querySelector(':scope > thead');
   if (!win || !head) throw unsupported();
+  // Bound text as well as elements before allocating any synthetic header.
+  const walker = doc.createTreeWalker(head);
+  let headerNodes = 0;
+  while (walker.nextNode()) {
+    if (++headerNodes > HEADER_LIMITS.nodes)
+      throw Error(
+        'Repeat table headers supports at most 128 descendant nodes per header. Shorten the header or turn this option off.'
+      );
+  }
   const copy = source.cloneNode(false) as HTMLTableElement;
   copy.removeAttribute('id');
   const computed = win.getComputedStyle(source);
@@ -105,15 +114,13 @@ export async function measureTableHeaders(
       .flatMap((body) => [...body.rows])
       .filter((row) => row.getBoundingClientRect().height > 0);
     if (!bodyRows.length) continue;
-    if (
-      !headBox.height ||
-      !head.rows.length ||
-      head.querySelectorAll('*').length > HEADER_LIMITS.nodes
-    )
-      throw unsupported();
+    if (!headBox.height || !head.rows.length) throw unsupported();
     const first = bodyRows[0];
-    if (!first.cells.length || first.cells.length > HEADER_LIMITS.columns)
-      throw unsupported();
+    if (!first.cells.length) throw unsupported();
+    if (first.cells.length > HEADER_LIMITS.columns)
+      throw Error(
+        'Repeat table headers supports at most 20 columns. Reduce columns or turn this option off.'
+      );
     const columns = [...first.cells].map(
       (cell) => cell.getBoundingClientRect().width
     );
@@ -186,7 +193,10 @@ export async function measureTableHeaders(
         );
       model.height = Math.ceil(cloneBox.height);
       result.push(model);
-      if (result.length > HEADER_LIMITS.tables) throw unsupported();
+      if (result.length > HEADER_LIMITS.tables)
+        throw Error(
+          'Repeat table headers supports at most 20 tables. Shorten the document or turn this option off.'
+        );
     } finally {
       holder.remove();
     }

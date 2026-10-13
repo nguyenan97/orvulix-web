@@ -112,3 +112,15 @@ it('ignores entirely hidden tables but never promotes body rows into implicit he
     )
   ).toEqual([]); // jsdom has no layout; hidden/zero geometry is ignored.
 });
+
+it('rejects over-limit text descendants before cloning while preserving the original source', () => {
+  const root = source(),
+    table = root.querySelector('table')!;
+  table.querySelector('thead')!.innerHTML =
+    '<tr><th>' +
+    Array.from({ length: 64 }, () => '<span>A </span>').join('') +
+    '</th></tr>';
+  expect(() => cloneHeader(table, model)).toThrow(/128 descendant nodes/);
+  expect(table.querySelectorAll('thead span')).toHaveLength(64);
+  expect(table.querySelector('tbody')?.textContent).toContain('SECRET BODY');
+});
