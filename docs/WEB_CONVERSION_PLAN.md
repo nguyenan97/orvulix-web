@@ -49,7 +49,8 @@ Do not merge or release implicitly. Follow AGENTS.md for branch cleanup.
 | 2 | Local assets/system fonts/single-image boundary refinement | Asset limits, safe font stacks, crop/row warnings and strict export with fidelity fixtures | Implemented on feature/html-to-image, not merged; multi-page pagination belongs to step 4 |
 | 3 | Targeted PDF dependency/security baseline | Patched supported versions, existing image-to-PDF regression tests | jsPDF 4.2.1 and regression coverage implemented on branch, not merged |
 | 4 | One-page HTML to PDF raster | Actual page size, margins, image placement/pixels and raster label | Implemented on feature/html-to-image, not merged |
-| 4b | Multi-page PDF pagination/ranges | Explicit break/oversized-row/header policy and actual multi-page PDF assertions | Planned |
+| 4b | Bounded multi-page raster PDF | Width-fit, atomic block/row rejection, sequential captures and actual PDF seam assertions | Implemented on feature/html-to-image, not merged |
+| 4c | PDF ranges/repeated headers | Separate range and header semantics/tests | Planned |
 | 5 | Remote service spike | Measured latency/resource budgets, funding/hosting plan, isolation/egress policy | Planned |
 | 6 | Web to Image | Real gateway-renderer-download tests, SSRF/cancel/quota coverage | Planned |
 | 7 | Web to PDF | Native text extraction, print/screen styles, paper/margins/ranges | Planned |
@@ -191,8 +192,8 @@ before preview/export. A 5-second asynchronous validation deadline and abort
 discard late results; every resolved bitmap is closed, including late results.
 Native decode itself cannot be preempted and these checks are not hard memory
 quotas. The capture CSP permits only data images; scripts and network remain
-blocked. One-page HTML/PDF is implemented on branch; multi-page and URL conversion remain
-planned. The narrow jsPDF dependency
+blocked. One-page and bounded multi-page HTML/PDF are implemented on branch; ranges,
+repeated headers and URL conversion remain planned. The narrow jsPDF dependency
 gate is implemented on branch, subject to exact-head CI and review. Embedded/custom fonts and full-page capture are outside the current
 local-image contract.
 
@@ -340,8 +341,8 @@ pixels only; page geometry and placement do not change. The preview displays a
 white paper board at 2 CSS px/mm with the same fit/offsets, in a scrollable panel.
 It is a supported-layout preview, not a native PDF viewer or a glyph-identical
 promise across operating systems. Cropping applies to the fixed HTML viewport;
-strict mode rejects viewport overflow before image capture. No full-page capture,
-automatic pagination, page ranges, repeated headers or page-break CSS support.
+strict mode rejects viewport overflow before image capture. This One page mode does not paginate. Paginated mode is described below; page
+ranges, repeated headers and page-break CSS remain unsupported.
 
 Input/DOM/assets retain existing limits: 64 KiB UTF-8, 1000 nodes, depth 24,
 4 embedded PNG/JPEG images, 48 KiB combined file data and 1 MP combined source
@@ -382,3 +383,81 @@ key, two SEO override lines, focused CI command and small shared converter/model
 integration. Core and test additions remain under src/features/web-conversion/;
 new page/meta/content adapters follow existing conventions. Netlify settings,
 production policy, unrelated services/locales and directory structure are unchanged.
+
+
+## Bounded multi-page raster PDF contract
+
+Implemented on feature/html-to-image, not merged. One page remains the default
+and retains contain-fit/centering, fixed viewport and crop policy. Paginated is
+an explicit separate mode. It ignores the disabled viewport-height/crop controls.
+Paper, orientation and 0..100 mm finite decimal margins use the same validation.
+
+Paginated layout uses a fixed 320..1280 CSS px source width. The coefficient is
+printableWidth / sourceWidth mm per CSS pixel (points = mm * 72 / 25.4).
+Capacity = floor(printableHeight / coefficient) CSS px. Scale 1/2 multiplies
+raster pixels only and never changes source boundaries. A partial last page is
+placed at left/top margins at the same coefficient, with white paper below;
+it is never stretched or fit to the whole page.
+
+The planner emits integer, continuous [start,end) source slices. It retreats
+from a crossing protected range to floor(range.top), checking other overlapping
+ranges until safe, or rejecting a non-progressing layout. No pixels are omitted
+between slices; whitespace inside the retained source is preserved. Unpainted
+trailing empty wrappers are excluded from printable height, but still included
+in the geometry budget. Explicit heights of visible leaf blocks, painted
+backgrounds and intentional leading/inter-block whitespace remain meaningful.
+Completely hidden/empty printable content is rejected rather than exporting an
+accidental blank page. Measurement covers descendants overflowing fixed-height
+wrappers and rejects horizontal overflow. It measures element/scroll boxes,
+not universal glyph outlines.
+
+Supported break subset: leaf text/heading/list/code blocks and simple table rows
+inside structural wrappers. Direct anonymous text is protected by its Range
+bounds. Rowspan/nested tables are atomic. Overlapping atomic ranges that cannot
+be safely divided are rejected. A block/row taller than capacity is rejected
+with a shorten/increase printable height/use One page message. There is no
+explicit split option. Nested/flex layout fidelity is not universally promised.
+Existing sanitizer removes break-inside/page-break CSS with an unsupported-style
+warning; these properties are not silently interpreted as pagination commands.
+No repeated table headers, page ranges, custom fonts or remote URL rendering.
+
+Budgets: 8 pages, 10000 CSS px measured source extent, 4 MP per captured page,
+16 MP cumulative raster pixels, 8 MiB cumulative PNG captures and 8 MiB actual
+PDF output. Input 64 KiB/1000 nodes/depth24 and embedded assets 4/48 KiB/1 MP
+remain unchanged. Pixel and source budgets are checked before capture. Encoded
+PNG/PDF byte budgets are checked between pages before another canvas is started.
+These are acceptance bounds, not hard browser/native allocation or memory quotas.
+
+A script-disabled, data-only CSP frame contains a trusted flow-root wrapper;
+measurement and preview/export share this wrapper to avoid margin-collapse
+differences. A bounded body viewport clips the source translated by -start CSS
+pixels. html-to-image serializes the safe DOM into its SVG clone and creates
+only a per-page canvas, never a full-document canvas. Captures/encoding are
+sequential; each canvas is zeroed before the next page. PNG headers/dimensions
+are revalidated. jsPDF addImage uses supported FAST PNG compression to keep
+multi-page 2x files within the existing cap; no HTML/actions/annotation APIs.
+jsPDF retains compressed image data until completion and has no dispose API.
+
+Preview shows page count, source bounds and paper/margins using the same pure
+planner and width-fit coefficient. Export remeasures the immutable input/options
+snapshot in a fresh owned frame before capture. System-font layout can differ
+across operating systems; this is not a native PDF viewer or byte/glyph identity
+promise. Actual browser tests compare preview bounds to emitted image dimensions
+and matrices, then rasterize every downloaded page with PDF.js.
+
+One paginated render has a 10-second async deadline after asset validation, with
+elapsed monotonic checks before/after DOM measurement, async capture, byte reads,
+per-page PDF encoding and final output. Abort/timeout removes the owned frame,
+clears timers/listeners, zeros current/late canvases and discards late callbacks.
+Input/options/mode edits, cancel/reset and SPA unmount cancel job ownership.
+Progress reports measurement/capture page counts, never invented percentages.
+DOM layout, native decode and synchronous jsPDF work cannot be preempted; no hard
+CPU/memory quota is claimed. Local encoding arrays/PDF objects are GC-owned.
+
+Official jsPDF release/advisories were rechecked October 13, 2026: 4.2.1 remains
+latest and exceeds published affected ranges. No dependency change in this phase.
+Focused CI includes pagination browser coverage alongside existing image, one-page
+PDF and legacy PDF regressions. Exact checks/head and audit counts belong in PR20.
+Sync hotspots: shared local HTML UI, the existing related English PDF description,
+SEO content, focused Pages CI and these docs. Core/planner/test additions stay in
+src/features/web-conversion; no deployment/routing policy or unrelated services.

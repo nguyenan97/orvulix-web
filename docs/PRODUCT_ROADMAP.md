@@ -26,7 +26,8 @@ Our approach is to make existing tools better first, then explore new capabiliti
   External resources/scripts are blocked. Safe system font stacks and crop/row
   boundary warnings with strict rejection are implemented. Embedded fonts and
   full-page capture remain outside the local-image contract. One-page HTML to PDF is implemented on the branch with A4/Letter, margins and
-  an explicit raster-text label; multi-page PDF and URL rendering remain planned. The targeted jsPDF 4.2.1 dependency baseline is implemented on the
+  an explicit raster-text label; bounded multi-page raster PDF is implemented on the branch, not merged; ranges,
+  repeated headers, custom fonts and URL rendering remain planned. The targeted jsPDF 4.2.1 dependency baseline is implemented on the
   feature branch for review; remaining legacy PDF limits and remote isolation
   need separate scope.
 
@@ -117,3 +118,10 @@ We welcome practical suggestions and contributions.
 - **Contact:** founder@orvulix.io.vn
 
 Orvulix is independently maintained as a fork of [OmniTools](https://github.com/iib0011/omni-tools), with original attribution and licensing preserved.
+
+
+PR20 pagination gate: implemented on feature/html-to-image, not merged. Explicit
+Paginated width-fit uses bounded sequential captures and protected block/row
+boundaries, rejecting oversized/unsafe layout. One page remains default. Review
+actual PDF bytes, cross-browser page seams, deadlines/cleanup and Pages smoke
+before merge; ranges/header repetition/custom fonts are separate next scopes.

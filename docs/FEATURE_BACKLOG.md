@@ -48,10 +48,11 @@ cancellation. Embedded PNG/JPEG data URLs have header checks, byte/pixel budgets
 and native decode validation; external images, SVG/APNG, scripts and stylesheet
 blocks remain blocked. Safe system font stacks, overflow/split-row warnings and
 optional strict crop rejection are implemented. Output is one fixed-size image;
-multi-page pagination belongs to the gated PDF phase. jsPDF is upgraded to 4.2.1 on the branch with real PDF regression coverage;
+bounded multi-page raster pagination is implemented on the branch, not merged.
+Ranges/repeated headers and URL conversion remain planned. jsPDF is upgraded to 4.2.1 on the branch with real PDF regression coverage;
 61 inherited audit findings remain. One-page HTML to PDF is implemented on the branch with A4/Letter, orientation,
 margins, aspect-preserving fit, strict crop handling and a raster-text label.
-Multi-page pagination/ranges and URL conversion remain planned. This
+Page ranges/repeated headers and URL conversion remain planned. This
 request does not imply acceptance by upstream or completion of PDF privacy work.
 
 Difficulty is relative implementation risk, not an estimate of calendar time.
@@ -105,3 +106,11 @@ an accepted or tested feature.
 - OCR/background-removal asset self-hosting ([#464](https://github.com/iib0011/omni-tools/issues/464))
   can consume hosting bandwidth/credits. Evaluate asset sizes and licensing before
   calling this a cost-saving or fully offline solution.
+
+
+HTML/PDF pagination update (PR20, implemented on feature/html-to-image, not merged):
+explicit One page/Paginated modes; width-fit, atomic leaf/row boundaries, default
+oversized-content rejection, sequential page captures, 8-page/10000-CSS-px/
+4-MP-page/16-MP-total/8-MiB budgets. Partial last pages retain scale. Preview/export
+share the planner; export remeasures its input snapshot. No split option, ranges,
+repeated headers, custom fonts or URL converters. See WEB_CONVERSION_PLAN.md.
