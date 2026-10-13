@@ -87,8 +87,9 @@ for (const [paper, orientation, scale] of [
   test(`${paper}/${orientation}/${scale}: repeated multi-row colspan headers, stable columns, every row once and PDF seam pixels`, async ({
     page
   }) => {
+    const width = paper === 'Letter' ? 640 : 480;
     await mode(page);
-    await page.getByLabel('Width (px)').fill('480');
+    await page.getByLabel('Width (px)').fill(String(width));
     for (const [label, value] of [
       ['Paper size', paper],
       ['Page orientation', orientation],
@@ -190,9 +191,9 @@ for (const [paper, orientation, scale] of [
           .dict.lookup(PDFName.of('Height'), PDFNumber)
           .asNumber()
       ).toBe(height * (scale === '2x' ? 2 : 1));
-      expect(w / h).toBeCloseTo(480 / height, 6);
+      expect(w / h).toBeCloseTo(width / height, 6);
       const map = (sx: number, sy: number) => [
-        (x + (w * sx) / 480) * 2,
+        (x + (w * sx) / width) * 2,
         (ph - y - h + (h * sy) / height) * 2
       ];
       points[i] = [];
@@ -586,4 +587,67 @@ test('outer borders and separate-border spacing retain column geometry or reject
       (await PDFDocument.load(await bytes(page))).getPageCount()
     ).toBeGreaterThan(1);
   }
+});
+
+test('large header plan enforces elapsed deadline after a held continuation capture, cleans resources and recovers', async ({
+  page
+}) => {
+  await mode(page);
+  await page.getByLabel('Width (px)').fill('480');
+  await page.getByLabel('Paper size', { exact: true }).click();
+  await page.getByRole('option', { name: /^Letter/ }).click();
+  await page.getByLabel('Page orientation', { exact: true }).click();
+  await page.getByRole('option', { name: 'Landscape', exact: true }).click();
+  await page.getByLabel('Scale', { exact: true }).click();
+  await page.getByRole('option', { name: '2x' }).click();
+  await page.getByLabel('HTML markup').fill(invoice());
+  await page.evaluate(() => {
+    const original = HTMLCanvasElement.prototype.toBlob;
+    Reflect.set(window, '__deadlineBlob', original);
+    Reflect.set(window, '__deadlineClock', performance.now.bind(performance));
+    let calls = 0;
+    HTMLCanvasElement.prototype.toBlob = function (cb, type, quality) {
+      if (++calls === 2) {
+        const canvas = this;
+        Reflect.set(window, '__deadlineCanvas', canvas);
+        Reflect.set(window, '__deadlineRelease', () =>
+          original.call(canvas, cb, type, quality)
+        );
+      } else original.call(this, cb, type, quality);
+    };
+  });
+  await page.getByRole('button', { name: 'Convert to PDF' }).click();
+  await expect
+    .poll(() => page.evaluate(() => !!Reflect.get(window, '__deadlineCanvas')))
+    .toBe(true);
+  expect(
+    await page.locator('iframe[title^="Paginated preview"]').count()
+  ).toBeGreaterThanOrEqual(7);
+  await page.evaluate(() => {
+    Reflect.set(
+      performance,
+      'now',
+      () => Reflect.get(window, '__deadlineClock')() + 10001
+    );
+    Reflect.get(window, '__deadlineRelease')();
+  });
+  await expect(page.getByText(/Pagination .*timed out/)).toBeVisible();
+  await expect(page.locator('[data-html-renderer]')).toHaveCount(0);
+  await expect
+    .poll(() =>
+      page.evaluate(() => Reflect.get(window, '__deadlineCanvas').width)
+    )
+    .toBe(0);
+  await expect(page.getByRole('link', { name: 'Download PDF' })).toHaveCount(0);
+  await page.evaluate(() => {
+    Reflect.set(performance, 'now', Reflect.get(window, '__deadlineClock'));
+    Reflect.set(
+      HTMLCanvasElement.prototype,
+      'toBlob',
+      Reflect.get(window, '__deadlineBlob')
+    );
+  });
+  await page.getByLabel('HTML markup').fill('<p>Recovered after deadline</p>');
+  await page.getByRole('button', { name: 'Convert to PDF' }).click();
+  expect((await PDFDocument.load(await bytes(page))).getPageCount()).toBe(1);
 });

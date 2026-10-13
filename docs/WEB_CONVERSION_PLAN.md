@@ -568,7 +568,13 @@ PNG validation and PDF placement includes the reserved strip, preserving aspect
 ratio and partial last-page scale. Assembly revalidates header/table geometry
 and page references before range selection or capture. No runtime dependencies
 or PDF active-content APIs were added. Native DOM/decode/synchronous encoding
-remain cooperative, without hard CPU/memory quotas.
+remain cooperative, without hard CPU/memory quotas. Resource limits are not a
+completion-time guarantee: a 7-8-page/2x header table reached the unchanged
+10-second deadline on desktop WebKit. Fidelity fixtures use bounded smaller
+workloads; a separate large-plan browser regression expires the monotonic clock
+after a held continuation capture and checks timeout, frame/canvas cleanup,
+no partial download and recovery. No deadline/retry increase. Pixel probes use
+blank colored areas outside font-dependent glyphs; RGB tolerance stays 3.
 
 Baseline reproduction: an ordinary 30-row table with default collapsed borders
 returned Overlapping blocks instead of pages. Adjacent native row edges lie on
