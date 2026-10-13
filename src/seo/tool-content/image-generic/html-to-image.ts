@@ -29,7 +29,7 @@ const content: ToolSeoOverride = {
     {
       question: 'Can I export HTML to PDF here?',
       answer:
-        'No. This tool exports PNG and JPEG only. HTML to PDF is a separate planned feature.'
+        'This tool exports PNG and JPEG only. Use the separate HTML to PDF tool for local raster PDF output; its text is not searchable or selectable.'
     }
   ]
 };
