@@ -1,6 +1,8 @@
 import { useEffect, useRef, useState } from 'react';
 import {
   Alert,
+  Checkbox,
+  FormControlLabel,
   Box,
   Button,
   Card,
@@ -31,6 +33,7 @@ export default function HtmlToImage({
   const paginated = isPdf && pdfMode === 'paginated';
   const [pagePlan, setPagePlan] = useState<PaginationPlan | null>(null);
   const [progress, setProgress] = useState('');
+  const [repeatHeaders, setRepeatHeaders] = useState(false);
   const [selection, setSelection] = useState<PageSelection>(ALL_PAGES);
   const defaults = {
     ...DEFAULT_OPTIONS,
@@ -117,6 +120,7 @@ export default function HtmlToImage({
     job.current = controller;
     setBusy(true);
     setProgress('');
+    setPagePlan(null);
     setError('');
     try {
       const prepared = await prepare(controller);
@@ -131,7 +135,8 @@ export default function HtmlToImage({
           false,
           undefined,
           undefined,
-          selection
+          selection,
+          repeatHeaders
         );
         if (job.current === controller) setPagePlan(plan);
       }
@@ -155,6 +160,7 @@ export default function HtmlToImage({
     setProgress('');
     setError('');
     setFile(null);
+    setPagePlan(null);
     try {
       const prepared = await prepare(controller);
       const report = (report: import('./layout').LayoutReport) => {
@@ -186,7 +192,8 @@ export default function HtmlToImage({
                     } - output page ${state.page} of ${state.total}`
               );
           },
-          selection
+          selection,
+          repeatHeaders
         );
         if (!result.file) throw Error('PDF export did not produce a file.');
         output = result.file;
@@ -307,6 +314,7 @@ export default function HtmlToImage({
                     setHtml('');
                     setPdfMode('one');
                     setSelection(ALL_PAGES);
+                    setRepeatHeaders(false);
                     setOptions({ ...defaults });
                     setPdfOptions({
                       ...DEFAULT_PDF_OPTIONS,
@@ -390,9 +398,30 @@ export default function HtmlToImage({
                 <Alert severity="info">
                   Width-fit, up to 8 pages, 10000 CSS px source height, 4
                   MP/page and 16 MP total. Oversized blocks/rows are rejected.
-                  No repeated headers or CSS page breaks. Viewport height and
+                  CSS page breaks are not supported. Viewport height and
                   overflow handling apply only to One page.
                 </Alert>
+              )}
+              {paginated && (
+                <FormControlLabel
+                  label="Repeat table headers"
+                  control={
+                    <Checkbox
+                      checked={repeatHeaders}
+                      onChange={(e) => {
+                        invalidate();
+                        setRepeatHeaders(e.target.checked);
+                      }}
+                    />
+                  }
+                />
+              )}
+              {paginated && (
+                <Typography variant="body2">
+                  Repeats supported thead rows on continuation pages. Nested
+                  tables, rowspan, body colspan, captions, footers and flex
+                  layouts require this option Off.
+                </Typography>
               )}
               {paginated && (
                 <PageRangeFields
@@ -556,6 +585,7 @@ export default function HtmlToImage({
                 onClick={() => {
                   editOptions({ ...defaults });
                   setSelection(ALL_PAGES);
+                  setRepeatHeaders(false);
                   setPdfOptions({
                     ...DEFAULT_PDF_OPTIONS,
                     margins: { ...DEFAULT_PDF_OPTIONS.margins }
@@ -572,6 +602,7 @@ export default function HtmlToImage({
         <Card variant="outlined">
           <CardContent>
             <PaginatedPreview
+              key={previewRun}
               prepared={preview}
               plan={pagePlan}
               selection={selection}

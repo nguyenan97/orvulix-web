@@ -75,6 +75,47 @@ describe('measured source bounds', () => {
     bounds(p, NaN, 100);
     expect(() => measureDocument(root, 320)).toThrow(/geometry/);
   });
+  it('accounts for Firefox collapsed row/group outer-border scrollWidth without hiding real overflow', () => {
+    const root = document.createElement('div');
+    root.innerHTML =
+      '<table style="border-collapse:collapse"><tbody><tr><td>A</td></tr></tbody></table>';
+    document.body.append(root);
+    bounds(root, 0, 40);
+    const [table, group, row, cell] = root.querySelectorAll('*');
+    bounds(table, 0, 40);
+    bounds(group, 0, 40, 319);
+    bounds(row, 0, 40, 319);
+    bounds(cell, 0, 40, 160);
+    // happy-dom omits native row-group display, so supply the observed browser metrics.
+    const computed = window.getComputedStyle.bind(window);
+    vi.spyOn(window, 'getComputedStyle').mockImplementation(
+      (el) =>
+        new Proxy(computed(el), {
+          get(target, key) {
+            if (key === 'display' && el === group) return 'table-row-group';
+            if (key === 'display' && el === row) return 'table-row';
+            return Reflect.get(target, key, target);
+          }
+        })
+    );
+    for (const el of [group, row])
+      Object.defineProperty(el, 'scrollWidth', {
+        configurable: true,
+        value: 320
+      });
+    expect(measureDocument(root, 320).height).toBe(40);
+    Object.defineProperty(row, 'scrollWidth', {
+      configurable: true,
+      value: 321
+    });
+    expect(() => measureDocument(root, 320)).toThrow(/width/);
+    bounds(row, 0, 40, 319);
+    Object.defineProperty(cell, 'scrollWidth', {
+      configurable: true,
+      value: 162
+    });
+    expect(() => measureDocument(root, 320)).toThrow(/width/);
+  });
   it('keeps trusted clipping wrapper/CSP and rejects invalid offsets', () => {
     const prepared = prepareHtml('<p onclick="x()">Safe</p>');
     const doc = paginatedDocument(prepared, 100);

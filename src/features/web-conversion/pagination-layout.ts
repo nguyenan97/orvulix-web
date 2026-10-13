@@ -38,14 +38,32 @@ export function measureDocument(
     if (!Number.isFinite(top) || top < 0 || !Number.isFinite(bottom))
       throw Error('Unsupported source geometry.');
     extent = Math.max(extent, bottom, top + element.scrollHeight);
+    const style = win.getComputedStyle(element);
+    const table = element.closest('table');
+    // Firefox reports collapsed table outer width as row/group scrollWidth,
+    // although their border boxes exclude half of each outer border. Keep the
+    // physical viewport check and check every cell/descendant independently.
+    const nativeGroup =
+      ['tr', 'thead', 'tbody', 'tfoot'].includes(element.localName) &&
+      [
+        'table-row',
+        'table-header-group',
+        'table-row-group',
+        'table-footer-group'
+      ].includes(style.display);
+    const scrollBox =
+      nativeGroup &&
+      table &&
+      win.getComputedStyle(table).borderCollapse === 'collapse'
+        ? Math.max(rect.width, table.getBoundingClientRect().width)
+        : rect.width;
     if (
       rect.right - origin.left > width + 0.5 ||
-      element.scrollWidth > rect.width + 0.5
+      element.scrollWidth > scrollBox + 0.5
     )
       throw Error(
         'Content exceeds the page width. Reduce fixed widths or use One page.'
       );
-    const style = win.getComputedStyle(element);
     const row = element.localName === 'tr';
     // Preserve whole rows. Rowspan tables and nested tables are atomic, not
     // independently breakable. Simple wrappers may contain multiple leaf blocks.

@@ -1,3 +1,5 @@
+import { rasterHeight, validateTableHeaders } from './table-header-model';
+import { measureTableHeaders, composeHeaderPage } from './table-headers';
 import { type PreparedHtml } from './sanitize';
 import { validateEmbeddedImages } from './assets';
 import {
@@ -36,7 +38,8 @@ export async function runPaginated(
   exportPdf: boolean,
   onPlan?: (plan: PaginationPlan) => void,
   onProgress?: (progress: PaginationProgress) => void,
-  selection: PageSelection = ALL_PAGES
+  selection: PageSelection = ALL_PAGES,
+  repeatHeaders = false
 ): Promise<{ plan: PaginationPlan; file?: File }> {
   // Reject invalid options before native decode/layout or module loading.
   planPagination({ height: 1, extent: 1, blocks: [] }, image, options);
@@ -107,11 +110,18 @@ export async function runPaginated(
         [...source.querySelectorAll('img')].map((img) => img.decode())
       );
       check();
-      const plan = planPagination(
-        measureDocument(source, image.width),
-        image,
-        options
-      );
+      const layout = measureDocument(source, image.width);
+      if (layout.extent > PAGINATION_LIMITS.documentHeight)
+        throw Error('Document geometry exceeds the 10000 CSS pixel limit.');
+      if (repeatHeaders) {
+        layout.tables = await measureTableHeaders(source, check);
+        layout.height = Math.max(
+          layout.height,
+          ...layout.tables.map((t) => t.bottom)
+        );
+        layout.extent = Math.max(layout.extent, layout.height);
+      }
+      const plan = planPagination(layout, image, options, repeatHeaders);
       check();
       const selected = selectedSourcePages(selection, plan.pages.length);
       onPlan?.(plan);
@@ -132,10 +142,11 @@ export async function runPaginated(
             sourcePage,
             total: selected.length
           });
-          const height = slice.end - slice.start;
+          const height = rasterHeight(slice);
           frame.style.height = `${height}px`;
           body.style.height = `${height}px`;
-          source.style.transform = `translateY(-${slice.start}px)`;
+          if (plan.tables) await composeHeaderPage(body, plan, slice, check);
+          else source.style.transform = `translateY(-${slice.start}px)`;
           const captured = await toCanvas(body, {
             width: image.width,
             height,
@@ -240,19 +251,53 @@ export async function assemblePaginatedPdf(
     plan.pages[plan.pages.length - 1].end > PAGINATION_LIMITS.documentHeight
   )
     throw Error('Invalid pagination plan.');
+  validateTableHeaders(
+    plan.tables ?? [],
+    plan.width,
+    plan.pages[plan.pages.length - 1].end
+  );
   let previous = 0,
     pixels = 0;
   for (const slice of plan.pages) {
+    const continuing = plan.tables?.find(
+      (t) =>
+        slice.start >= Math.floor(t.headBottom) &&
+        slice.start < t.rows[t.rows.length - 1].bottom - 0.5
+    );
+    if (
+      continuing
+        ? slice.header?.table !== continuing.index ||
+          slice.header?.height !== continuing.height
+        : !!slice.header
+    )
+      throw Error('Invalid repeated header page plan.');
+    for (const table of plan.tables ?? []) {
+      const protectedRows = [
+        { top: table.top, bottom: table.rows[0].bottom },
+        ...table.rows,
+        { top: table.rows[table.rows.length - 1].top, bottom: table.bottom }
+      ];
+      if (
+        protectedRows.some(
+          (row) =>
+            row.top < slice.end &&
+            row.bottom > slice.end &&
+            Math.min(slice.end - row.top, row.bottom - slice.end) > 0.5
+        )
+      )
+        throw Error('Invalid repeated header row boundary.');
+    }
+
     if (
       !Number.isInteger(slice.start) ||
       !Number.isInteger(slice.end) ||
       slice.start !== previous ||
       slice.end <= slice.start ||
-      slice.end - slice.start > plan.capacity ||
+      rasterHeight(slice) > plan.capacity ||
       !['end', 'boundary', 'capacity'].includes(slice.reason)
     )
       throw Error('Invalid pagination page bounds.');
-    const count = image.width * (slice.end - slice.start) * image.scale ** 2;
+    const count = image.width * rasterHeight(slice) * image.scale ** 2;
     pixels += count;
     if (
       count > PAGINATION_LIMITS.pagePixels ||
@@ -287,7 +332,7 @@ export async function assemblePaginatedPdf(
       throw Error('Page captures exceed the 8 MiB cumulative byte limit.');
     const bytes = new Uint8Array(await blob.arrayBuffer());
     check();
-    const height = slice.end - slice.start;
+    const height = rasterHeight(slice);
     validateCapturedPng(bytes, { ...image, height });
     if (index) pdf.addPage(options.paper, options.orientation);
     onEncoding?.(index + 1, selected.length, sourcePage);

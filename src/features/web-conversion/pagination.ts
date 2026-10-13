@@ -1,3 +1,9 @@
+import {
+  rasterHeight,
+  validateTableHeaders,
+  type TableHeader,
+  type RepeatedHeader
+} from './table-header-model';
 import { pdfGeometry, type PdfOptions } from './pdf-model';
 import { type ImageOptions } from './model';
 
@@ -17,11 +23,13 @@ export interface DocumentLayout {
   height: number;
   extent: number;
   blocks: ProtectedBlock[];
+  tables?: TableHeader[];
 }
 export interface PageSlice {
   start: number;
   end: number;
   reason: 'end' | 'boundary' | 'capacity';
+  header?: RepeatedHeader;
 }
 export interface PaginationPlan {
   pages: PageSlice[];
@@ -33,12 +41,14 @@ export interface PaginationPlan {
   x: number;
   y: number;
   capacity: number;
+  tables?: TableHeader[];
 }
 /** Width-fit; integer CSS-pixel seams, independent of raster scale. */
 export function planPagination(
   layout: DocumentLayout,
   image: ImageOptions,
-  pdf: PdfOptions
+  pdf: PdfOptions,
+  repeatHeaders = false
 ): PaginationPlan {
   // Viewport height is irrelevant to paginated output. Validate the remaining
   // legacy contract through a small bounded viewport without its pixel budget.
@@ -71,20 +81,57 @@ export function planPagination(
         `A ${block.kind} is taller than one printable page. Shorten it, increase printable height or use One page.`
       );
   }
+  const tables = repeatHeaders ? layout.tables ?? [] : [];
+  validateTableHeaders(tables, image.width, layout.height);
+  const blocks = [...layout.blocks];
+  for (const table of tables) {
+    blocks.push(...table.rows);
+    for (const row of table.rows) {
+      if (
+        table.height + Math.ceil(row.bottom) - Math.floor(row.top) + 1 >
+        capacity
+      )
+        throw Error(
+          'Repeated header and a body row must fit one printable page. Reduce header/row height or turn Repeat table headers off.'
+        );
+    }
+    // Original header must stay with its first row; keep the final outer border.
+    blocks.push({ top: table.top, bottom: table.rows[0].bottom, kind: 'row' });
+    blocks.push({
+      top: table.rows[table.rows.length - 1].top,
+      bottom: table.bottom,
+      kind: 'row'
+    });
+  }
   const pages: PageSlice[] = [];
   const end = Math.ceil(layout.height);
   let start = 0,
     pixels = 0;
   while (start < end) {
-    let next = Math.min(start + capacity, end);
+    const continuing = tables.find(
+      (t) =>
+        start >= Math.floor(t.headBottom) &&
+        start < t.rows[t.rows.length - 1].bottom - 0.5
+    );
+    const header = continuing
+      ? { table: continuing.index, height: continuing.height }
+      : undefined;
+    let next = Math.min(start + capacity - (header?.height ?? 0), end);
     const natural = next;
     // Retreat to the earliest crossing block until no protected range is cut.
     // Overlapping nested ranges converge or fail explicitly; never loop forever.
-    for (let tries = 0; tries <= layout.blocks.length; tries++) {
-      const crossing = layout.blocks.filter(
-        (b) => b.top < next && b.bottom > next
-      );
+    for (let tries = 0; tries <= blocks.length; tries++) {
+      const crossing = blocks.filter((b) => b.top < next && b.bottom > next);
       if (!crossing.length) break;
+      // Native collapsed borders place adjacent row edges on half pixels.
+      // Allow only that rounding band, never a cut through a real block/row.
+      if (
+        crossing.every(
+          (b) =>
+            b.kind === 'row' && Math.min(next - b.top, b.bottom - next) <= 0.5
+        )
+      )
+        break;
       const previous = next;
       next = Math.floor(Math.min(...crossing.map((b) => b.top)));
       if (next <= start || next >= previous)
@@ -93,7 +140,10 @@ export function planPagination(
         );
     }
     if (next <= start) throw Error('Pagination did not advance.');
-    const pagePixels = image.width * (next - start) * image.scale ** 2;
+    const pagePixels =
+      image.width *
+      rasterHeight({ start, end: next, header }) *
+      image.scale ** 2;
     pixels += pagePixels;
     if (
       pagePixels > PAGINATION_LIMITS.pagePixels ||
@@ -109,7 +159,8 @@ export function planPagination(
     pages.push({
       start,
       end: next,
-      reason: next === end ? 'end' : next < natural ? 'boundary' : 'capacity'
+      reason: next === end ? 'end' : next < natural ? 'boundary' : 'capacity',
+      ...(header ? { header } : {})
     });
     start = next;
   }
@@ -123,6 +174,7 @@ export function planPagination(
     mmPerCssPixel: ratio,
     x: pdf.margins.left,
     y: pdf.margins.top,
-    capacity
+    capacity,
+    ...(tables.length ? { tables } : {})
   };
 }
