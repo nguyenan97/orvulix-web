@@ -51,7 +51,7 @@ Do not merge or release implicitly. Follow AGENTS.md for branch cleanup.
 | 4 | One-page HTML to PDF raster | Actual page size, margins, image placement/pixels and raster label | Implemented on feature/html-to-image, not merged |
 | 4b | Bounded multi-page raster PDF | Width-fit, atomic block/row rejection, sequential captures and actual PDF seam assertions | Implemented on feature/html-to-image, not merged |
 | 4c | PDF page ranges | Bounded syntax, source/output mapping and actual selected-page PDFs | Implemented on feature/html-to-image, not merged |
-| 4d | Repeated table headers | Separate header semantics/tests | Planned |
+| 4d | Repeated table headers | Header-aware bounded plans, locked columns and actual continuation-page PDF pixels | Implemented on feature/html-to-image, not merged |
 | 5 | Remote service spike | Measured latency/resource budgets, funding/hosting plan, isolation/egress policy | Planned |
 | 6 | Web to Image | Real gateway-renderer-download tests, SSRF/cancel/quota coverage | Planned |
 | 7 | Web to PDF | Native text extraction, print/screen styles, paper/margins/ranges | Planned |
@@ -193,7 +193,7 @@ before preview/export. A 5-second asynchronous validation deadline and abort
 discard late results; every resolved bitmap is closed, including late results.
 Native decode itself cannot be preempted and these checks are not hard memory
 quotas. The capture CSP permits only data images; scripts and network remain
-blocked. One-page and bounded multi-page HTML/PDF are implemented on branch; repeated headers and URL conversion remain planned; page ranges are implemented on branch. The narrow jsPDF dependency
+blocked. One-page and bounded multi-page HTML/PDF are implemented on branch; repeated headers and page ranges are implemented on branch; URL conversion remains planned. The narrow jsPDF dependency
 gate is implemented on branch, subject to exact-head CI and review. Embedded/custom fonts and full-page capture are outside the current
 local-image contract.
 
@@ -341,7 +341,7 @@ pixels only; page geometry and placement do not change. The preview displays a
 white paper board at 2 CSS px/mm with the same fit/offsets, in a scrollable panel.
 It is a supported-layout preview, not a native PDF viewer or a glyph-identical
 promise across operating systems. Cropping applies to the fixed HTML viewport;
-strict mode rejects viewport overflow before image capture. This One page mode does not paginate. Paginated mode is described below; repeated headers and page-break CSS remain unsupported; ranges apply only to Paginated mode.
+strict mode rejects viewport overflow before image capture. This One page mode does not paginate. Paginated mode is described below; optional repeated headers and ranges apply only to Paginated mode. CSS page breaks remain unsupported.
 
 Input/DOM/assets retain existing limits: 64 KiB UTF-8, 1000 nodes, depth 24,
 4 embedded PNG/JPEG images, 48 KiB combined file data and 1 MP combined source
@@ -418,8 +418,8 @@ with a shorten/increase printable height/use One page message. There is no
 explicit split option. Nested/flex layout fidelity is not universally promised.
 Existing sanitizer removes break-inside/page-break CSS with an unsupported-style
 warning; these properties are not silently interpreted as pagination commands.
-No repeated table headers, custom fonts or remote URL rendering. Optional page
-ranges are described below.
+Optional repeated table headers and page ranges are described below. No custom
+fonts or remote URL rendering.
 
 Budgets: 8 pages, 10000 CSS px measured source extent, 4 MP per captured page,
 16 MP cumulative raster pixels, 8 MiB cumulative PNG captures and 8 MiB actual
@@ -515,6 +515,93 @@ unmount/readiness. Exact-head counts and CI evidence belong in PR20.
 Sync hotspots: shared local HTML UI, PaginatedPreview, selected capture/assembly,
 related SEO copy and focused CI. New parser/control/tests stay in the existing
 feature module. No dependency, unrelated locale/service, deployment/routing,
-SSR or folder-structure changes. Repeated headers/custom fonts/URL conversion
-remain separate planned tasks. Native decode/layout/synchronous encoding retain
+SSR or folder-structure changes. Repeated headers are described below; custom fonts/URL conversion remain planned. Native decode/layout/synchronous encoding retain
 the documented cancellation and CPU/memory limitations.
+
+
+## Repeated table headers
+
+Implemented on feature/html-to-image for PR20 review, not merged. Repeat table
+headers is explicit, Paginated-only and defaults Off. One page is unchanged.
+Reset and Restore default options clear the flag; option edits cancel ownership
+and clear old preview/output. It never guesses the first body row as a header.
+
+Supported: normal-flow native tables with a visible thead, body cells without
+spans, multiple header rows and header colspan. At most 20 header-bearing tables,
+20 columns and 128 descendant nodes per header. Native table/row/cell/group
+displays are required. Nested tables, rowspan, body colspan, caption/tfoot, flex
+ancestors and layout overrides reject when enabled with an actionable Off option.
+Entirely hidden tables are ignored; visible empty/hidden headers reject when a
+body exists. A table without thead uses ordinary pagination without repetition.
+
+Measurement runs inside the owned script-disabled data-only CSP frame after
+embedded images are ready. A shallow table clone contains only sanitized thead
+and a trusted colgroup with original measured body-column widths. Font/color/
+border properties are inherited explicitly; the nearest painted ancestor's
+background is copied behind the header. Native probe cell widths, horizontal
+positions and heights must match within 0.5 CSS px or the table rejects. Custom
+fonts/external resources remain unsupported. No complete table/body clone is
+created for repetition. Complex painted ancestor effects are not reproduced.
+
+The pure planner keeps original header plus first body row together and includes
+the last table border. On a continuation page it reserves the measured clone's
+ceil-rounded height before finding the next row boundary. Header plus each body
+row must fit printable capacity, including rounding allowance; no oversized row
+splitting. Only a table continuing at the page start gets a synthetic header;
+a subsequent table keeps its original header, and paragraph-only pages have none.
+The complete header-aware plan is built and bounded before page ranges resolve.
+Selected continuation pages retain headers without requiring their first page.
+
+Preview/export use the same bounded composition: source is translated by -start
+inside a separate overflow-hidden clip below the reserved strip. This prevents
+preceding body rows leaking into the header. The header table is positioned at
+its measured horizontal offset; each page gets a new header-only clone and the
+last temporary wrappers are removed. Capture remains sequential and never
+allocates a full-document canvas. Clone image decode and capture/encoding use
+the existing job ownership, abort/deadline and elapsed checks. Preview errors
+are visible; disconnected preview frames discard late failures.
+
+Budgets remain 8 source pages, 10000 CSS px document extent, 4 MP/page, 16 MP
+full-plan cumulative pixels, 8 MiB cumulative selected PNG and actual PDF output.
+Synthetic header pixels count in page and full-plan raster budgets. Height in
+PNG validation and PDF placement includes the reserved strip, preserving aspect
+ratio and partial last-page scale. Assembly revalidates header/table geometry
+and page references before range selection or capture. No runtime dependencies
+or PDF active-content APIs were added. Native DOM/decode/synchronous encoding
+remain cooperative, without hard CPU/memory quotas.
+
+Baseline reproduction: an ordinary 30-row table with default collapsed borders
+returned Overlapping blocks instead of pages. Adjacent native row edges lie on
+half pixels; integer-floor retreat could cascade to the table start, including
+an unnecessary intro-only page. The planner now permits only row-edge rounding
+within 0.5 CSS px. Actual overlapping blocks still reject. Firefox additionally
+reports the collapsed table outer width as row/group scrollWidth, despite their
+inner border boxes being 1 px narrower. Native collapsed row/group scroll checks
+now compare against the actual table outer box; physical viewport and individual
+cell/descendant overflow checks remain unchanged. Regression tests still reject
+real group or cell overflow. Integer/source slices
+remain contiguous with no omitted/duplicated source pixels; a shared border can
+straddle the integer seam. This is not a promise of pixel-identical text across
+browser engines/OS fonts.
+
+Validation covers pure plans, paper/orientation/asymmetric margins/scale,
+original-header grouping, multiple tables/paragraphs, invalid geometry, budgets,
+forged/missing header references and actual jsPDF dimensions/matrices/alpha/safe
+resources for selected continuation pages. Browser fixtures use multi-row colspan
+headers, embedded PNG/JPEG, colored unique rows and collapsed borders; downloaded
+PDFs are parsed and rasterized with PDF.js to check headers, column colors, every
+row center/edge, order and last-page scale. Additional cases cover unsupported
+tables, cancellation of a held continuation canvas, option edits, unmount,
+mobile/dark/keyboard, malicious header scripts/assets and recovery. Exact tested
+head, browser counts and remaining audit findings belong in PR20.
+
+jsPDF official latest release/advisories were rechecked October 13, 2026:
+4.2.1 remains the patched baseline. The registry audit still reports 61 inherited
+findings (6 critical, 37 high, 16 moderate, 2 low); none identify jsPDF, DOMPurify
+or html-to-image. This does not claim the entire dependency graph is safe.
+
+Sync hotspots: existing feature planner/renderer, shared HTML/PDF UI and
+PaginatedPreview, related HTML/PDF SEO notes and focused Pages CI. New header
+model/DOM helpers/tests remain in src/features/web-conversion. Netlify settings,
+routing/canonical policies, upstream tool services and unrelated locales stay
+unchanged. Custom fonts and URL conversion remain planned.

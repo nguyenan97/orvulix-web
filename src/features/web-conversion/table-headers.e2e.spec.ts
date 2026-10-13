@@ -10,7 +10,7 @@ const colors = Array.from({ length: 32 }, (_, i) => [
 ]);
 function invoice() {
   return (
-    `<p style="margin:0;height:30px">Hóa đơn Nguyễn An</p><table style="width:100%;font-size:14px"><thead><tr><th colspan="2" style="height:28px;padding:0;background-color:rgb(180,40,90)">Invoice header<img src="${RASTER_FIXTURES.png}" width="12" height="12"></th></tr><tr><th style="width:30%;height:30px;padding:0;background-color:rgb(30,60,220)">Mã</th><th style="height:30px;padding:0;background-color:rgb(220,160,30)">Thông tin hàng hóa</th></tr></thead><tbody>` +
+    `<p style="margin:0;height:30px">Hóa đơn Nguyễn An</p><table style="width:100%;font-size:14px"><thead><tr><th colspan="2" style="height:28px;padding:0;text-align:left;background-color:rgb(180,40,90)">Invoice header<img src="${RASTER_FIXTURES.png}" width="12" height="12"></th></tr><tr><th style="width:30%;height:30px;padding:0;text-align:left;background-color:rgb(30,60,220)">Mã</th><th style="height:30px;padding:0;text-align:left;background-color:rgb(220,160,30)">Thông tin hàng hóa</th></tr></thead><tbody>` +
     colors
       .map(
         (c, i) =>
@@ -52,6 +52,9 @@ async function raster(page: Page, data: Buffer, points: number[][][]) {
     mimeType: 'application/pdf',
     buffer: data
   });
+  await page.waitForFunction(
+    () => !!document.querySelector('img[alt="Preview 0"]')
+  );
   const result: number[][][] = [];
   for (const [i, samples] of points.entries()) {
     const image = page.locator(`img[alt="Preview ${i}"]`);
@@ -215,7 +218,10 @@ for (const [paper, orientation, scale] of [
     actual.forEach((samples, i) =>
       samples.forEach((rgba, j) =>
         expected[i][j].forEach((v, k) =>
-          expect(Math.abs(rgba[k] - v)).toBeLessThanOrEqual(3)
+          expect(
+            Math.abs(rgba[k] - v),
+            `page ${i} sample ${j}: ${rgba} expected ${expected[i][j]}`
+          ).toBeLessThanOrEqual(3)
         )
       )
     );
@@ -287,7 +293,10 @@ test('selected continuation pages 2/4 contain their own header and correct origi
   actual.forEach((samples, i) =>
     samples.forEach((rgba, j) =>
       expected[i][j].forEach((v, k) =>
-        expect(Math.abs(rgba[k] - v)).toBeLessThanOrEqual(3)
+        expect(
+          Math.abs(rgba[k] - v),
+          `page ${i} sample ${j}: ${rgba} expected ${expected[i][j]}`
+        ).toBeLessThanOrEqual(3)
       )
     )
   );
