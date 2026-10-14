@@ -31,6 +31,15 @@ export function summarizeSarif(report) {
       if (!rule || !/^[a-z0-9/._-]+$/i.test(rule.id))
         throw Error('Unknown CodeQL rule identity.');
       const value = rule.properties?.['security-severity'];
+      if (
+        value !== undefined &&
+        !(
+          (typeof value === 'string' &&
+            /^(?:[0-9](?:\.\d+)?|10(?:\.0+)?)$/.test(value)) ||
+          typeof value === 'number'
+        )
+      )
+        throw Error('Invalid CodeQL security severity.');
       const score = value === undefined ? null : Number(value);
       if (
         score !== null &&

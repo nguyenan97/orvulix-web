@@ -68,12 +68,21 @@ test('empty result set is a verified zero result, not a missing file', () => {
   r.runs[0].results = [];
   assert.equal(summarizeSarif(r).total, 0);
 });
+test('query-pack extension rules are resolved without losing security severity', () => {
+  const r = report();
+  const rules = r.runs[0].tool.driver.rules;
+  r.runs[0].tool.driver.rules = [];
+  r.runs[0].tool.extensions = [{ name: 'codeql/javascript-queries', rules }];
+  assert.equal(summarizeSarif(r).highCritical, 1);
+});
 test('unknown rules, missing schema/location and invalid severity fail closed', () => {
   for (const r of [
     {},
     { version: '2.1.0', runs: [] },
     report('NaN'),
-    report('11')
+    report('11'),
+    report(null),
+    report('')
   ])
     assert.throws(() => summarizeSarif(r));
   const r = report();
