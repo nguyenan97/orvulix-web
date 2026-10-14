@@ -9,6 +9,13 @@ async function mode(page: Page) {
   await page.getByRole('option', { name: 'Paginated', exact: true }).click();
 }
 async function download(page: Page) {
+  // A bounded conversion may take longer than an assertion's visibility poll.
+  // Observe the real job completion within the unchanged whole-test deadline.
+  await page.waitForFunction(() =>
+    [...document.querySelectorAll('button')].some(
+      (button) => button.textContent === 'Convert to PDF' && !button.disabled
+    )
+  );
   await expect(
     page.getByRole('link', { name: 'Download PDF', exact: true })
   ).toBeVisible();

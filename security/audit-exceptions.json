@@ -1,0 +1,17 @@
+{
+  "version": 1,
+  "exceptions": [
+    {
+      "id": "GHSA-vfj7-8cjw-p6xm",
+      "package": "braces",
+      "version": "3.0.3",
+      "path": "node_modules/braces",
+      "severity": "high",
+      "scope": "tooling",
+      "reason": "No patched braces release exists as of 2026-10-14. Tailwind 3 and its ESLint plugin require this parser; moving to Tailwind 4 requires a separate CSS integration migration.",
+      "mitigation": "Only trusted repository content globs are processed. User HTML, regex and files never enter this dependency. Review untrusted PR changes in isolated CI without secrets; deeply nested glob patterns can still exhaust that job.",
+      "owner": "nguyenan97",
+      "expires": "2026-11-13"
+    }
+  ]
+}

@@ -1,4 +1,5 @@
-import { afterEach, describe, expect, it, vi } from 'vitest';
+// @vitest-environment jsdom
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { waitFor } from '@testing-library/react';
 import { toCanvas } from 'html-to-image';
 import { runPaginated } from './paginated-renderer';
@@ -8,6 +9,21 @@ import { prepareHtml } from './sanitize';
 vi.mock('html-to-image', () => ({
   toCanvas: vi.fn(() => new Promise(() => {}))
 }));
+beforeEach(() => {
+  // jsdom emits an about:blank load but does not implement srcdoc rendering.
+  // Readiness is supplied explicitly by ready(), not by that unrelated event.
+  const append = document.body.append.bind(document.body);
+  vi.spyOn(document.body, 'append').mockImplementation((...nodes) => {
+    for (const node of nodes)
+      if (node instanceof HTMLIFrameElement)
+        node.addEventListener(
+          'load',
+          (event) => event.stopImmediatePropagation(),
+          { capture: true }
+        );
+    append(...nodes);
+  });
+});
 afterEach(() => {
   vi.useRealTimers();
   vi.restoreAllMocks();
@@ -18,6 +34,7 @@ function ready() {
     '[data-html-renderer]'
   )!;
   const doc = document.implementation.createHTMLDocument();
+  Object.defineProperty(doc, 'defaultView', { value: window });
   doc.body.innerHTML = '<div data-page-source><p>Text</p></div>';
   const source = doc.querySelector<HTMLElement>('[data-page-source]')!,
     p = source.firstElementChild!;
@@ -34,7 +51,7 @@ function ready() {
       toJSON: () => ({})
     });
   Object.defineProperty(frame, 'contentDocument', { value: doc });
-  frame.dispatchEvent(new Event('load'));
+  frame.onload?.call(frame, new Event('load'));
   return frame;
 }
 describe('pagination job ownership and cleanup', () => {
