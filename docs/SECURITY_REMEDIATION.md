@@ -96,19 +96,29 @@ before expiry. A passing gate with this exception does not give production appro
 
 Remaining moderate/low findings:
 
-- Jimp 0.x/file-type: malformed ASF parsing can hang the old sniffing path. Jimp's
-  real image consumers remain exposed to user files. Moving to Jimp 1.x or replacing
-  the decoder requires service/API/bundle review and targeted hostile-file/browser
-  tests. This remains a runtime risk and a production release decision, not waived
-  by the high/critical gate.
+- Jimp 0.22.12/file-type 16.5.4: GHSA-5v7r-6r5c-r473 remains affected;
+  malformed ASF with a zero-size sub-header can hang the sniffing path. Confirmed
+  imports are unit/e2e fixtures and assertions decoding generated/downloaded
+  PNG/JPEG, including PDF raster checks. Application/scripts scans found no direct
+  or dynamic Jimp imports; checked image consumers use browser Image/canvas and
+  pdf-lib. Searches of current emitted JS found no Jimp/file-type signatures.
+  These checks have not established a production user-file path through Jimp;
+  absence of imports/signatures is not a complete transitive reachability proof.
+  jimp remains declared in dependencies, so npm's production audit includes it.
+  Test tooling remains at risk if hostile bytes reach Jimp.read; trusted fixture
+  provenance limits current exposure without resolving the advisory. A follow-up
+  should assess dependency classification and a compatible patched decoder/test
+  API migration, not assume application tool services need rewriting.
 - React Router 6: retain the moderate advisory disposition above; a Router 7
   migration or a compatible vendor backport is separate work.
 - postcss-selector-parser: older copies remain under existing Tailwind tooling;
   repository selectors are trusted inputs, but untrusted PR jobs remain bounded
   only by the CI runner. Review compatible parent changes before a CSS migration.
-- min-document: legacy virtual DOM dependency has a low prototype-pollution
-  advisory. No direct app import was found; preserve attribution and investigate
-  the upstream consumer before a compatibility-breaking replacement.
+- min-document 2.19.0: GHSA-rx8g-88g5-qh64 remains affected (low prototype
+  pollution). The installed chain is jimp -> @jimp/plugins -> @jimp/plugin-print
+  -> load-bmfont -> xhr -> global -> min-document. Confirmed Jimp consumers above
+  are tests; no direct application min-document import was found. Trace the
+  consumer before replacement; this classification does not resolve the advisory.
 
 Node 20 ended support on 2026-04-30 according to the official release schedule.
 CI now uses supported Node 24, but netlify.toml still requests Node 20. Changing
@@ -150,7 +160,10 @@ uses build-mode:none; it does not execute untrusted PR application code or insta
 packages. Fork PR analysis does not upload using write credentials. CodeQL alerts
 require triage; upload success alone is not a zero-findings result. A SARIF summary
 logs only rule IDs, severities and locations when API access is unavailable;
-messages, snippets and traces are excluded. No duplicate
+messages, snippets and traces are excluded. Valid findings, including new high/
+critical results, are reported rather than automatically failing this summary;
+only invalid/missing report handling fails. Owner triage/enforcement is a deferred
+policy task, not an implemented CodeQL findings gate. No duplicate
 Dependency Review gate is added: the npm gate already checks the resolved tree
 and exact temporary exception, while CodeQL examines application code.
 
@@ -170,6 +183,44 @@ configs on the default branch in a separately authorized release. PR security
 checks do run for this feature PR. Private vulnerability reporting was disabled
 when checked; SECURITY.md documents a private-contact fallback without inventing
 an address, monitored mailbox or response SLA.
+
+## Deferred follow-ups and acceptance criteria
+
+The dependency upgrades, audit gate, workflows and exposure documentation are
+implemented on this feature branch, not merged. Braces is temporarily accepted
+until 2026-11-13. The following tasks are planned, not implemented by this PR;
+owner nguyenan97 must review their scope and any required settings authorization.
+
+- Jimp/test tooling: inventory direct/dynamic/transitive consumers and emitted
+  runtime modules before considering devDependency classification. Assess a
+  compatible patched decoder or Jimp API migration without incompatible overrides.
+  Done when the relevant advisory is resolved or explicitly dispositioned with
+  input-boundary evidence, PNG/JPEG decoding and real PDF pixel assertions remain
+  green, and bounded hostile-file/recovery checks cover the selected decoder.
+  Moving a package to devDependencies alone is not remediation.
+- Braces: recheck official releases and the Tailwind/glob dependency paths before
+  expiry. Done when a compatible patch removes the affected installed path and its
+  now-stale exception, or a separately reviewed migration removes the consumer.
+  Preserve CSS/build/lint behavior; no blanket ignore or automatic expiry renewal.
+- Production runtime: in a separately authorized release task, select a supported
+  Netlify Node LTS and review Router navigation/SSR exposure. Done when clean
+  install, production/Pages builds and navigation regressions pass on that runtime,
+  hosting configuration is verified, and Router advisory dispositions identify
+  actual inputs/sinks plus any remaining accepted risk. This PR changes no Netlify
+  settings and does not approve a production release.
+- CodeQL policy: decide how owner-reviewed baseline findings and new findings are
+  triaged/enforced, with explicit authority for any repository settings. Done when
+  a new high finding and escalation are detected by the chosen process, disposition
+  changes are reviewable, and fork PRs remain isolated without privileged execution
+  or content leakage. Keep the current five findings visible; no blanket dismissal.
+- Markdown: define literal backslash/pipe/newline round-trip behavior and exported
+  raw-HTML handling. Done when tests cover these cases, textarea output stays inert,
+  and any supported downstream rendering uses an explicit safe policy. Do not
+  describe Markdown pipe escaping as an HTML security sanitizer.
+
+Dependabot discovery/scheduled runs still require configuration on default branch
+main through an authorized release. These planned tasks do not enable settings,
+merge this branch, activate an automatic production release or waive remaining risks.
 
 ## Validation and integration hotspots
 
