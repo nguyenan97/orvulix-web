@@ -2,13 +2,14 @@
 
 - Updated: 2026-10-14, Asia/Bangkok
 - Branch / base: feature/upstream-png-dimensions / develop
-- PR: not opened yet; resolve by matching feature head when resuming
-- Phase: validating
+- PR: #24, https://github.com/nguyenan97/orvulix-web/pull/24
+- Phase: ready for review; exact-head CI pending
 - Delivery mode: develop-merge per owner's upstream sync request
 - Last verified base: a32c133f9bab589a856c638866df8f67da79c00c
 - Upstream: cf41a30; common history 3bbca2f; provenance #461 / 1fe23b4
-- Uncommitted changes: PNG feature core/tests/UI, related English locale,
-  focused browser CI entry, upstream sync/backlog/roadmap docs and this checkpoint.
+- Implementation committed: 59e8d6747fbe6c12f9aa7d1d770e05f0f92da1d5.
+- This documentation checkpoint follows that commit; resolve latest head via Git/PR.
+- Unrelated user work: public/sitemap.xml remains untracked and unchanged.
 
 ## Scope and acceptance
 
@@ -35,8 +36,9 @@ library main-thread fallback). No exact-head CI result is claimed yet.
 
 Full-diff self-review found no remaining scoped blocker. Existing shared preview
 preflight/main-thread fallback and non-lossless limits remain explicitly documented.
-Pending: scoped commit/one PR; exact latest-head CI (including full unit suite
-after the additional unmount assertion); authorized merge and cleanup. Preserve public/sitemap.xml with original checksum
+PR #24 is open/ready and targets develop. Pending: exact latest-head CI (including
+full unit suite after the additional unmount assertion); authorized merge and
+cleanup. Use PR/run metadata for final CI/merge state, not this pre-CI snapshot. Preserve public/sitemap.xml with original checksum
 5f9cf3fbeb7d4acfd9b7f0e79dd10ea184df2f4a8cfb11f6a529cf2f538d7df3.
 
 ## Resume point
