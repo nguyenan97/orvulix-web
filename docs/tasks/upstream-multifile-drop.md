@@ -3,9 +3,11 @@
 - Updated: 2026-10-14 UTC
 - Branch / base: feature/upstream-multifile-drop / develop
 - PR: not opened yet
-- Phase: validating; local final browser regression running
+- Phase: reviewed; exact-head CI pending
 - Delivery mode: develop-merge, explicitly requested by owner
 - Last verified base: 097d5941f3cdf8ba14df3f3629d709b5d703d320 (PR #24 merged)
+- Implementation commit: e8817ec8a81c9e9ea63f1d0fbbd8bb9d99d0927a; this checkpoint
+  and the expected-filename baseline helper refinement follow it.
 - User work: preserve untracked public/sitemap.xml; do not stage it.
 
 ## Scope and acceptance
@@ -45,7 +47,12 @@ braces exception unchanged). Text-style and diff whitespace passed.
 MP4 output. PDF tests now assert earlier importer errors and no partial admission;
 filename-filtered explicit download events avoid native iframe auto-downloads.
 Added actual output-control readiness without changing timeout/retry settings.
-Final combined 39-case browser run is pending; no pass is claimed for it yet.
+Final combined run: 38/39, with Split Image to Pages WebKit readiness timing out.
+That unchanged-service case passed alone in 14 seconds. Entire PNG/PDF baseline
+then passed 24/24 in a fresh process across all three engines, preserving all
+assertions and timeouts/retries. Multi-file 15/15 passed, including all its cases
+in the combined run. Do not claim the combined run was 39/39 or a proven OOM
+root cause; record the observed suite-isolation limit in PR metadata.
 Pages build/smoke passed prefix/noindex/no canonical and picker/drop to actual
 two-page PDF, clear and PDF reimport. Test-only WASM decode fixtures do not ship
 in Pages output. Full-diff self-review found no scoped correctness blocker after
@@ -54,8 +61,8 @@ independent approval.
 
 ## Pending / resume
 
-Reconcile final browser result and any findings; one PR develop, exact-head CI,
-authorized merge/cleanup. Dev server 5173 and Pages smoke host 4188 are owned by
-this task; stop only these resources. Preserve untracked public/sitemap.xml with
+Local acceptance/review done; commit remaining scoped test/docs refinements,
+push one PR develop, exact-head CI, authorized merge/cleanup. Dev server 5173,
+Pages host 4188 and owned browser runs have stopped. Preserve untracked public/sitemap.xml with
 checksum 5f9cf3fbeb7d4acfd9b7f0e79dd10ea184df2f4a8cfb11f6a529cf2f538d7df3.
 This snapshot precedes CI/merge; resolve final head/state through Git/PR metadata.

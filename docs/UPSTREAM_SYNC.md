@@ -145,3 +145,9 @@ output assertions remain. Isolated core/hook/status/tests. No runtime dependency
 registry, SEO/routing, Netlify or production deployment changes. Future tasks need
 explicit scope for conversion job cancellation, GIF timing/quality or backend URL
 rendering; Web/URL conversion remains paused.
+
+Follow-up owner: Orvulix maintainer. A separate consumer-conversion lifecycle task
+must clear outdated downloads when files/options change, ignore late output/errors
+on clear/navigation and define cancellation for the existing FFmpeg queue. Acceptance
+requires real merge/GIF/image export recovery tests and truthful native/worker
+cancellation limits. This is outside importer ownership, not an implemented feature.

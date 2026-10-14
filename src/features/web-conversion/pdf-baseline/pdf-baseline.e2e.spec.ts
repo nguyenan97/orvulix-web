@@ -22,17 +22,19 @@ async function raster(
     buffer: await image.getBufferAsync(mimeType)
   };
 }
-async function downloadPdf(page: Page) {
+async function downloadPdf(
+  page: Page,
+  expectedName: string | RegExp = 'merged-images.pdf'
+) {
   await expect(
     page.getByRole('button', { name: 'Download', exact: true })
   ).toBeEnabled();
   // Native PDF iframe viewers can emit their own downloads; select the explicit tool file.
-  const images = page.url().endsWith('/pdf/convert-to-pdf');
   const pending = page.waitForEvent('download', {
     predicate: (download) =>
-      images
-        ? download.suggestedFilename() === 'merged-images.pdf'
-        : /^Nguyễn An-\d+\.pdf$/.test(download.suggestedFilename())
+      typeof expectedName === 'string'
+        ? download.suggestedFilename() === expectedName
+        : expectedName.test(download.suggestedFilename())
   });
   await page.getByRole('button', { name: 'Download', exact: true }).click();
   const download = await pending;
@@ -142,7 +144,7 @@ for (const [orientation, scale] of [
     await page
       .locator('input[type=file]')
       .setInputFiles(await raster(160, 80, 'jpeg'));
-    const { name, bytes } = await downloadPdf(page);
+    const { name, bytes } = await downloadPdf(page, 'Nguyễn An.pdf');
     expect(name).toBe('Nguyễn An.pdf');
     const pdf = await PDFDocument.load(bytes),
       pageSize = pdf.getPage(0).getSize();
@@ -195,7 +197,7 @@ test('invalid decode has an actionable error, no unhandled rejection and valid u
   await page
     .locator('input[type=file]')
     .setInputFiles(await raster(80, 160, 'png'));
-  const result = await downloadPdf(page);
+  const result = await downloadPdf(page, 'Nguyễn An.pdf');
   expect((await PDFDocument.load(result.bytes)).getPageCount()).toBe(1);
   await page.getByRole('button', { name: 'Clear', exact: true }).click();
   await expect(
@@ -210,7 +212,7 @@ test('split image to pages stays on pdf-lib and preserves four tiles, padding an
   await page
     .locator('input[type=file]')
     .setInputFiles(await raster(800, 1200, 'png'));
-  const { name, bytes } = await downloadPdf(page);
+  const { name, bytes } = await downloadPdf(page, /^Nguyễn An-\d+\.pdf$/);
   expect(name).toMatch(/^Nguyễn An-\d+\.pdf$/);
   const pdf = await PDFDocument.load(bytes);
   expect(pdf.getPageCount()).toBe(4);
