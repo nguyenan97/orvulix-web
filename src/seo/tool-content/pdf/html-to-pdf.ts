@@ -2,7 +2,7 @@ import type { ToolSeoOverride } from '../../types';
 const content: ToolSeoOverride = {
   title: 'HTML to PDF - Local Raster Export | Orvulix',
   description:
-    'Convert static HTML with embedded images to a raster PDF locally. Preview A4 or Letter, set orientation and margins, then download a raster PDF.',
+    'Convert local HTML files or snippets to raster PDF. Upload a file or paste markup, preview supported layouts, and download. Website URLs are not supported.',
   howTo: [
     'Paste or upload static HTML, or load the Vietnamese invoice example.',
     'Choose viewport dimensions, raster scale, A4 or Letter, orientation and margins.',
