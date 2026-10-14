@@ -62,7 +62,7 @@ describe('shuffle function', () => {
       input,
       splitSeparator,
       joinSeparator,
-      length
+      undefined // Explicitly omit length; jsdom exposes window.length = 0.
     );
     expect(result.split(joinSeparator)).toContain('apple');
   });
@@ -78,7 +78,7 @@ describe('shuffle function', () => {
       input,
       splitSeparator,
       joinSeparator,
-      length
+      undefined // This case tests omitted length, not window.length.
     );
     expect(result).toBe('');
   });

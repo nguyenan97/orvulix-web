@@ -1,5 +1,5 @@
 /// <reference types="vitest" />
-import { defineConfig } from 'vite';
+import { defineConfig } from 'vitest/config'; // ORVULIX-SECURITY: typed Vite/Vitest 4 config.
 import react from '@vitejs/plugin-react-swc';
 import tsconfigPaths from 'vite-tsconfig-paths';
 import packageJson from './package.json';
@@ -20,7 +20,20 @@ export default defineConfig({
   },
   test: {
     globals: true,
-    environment: 'happy-dom',
+    environment: 'happy-dom', // ORVULIX-SECURITY: patched; sanitizer fidelity tests use jsdom.
+    // ORVULIX-SECURITY: unit emulators do not execute input scripts or load resources; native browser tests cover real frame behavior.
+    environmentOptions: {
+      jsdom: { runScripts: 'outside-only' },
+      happyDOM: {
+        settings: {
+          enableJavaScriptEvaluation: false,
+          disableJavaScriptFileLoading: true,
+          disableCSSFileLoading: true,
+          disableIframePageLoading: true,
+          enableImageFileLoading: false
+        }
+      }
+    },
     setupFiles: '.vitest/setup',
     include: ['**/*.test.{ts,tsx}']
   },
