@@ -145,3 +145,8 @@ past the budget before timer delivery, with late-resource cleanup and recovery
 regressions. The headers UI unit flow is split into independent lifecycle cases;
 FAQ describes the existing separate raster-PDF tool. Implemented on branch, not
 merged; full Web conversion and the deferred register remain unchanged.
+
+PR20 second review: pagination retains trailing border-only boxes and rejects
+negative horizontal flex overflow. Unit regressions and actual PDF pixel/browser
+flows cover these cases. Implemented on branch, not merged; limits and deferred
+scope are unchanged.

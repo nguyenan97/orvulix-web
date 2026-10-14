@@ -146,3 +146,7 @@ late-result cleanup regressions are implemented on the feature branch, not merge
 The separate HTML to PDF tool is described as implemented raster output, while
 fonts, URL rendering and automation remain deferred. Release still follows the
 normal develop review and separately authorized main workflow.
+
+PR20 pagination fidelity corrections retain painted border-only boxes and reject
+left-of-viewport content instead of silently cropping it. These are local MVP
+reliability fixes on the feature branch, not a change to remote conversion scope.

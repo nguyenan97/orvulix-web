@@ -27,6 +27,25 @@ afterEach(() => {
   document.body.innerHTML = '';
 });
 describe('measured source bounds', () => {
+  it('retains a trailing border-only box but trims transparent or zero-width borders', () => {
+    const root = document.createElement('div');
+    root.innerHTML =
+      '<p>Text</p><div style="border:4px solid red"></div><div style="border:4px solid transparent"></div><div style="border:0px solid red"></div>';
+    document.body.append(root);
+    bounds(root, 0, 400);
+    const [text, painted, transparent, zero] = root.querySelectorAll('*');
+    bounds(text, 0, 100);
+    bounds(painted, 100, 100);
+    bounds(transparent, 200, 100);
+    bounds(zero, 300, 100);
+    const result = measureDocument(root, 320);
+    expect(result.height).toBe(200);
+    expect(result.extent).toBe(400);
+    expect(result.blocks).toEqual([
+      { top: 0, bottom: 100, kind: 'block' },
+      { top: 100, bottom: 200, kind: 'block' }
+    ]);
+  });
   it('includes overflowing descendants, trims unpainted trailing blank wrappers and ignores hidden geometry', () => {
     const root = document.createElement('div');
     root.innerHTML =
@@ -69,6 +88,14 @@ describe('measured source bounds', () => {
     bounds(root, 0, 100);
     const p = root.firstElementChild!;
     bounds(p, 0, 100, 321);
+    expect(() => measureDocument(root, 320)).toThrow(/width/);
+    bounds(p, 0, 100, 100);
+    vi.mocked(p.getBoundingClientRect).mockReturnValue({
+      ...p.getBoundingClientRect(),
+      left: -1,
+      right: 99,
+      x: -1
+    });
     expect(() => measureDocument(root, 320)).toThrow(/width/);
     bounds(p, -1, 100);
     expect(() => measureDocument(root, 320)).toThrow(/geometry/);

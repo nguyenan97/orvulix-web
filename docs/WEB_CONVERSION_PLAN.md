@@ -681,3 +681,21 @@ matching UI and prerendered HTML. Fonts/remote scope remains deferred.
 Sync hotspots for these corrections: existing feature capture/assets, header UI
 tests, related SEO FAQ, focused Pages CI and docs. No budgets, dependencies,
 sanitizer/CSP, deployment/routing policy or unrelated services/locales change.
+
+## Review corrections: painted bounds and left overflow
+
+Implemented on feature/html-to-image, not merged. Pagination measurement now
+retains empty boxes with visible borders, including trailing boxes, instead of
+trimming them as whitespace. Transparent, zero-width and non-painted borders
+remain eligible for whitespace trimming. A border-only leaf follows the existing
+whole-block policy; oversized boxes reject instead of introducing implicit cuts.
+
+Negative horizontal bounds now reject using the same half-CSS-pixel rounding
+tolerance as right overflow. A narrow, end-aligned flex column can place a wider
+child left of the viewport without increasing scrollWidth; relying on right bounds
+and scrollWidth alone silently cropped its left side. Unit regressions reproduced
+both omissions before the fix. Browser coverage verifies preview/page bounds and
+actual downloaded PDF border pixels, left-overflow rejection, cleanup and recovery.
+
+Sync hotspot: pagination-layout.ts only. Existing planner, renderer, budgets,
+sanitizer/CSP, dependencies, One page behavior and deployment policies are unchanged.

@@ -58,6 +58,7 @@ export function measureDocument(
         ? Math.max(rect.width, table.getBoundingClientRect().width)
         : rect.width;
     if (
+      rect.left - origin.left < -0.5 ||
       rect.right - origin.left > width + 0.5 ||
       element.scrollWidth > scrollBox + 0.5
     )
@@ -76,10 +77,24 @@ export function measureDocument(
     const ownText = [...element.childNodes].some(
       (n) => n.nodeType === 3 && n.textContent?.trim()
     );
+    const borderPainted = ['top', 'right', 'bottom', 'left'].some((side) => {
+      const color = style
+        .getPropertyValue(`border-${side}-color`)
+        .replace(/\s/g, '');
+      const borderStyle = style.getPropertyValue(`border-${side}-style`);
+      return (
+        parseFloat(style.getPropertyValue(`border-${side}-width`)) > 0 &&
+        !['none', 'hidden', ''].includes(borderStyle) &&
+        !!color &&
+        color !== 'transparent' &&
+        !/^rgba\([^)]*,0(?:\.0+)?\)$/.test(color)
+      );
+    });
     const painted =
-      !!style.backgroundColor &&
-      style.backgroundColor !== 'rgba(0, 0, 0, 0)' &&
-      style.backgroundColor !== 'transparent';
+      borderPainted ||
+      (!!style.backgroundColor &&
+        style.backgroundColor !== 'rgba(0, 0, 0, 0)' &&
+        style.backgroundColor !== 'transparent');
     const visible =
       !!element.textContent?.trim() ||
       element.localName === 'img' ||

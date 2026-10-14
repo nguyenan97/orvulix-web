@@ -194,6 +194,71 @@ test('exact seams, last page is not stretched, trailing blank and fixed-wrapper 
     [255, 255, 255, 255]
   ]);
 });
+test('border-only trailing content remains a whole block in preview and actual PDF pixels', async ({
+  page
+}) => {
+  await mode(page);
+  await page.getByLabel('Width (px)').fill('320');
+  await page
+    .getByLabel('HTML markup')
+    .fill(
+      '<div style="height:400px;background-color:green">First</div><div style="height:200px;border:4px solid red"></div><div style="height:99px;border:4px solid transparent"></div>'
+    );
+  await page.getByRole('button', { name: 'Preview', exact: true }).click();
+  await expect(page.getByText(/^2 pages -/)).toBeVisible();
+  await expect(
+    page.getByText('Page 2 - source 400..600 px', { exact: true })
+  ).toBeVisible();
+  await page.getByRole('button', { name: 'Convert to PDF' }).click();
+  const bytes = await download(page);
+  const pdf = await PDFDocument.load(bytes, { updateMetadata: false });
+  expect(pdf.getPageCount()).toBe(2);
+  expect(
+    drawnImage(pdf, 1).dict.lookup(PDFName.of('Height'), PDFNumber).asNumber()
+  ).toBe(200);
+  const locations = [400, 200].map((height, index) => {
+    const [w, h, x, y] = placement(pdf, index);
+    const top = pdf.getPage(index).getHeight() - y - h;
+    const point = (sx: number, sy: number) => [
+      (x + (w * sx) / 320) * 2,
+      (top + (h * sy) / height) * 2
+    ];
+    return index === 0
+      ? [point(160, 200)]
+      : [point(2, 100), point(160, 198), point(160, 100)];
+  });
+  expect(await pixels(page, bytes, locations)).toEqual([
+    [[0, 128, 0, 255]],
+    [
+      [255, 0, 0, 255],
+      [255, 0, 0, 255],
+      [255, 255, 255, 255]
+    ]
+  ]);
+});
+test('negative horizontal flex overflow rejects instead of silently cropping and recovers', async ({
+  page
+}) => {
+  await mode(page);
+  await page.getByLabel('Width (px)').fill('320');
+  await page
+    .getByLabel('HTML markup')
+    .fill(
+      '<div style="display:flex;flex-direction:column;align-items:flex-end;width:100px"><div style="width:320px;height:100px;background-color:red">Left overflow</div></div>'
+    );
+  await page.getByRole('button', { name: 'Convert to PDF' }).click();
+  await expect(
+    page.getByText(
+      'Content exceeds the page width. Reduce fixed widths or use One page.',
+      { exact: true }
+    )
+  ).toBeVisible();
+  await expect(page.getByRole('link', { name: 'Download PDF' })).toHaveCount(0);
+  await expect(page.locator('[data-html-renderer]')).toHaveCount(0);
+  await page.getByLabel('HTML markup').fill('<p>Recovered</p>');
+  await page.getByRole('button', { name: 'Convert to PDF' }).click();
+  expect((await PDFDocument.load(await download(page))).getPageCount()).toBe(1);
+});
 test('oversized row, hidden content, unsupported breaks, budgets and recovery', async ({
   page
 }) => {
