@@ -6,6 +6,8 @@ import InputFooter from './InputFooter';
 import MusicNoteIcon from '@mui/icons-material/MusicNote';
 import ClearIcon from '@mui/icons-material/Clear';
 import { useTranslation } from 'react-i18next';
+import { useMultiFileImport } from '../../features/multifile-drop/useMultiFileImport'; // ORVULIX-UPSTREAM: selective #458 adaptation.
+import { ImportStatus } from '../../features/multifile-drop/ImportStatus';
 
 interface MultiAudioInputComponentProps {
   accept: string[];
@@ -31,22 +33,19 @@ export default function ToolMultipleAudioInput({
   const theme = useTheme();
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const files = event.target.files;
-    if (files)
-      onChange([
-        ...value,
-        ...Array.from(files).map((file) => ({ file, order: value.length }))
-      ]);
-  };
+  const importer = useMultiFileImport({
+    value,
+    onChange,
+    accept,
+    kind: 'audio'
+  });
+  const handleFileChange = importer.pick;
 
   const handleImportClick = () => {
     fileInputRef.current?.click();
   };
 
-  function handleClear() {
-    onChange([]);
-  }
+  const handleClear = importer.clear;
 
   function fileNameTruncate(fileName: string) {
     const maxLength = 15;
@@ -103,7 +102,13 @@ export default function ToolMultipleAudioInput({
         }
       />
       <Box
+        {...importer.handlers}
+        role="region"
+        aria-label="File drop zone"
+        aria-busy={importer.processing}
         sx={{
+          display: 'flex',
+          flexDirection: 'column',
           width: '100%',
           height: '300px',
           border: value?.length ? 0 : 1,
@@ -113,9 +118,11 @@ export default function ToolMultipleAudioInput({
           position: 'relative'
         }}
       >
+        <ImportStatus kind="audio" {...importer} />
         <Box
           width="100%"
-          height="100%"
+          flex={1}
+          minHeight={0}
           sx={{
             overflow: 'auto',
             display: 'flex',
@@ -166,8 +173,7 @@ export default function ToolMultipleAudioInput({
                     size="small"
                     aria-label={t('toolMultipleInput.deleteFile')}
                     onClick={() => {
-                      const updatedFiles = value.filter((_, i) => i !== index);
-                      onChange(updatedFiles);
+                      importer.remove(index);
                     }}
                   >
                     <ClearIcon fontSize="small" />

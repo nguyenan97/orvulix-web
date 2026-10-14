@@ -26,7 +26,14 @@ async function downloadPdf(page: Page) {
   await expect(
     page.getByRole('button', { name: 'Download', exact: true })
   ).toBeEnabled();
-  const pending = page.waitForEvent('download');
+  // Native PDF iframe viewers can emit their own downloads; select the explicit tool file.
+  const images = page.url().endsWith('/pdf/convert-to-pdf');
+  const pending = page.waitForEvent('download', {
+    predicate: (download) =>
+      images
+        ? download.suggestedFilename() === 'merged-images.pdf'
+        : /^Nguyễn An-\d+\.pdf$/.test(download.suggestedFilename())
+  });
   await page.getByRole('button', { name: 'Download', exact: true }).click();
   const download = await pending;
   return {
@@ -37,13 +44,15 @@ async function downloadPdf(page: Page) {
 async function renderPdf(page: Page, bytes: Buffer, count: number) {
   // A real second tool flow runs installed PDF.js and its emitted worker.
   await page.goto('/pdf/pdf-to-png');
+  await page.locator('input[type=file]').setInputFiles({
+    name: 'result.pdf',
+    mimeType: 'application/pdf',
+    buffer: bytes
+  });
+  // Wait for the real completed export control before asserting page count.
   await page
-    .locator('input[type=file]')
-    .setInputFiles({
-      name: 'result.pdf',
-      mimeType: 'application/pdf',
-      buffer: bytes
-    });
+    .getByRole('button', { name: 'Download All as ZIP', exact: true })
+    .waitFor({ state: 'visible' });
   const previews = page.locator('img[alt^="Preview "]');
   await expect(previews).toHaveCount(count);
   const result: {
@@ -165,16 +174,20 @@ test('invalid decode has an actionable error, no unhandled rejection and valid u
   await expect(
     page.getByRole('button', { name: 'Download', exact: true })
   ).toBeDisabled();
-  await page
-    .locator('input[type=file]')
-    .setInputFiles({
-      name: 'bad.png',
-      mimeType: 'image/png',
-      buffer: Buffer.from('invalid raster')
-    });
+  await page.locator('input[type=file]').setInputFiles({
+    name: 'bad.png',
+    mimeType: 'image/png',
+    buffer: Buffer.from('invalid raster')
+  });
   await expect(
-    page.getByText(/Error converting image\(s\) to PDF/)
+    page
+      .getByRole('alert')
+      .filter({ hasText: 'Image cannot be decoded. Choose a supported image.' })
   ).toBeVisible();
+  // Import preflight rejects the entire invalid batch before conversion starts.
+  await expect(
+    page.getByRole('button', { name: 'Delete file', exact: true })
+  ).toHaveCount(0);
   await expect(
     page.getByRole('button', { name: 'Download', exact: true })
   ).toBeDisabled();
