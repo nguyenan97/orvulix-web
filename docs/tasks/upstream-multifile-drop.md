@@ -2,8 +2,8 @@
 
 - Updated: 2026-10-14 UTC
 - Branch / base: feature/upstream-multifile-drop / develop
-- PR: not opened yet
-- Phase: reviewed; exact-head CI pending
+- PR: #25, https://github.com/nguyenan97/orvulix-web/pull/25
+- Phase: PR ready; exact-head CI pending
 - Delivery mode: develop-merge, explicitly requested by owner
 - Last verified base: 097d5941f3cdf8ba14df3f3629d709b5d703d320 (PR #24 merged)
 - Implementation commit: e8817ec8a81c9e9ea63f1d0fbbd8bb9d99d0927a; this checkpoint
@@ -61,8 +61,10 @@ independent approval.
 
 ## Pending / resume
 
-Local acceptance/review done; commit remaining scoped test/docs refinements,
-push one PR develop, exact-head CI, authorized merge/cleanup. Dev server 5173,
+Local acceptance/review and scoped implementation commits done; latest prior
+head 1c103a391c5e9215dc7ad8ebc934a7c90b7fb478. PR #25 targets develop; pending
+exact latest-head CI, authorized merge and cleanup. Resolve current SHA/run/merge
+state from PR metadata, not this pre-CI snapshot. Dev server 5173,
 Pages host 4188 and owned browser runs have stopped. Preserve untracked public/sitemap.xml with
 checksum 5f9cf3fbeb7d4acfd9b7f0e79dd10ea184df2f4a8cfb11f6a529cf2f538d7df3.
 This snapshot precedes CI/merge; resolve final head/state through Git/PR metadata.
