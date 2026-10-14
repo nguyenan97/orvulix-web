@@ -148,7 +148,9 @@ It uses read-only permissions for audit and job-scoped security-events:write for
 CodeQL. Public repository eligibility was checked. CodeQL JavaScript/TypeScript
 uses build-mode:none; it does not execute untrusted PR application code or install
 packages. Fork PR analysis does not upload using write credentials. CodeQL alerts
-require triage; upload success alone is not a zero-findings result. No duplicate
+require triage; upload success alone is not a zero-findings result. A SARIF summary
+logs only rule IDs, severities and locations when API access is unavailable;
+messages, snippets and traces are excluded. No duplicate
 Dependency Review gate is added: the npm gate already checks the resolved tree
 and exact temporary exception, while CodeQL examines application code.
 
