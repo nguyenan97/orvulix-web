@@ -17,7 +17,8 @@ not current security status (see SECURITY_REMEDIATION.md).
 
 Milestone A is implemented on feature/web-conversion-ux for review, not merged:
 category CTAs use editorial choices (Split PDF and Resize Image) independent of
-registry insertion order; browse/related lists retain existing relative order
+registry insertion order; unrelated category CTAs retain upstream choices.
+Browse/related lists retain existing relative order
 with local HTML tools last. Search relevance and user bookmarks are unchanged.
 Local pages advertise experimental file/snippet input, upload and sample options,
 not URLs. Routes, renderers, budgets, presets and actual export remain available.

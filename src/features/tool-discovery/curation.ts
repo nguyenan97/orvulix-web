@@ -26,6 +26,13 @@ export function categoryExample<T extends DiscoverableTool>(
   category: string,
   tools: readonly T[]
 ) {
+  // Only PDF/image categories are curated here. Keep unrelated upstream CTAs.
+  if (!Object.hasOwn(categoryExamples, category)) {
+    const first = tools[0];
+    return first
+      ? { title: first.name, path: first.path }
+      : { title: '', path: '' };
+  }
   const preferred = categoryExamples[category]
     ?.map((path) => tools.find((tool) => tool.path === path))
     .find((tool) => tool !== undefined);

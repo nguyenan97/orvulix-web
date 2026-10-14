@@ -9,12 +9,20 @@ import {
 test('homepage recommends stable tools, category browse keeps HTML last, search still opens it by keyboard', async ({
   page
 }) => {
+  await page.emulateMedia({ colorScheme: 'light' });
   await page.goto('/');
+  await expect(page.locator('body')).toHaveCSS(
+    'background-color',
+    'rgb(248, 250, 252)'
+  );
   await expect(
     page.getByRole('button', { name: /Try.*Split PDF/i })
   ).toBeVisible();
   await expect(
     page.getByRole('button', { name: /Try.*Resize image/i })
+  ).toBeVisible();
+  await expect(
+    page.getByRole('button', { name: /Try.*Validate JSON/i })
   ).toBeVisible();
   await expect(page.getByRole('button', { name: /Try.*HTML/i })).toHaveCount(0);
   await page.getByRole('button', { name: /Try.*Split PDF/i }).click();
@@ -52,6 +60,10 @@ test('mobile dark local-file workflow keeps sample/upload/preview and actual PNG
     '<div style="width:200px;height:100px;background-color:#ff0000">Local file</div>';
   for (const pdf of [false, true]) {
     await page.goto(pdf ? '/pdf/html-to-pdf' : '/image-generic/html-to-image');
+    await expect(page.locator('body')).toHaveCSS(
+      'background-color',
+      'rgb(28, 31, 32)'
+    );
     await expect(
       page.getByText(/Experimental local HTML conversion/)
     ).toBeVisible();

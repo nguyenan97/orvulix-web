@@ -3,6 +3,14 @@ import { categoryExample, orderBrowseTools } from './curation';
 
 const tool = (path: string) => ({ path, name: path });
 describe('editorial discovery independent of upstream insertion', () => {
+  it('preserves unrelated categories and inherited-name categories without treating them as editorial config', () => {
+    const source = [tool('json/validateJson'), tool('json/prettify')];
+    expect(categoryExample('json', source).path).toBe('json/validateJson');
+    expect(categoryExample('constructor', source).path).toBe(
+      'json/validateJson'
+    );
+    expect(categoryExample('json', [])).toEqual({ title: '', path: '' });
+  });
   it('keeps new and established tools discoverable, demoting only local HTML without mutation', () => {
     const source = Object.freeze([
       tool('pdf/html-to-pdf'),
