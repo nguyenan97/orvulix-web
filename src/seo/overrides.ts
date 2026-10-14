@@ -27,6 +27,8 @@ import convertersVideoToGif from './tool-content/converters/video-to-gif';
 import stringBase64 from './tool-content/string/base64';
 import stringPasswordGenerator from './tool-content/string/password-generator';
 import stringTextCompare from './tool-content/string/text-compare';
+import htmlToImage from './tool-content/image-generic/html-to-image'; // ORVULIX-WEB-CONVERSION
+import htmlToPdf from './tool-content/pdf/html-to-pdf'; // ORVULIX-WEB-CONVERSION
 
 /**
  * Hand-written SEO metadata and content, keyed by tool route path without
@@ -35,6 +37,8 @@ import stringTextCompare from './tool-content/string/text-compare';
  * generated from their English locale strings.
  */
 export const TOOL_OVERRIDES: Record<string, ToolSeoOverride> = {
+  'pdf/html-to-pdf': htmlToPdf, // ORVULIX-WEB-CONVERSION
+  'image-generic/html-to-image': htmlToImage, // ORVULIX-WEB-CONVERSION
   'json/prettify': jsonPrettify,
   'json/validateJson': jsonValidatejson,
   'json/minify': jsonMinify,

@@ -20,6 +20,16 @@ Our approach is to make existing tools better first, then explore new capabiliti
   [bounded workers](BOUNDED_LIST_REGEX.md), with numeric guards for Group and Duplicate
   and preflight checks for Group padding separator expansion.
 - Improve search visibility with helpful, original content for individual tools.
+- Web/HTML conversion follows a [separate phased plan](WEB_CONVERSION_PLAN.md).
+  HTML to Image is implemented on feature/html-to-image for review, with local
+  static text/table/list rendering, bounded embedded PNG/JPEG and PNG/JPEG export.
+  External resources/scripts are blocked. Safe system font stacks and crop/row
+  boundary warnings with strict rejection are implemented. Embedded fonts and
+  full-page capture remain outside the local-image contract. One-page HTML to PDF is implemented on the branch with A4/Letter, margins and
+  an explicit raster-text label; bounded multi-page raster PDF is implemented on the branch, not merged; source page ranges and optional repeated thead headers are implemented
+  on the branch, not merged. Custom fonts and URL rendering remain deferred. The targeted jsPDF 4.2.1 dependency baseline is implemented on the
+  feature branch for review; remaining legacy PDF limits and remote isolation
+  need separate scope.
 
 **Outcome we want:** People can find the right tool quickly, complete their task, and confidently return when they need it again.
 
@@ -108,3 +118,35 @@ We welcome practical suggestions and contributions.
 - **Contact:** founder@orvulix.io.vn
 
 Orvulix is independently maintained as a fork of [OmniTools](https://github.com/iib0011/omni-tools), with original attribution and licensing preserved.
+
+
+PR20 pagination gate: implemented on feature/html-to-image, not merged. Explicit
+Paginated width-fit uses bounded sequential captures and protected block/row
+boundaries, rejecting oversized/unsafe layout. One page remains default. Review
+actual PDF bytes, cross-browser page seams, deadlines/cleanup and Pages smoke
+before merge; header repetition is implemented on the branch, not merged. Custom fonts remain deferred.
+
+
+Page ranges (PR20): implemented on feature/html-to-image, not merged. Explicit
+All pages/Custom ranges select original source pages without reflow or bypassing
+full-document limits. Invalid input is rejected, normalized selection is visible,
+selected capture is cancellable and PDF source/output order is tested with actual
+bytes/pixels. Repeated table headers are implemented on the branch, not merged. Custom fonts/URL rendering remain deferred.
+
+
+Local Web/HTML conversion MVP (PR20) is implemented and verified on the feature
+branch, not merged, including six option presets without content/settings storage.
+The full Web conversion feature remains incomplete. See the
+[deferred register](WEB_CONVERSION_DEFERRED.md) for font/security gates, remote
+service prerequisites and future URL outputs/automation. No backend or paid API
+is added by the local delivery.
+
+PR20 local reliability review: monotonic capture/asset acceptance deadlines and
+late-result cleanup regressions are implemented on the feature branch, not merged.
+The separate HTML to PDF tool is described as implemented raster output, while
+fonts, URL rendering and automation remain deferred. Release still follows the
+normal develop review and separately authorized main workflow.
+
+PR20 pagination fidelity corrections retain painted border-only boxes and reject
+left-of-viewport content instead of silently cropping it. These are local MVP
+reliability fixes on the feature branch, not a change to remote conversion scope.

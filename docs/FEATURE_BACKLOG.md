@@ -40,6 +40,21 @@ update it alongside this ordered plan. Technical criteria stay in this document.
 
 ## Ordered feature plan
 
+Owner-requested Web/HTML conversion has a separate phased
+[research and implementation plan](WEB_CONVERSION_PLAN.md). HTML to Image is implemented on
+feature/html-to-image for review: static text/table/list HTML, safe inline styles,
+PNG/JPEG, bounded dimensions/scale, transparency, upload/preview/download and
+cancellation. Embedded PNG/JPEG data URLs have header checks, byte/pixel budgets
+and native decode validation; external images, SVG/APNG, scripts and stylesheet
+blocks remain blocked. Safe system font stacks, overflow/split-row warnings and
+optional strict crop rejection are implemented. Output is one fixed-size image;
+bounded multi-page raster pagination is implemented on the branch, not merged.
+Ranges are implemented on the branch; repeated table headers are implemented on the branch; URL conversion remains deferred. jsPDF is upgraded to 4.2.1 on the branch with real PDF regression coverage;
+61 inherited audit findings remain. One-page HTML to PDF is implemented on the branch with A4/Letter, orientation,
+margins, aspect-preserving fit, strict crop handling and a raster-text label.
+Page ranges are implemented on the branch; repeated table headers are implemented on the branch; URL conversion remains deferred. This
+request does not imply acceptance by upstream or completion of PDF privacy work.
+
 Difficulty is relative implementation risk, not an estimate of calendar time.
 All items below remain planned until their implementation PR is merged and verified.
 
@@ -91,3 +106,47 @@ an accepted or tested feature.
 - OCR/background-removal asset self-hosting ([#464](https://github.com/iib0011/omni-tools/issues/464))
   can consume hosting bandwidth/credits. Evaluate asset sizes and licensing before
   calling this a cost-saving or fully offline solution.
+
+
+HTML/PDF pagination update (PR20, implemented on feature/html-to-image, not merged):
+explicit One page/Paginated modes; width-fit, atomic leaf/row boundaries, default
+oversized-content rejection, sequential page captures, 8-page/10000-CSS-px/
+4-MP-page/16-MP-total/8-MiB budgets. Partial last pages retain scale. Preview/export
+share the planner; export remeasures its input snapshot. Optional source page ranges are implemented; repeated thead headers are implemented; no split option, custom fonts or URL converters. See WEB_CONVERSION_PLAN.md.
+
+
+PR20 page ranges: implemented on feature/html-to-image, not merged. All pages or
+bounded 1-based custom syntax (128 UTF-8 bytes/16 tokens); normalize duplicates and
+ordering, reject invalid/out-of-source input. Full-plan budgets remain enforced,
+only selected pages are captured, original geometry stays intact and UI progress
+separates source number from output position. Fix the baseline assembler's false
+rejection of safe pre-broken plans. Custom fonts/URLs remain deferred; see WEB_CONVERSION_DEFERRED.md for reopening gates.
+
+
+PR20 repeated table headers: implemented on feature/html-to-image, not merged.
+Paginated-only option defaults Off. Measured thead clones lock original column
+widths and reserve continuation height before ranges; repeated pixels count
+against unchanged limits. Multi-row headers and header colspan are supported;
+rowspan/nesting/body colspan/caption/tfoot/flex tables reject with option On.
+Normal collapsed-border half-pixel row seams now progress instead of incorrectly
+retreating through the entire table. Real PDF/browser coverage and details are
+in WEB_CONVERSION_PLAN.md; custom fonts/URL conversion remain deferred.
+
+
+PR20 local completion: local conversion MVP and six validated option presets are
+implemented on feature/html-to-image, not merged. Presets preserve HTML/filename,
+clear/cancel stale work and persist no content/settings. Full Web conversion is
+not complete. See [deferred work and reopening gates](WEB_CONVERSION_DEFERRED.md)
+for uploaded fonts, remote platform, URL outputs, automation and authenticated /
+batch jobs. These are not features shipped by the local MVP.
+
+PR20 review corrections: capture/asset elapsed deadlines now reject completion
+past the budget before timer delivery, with late-resource cleanup and recovery
+regressions. The headers UI unit flow is split into independent lifecycle cases;
+FAQ describes the existing separate raster-PDF tool. Implemented on branch, not
+merged; full Web conversion and the deferred register remain unchanged.
+
+PR20 second review: pagination retains trailing border-only boxes and rejects
+negative horizontal flex overflow. Unit regressions and actual PDF pixel/browser
+flows cover these cases. Implemented on branch, not merged; limits and deferred
+scope are unchanged.

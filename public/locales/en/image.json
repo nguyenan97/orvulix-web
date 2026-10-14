@@ -1,4 +1,9 @@
 {
+  "htmlToImage": {
+    "title": "HTML to Image",
+    "description": "Convert static HTML with embedded PNG/JPEG images to a downloadable image locally. Preview safe styles, choose dimensions and transparent backgrounds.",
+    "shortDescription": "Export static HTML as a PNG or JPEG image in your browser."
+  },
   "changeColors": {
     "description": "Change specific colors in an image by selecting a source color and replacing it with a new one.",
     "fromColor": {

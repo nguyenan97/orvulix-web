@@ -7,7 +7,7 @@ import {
   Radio,
   Stack
 } from '@mui/material';
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import ToolContent from '@components/ToolContent';
 import ToolMultipleImageInput, {
   MultiImageInput
@@ -17,6 +17,7 @@ import { ToolComponentProps } from '@tools/defineTool';
 import { Orientation, PageType, InitialValuesType, ImageSize } from './types';
 import { buildPdf } from './service';
 import { useTranslation } from 'react-i18next';
+import { CustomSnackBarContext } from '../../../../contexts/CustomSnackBarContext';
 
 const initialValues: InitialValuesType = {
   pageType: 'full',
@@ -26,6 +27,7 @@ const initialValues: InitialValuesType = {
 
 export default function ConvertToPdf({ title }: ToolComponentProps) {
   const { t } = useTranslation('pdf');
+  const { showSnackBar } = useContext(CustomSnackBarContext);
   const [input, setInput] = useState<MultiImageInput[]>([]);
   const [result, setResult] = useState<File | null>(null);
   const [imageSizes, setImageSizes] = useState<ImageSize[] | null>(null);
@@ -35,7 +37,11 @@ export default function ConvertToPdf({ title }: ToolComponentProps) {
     optionsValues: InitialValuesType,
     input: MultiImageInput[]
   ) => {
-    if (!input.length) return;
+    if (!input.length) {
+      setResult(null);
+      setImageSizes(null);
+      return;
+    }
 
     setIsProcessing(true);
 
@@ -46,7 +52,9 @@ export default function ConvertToPdf({ title }: ToolComponentProps) {
       setResult(pdfFile);
       setImageSizes(imageSizes);
     } catch (error) {
-      throw new Error('Error converting image(s) to PDF:' + error);
+      setResult(null);
+      setImageSizes(null);
+      showSnackBar('Error converting image(s) to PDF: ' + error, 'error');
     } finally {
       setIsProcessing(false);
     }
