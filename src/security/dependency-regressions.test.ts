@@ -5,6 +5,14 @@ import { unset, template } from 'lodash';
 import { parse, Type, Field } from 'protobufjs';
 
 describe('patched dependencies at real consumer boundaries', () => {
+  it('rejects external entities without fetching their content', () => {
+    expect(
+      beautifyXml(
+        '<!DOCTYPE root [<!ENTITY external SYSTEM "https://blocked.security.test/private">]><root>&external;</root>',
+        { preserveAttributes: true }
+      )
+    ).toBe('Invalid XML: External entities are not supported');
+  });
   it('preserves XML attributes, Unicode and formatting after the parser upgrade', () => {
     const input = '<invoice owner="Nguyễn An"><total>42</total></invoice>';
     expect(validateXml(input, {})).toBe('Valid XML');

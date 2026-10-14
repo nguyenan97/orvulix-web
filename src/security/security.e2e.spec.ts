@@ -48,7 +48,9 @@ test('XML entities stay bounded, external entities make no requests and output c
   await input.fill(
     '<!DOCTYPE root [<!ENTITY external SYSTEM "https://blocked.security.test/private">]><root>&external;</root>'
   );
-  await expect(result).toHaveValue('<root>&amp;external;</root>\n');
+  await expect(result).toHaveValue(
+    'Invalid XML: External entities are not supported'
+  );
   await input.fill('<root>&#9999999999999999;</root>');
   await expect(result).toHaveValue('<root>&amp;#9999999999999999;</root>\n');
   await input.fill(

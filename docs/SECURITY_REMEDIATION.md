@@ -299,3 +299,23 @@ is universally safe. Related parent package findings inherit these advisories.
 | tinypool / [GHSA-85c8-ppgw-ccpr](https://github.com/advisories/GHSA-85c8-ppgw-ccpr) | critical | `<2.1.2` | unused dependency chain removed |
 | vite / [GHSA-fx2h-pf6j-xcff](https://github.com/advisories/GHSA-fx2h-pf6j-xcff) | high | `<=6.4.2` | 6.4.4 - resolved in audit |
 | vitest / [GHSA-5xrq-8626-4rwp](https://github.com/advisories/GHSA-5xrq-8626-4rwp) | critical | `<3.2.6` | 4.1.11 - resolved in audit |
+
+## CodeQL first-scan disposition
+
+CodeQL at head 4155794 reports five high-scored results. They are not silently
+suppressed or marked resolved. The token used for this task cannot read/manage
+code-scanning alerts via the REST API (403), so the runner's metadata-only SARIF
+summary is the review evidence. Rule score is not proof of a reachable exploit.
+
+| Rule / source | Trigger and sink review | Disposition |
+| --- | --- | --- |
+| js/bad-tag-filter / scripts/seo/validate-html.mjs:260 | Regex excludes generated script blocks only for a placeholder-text check; its output feeds PLACEHOLDER.test and a problem array, never a DOM or published artifact. | Non-sanitizer validation utility; no app XSS sink identified. Keep the alert visible for owner triage. |
+| js/incomplete-multi-character-sanitization / scripts/seo/validate-html.mjs:260 | Same operation, potentially nested tag-like strings. This does not sanitize untrusted markup or promise removal of arbitrary active HTML. | Same bounded build-validator context; no security relaxation or regex rewrite to hide the alert. |
+| js/incomplete-multi-character-sanitization / scripts/pages/prepare.mjs:24 | Removes authored JSON-LD from generated build artifacts before adding dev metadata. Inputs come from the controlled static generator, not pasted/uploaded user HTML; Pages validation checks resulting metadata. | Build transform, not an HTML sanitizer. Do not reuse it for user content; retain canonical/noindex tests. |
+| js/double-escaping / src/seo/SeoContent.test.tsx:18 | Entity decoding compares text in a unit assertion; the decoded value is not inserted into an application DOM or output artifact. | Test-only comparison helper; no executable sink. |
+| js/incomplete-sanitization / src/pages/tools/string/table-text-converter/service.ts:204 | Pipe escaping formats Markdown cells. UI renders the result with ToolTextResult's textarea; HTML output separately uses escapeMarkup. Backslash/raw HTML in exported Markdown can affect downstream renderers. | No app HTML sink identified. Markdown formatting is not a security sanitizer; downstream safe rendering and backslash round-trip behavior remain a scoped follow-up. Do not present exported Markdown as sanitized HTML. |
+
+No application/tool service changes are made merely to quiet these queries.
+Repository maintainers should review these individual dispositions in GitHub's
+Security UI and reassess if input provenance or sinks change. The scan does not
+replace the remaining runtime/hosting release decisions above.
