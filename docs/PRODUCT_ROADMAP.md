@@ -168,3 +168,11 @@ Current feature/upstream-png-dimensions ports PNG dimension correctness (#461),
 not a complete encoder/batch migration or lossless optimizer. Further GIF/drop
 and generic image compression work require separate acceptance/tests. Owner has
 paused Web/URL conversion; retain existing local HTML tools without extending them.
+
+### Shared file-input reliability
+
+Multi-file drop adaptation on feature/upstream-multifile-drop covers image/audio/
+video/PDF inputs, including queued budgets, invalid batch recovery and owned URL
+cleanup. It preserves existing tool conversion behavior and does not extend Web/
+URL conversion. Implementation is on the feature branch until its PR is merged;
+consumer conversion cancellation requires a separate reliability task.

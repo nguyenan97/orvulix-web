@@ -22,11 +22,20 @@ async function raster(
     buffer: await image.getBufferAsync(mimeType)
   };
 }
-async function downloadPdf(page: Page) {
+async function downloadPdf(
+  page: Page,
+  expectedName: string | RegExp = 'merged-images.pdf'
+) {
   await expect(
     page.getByRole('button', { name: 'Download', exact: true })
   ).toBeEnabled();
-  const pending = page.waitForEvent('download');
+  // Native PDF iframe viewers can emit their own downloads; select the explicit tool file.
+  const pending = page.waitForEvent('download', {
+    predicate: (download) =>
+      typeof expectedName === 'string'
+        ? download.suggestedFilename() === expectedName
+        : expectedName.test(download.suggestedFilename())
+  });
   await page.getByRole('button', { name: 'Download', exact: true }).click();
   const download = await pending;
   return {
@@ -37,13 +46,15 @@ async function downloadPdf(page: Page) {
 async function renderPdf(page: Page, bytes: Buffer, count: number) {
   // A real second tool flow runs installed PDF.js and its emitted worker.
   await page.goto('/pdf/pdf-to-png');
+  await page.locator('input[type=file]').setInputFiles({
+    name: 'result.pdf',
+    mimeType: 'application/pdf',
+    buffer: bytes
+  });
+  // Wait for the real completed export control before asserting page count.
   await page
-    .locator('input[type=file]')
-    .setInputFiles({
-      name: 'result.pdf',
-      mimeType: 'application/pdf',
-      buffer: bytes
-    });
+    .getByRole('button', { name: 'Download All as ZIP', exact: true })
+    .waitFor({ state: 'visible' });
   const previews = page.locator('img[alt^="Preview "]');
   await expect(previews).toHaveCount(count);
   const result: {
@@ -133,7 +144,7 @@ for (const [orientation, scale] of [
     await page
       .locator('input[type=file]')
       .setInputFiles(await raster(160, 80, 'jpeg'));
-    const { name, bytes } = await downloadPdf(page);
+    const { name, bytes } = await downloadPdf(page, 'Nguyễn An.pdf');
     expect(name).toBe('Nguyễn An.pdf');
     const pdf = await PDFDocument.load(bytes),
       pageSize = pdf.getPage(0).getSize();
@@ -165,16 +176,20 @@ test('invalid decode has an actionable error, no unhandled rejection and valid u
   await expect(
     page.getByRole('button', { name: 'Download', exact: true })
   ).toBeDisabled();
-  await page
-    .locator('input[type=file]')
-    .setInputFiles({
-      name: 'bad.png',
-      mimeType: 'image/png',
-      buffer: Buffer.from('invalid raster')
-    });
+  await page.locator('input[type=file]').setInputFiles({
+    name: 'bad.png',
+    mimeType: 'image/png',
+    buffer: Buffer.from('invalid raster')
+  });
   await expect(
-    page.getByText(/Error converting image\(s\) to PDF/)
+    page
+      .getByRole('alert')
+      .filter({ hasText: 'Image cannot be decoded. Choose a supported image.' })
   ).toBeVisible();
+  // Import preflight rejects the entire invalid batch before conversion starts.
+  await expect(
+    page.getByRole('button', { name: 'Delete file', exact: true })
+  ).toHaveCount(0);
   await expect(
     page.getByRole('button', { name: 'Download', exact: true })
   ).toBeDisabled();
@@ -182,7 +197,7 @@ test('invalid decode has an actionable error, no unhandled rejection and valid u
   await page
     .locator('input[type=file]')
     .setInputFiles(await raster(80, 160, 'png'));
-  const result = await downloadPdf(page);
+  const result = await downloadPdf(page, 'Nguyễn An.pdf');
   expect((await PDFDocument.load(result.bytes)).getPageCount()).toBe(1);
   await page.getByRole('button', { name: 'Clear', exact: true }).click();
   await expect(
@@ -197,7 +212,7 @@ test('split image to pages stays on pdf-lib and preserves four tiles, padding an
   await page
     .locator('input[type=file]')
     .setInputFiles(await raster(800, 1200, 'png'));
-  const { name, bytes } = await downloadPdf(page);
+  const { name, bytes } = await downloadPdf(page, /^Nguyễn An-\d+\.pdf$/);
   expect(name).toMatch(/^Nguyễn An-\d+\.pdf$/);
   const pdf = await PDFDocument.load(bytes);
   expect(pdf.getPageCount()).toBe(4);

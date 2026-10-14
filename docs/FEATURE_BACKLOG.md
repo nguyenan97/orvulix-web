@@ -170,3 +170,12 @@ palette colors/metadata may change. See UPSTREAM_SYNC.md for candidates, boundar
 and the static-PNG compression limits. GIF/multiple-input drop support (#458) is
 now merged upstream but remains a separate Orvulix task; it is not delivered here.
 Web/URL conversion is paused by owner decision, not canceled or rolled back.
+
+### Multi-file drop implementation checkpoint
+
+Upstream #458 is being adapted on feature/upstream-multifile-drop after merged
+PNG PR #24. All four shared inputs use one bounded picker/drop import pipeline,
+atomic rejection, serial ordering and preview cleanup. Duplicate files remain
+allowed. No GIF timing/Create/quality or conversion-service lifecycle work is
+included. See UPSTREAM_SYNC.md for budgets, supported formats, validation and
+remaining boundaries. Resolve final merge status through the feature PR.

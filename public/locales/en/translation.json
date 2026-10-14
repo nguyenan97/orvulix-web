@@ -241,6 +241,10 @@
     "result": "Result"
   },
   "toolMultipleInput": {
+    "processing": "Importing files...",
+    "dropHint": "Drop files here or use Select files.",
+    "dropFiles": "Drop files to import",
+    "limits": "Up to {{count}} files, {{file}} MiB each, {{total}} MiB combined.",
     "deleteFile": "Delete file",
     "inputTitle": "Input {{type}}",
     "noFilesSelected": "No files selected"

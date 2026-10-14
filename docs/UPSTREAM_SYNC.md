@@ -89,3 +89,65 @@ image compressor still has its own resizing policy and requires a separate task.
 
 Owner paused Web/URL conversion on 2026-10-14. Keep existing local HTML tools;
 do not extend URL renderer/backend, custom fonts or HTML/PDF features during sync.
+
+## Multi-file drag/drop adaptation after PR #24
+
+PNG correction above merged in Orvulix PR #24 (097d594). The earlier candidate
+snapshot remains historical. Multi-file drop is now implemented on
+feature/upstream-multifile-drop from that develop baseline, not yet merged.
+Source #458 / b2e6f0b remains merged upstream; no whole-PR cherry-pick.
+
+Four existing shared adapters use src/features/multifile-drop for picker/drop
+validation, nested file-drag state and serial transactional import. Every batch
+is atomic: invalid selection, budget or preparation failure adds none of that
+batch and displays an error; previously accepted batches remain. Duplicates are
+retained intentionally for repeated frames/slides. Orders append after the maximum
+existing order (not list length); removing a file cannot introduce collisions.
+The inputs do not add reorder UI; existing list order/consumer behavior is retained.
+
+Admission budgets include queued reservations: image 20 files, 16 MiB/file,
+64 MiB combined; PDF 20, 32/128 MiB; audio/video 10, 64/128 MiB. Converted image
+bytes are checked again before publication. Native image metadata rejects invalid
+images or geometry above 8192px/side and 16M pixels. PNG/JPEG/GIF/WebP/SVG/AVIF and
+other accepted native formats retain their paths; HEIC/HEIF is converted through
+the existing library lazily rather than introducing another decoder. PDF uses
+existing pdf-lib validation before passing input to auto-conversion. MIME/extension
+matching is only a selection hint, never content/security proof; known extensions
+can match empty MIME, but an incompatible explicit MIME is rejected unless the
+consumer explicitly accepts that extension.
+
+Metadata/async preparation waits are bounded at 15 seconds. Clear/reset/unmount
+aborts cooperative waits, invalidates queued work and ignores late results/errors.
+Managed preview/probe URLs, event handlers and readiness timers are reclaimed.
+Native decoding and synchronous HEIC/pdf-lib work have no hard CPU/memory quota
+or preemption; byte/count limits do not prevent all decompression allocations.
+Audio/video import has no native decode requirement, preserving FFmpeg formats
+unsupported by native playback. Codec errors/output lifecycle in existing tool
+services are separate, unchanged behavior; importer cancellation does not cancel
+an already started tool conversion. This task does not claim to fix that boundary.
+
+Drop handlers are zone-local and apply to file drags; text/links outside/within
+the zone are not hijacked. Directory entries and empty file drops are rejected.
+Keyboard/mobile use the existing picker. Accessible image removal replaces the
+clickable-only cross with an IconButton; region, status and error UI use MUI theme.
+
+Validation requires the four actual inputs plus real exported PDF/WAV/MP4 decoding.
+The media browser fixtures use installed @ffmpeg/core 0.12.10 WASM served to the
+existing 0.12.6 CDN request through the test route; conversions are genuine, but
+this does not validate production CDN availability/version delivery. MP4 output is decoded using a second genuine WASM engine via test-only local
+assets when native H.264 support is unavailable; these assets are not shipped in
+Pages output. Tiny local red/blue MP4 fixtures were generated with FFmpeg; no external user data is used.
+
+Sync hotspots: four ToolMultiple*Input adapters, four English status strings,
+one focused CI entry and PDF-baseline browser assertions adapted to earlier
+import rejection and explicit filename-filtered downloads/readiness; existing
+output assertions remain. Isolated core/hook/status/tests. No runtime dependency,
+registry, SEO/routing, Netlify or production deployment changes. Future tasks need
+explicit scope for conversion job cancellation, GIF timing/quality or backend URL
+rendering; Web/URL conversion remains paused.
+
+Follow-up owner: Orvulix maintainer. A separate consumer-conversion lifecycle task
+must clear outdated downloads when files/options change, ignore late output/errors
+on clear/navigation and define cancellation for the existing FFmpeg queue. Acceptance
+requires real merge/GIF/image export recovery tests and truthful native/worker
+cancellation limits. This is outside importer ownership, not an implemented feature.
