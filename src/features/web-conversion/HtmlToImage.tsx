@@ -26,11 +26,13 @@ import { ALL_PAGES, parsePageRanges, type PageSelection } from './page-ranges';
 import PageRangeFields from './PageRangeFields';
 import PresetFields from './PresetFields';
 import { resolvePreset } from './presets';
+import { useTranslation } from 'react-i18next';
 
 export default function HtmlToImage({
   output = 'image'
 }: { output?: 'image' | 'pdf'; title?: string } = {}) {
   const isPdf = output === 'pdf';
+  const { t } = useTranslation('image');
   const [pdfMode, setPdfMode] = useState<'one' | 'paginated'>('one');
   const paginated = isPdf && pdfMode === 'paginated';
   const [pagePlan, setPagePlan] = useState<PaginationPlan | null>(null);
@@ -278,6 +280,12 @@ export default function HtmlToImage({
   }
   return (
     <Stack spacing={2} id="tool">
+      <Alert severity="warning">
+        {t(
+          'htmlToImage.experimentalNotice',
+          'Experimental local HTML conversion for snippets and files, not website URLs. Complex layouts may differ from the original; preview before exporting.'
+        )}
+      </Alert>
       <Alert severity="info">
         Local static HTML with simple inline styles and embedded PNG/JPEG data
         URLs. Scripts, SVG, stylesheet blocks and external resources are
@@ -313,12 +321,23 @@ export default function HtmlToImage({
         <Card variant="outlined" sx={{ minWidth: 0 }}>
           <CardContent>
             <Stack spacing={2}>
-              <Typography variant="h6">HTML input</Typography>
+              <Typography variant="h6">
+                {t('htmlToImage.inputTitle', 'HTML input')}
+              </Typography>
+              <Typography variant="body2" color="text.secondary">
+                {t(
+                  'htmlToImage.inputHint',
+                  'Upload a local .html file, paste an HTML snippet, or load the example. You do not need to paste markup if you already have a file. Only supported static content and embedded PNG/JPEG images are rendered.'
+                )}
+              </Typography>
               <Stack direction="row" spacing={1} flexWrap="wrap" useFlexGap>
                 <Button component="label" variant="outlined">
-                  Upload HTML
+                  {t('htmlToImage.uploadLabel', 'Upload HTML')}
                   <input
-                    aria-label="Upload HTML file"
+                    aria-label={t(
+                      'htmlToImage.uploadAriaLabel',
+                      'Upload HTML file'
+                    )}
                     hidden
                     type="file"
                     accept=".html,.htm,text/html"
@@ -328,7 +347,9 @@ export default function HtmlToImage({
                     }}
                   />
                 </Button>
-                <Button onClick={() => editHtml(SAMPLE)}>Load example</Button>
+                <Button onClick={() => editHtml(SAMPLE)}>
+                  {t('htmlToImage.exampleLabel', 'Load example')}
+                </Button>
                 <Button
                   onClick={() => {
                     invalidate();

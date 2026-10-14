@@ -1,7 +1,7 @@
 # Web conversion deferred work
 
 Decision snapshot: October 13, 2026. Local conversion is implemented on
-feature/html-to-image in PR20, not merged. This register describes future work,
+develop via PR20 (merged). This register describes future work,
 not features available in the product. No completion-time or hosting-cost
 estimates have been measured. See [current contracts](WEB_CONVERSION_PLAN.md).
 
@@ -15,10 +15,10 @@ there is no settings persistence. Production and Pages policies are unchanged.
 
 | Order | Item | Status | Reopen when |
 | --- | --- | --- | --- |
-| 1 | Local uploaded fonts | Deferred | A bounded validator/embedding spike passes all three engines |
-| 2 | Remote gateway/renderer platform | Blocked | Hosting/funding and service operation are explicitly authorized |
-| 3 | URL to Image | Deferred | Platform security/ownership/cancellation gate passes |
-| 4 | URL to native searchable PDF | Deferred | Platform plus native PDF fidelity gate passes |
+| 1 | Remote gateway/renderer platform | Blocked | Hosting/funding and service operation are explicitly authorized |
+| 2 | URL to native searchable PDF | Deferred | Platform security/ownership/cancellation plus native PDF fidelity gate passes |
+| 3 | URL to Image | Deferred | URL PDF MVP passes before screenshot/security fixtures |
+| 4 | Local uploaded fonts | Deferred | A bounded validator/embedding spike passes all three engines; not a substitute for URL-first delivery |
 | 5 | Remote readiness/lazy/fixed/cookie controls | Deferred | Relevant output tool is stable and each heuristic is bounded/tested |
 | 6 | Batch/scheduled/authenticated capture | Blocked | Ownership, secret handling, quotas and retention are designed and authorized |
 | 7 | Complex local layouts/assets and oversized-block splitting | Deferred | A bounded fidelity/security spike passes before changing local contracts |

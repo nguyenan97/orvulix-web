@@ -16,6 +16,10 @@ import { xmlTools } from '../pages/tools/xml';
 import { convertersTools } from '../pages/tools/converters';
 import { TFunction } from 'i18next';
 import { FullI18nKey, I18nNamespaces } from '../i18n';
+import {
+  categoryExample,
+  orderBrowseTools
+} from '../features/tool-discovery/curation'; // ORVULIX-DISCOVERY
 
 const toolCategoriesOrder: ToolCategory[] = [
   'image-generic',
@@ -391,11 +395,8 @@ export const getToolsByCategory = (
         description: categoryConfig?.value ? t(categoryConfig.value) : '',
         type,
         icon: categoryConfig!.icon,
-        tools: filteredTools,
-        example:
-          filteredTools.length > 0
-            ? { title: filteredTools[0].name, path: filteredTools[0].path }
-            : { title: '', path: '' },
+        tools: orderBrowseTools(filteredTools), // ORVULIX-DISCOVERY: browsing/related only; search scoring stays unchanged.
+        example: categoryExample(type, filteredTools), // ORVULIX-DISCOVERY: editorial CTA independent of registry order.
         userTypes: aggregatedUserTypes // <-- Add this line
       };
     })

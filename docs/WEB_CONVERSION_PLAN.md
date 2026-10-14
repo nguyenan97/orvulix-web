@@ -1,11 +1,59 @@
 # Web and HTML conversion plan
 
 Research snapshot: October 12, 2026. Base inspected: develop at 31fb8ac.
-Local conversion MVP is implemented and verified on feature/html-to-image in
-PR20, not merged. Full Web conversion remains incomplete: uploaded fonts and
-remote URL features are tracked in [the deferred register](WEB_CONVERSION_DEFERRED.md).
+Local conversion MVP is merged and verified on develop via PR20. Full Web
+conversion remains incomplete: uploaded fonts and remote URL features are tracked in [the deferred register](WEB_CONVERSION_DEFERRED.md).
 This document distinguishes current local contracts from future delivery. Agent execution
 rules are defined in AGENTS.md and its required skills.
+
+## URL-first product direction and discovery correction
+
+User decision, October 14, 2026: the primary Web conversion journey is URL ->
+conversion/preview -> download. Local HTML file/snippet tools are experimental
+utilities for technical users, not a substitute for website URL conversion.
+PR20 is merged into develop, which does not imply release to main/production.
+PR21 security remediation is also merged; historical audit snapshots below are
+not current security status (see SECURITY_REMEDIATION.md).
+
+Milestone A is implemented on feature/web-conversion-ux for review, not merged:
+category CTAs use editorial choices (Split PDF and Resize Image) independent of
+registry insertion order; unrelated category CTAs retain upstream choices.
+Browse/related lists retain existing relative order
+with local HTML tools last. Search relevance and user bookmarks are unchanged.
+Local pages advertise experimental file/snippet input, upload and sample options,
+not URLs. Routes, renderers, budgets, presets and actual export remain available.
+Sync hotspots: one tools/index.ts integration, shared HTML UI, relevant English
+locale blocks and two SEO descriptions. New curation logic/tests are isolated.
+
+| Milestone | Scope and acceptance | State |
+| --- | --- | --- |
+| A | Correct discovery/copy, keep local upload/paste/sample flows and actual exports; no URL CTA without a service | Implemented on current feature branch, pending review |
+| B | Decide renderer architecture, isolation/SSRF controls, measured resource budgets, hosting and monthly cost | Planned/deferred; no service selected or running |
+| C | URL to PDF MVP with real gateway/renderer/download, cancellation, security/fidelity fixtures and actionable errors | Deferred until B is accepted and operation is authorized |
+| D | URL to Image and advanced options, each with bounded readiness/fidelity tests | Deferred until URL PDF MVP meets its gate |
+
+Milestone B compares maintained Playwright/Puppeteer (Apache-2.0) custom workers
+and Gotenberg (MIT) against native PDF fidelity, screenshot support, isolation,
+versions/advisories, deployment footprint and measured operating cost. Existing
+star counts do not select the service. Recheck licenses/versions when reopening.
+Keep the SPA static; renderer jobs use a controlled separate service and gateway,
+not SSR or a public CORS proxy. Netlify/Pages hosting alone provides no such service.
+
+MVP should accept public HTTP(S) URLs only; no uploaded cookies/authenticated pages
+or arbitrary custom scripts. Validate DNS/IPs before connection and after redirects;
+apply egress controls to every subresource, block private/internal/link-local and
+metadata destinations, unsafe protocols and DNS rebinding. Browser contexts/jobs
+need isolation, concurrency/rate limits, bounded redirects/time/resources/output,
+backend cancellation and cleanup of temporary files. Do not expose browser or
+Gotenberg endpoints directly. Handle login, anti-bot, paywall and render failures
+with explicit errors, without bypassing access controls.
+
+Before milestone C: benchmark latency/CPU/RAM, define numeric quotas and retention,
+calculate hosting/egress/browser costs, decide abuse controls and verify browser
+-> gateway -> renderer -> bounded download with SSRF fixtures. No measurements,
+funding, completion date or backend deployment are implied by this document.
+Local uploaded fonts remain deferred and do not take priority over this URL-first
+product decision. Existing local contracts below remain supported as documented.
 
 ## Research and decisions
 
@@ -33,7 +81,7 @@ Keep current production SEO/static routes and Pages dev isolation unchanged.
 | [Stirling-PDF](https://github.com/Stirling-Tools/Stirling-PDF) | 94,023 | Open-core, directory-specific licenses; product reference |
 | [html2canvas](https://github.com/niklasvh/html2canvas) | 31,925 | MIT; local capture candidate, optional transitive dependency already present |
 | [jsPDF](https://github.com/parallax/jsPDF) | 31,308 | MIT; existing PDF assembly, advisory review required |
-| [Gotenberg](https://github.com/gotenberg/gotenberg) | 13,267 | MIT; preferred remote service spike |
+| [Gotenberg](https://github.com/gotenberg/gotenberg) | 13,267 | MIT; remote service candidate, selection deferred to milestone B |
 | [html-to-image](https://github.com/bubkoo/html-to-image) | 7,253 | MIT; alternative capture candidate, evaluate same fixtures |
 | [html2pdf.js](https://github.com/eKoopmans/html2pdf.js) | 4,921 | MIT; reference pagination/visual tests, avoid unnecessary wrapper |
 
@@ -48,17 +96,17 @@ Do not merge or release implicitly. Follow AGENTS.md for branch cleanup.
 
 | Step | Scope | Acceptance gate | Status |
 | --- | --- | --- | --- |
-| 1 | Local engine/isolation and HTML to Image MVP | Real images on all 3 engines, no script/network leak, bounded inputs and recovery | Implemented on feature/html-to-image, not merged |
-| 2 | Local assets/system fonts/single-image boundary refinement | Asset limits, safe font stacks, crop/row warnings and strict export with fidelity fixtures | Implemented on feature/html-to-image, not merged; multi-page pagination belongs to step 4 |
-| 3 | Targeted PDF dependency/security baseline | Patched supported versions, existing image-to-PDF regression tests | jsPDF 4.2.1 and regression coverage implemented on branch, not merged |
-| 4 | One-page HTML to PDF raster | Actual page size, margins, image placement/pixels and raster label | Implemented on feature/html-to-image, not merged |
-| 4b | Bounded multi-page raster PDF | Width-fit, atomic block/row rejection, sequential captures and actual PDF seam assertions | Implemented on feature/html-to-image, not merged |
-| 4c | PDF page ranges | Bounded syntax, source/output mapping and actual selected-page PDFs | Implemented on feature/html-to-image, not merged |
-| 4d | Repeated table headers | Header-aware bounded plans, locked columns and actual continuation-page PDF pixels | Implemented on feature/html-to-image, not merged |
-| 4e | Validated local option presets | Real PNG/JPEG/PDF outputs, preserved input/filename and cancelled stale work | Implemented on feature/html-to-image, not merged |
+| 1 | Local engine/isolation and HTML to Image MVP | Real images on all 3 engines, no script/network leak, bounded inputs and recovery | Merged into develop via PR20 |
+| 2 | Local assets/system fonts/single-image boundary refinement | Asset limits, safe font stacks, crop/row warnings and strict export with fidelity fixtures | Merged into develop via PR20; multi-page pagination belongs to step 4 |
+| 3 | Targeted PDF dependency/security baseline | Patched supported versions, existing image-to-PDF regression tests | jsPDF 4.2.1 and regression coverage merged into develop via PR20 |
+| 4 | One-page HTML to PDF raster | Actual page size, margins, image placement/pixels and raster label | Merged into develop via PR20 |
+| 4b | Bounded multi-page raster PDF | Width-fit, atomic block/row rejection, sequential captures and actual PDF seam assertions | Merged into develop via PR20 |
+| 4c | PDF page ranges | Bounded syntax, source/output mapping and actual selected-page PDFs | Merged into develop via PR20 |
+| 4d | Repeated table headers | Header-aware bounded plans, locked columns and actual continuation-page PDF pixels | Merged into develop via PR20 |
+| 4e | Validated local option presets | Real PNG/JPEG/PDF outputs, preserved input/filename and cancelled stale work | Merged into develop via PR20 |
 | 5 | Remote service spike | Measured latency/resource budgets, funding/hosting plan, isolation/egress policy | Blocked - hosting/funding/operations authorization required; see WEB_CONVERSION_DEFERRED.md |
-| 6 | Web to Image | Real gateway-renderer-download tests, SSRF/cancel/quota coverage | Deferred - see WEB_CONVERSION_DEFERRED.md |
-| 7 | Web to PDF | Native text extraction, print/screen styles, paper/margins/ranges | Deferred - see WEB_CONVERSION_DEFERRED.md |
+| 6 | Web to PDF | Real URL/gateway/renderer/download, SSRF/cancel/quota coverage and native text fidelity | Deferred until milestone B; see WEB_CONVERSION_DEFERRED.md |
+| 7 | Web to Image | Actual screenshot/download and bounded readiness/security fixtures | Deferred until URL PDF MVP; see WEB_CONVERSION_DEFERRED.md |
 | 8 | Advanced controls individually | Lazy/fixed/cookie heuristics have bounds, explicit opt-in and fixtures | Deferred - see WEB_CONVERSION_DEFERRED.md |
 
 The inspected develop baseline used jsPDF 3.0.3 in an official vulnerable range. Review
@@ -158,7 +206,7 @@ bounded DOM/fonts/images/selector checks, not endless networkidle waits.
 
 ## Completion evidence
 
-HTML to Image is implemented on feature/html-to-image, not merged. Engine spike
+HTML to Image is merged into develop via PR20. Engine spike
 found html2canvas stuck in WebKit's script-disabled sandbox clone. The selected
 adapter uses html-to-image 1.11.13 (MIT, no runtime dependencies), lazy-loaded only
 when converting. Existing html2canvas remains an optional dependency of jsPDF;
@@ -221,7 +269,7 @@ scope and tests; do not mark all four converters complete from this MVP.
 
 Step 2 now covers the supported local-image contract: bounded PNG/JPEG assets,
 system font stacks and explicit crop boundaries. This is implemented on the
-feature branch, not merged. Safe stacks accept Arial, system-ui, serif,
+develop via merged PR20. Safe stacks accept Arial, system-ui, serif,
 sans-serif and monospace, including comma-separated fallbacks and quoted names.
 Font appearance depends on the host OS; do not claim identical glyph metrics.
 Bounded border longhands are preserved because browser CSSOM expands shorthand
@@ -291,7 +339,7 @@ a 4.0.1 release was published.
 
 Older GHSA-8mvj-3j78-4qmw and GHSA-w532-jxjh-hjhj were already patched before
 3.0.3. Advisories affect library API ranges; this is not evidence of exploitation
-of this app's blob output flow. npm audit reports 61 remaining package findings,
+of this app's blob output flow. The historical PR20 npm audit reported 61 remaining package findings,
 including 6 critical. No claim of a clean repository or universal PDF security.
 
 Regression tests parse real jsPDF bytes for page count, portrait/landscape,
@@ -309,7 +357,7 @@ HEIC/WebP/GIF conversions are not covered by the new PNG/JPEG fidelity fixtures.
 The dependency/API baseline gate is narrow, not proof that all legacy PDF
 consumers have resource quotas or cancellation.
 
-The following planned scope is now implemented for one page on the branch:
+The following planned scope is now merged into develop via PR20 for one page:
 local raster HTML to PDF in the isolated conversion module,
 with explicit page-size/orientation/margins, bounded page/pixel/output counts,
 strict option validation, safe static assets and existing job cancellation. Label
@@ -326,7 +374,7 @@ locale, Netlify, route or production policy changes.
 
 ## One-page HTML to PDF contract
 
-Implemented on feature/html-to-image, not merged: /pdf/html-to-pdf. The shared
+Merged into develop via PR20: /pdf/html-to-pdf. The shared
 HTML conversion UI has an explicit PDF adapter; image mode keeps its existing
 controls and outputs. The same sanitizer, embedded asset policy, capture frame,
 CSP, crop inspection, jobs and resource cleanup are reused. PDF.js is used in
@@ -390,7 +438,7 @@ production policy, unrelated services/locales and directory structure are unchan
 
 ## Bounded multi-page raster PDF contract
 
-Implemented on feature/html-to-image, not merged. One page remains the default
+Merged into develop via PR20. One page remains the default
 and retains contain-fit/centering, fixed viewport and crop policy. Paginated is
 an explicit separate mode. It ignores the disabled viewport-height/crop controls.
 Paper, orientation and 0..100 mm finite decimal margins use the same validation.
@@ -469,7 +517,7 @@ src/features/web-conversion; no deployment/routing policy or unrelated services.
 
 ## Paginated page selection
 
-Implemented on feature/html-to-image, not merged. All pages is the default.
+Merged into develop via PR20. All pages is the default.
 Custom ranges refer to 1-based pages in the complete source plan: 1, 1-3 or
 1,3,5-7. Whitespace around tokens/dashes is accepted. Leading zeroes normalize
 to their positive integer page. Duplicate/overlapping/unsorted entries normalize
@@ -525,7 +573,7 @@ the documented cancellation and CPU/memory limitations.
 
 ## Repeated table headers
 
-Implemented on feature/html-to-image for PR20 review, not merged. Repeat table
+Merged into develop via PR20. Repeat table
 headers is explicit, Paginated-only and defaults Off. One page is unchanged.
 Reset and Restore default options clear the flag; option edits cancel ownership
 and clear old preview/output. It never guesses the first body row as a header.
@@ -606,7 +654,7 @@ mobile/dark/keyboard, malicious header scripts/assets and recovery. Exact tested
 head, browser counts and remaining audit findings belong in PR20.
 
 jsPDF official latest release/advisories were rechecked October 13, 2026:
-4.2.1 remains the patched baseline. The registry audit still reports 61 inherited
+4.2.1 remains the patched baseline. The PR20 historical registry audit reported 61 inherited
 findings (6 critical, 37 high, 16 moderate, 2 low); none identify jsPDF, DOMPurify
 or html-to-image. This does not claim the entire dependency graph is safe.
 
@@ -618,7 +666,7 @@ unchanged. Custom fonts and URL conversion remain deferred; see WEB_CONVERSION_D
 
 ## Local completion and presets
 
-Local MVP is implemented and verified on the PR branch, not merged. This does not
+Local MVP is implemented and verified on develop via merged PR20. This does not
 complete arbitrary Web/URL conversion. Review exact-head checks in PR20 and the
 [deferred register](WEB_CONVERSION_DEFERRED.md) before reopening another scope.
 
@@ -649,7 +697,7 @@ remote isolation/operations/funding, not replaced by a CORS proxy.
 
 ## Review corrections: elapsed deadline acceptance
 
-Implemented on feature/html-to-image, not merged. Review reproduced timer-starved
+Merged into develop via PR20. Review reproduced timer-starved
 capture accepting a PNG after 10.3 seconds and native validation accepting preview
 after 5.24 seconds. These were controlled instrumentation probes, not untrusted
 HTML executing scripts. Capture now checks a monotonic deadline at preparation,
@@ -684,7 +732,7 @@ sanitizer/CSP, deployment/routing policy or unrelated services/locales change.
 
 ## Review corrections: painted bounds and left overflow
 
-Implemented on feature/html-to-image, not merged. Pagination measurement now
+Merged into develop via PR20. Pagination measurement now
 retains empty boxes with visible borders, including trailing boxes, instead of
 trimming them as whitespace. Transparent, zero-width and non-painted borders
 remain eligible for whitespace trimming. A border-only leaf follows the existing

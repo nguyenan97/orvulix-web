@@ -1,8 +1,14 @@
 {
   "htmlToImage": {
     "title": "HTML to Image",
-    "description": "Convert static HTML with embedded PNG/JPEG images to a downloadable image locally. Preview safe styles, choose dimensions and transparent backgrounds.",
-    "shortDescription": "Export static HTML as a PNG or JPEG image in your browser."
+    "description": "Experimental local HTML file/snippet conversion to PNG or JPEG. Upload a .html file or paste markup; website URL conversion is not supported.",
+    "shortDescription": "Experimental HTML file/snippet to PNG or JPEG; no website URLs.",
+    "experimentalNotice": "Experimental local HTML conversion for snippets and files, not website URLs. Complex layouts may differ from the original; preview before exporting.",
+    "inputTitle": "HTML input",
+    "inputHint": "Upload a local .html file, paste an HTML snippet, or load the example. You do not need to paste markup if you already have a file. Only supported static content and embedded PNG/JPEG images are rendered.",
+    "uploadLabel": "Upload HTML",
+    "uploadAriaLabel": "Upload HTML file",
+    "exampleLabel": "Load example"
   },
   "changeColors": {
     "description": "Change specific colors in an image by selecting a source color and replacing it with a new one.",

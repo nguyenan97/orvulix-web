@@ -2,7 +2,7 @@ import type { ToolSeoOverride } from '../../types';
 const content: ToolSeoOverride = {
   title: 'HTML to Image - Local PNG and JPEG Export | Orvulix',
   description:
-    'Convert static HTML with embedded PNG/JPEG images to PNG or JPEG locally. Preview safe styles, set dimensions and transparency, then download.',
+    'Convert local HTML files or snippets to PNG or JPEG. Upload a file or paste markup, preview supported layout, and download. Website URLs are not supported.',
   howTo: [
     'Paste static HTML or upload an .html/.htm file, or load the invoice example.',
     'Embed static PNG/JPEG images as base64 data URLs; external sources and SVG are removed.',

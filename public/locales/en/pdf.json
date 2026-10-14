@@ -1,8 +1,8 @@
 {
   "htmlToPdf": {
     "title": "HTML to PDF",
-    "description": "Convert supported static HTML and embedded PNG/JPEG images to bounded raster PDF pages locally. Choose A4 or Letter, orientation and margins; text is not searchable or selectable.",
-    "shortDescription": "Export static HTML as local raster PDF pages"
+    "description": "Experimental local HTML file/snippet to raster PDF. Upload a .html file or paste markup; no website URLs. PDF text is not searchable or selectable.",
+    "shortDescription": "Experimental HTML file/snippet to raster PDF; no website URLs."
   },
   "compressPdf": {
     "compressedFileSize": "Compressed File Size",
