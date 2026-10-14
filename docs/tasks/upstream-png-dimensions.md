@@ -34,7 +34,11 @@ tests/check and text-style/whitespace checks passed. See UPSTREAM_SYNC.md for
 intentional divergence and implementation limits (including native preview and
 library main-thread fallback). No exact-head CI result is claimed yet.
 
-Full-diff self-review found no remaining scoped blocker. Existing shared preview
+Full-diff self-review found no remaining scoped blocker. Initial CodeQL reported
+one test-only URL-substring finding; changed the observer to exact URL.hostname
+comparison and asset checks to cover both emitted compression files. Refined browser tests passed
+9/9 across all three engines; final production build passed 157 routes plus 404.
+Exact-head CodeQL must be rechecked after committing this refinement. Existing shared preview
 preflight/main-thread fallback and non-lossless limits remain explicitly documented.
 PR #24 is open/ready and targets develop. Pending: exact latest-head CI (including
 full unit suite after the additional unmount assertion); authorized merge and

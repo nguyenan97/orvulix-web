@@ -15,17 +15,18 @@ for (const [width, height] of [
     const bytes = await source.getBufferAsync(Jimp.MIME_PNG);
     const external: string[] = [];
     page.on('request', (request) => {
-      if (request.url().includes('cdn.jsdelivr.net'))
+      if (new URL(request.url()).hostname === 'cdn.jsdelivr.net')
         external.push(request.url());
     });
     await page.goto('/png/compress-png');
-    const workerAsset = (await readdir('dist/assets')).find((name) =>
+    const workerAssets = (await readdir('dist/assets')).filter((name) =>
       name.startsWith('browser-image-compression-')
     );
-    expect(workerAsset).toBeDefined();
-    expect((await page.request.get(`/assets/${workerAsset}`)).status()).toBe(
-      200
-    );
+    expect(workerAssets.length).toBeGreaterThan(0);
+    for (const workerAsset of workerAssets)
+      expect((await page.request.get(`/assets/${workerAsset}`)).status()).toBe(
+        200
+      );
     await page
       .locator('input[type=file]')
       .setInputFiles({ name: 'ảnh.png', mimeType: 'image/png', buffer: bytes });
