@@ -159,3 +159,12 @@ available and unchanged.
 Next milestones: renderer architecture/security/measured cost decision -> actual
 URL to PDF MVP -> URL to Image/advanced options. These remain deferred; no backend
 or fake URL input exists. See WEB_CONVERSION_PLAN.md for gates and sync hotspots.
+
+## Selective upstream integration
+
+Follow UPSTREAM_SYNC.md: compare upstream/main against Orvulix develop and port
+one bounded improvement at a time, preserving branding/SEO/Pages/security rules.
+Current feature/upstream-png-dimensions ports PNG dimension correctness (#461),
+not a complete encoder/batch migration or lossless optimizer. Further GIF/drop
+and generic image compression work require separate acceptance/tests. Owner has
+paused Web/URL conversion; retain existing local HTML tools without extending them.

@@ -159,3 +159,14 @@ available and unchanged.
 Next milestones: renderer architecture/security/measured cost decision -> actual
 URL to PDF MVP -> URL to Image/advanced options. These remain deferred; no backend
 or fake URL input exists. See WEB_CONVERSION_PLAN.md for gates and sync hotspots.
+
+## Upstream PNG dimension correction
+
+Upstream review against main cf41a30 found #461 merged after the shared 3bbca2f
+baseline. Orvulix is porting only the native-dimension/non-inflation contract on
+feature/upstream-png-dimensions, using existing browser-image-compression rather
+than copying the new encoder/batch UI. This is not the planned lossless optimizer:
+palette colors/metadata may change. See UPSTREAM_SYNC.md for candidates, boundaries
+and the static-PNG compression limits. GIF/multiple-input drop support (#458) is
+now merged upstream but remains a separate Orvulix task; it is not delivered here.
+Web/URL conversion is paused by owner decision, not canceled or rolled back.
