@@ -196,3 +196,13 @@ RGBA PNG normalization only when PNG and JPEG occur together, preserving the
 existing homogeneous encoder/timing. Equal decoded dimensions and bounded static
 PNG/JPEG are required; errors are actionable. Implemented on this branch, pending
 PR #27 gates/merge. See GIF_MIXED_FORMAT.md for budgets, evidence and limits.
+
+## Merge PDF output ownership
+
+Implemented through [PR #29](https://github.com/nguyenan97/orvulix-web/pull/29);
+verify its merged state before assuming delivery. A reproduced Clear
+during merge could republish an old PDF. The bounded owner now invalidates on
+selection edits/Clear/unmount, ignores late completion/error and exposes current
+failures with recovery. File/page order, geometry and automatic merge remain.
+See [scope, budgets and validation](PDF_MERGE_LIFECYCLE.md). This does not extend
+Split PDF or other conversion consumers; release to main is separate.
