@@ -185,3 +185,68 @@ it('failed shared loading rejects normally and a later default caller can retry'
   );
   expect(fake.load).toHaveBeenCalledTimes(2);
 });
+it.each([
+  'abort',
+  'normalization-error',
+  'concat-error',
+  'output-limit'
+] as const)(
+  'mixed %s cleans every written/encoded path and leaves the shared queue reusable',
+  async (outcome) => {
+    const { default: Jimp } = await import('jimp');
+    const { imagesToGif } = await import(
+      '../../pages/tools/video/gif/images-to-gif/service'
+    );
+    const { runFFmpegTask } = await import('../../lib/ffmpeg');
+    const png = await new Jimp(32, 32, 0xff0000ff).getBufferAsync(
+      Jimp.MIME_PNG
+    );
+    const jpeg = await new Jimp(32, 32, 0x0000ffff).getBufferAsync(
+      Jimp.MIME_JPEG
+    );
+    const files = [
+      new File([new Uint8Array(png)], 'a.png'),
+      new File([new Uint8Array(jpeg)], 'b.jpg')
+    ];
+    const controller = new AbortController();
+    fake.exec.mockImplementation(async (args: string[]) => {
+      if (outcome === 'abort') controller.abort();
+      if (
+        outcome === 'normalization-error' ||
+        (outcome === 'concat-error' && args.includes('concat'))
+      )
+        return 1;
+      return 0;
+    });
+    fake.readFile.mockImplementation(async (name: string) =>
+      name.endsWith('.png')
+        ? new Uint8Array(png)
+        : new Uint8Array(outcome === 'output-limit' ? 33 * 1024 * 1024 : 3)
+    );
+    const work = imagesToGif(
+      files,
+      { frameRateMode: 'fps', frameRateValue: 10 },
+      controller.signal
+    );
+    if (outcome === 'abort')
+      await expect(work).rejects.toMatchObject({ name: 'AbortError' });
+    else
+      await expect(work).rejects.toThrow(
+        outcome === 'normalization-error'
+          ? /could not be decoded/
+          : outcome === 'concat-error'
+            ? /encoding failed/
+            : /32 MiB/
+      );
+    const deleted = new Set(fake.deleteFile.mock.calls.map((c) => c[0]));
+    for (const [name] of fake.writeFile.mock.calls)
+      expect(deleted.has(name)).toBe(true);
+    for (const [args] of fake.exec.mock.calls)
+      expect(deleted.has(args.at(-1))).toBe(true);
+    expect([...deleted].some((n) => String(n).endsWith('.gif'))).toBe(true);
+    expect(fake.terminate).not.toHaveBeenCalled();
+    await expect(runFFmpegTask(async () => 'next caller')).resolves.toBe(
+      'next caller'
+    );
+  }
+);
