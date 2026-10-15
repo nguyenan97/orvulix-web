@@ -194,7 +194,8 @@ GIF_MIXED_FORMAT.md.
 
 ## Merge PDF output ownership
 
-Implemented on feature/pdf-merge-lifecycle, not yet merged. A reproduced Clear
+Implemented through [PR #29](https://github.com/nguyenan97/orvulix-web/pull/29);
+verify its merged state before assuming delivery. A reproduced Clear
 during merge could republish an old PDF. The bounded owner now invalidates on
 selection edits/Clear/unmount, ignores late completion/error and exposes current
 failures with recovery. File/page order, geometry and automatic merge remain.

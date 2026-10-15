@@ -2,8 +2,8 @@
 
 - Updated: 2026-10-15 UTC
 - Branch/base: feature/pdf-merge-lifecycle / develop fd1214d
-- PR: not opened
-- Phase: developing, uncommitted changes
+- PR: #29 https://github.com/nguyenan97/orvulix-web/pull/29
+- Phase: reviewed/CI; final checkpoint-only changes prepared
 - Delivery mode: develop-merge, explicitly authorized for this one task
 - Preserve untracked public/sitemap.xml, SHA256 5f9cf3fbeb7d4acfd9b7f0e79dd10ea184df2f4a8cfb11f6a529cf2f538d7df3.
 
@@ -20,7 +20,9 @@ Select -> Clear -> resolve old merge publishes merged.pdf instead of empty.
 One test failed for that assertion, then passed after ownership integration.
 Affected unit tests: 29 passed across lifecycle, actual PDF service and existing
 page-range tests. Production build/typecheck passed with 157 routes/sitemap and
-404 validation. Full units and 18 native cases across three engines are running.
+404 validation. Full units: 136 files / 1227 passed. Native: 18/18 across three engines,
+retries zero. Pages build: 158 dev HTML files; three-engine merge/download/PDF.js
+pixel smoke: 3/3 passed. Metadata noindex/no production canonical and prefix pass.
 Security gate passed with the existing 15 package findings / 6 advisory IDs.
 
 Acceptance: immediate stale-output invalidation on Clear/input changes, late
@@ -36,8 +38,20 @@ post-encoding. No new dependencies or shared generic job framework.
 
 ## Validation/review and resume
 
-Pending: expand lifecycle and actual PDF tests, three-engine browser flows with
-real outputs, full units/typecheck/build/security/style, Pages regression where
-appropriate, review both axes, one PR/exact-head CI, matched-head merge/cleanup.
-No owned server. Reconcile live Git/PR state before resuming. Rollback core and
-merge adapters to restore prior behavior; no shared UI or hosting changes.
+Reviewed full diff at code SHA 781f2cb against fd1214d in two passes.
+Standards: typed core, local integration, cooperative checks and ownership, scoped
+imports/dependencies, instructions, security boundaries and preserved user work.
+Requirements: reproduced Clear bug fixed, stale success/error/loading/unmount and
+recovery covered, actual page order/geometry/pixels preserved. No task blocker
+found. Self-review is not independent approval; check live rules before merging.
+
+All local checks above passed; security:test 26 passed, security:check retains
+15 package findings / 6 advisory IDs, no exception changes. Text style and full-PR
+whitespace check passed. Final documentation changes only, code unchanged after
+781f2cb (earlier local code before hook formatting differs only in whitespace).
+Exact-head CI remains pending; resolve its run/SHA and flaky/CodeQL summaries in
+PR29 before matched-head merge. No owned servers remain after browser cleanup.
+
+Next: commit/push this checkpoint/docs, update PR body, follow latest-head CI,
+fetch current develop and revalidate if changed, then merge when gates pass and
+cleanup only this task branch. Keep main and untracked public/sitemap.xml.

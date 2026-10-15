@@ -2,7 +2,8 @@
 
 ## Scope and evidence
 
-Implemented on feature/pdf-merge-lifecycle; resolve merged state in its PR before
+Implemented through [PR #29](https://github.com/nguyenan97/orvulix-web/pull/29);
+resolve merged state there before
 assuming delivery to develop. This is not a production release. Base fd1214d has
 an observed bug: select a PDF, Clear while merge is pending, finish the original
 merge; merged.pdf reappears despite empty input. The regression failed with
@@ -56,6 +57,13 @@ PDF-to-PNG tool flow runs real PDF.js and checks red/blue/red page pixels and
 portrait/landscape geometry. Mobile keyboard Clear and horizontal layout are
 covered. Exact commands/results and CI evidence live in the task checkpoint/PR;
 pending checks are not passes.
+
+Local validation at code commit 781f2cb: 29 affected unit tests, full 136-file /
+1227-test suite, production/typecheck/157-route sitemap+404 validation and security
+checks passed. Native browsers: 18/18 across Chromium/Firefox/WebKit without retries.
+Pages build validated 158 HTML files; three-engine Pages merge/download/PDF.js
+pixel smoke passed under /orvulix-web/, with noindex, no production canonical and
+prefixed assets/worker. Final exact-head CI and merge evidence live in PR29.
 
 ## Sync hotspots and rollback
 
