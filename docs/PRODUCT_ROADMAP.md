@@ -176,3 +176,10 @@ video/PDF inputs, including queued budgets, invalid batch recovery and owned URL
 cleanup. It preserves existing tool conversion behavior and does not extend Web/
 URL conversion. Implementation is on the feature branch until its PR is merged;
 consumer conversion cancellation requires a separate reliability task.
+
+### GIF output ownership
+
+The feature/gif-conversion-lifecycle branch addresses output reappearing after
+Clear during conversion, without changing existing auto-generation or GIF timing.
+Implementation awaits its PR merge; see GIF_CONVERSION_LIFECYCLE.md. This does not
+complete GIF quality/timing work, mixed-format fidelity or other converters.

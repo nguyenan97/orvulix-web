@@ -5,9 +5,11 @@ import { getFileExtension } from '@utils/file';
 
 export async function imagesToGif(
   input: File[],
-  optionsValues: InitialValuesType
+  optionsValues: InitialValuesType,
+  signal?: AbortSignal
 ): Promise<File> {
   return runFFmpegTask(async ({ ffmpeg, tempFile }) => {
+    signal?.throwIfAborted();
     const { frameRateMode, frameRateValue } = optionsValues;
 
     const fileNames: string[] = [];
@@ -25,7 +27,11 @@ export async function imagesToGif(
 
       fileNames.push(inputName);
 
-      await ffmpeg.writeFile(inputName, await fetchFile(file));
+      signal?.throwIfAborted();
+      const bytes = await fetchFile(file);
+      signal?.throwIfAborted();
+      await ffmpeg.writeFile(inputName, bytes);
+      signal?.throwIfAborted();
     }
 
     const listContent =
@@ -33,7 +39,9 @@ export async function imagesToGif(
         .map((name) => `file '${name}'\nduration ${durationSeconds}`)
         .join('\n') + `\nfile '${fileNames[fileNames.length - 1]}'`;
 
+    signal?.throwIfAborted();
     await ffmpeg.writeFile(listName, listContent);
+    signal?.throwIfAborted();
 
     await ffmpeg.exec([
       '-f',
@@ -49,10 +57,12 @@ export async function imagesToGif(
       outputName
     ]);
 
+    signal?.throwIfAborted();
     const data = await ffmpeg.readFile(outputName);
+    signal?.throwIfAborted();
 
     return new File([new Uint8Array(data as Uint8Array)], 'animated.gif', {
       type: 'image/gif'
     });
-  });
+  }, signal);
 }
