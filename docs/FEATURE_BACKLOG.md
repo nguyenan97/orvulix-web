@@ -183,7 +183,7 @@ remaining boundaries. Resolve final merge status through the feature PR.
 ## Images to GIF lifecycle
 
 PR25 multi-file inputs are merged. Consumer GIF lifecycle is implemented on
-feature/gif-conversion-lifecycle, pending its own PR merge: immediate invalidation,
+feature/gif-conversion-lifecycle, delivered through PR #26 (resolve merge status there): immediate invalidation,
 latest-result ownership, debounce unmount cleanup and optional cooperative queue/
 service cancellation. Encoding/timing/Create/quality remain unchanged. See
 GIF_CONVERSION_LIFECYCLE.md for limits, baseline evidence and the separate mixed-

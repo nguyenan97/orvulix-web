@@ -181,5 +181,5 @@ consumer conversion cancellation requires a separate reliability task.
 
 The feature/gif-conversion-lifecycle branch addresses output reappearing after
 Clear during conversion, without changing existing auto-generation or GIF timing.
-Implementation awaits its PR merge; see GIF_CONVERSION_LIFECYCLE.md. This does not
+Resolve merge status in PR #26; see GIF_CONVERSION_LIFECYCLE.md. This does not
 complete GIF quality/timing work, mixed-format fidelity or other converters.

@@ -1,7 +1,7 @@
 # Images to GIF job ownership
 
 Implementation snapshot on feature/gif-conversion-lifecycle, based on develop
-PR25/d96ab5b. Resolve final merge status through the implementation PR. Automatic
+PR25/d96ab5b. Resolve final merge status through PR #26. Automatic
 1000ms debounce, FPS/delay options, FFmpeg arguments, animated.gif filename and
 encoding semantics remain unchanged. No Create mode or timing/quality redesign.
 
@@ -30,7 +30,8 @@ does not promise immediate physical removal of a queued Promise/closure.
 
 The GIF service checks around fetch/write/exec/read. Active ffmpeg.exec and shared
 startup cannot be preempted; they may finish after Clear or navigation. Output is
-discarded, then registered temporary files are deleted in the existing finally.
+discarded, then the existing finally attempts deletion of all registered temporary
+files. Cleanup remains best effort if the worker/filesystem itself fails.
 Abort never calls resetFFmpeg/terminate or disrupts another caller's shared worker.
 There is no hard CPU/memory quota. This does not change startup asset URL ownership,
 general conversion budgets or lifecycle of any other converter.
@@ -66,3 +67,30 @@ Do not describe this lifecycle PR as completing all GIF conversion capabilities.
 Other consumers' stale exports/cancellation, shared startup asset ownership and
 Pages deployment timeout remain independent tasks. No Pages retry/config change
 is performed to test this work. Web/URL conversion remains paused.
+
+## Validation snapshot / review
+
+Runtime and tests reviewed at 1978f15 (subsequent documentation-only changes do not
+alter this runtime). Focused unit tests: 20; full unit suite: 1173 / 132 files.
+Native GIF browser tests: 24 / 24 across Chromium, Firefox and WebKit, decoding real
+PNG/JPEG GIF bytes and testing active Clear/navigation and asset failure recovery.
+PNG/multi-file regression: 23 / 24 in the combined run; the Firefox image-to-PDF
+navigation case reported Download is starting, then passed 1 / 1 in isolation with
+unchanged assertions/timeouts. No PDF integration or encoding change was needed.
+Owner follow-up for that intermittent preview/navigation interaction: reproduce
+and distinguish PDF iframe download behavior from navigation/application defects
+before modifying other converters or their regression coverage.
+
+Production build validates 157 static routes with matching sitemap and 404.
+Pages build validates 158 dev HTML files. Pages smoke loads the actual worker
+under /orvulix-web/assets/, downloads/decodes the real three-frame GIF and verifies
+Clear, noindex and absence of production canonical.
+Security tests: 26 passed. Audit: 15 package findings / six advisory IDs, zero
+unaccepted high/critical, unchanged braces exception. CodeQL run 38680424587 at
+1978f15 reports the same five baseline findings/dispositions in
+SECURITY_REMEDIATION.md; no new rule/location. This is not an empty alerts claim.
+Full-diff review covers generation ownership, debounce, option no-ops, FIFO/shared
+startup compatibility, all abort boundaries including cleanup, URL ownership,
+errors/recovery, runtime imports, UI and scoped integration. No remaining blocking
+finding identified for this lifecycle scope. Exact final-head CI/merge status must
+be resolved through PR #26, not inferred from this snapshot.
