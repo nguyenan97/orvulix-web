@@ -11,12 +11,12 @@ Our approach is to make existing tools better first, then explore new capabiliti
 
 ## Verified development delivery
 
-Reconciled 2026-10-15 against develop `e4233a0` and main `96494b8`. PR19/20/22
-and PR24-29 are merged into develop, not released to main. These cover bounded
+Reconciled 2026-10-15 against develop `ef29d62` and main `96494b8`. PR19/20/22
+and PR24-30 are merged into develop, not released to main. These cover bounded
 list regex, local HTML conversion/discovery, PNG dimensions, multi-file input,
-GIF reliability, engineering practices and Merge PDF ownership. The authoritative
+GIF reliability, engineering practices, Merge PDF ownership and text-result clipboard reliability. The authoritative
 [delivery snapshot](FEATURE_BACKLOG.md#verified-delivery-snapshot) records PRs,
-merge commits and remaining scope. The current clipboard change is tracked below.
+merge commits and remaining scope. The current code-result extension is tracked below.
 
 ## 1. Better everyday tools
 
@@ -212,9 +212,17 @@ Split PDF or other conversion consumers; release to main is separate.
 
 ## Shared text-result copy reliability
 
-The current change aligns copied text with the displayed ToolTextResult value and
+PR30 merged a change that aligns copied text with the displayed ToolTextResult value and
 adds manual-copy guidance when native clipboard access fails. Downloads retain
-the original data. Delivery is tracked by this change's PR; this is not a production
+the original data. PR30 is merged into develop; this is not a production
 release or completion of JSON prettify/other clipboard investigations. Public
-/roadmap separates verified development delivery through PR29 from planned features;
+/roadmap separates verified development delivery through PR30 from planned features;
 see FEATURE_BACKLOG.md for the current partial foundation scope.
+
+### Code-result follow-up
+
+The current change adds the same native clipboard failure guidance to code results
+without transforming formatted code. Secure-origin JSON copy and insecure-origin
+manual-copy guidance are validated separately. Implementation/delivery is tracked
+by its PR; historical issue390 and input/file consumer investigation are not marked
+fully resolved. No production release, HTTP fallback or formatter rewrite.

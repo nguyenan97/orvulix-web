@@ -4,15 +4,15 @@ export const ROADMAP_BACKLOG_HEADING = 'Planned features';
 export const ROADMAP_BACKLOG_NOTICE =
   'These milestones are planned or partial, not complete. Priority indicates the proposed order, not a release date. Development subscopes above do not imply production availability; scope and order may change after testing and feedback.';
 export const ROADMAP_FOUNDATION =
-  'Remaining foundation work includes PDF Editor data handling and clipboard checks beyond shared text results. Bounded list regex execution is merged into develop; production rollout is separate.';
+  'Remaining foundation work includes PDF Editor data handling and clipboard checks in other input/file consumers. Bounded list regex execution is merged into develop; production rollout is separate.';
 export const ROADMAP_BACKLOG_URL =
   'https://github.com/nguyenan97/orvulix-web/blob/develop/docs/FEATURE_BACKLOG.md';
 
-// Verified against develop e4233a0 and main 96494b8 on 2026-10-15.
+// Verified against develop ef29d62 and main 96494b8 on 2026-10-15.
 // These changes are NOT released to main. Recheck Git ancestry when updating.
 export const DEVELOPMENT_HEADING = 'Development updates';
 export const DEVELOPMENT_NOTICE =
-  'Merged into develop through PR #29, not released to production. This snapshot separates delivered development work from the planned features below. Website URL conversion remains paused.';
+  'Merged into develop through PR #30, not released to production. This snapshot separates delivered development work from the planned features below. Website URL conversion remains paused.';
 export const DEVELOPMENT_UPDATES = [
   {
     title: 'Bounded list regex execution',
@@ -43,6 +43,11 @@ export const DEVELOPMENT_UPDATES = [
     title: 'Merge PDF output ownership',
     description:
       'Merged into develop in PR #29. Clear, input edits and unmount invalidate old runs; page order and geometry are retained. Cancellation is cooperative, with input/page/output budgets.'
+  },
+  {
+    title: 'Text-result clipboard reliability',
+    description:
+      'Merged into develop in PR #30. Copy matches displayed text, with manual-copy guidance when native clipboard access fails. Downloads retain raw data. Input/file/code-result follow-ups are separate.'
   }
 ] as const;
 

@@ -7,6 +7,8 @@ import { brand } from '../../brand/config'; // ORVULIX-BRAND
 import { useTranslation } from 'react-i18next';
 import Editor from '@monaco-editor/react';
 import mime from 'mime';
+import { guardCodeResultGesture } from '../../features/text-result-clipboard/code-gesture'; // ORVULIX: unsupported Monaco gesture isolation.
+import { writeResultText } from '../../features/text-result-clipboard/write'; // ORVULIX: guarded native code-result copy.
 import {
   globalInputHeight,
   codeInputHeightOffset
@@ -30,8 +32,7 @@ export default function ToolCodeResult({
   const theme = useTheme();
 
   const handleCopy = () => {
-    navigator.clipboard
-      .writeText(value)
+    writeResultText(value)
       .then(() => showSnackBar(t('toolTextResult.copied'), 'success'))
       .catch((err) => {
         showSnackBar(t('toolTextResult.copyFailed', { error: err }), 'error');
@@ -141,7 +142,15 @@ export default function ToolCodeResult({
             />
           </Box>
         )}
-        <ResultFooter handleCopy={handleCopy} handleDownload={handleDownload} />
+        <Box
+          onClick={guardCodeResultGesture}
+          onKeyDown={guardCodeResultGesture}
+        >
+          <ResultFooter
+            handleCopy={handleCopy}
+            handleDownload={handleDownload}
+          />
+        </Box>
       </Box>
     </Box>
   );
