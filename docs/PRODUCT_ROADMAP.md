@@ -191,3 +191,12 @@ jobs using bounded sequential normalization, with PR26 lifecycle retained.
 Implementation is on the feature branch until verified PR #27 merge. Different-size
 padding/resizing, other formats and quality/timing remain separate work; see
 GIF_MIXED_FORMAT.md.
+
+## Merge PDF output ownership
+
+Implemented on feature/pdf-merge-lifecycle, not yet merged. A reproduced Clear
+during merge could republish an old PDF. The bounded owner now invalidates on
+selection edits/Clear/unmount, ignores late completion/error and exposes current
+failures with recovery. File/page order, geometry and automatic merge remain.
+See [scope, budgets and validation](PDF_MERGE_LIFECYCLE.md). This does not extend
+Split PDF or other conversion consumers; release to main is separate.
