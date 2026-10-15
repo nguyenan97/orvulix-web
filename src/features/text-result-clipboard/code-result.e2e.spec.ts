@@ -84,6 +84,10 @@ async function probe(page: Page) {
   });
 }
 async function loadJson(page: Page) {
+  // Actual renderer initialization, bounded by the unchanged test deadline.
+  await page.waitForFunction(
+    () => (window as MonacoWindow).monaco?.editor.getModels().length === 2
+  );
   await expect(page.locator('.monaco-editor')).toHaveCount(2);
   await page.locator('input[type=file]').setInputFiles({
     name: 'sample.json',
@@ -120,49 +124,58 @@ test('JSON prettify copies formatted output with valid literal escapes using nat
   expect(text).toBe(formatted);
   expect(JSON.parse(text)).toEqual({ message: 'Việt Nam 😀', literal: 'a\nb' });
 });
-test('real insecure HTTP origin reports missing clipboard access without an uncaught error', async ({
-  page,
-  context,
-  baseURL
-}) => {
-  // Test-only artifact delivery. The browser still enforces genuine HTTP-origin policy.
-  // No product proxy, backend or browser security override is installed.
-  await context.route('http://clipboard-policy.test/**', async (request) => {
-    const path = new URL(request.request().url());
-    const response = await request.fetch({
-      url: new URL(path.pathname + path.search, baseURL).href,
-      headers: {
-        ...(await request.request().allHeaders()),
-        host: new URL(baseURL!).host
-      }
+for (const target of ['input', 'result'] as const)
+  test(`${target} real insecure HTTP origin reports missing clipboard access without an uncaught error`, async ({
+    page,
+    context,
+    baseURL
+  }) => {
+    // Test-only artifact delivery. The browser still enforces genuine HTTP-origin policy.
+    // No product proxy, backend or browser security override is installed.
+    await context.route('http://clipboard-policy.test/**', async (request) => {
+      const path = new URL(request.request().url());
+      const response = await request.fetch({
+        url: new URL(path.pathname + path.search, baseURL).href,
+        headers: {
+          ...(await request.request().allHeaders()),
+          host: new URL(baseURL!).host
+        }
+      });
+      await request.fulfill({ response });
     });
-    await request.fulfill({ response });
+    const errors: string[] = [];
+    page.on('pageerror', (error) => errors.push(error.message));
+    await page.goto('http://clipboard-policy.test' + route('/json/prettify'));
+    await loadJson(page);
+    expect(await page.evaluate(() => window.isSecureContext)).toBe(false);
+    expect(await page.evaluate(() => typeof navigator.clipboard)).toBe(
+      'undefined'
+    );
+    const chooserEvent = page.waitForEvent('filechooser');
+    await page
+      .getByRole('button', { name: 'Select files', exact: true })
+      .click();
+    await (
+      await chooserEvent
+    ).setFiles({
+      name: 'source.json',
+      mimeType: 'application/json',
+      buffer: Buffer.from(input)
+    });
+    const button =
+      target === 'result'
+        ? copy(page)
+        : page
+            .getByRole('button', { name: 'Copy to clipboard', exact: true })
+            .first();
+    await button.click();
+    await expect(
+      page.getByText(/Clipboard unavailable.*Use HTTPS.*copy it manually/)
+    ).toBeVisible();
+    await button.focus();
+    await page.keyboard.press('Enter');
+    expect(errors).toEqual([]);
   });
-  const errors: string[] = [];
-  page.on('pageerror', (error) => errors.push(error.message));
-  await page.goto('http://clipboard-policy.test' + route('/json/prettify'));
-  await loadJson(page);
-  expect(await page.evaluate(() => window.isSecureContext)).toBe(false);
-  expect(await page.evaluate(() => typeof navigator.clipboard)).toBe(
-    'undefined'
-  );
-  const inputCopy = page
-    .getByRole('button', { name: 'Copy to clipboard', exact: true })
-    .first();
-  await inputCopy.click();
-  await expect(
-    page.getByText(/Clipboard unavailable.*Use HTTPS.*copy it manually/)
-  ).toBeVisible();
-  await inputCopy.focus();
-  await page.keyboard.press('Enter');
-  await copy(page).click();
-  await expect(
-    page.getByText(/Clipboard unavailable.*Use HTTPS.*copy it manually/)
-  ).toBeVisible();
-  await copy(page).focus();
-  await page.keyboard.press('Enter');
-  expect(errors).toEqual([]);
-});
 for (const target of ['input', 'result'] as const)
   test(`${target} code permission denial shows guidance and a later gesture recovers`, async ({
     page
@@ -210,9 +223,23 @@ test('JSON code input copies raw source and subsequent editor changes using nati
     input
   ]);
   const next = '{"next":"new\\tvalue"}';
-  await page.locator('.monaco-editor').first().click();
-  await page.keyboard.press('ControlOrMeta+A');
-  await page.keyboard.insertText(next);
+  const editor = page
+    .locator('.monaco-editor')
+    .first()
+    .locator('textarea.inputarea');
+  await editor.focus();
+  const selectAll = await page.evaluate(() =>
+    navigator.userAgent.includes('Macintosh') ? 'Meta+A' : 'Control+A'
+  );
+  await editor.press(selectAll);
+  await editor.press('Backspace');
+  await page.waitForFunction(
+    () =>
+      (window as MonacoWindow).monaco?.editor
+        .getModels()
+        .some((model) => model.getValue() === '')
+  );
+  await editor.pressSequentially(next);
   await page.waitForFunction(
     (expected) =>
       (window as MonacoWindow).monaco?.editor

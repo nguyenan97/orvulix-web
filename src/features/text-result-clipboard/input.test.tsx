@@ -129,6 +129,21 @@ for (const kind of ['text', 'code'] as const) {
           }
         }
       );
+    if (kind === 'code')
+      it('keeps the programmatic file-input click inside the guarded footer', () => {
+        vi.spyOn(navigator, 'clipboard', 'get').mockReturnValue(
+          undefined as unknown as Clipboard
+        );
+        const ancestor = vi.fn();
+        document.body.addEventListener('click', ancestor);
+        try {
+          view();
+          fireEvent.click(screen.getByText('inputFooter.importFromFile'));
+          expect(ancestor).not.toHaveBeenCalled();
+        } finally {
+          document.body.removeEventListener('click', ancestor);
+        }
+      });
     it('does not try a native write in an insecure context', async () => {
       vi.stubGlobal('isSecureContext', false);
       const writeText = vi.fn();

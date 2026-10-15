@@ -128,14 +128,14 @@ export default function ToolCodeInput({
             handleCopy={handleCopy}
             handleImport={handleImportClick}
           />
+          <input
+            type="file"
+            accept="*"
+            ref={fileInputRef}
+            style={{ display: 'none' }}
+            onChange={handleFileChange}
+          />
         </Box>
-        <input
-          type="file"
-          accept="*"
-          ref={fileInputRef}
-          style={{ display: 'none' }}
-          onChange={handleFileChange}
-        />
       </Box>
     </Box>
   );
