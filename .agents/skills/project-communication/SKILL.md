@@ -73,3 +73,10 @@ description: Communication, project context and technical review standards for a
   completion gate. Review-only/stop-at-PR instructions override the default.
   Releasing into `main` still requires explicit authorization. Follow
   `development-workflow` and `sdlc-task-loop` for delivery and safe cleanup.
+
+# Engineering discipline reference
+
+For test design, bug diagnosis, behavior-preserving refactors and diff reviews,
+consult the Applied practices section of `docs/ENGINEERING_PRACTICES.md` (from the
+repository root). It adapts pinned Matt Pocock practices; provenance and the MIT
+notice are linked there. Its techniques do not expand workflow authorization.

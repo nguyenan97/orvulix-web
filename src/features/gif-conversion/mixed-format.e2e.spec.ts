@@ -1,6 +1,6 @@
 import { test, expect, Page } from '@playwright/test';
 import Jimp from 'jimp';
-import { GifReader } from 'omggif';
+import { inspectGifFixture } from './testing/inspect-gif';
 import { readFile } from 'node:fs/promises';
 async function setup(page: Page) {
   await page.route(
@@ -44,29 +44,9 @@ async function result(page: Page) {
     predicate: (d) => d.suggestedFilename() === 'animated.gif'
   });
   await page.getByRole('button', { name: 'Download', exact: true }).click();
-  const gif = new GifReader(await readFile((await (await pending).path())!));
-  const pixels = new Uint8Array(gif.width * gif.height * 4),
-    centers: number[][] = [],
-    corners: number[][] = [],
-    delays: number[] = [];
-  for (let i = 0; i < gif.numFrames(); i++) {
-    gif.decodeAndBlitFrameRGBA(i, pixels);
-    delays.push(gif.frameInfo(i).delay);
-    centers.push([
-      ...pixels.slice((16 * gif.width + 16) * 4, (16 * gif.width + 16) * 4 + 4)
-    ]);
-    corners.push([...pixels.slice(0, 4)]);
-  }
-  return {
-    width: gif.width,
-    height: gif.height,
-    frames: gif.numFrames(),
-    loop: gif.loopCount(),
-    delays,
-    centers,
-    corners
-  };
+  return inspectGifFixture(await readFile((await (await pending).path())!));
 }
+
 const orders = [
   ['png', 'jpeg'],
   ['jpeg', 'png'],
