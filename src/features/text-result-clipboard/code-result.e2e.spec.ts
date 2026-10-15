@@ -146,6 +146,15 @@ test('real insecure HTTP origin reports missing clipboard access without an unca
   expect(await page.evaluate(() => typeof navigator.clipboard)).toBe(
     'undefined'
   );
+  const inputCopy = page
+    .getByRole('button', { name: 'Copy to clipboard', exact: true })
+    .first();
+  await inputCopy.click();
+  await expect(
+    page.getByText(/Clipboard unavailable.*Use HTTPS.*copy it manually/)
+  ).toBeVisible();
+  await inputCopy.focus();
+  await page.keyboard.press('Enter');
   await copy(page).click();
   await expect(
     page.getByText(/Clipboard unavailable.*Use HTTPS.*copy it manually/)
@@ -154,26 +163,72 @@ test('real insecure HTTP origin reports missing clipboard access without an unca
   await page.keyboard.press('Enter');
   expect(errors).toEqual([]);
 });
-test('code-result permission denial shows guidance and a later gesture recovers', async ({
-  page
+for (const target of ['input', 'result'] as const)
+  test(`${target} code permission denial shows guidance and a later gesture recovers`, async ({
+    page
+  }) => {
+    await probe(page);
+    await page.goto(route('/json/prettify'));
+    await loadJson(page);
+    await page.evaluate(() => {
+      window.codeCopyProbe.denied = true;
+    });
+    const button =
+      target === 'result'
+        ? copy(page)
+        : page
+            .getByRole('button', { name: 'Copy to clipboard', exact: true })
+            .first();
+    await button.click();
+    await expect(
+      page.getByText(/Clipboard access failed.*copy it manually/)
+    ).toBeVisible();
+    await page.evaluate(() => {
+      window.codeCopyProbe.denied = false;
+    });
+    await button.focus();
+    await page.keyboard.press('Enter');
+    await page.waitForFunction(() => window.codeCopyProbe.completed === 1);
+    expect(await page.evaluate(() => window.codeCopyProbe.values)).toEqual([
+      target === 'result' ? formatted : input
+    ]);
+  });
+
+test('JSON code input copies raw source and subsequent editor changes using native clipboard', async ({
+  page,
+  browserName
 }) => {
   await probe(page);
   await page.goto(route('/json/prettify'));
   await loadJson(page);
-  await page.evaluate(() => {
-    window.codeCopyProbe.denied = true;
-  });
-  await copy(page).click();
-  await expect(
-    page.getByText(/Clipboard access failed.*copy it manually/)
-  ).toBeVisible();
-  await page.evaluate(() => {
-    window.codeCopyProbe.denied = false;
-  });
-  await copy(page).focus();
-  await page.keyboard.press('Enter');
+  const button = page
+    .getByRole('button', { name: 'Copy to clipboard', exact: true })
+    .first();
+  await button.click();
   await page.waitForFunction(() => window.codeCopyProbe.completed === 1);
   expect(await page.evaluate(() => window.codeCopyProbe.values)).toEqual([
-    formatted
+    input
   ]);
+  const next = '{"next":"new\\tvalue"}';
+  await page.locator('.monaco-editor').first().click();
+  await page.keyboard.press('ControlOrMeta+A');
+  await page.keyboard.insertText(next);
+  await page.waitForFunction(
+    (expected) =>
+      (window as MonacoWindow).monaco?.editor
+        .getModels()
+        .some((model) => model.getValue() === expected),
+    next
+  );
+  await button.focus();
+  await page.keyboard.press('Enter');
+  await page.waitForFunction(() => window.codeCopyProbe.completed === 2);
+  expect(await page.evaluate(() => window.codeCopyProbe.values)).toEqual([
+    input,
+    next
+  ]);
+  if (browserName === 'chromium')
+    expect(await page.evaluate(() => navigator.clipboard.readText())).toBe(
+      next
+    );
 });

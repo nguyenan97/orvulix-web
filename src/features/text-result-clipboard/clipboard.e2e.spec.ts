@@ -154,7 +154,7 @@ test('roadmap static and React views separate verified develop delivery from pla
     await page.goto(route('/roadmap'));
     const development = page.getByRole('region', { name: DEVELOPMENT_HEADING });
     await expect(development).toBeVisible();
-    await expect(development.getByRole('listitem')).toHaveCount(7);
+    await expect(development.getByRole('listitem')).toHaveCount(8);
     for (const target of [page, staticPage]) {
       await expect(
         target.getByText(DEVELOPMENT_NOTICE, { exact: true })
@@ -208,4 +208,90 @@ test('mobile light roadmap preserves heading order and readable development scop
       () => document.documentElement.scrollWidth <= window.innerWidth
     )
   ).toBe(true);
+});
+
+const inputCopy = (page: Page) =>
+  page.getByRole('button', { name: 'Copy to clipboard', exact: true }).first();
+test('text input copies raw imported source and updated input using native clipboard on mobile dark', async ({
+  page,
+  browserName
+}) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.emulateMedia({ colorScheme: 'dark' });
+  await nativeProbe(page);
+  await page.goto(route('/string/url-decode-string'));
+  const text = 'Việt Nam 😀\\nnext\tvalue';
+  await page
+    .locator('input[type=file]')
+    .setInputFiles({
+      name: 'source.txt',
+      mimeType: 'text/plain',
+      buffer: Buffer.from(text)
+    });
+  await expect(page.getByTestId('text-input')).toHaveValue(text);
+  await inputCopy(page).click();
+  await page.waitForFunction(() => window.orvulixClipboardProbe.copyDone === 1);
+  expect(
+    await page.evaluate(() => window.orvulixClipboardProbe.copyValues)
+  ).toEqual([text]);
+  await page.getByTestId('text-input').fill('edited\\nsource');
+  await inputCopy(page).focus();
+  await page.keyboard.press('Enter');
+  await page.waitForFunction(() => window.orvulixClipboardProbe.copyDone === 2);
+  expect(
+    await page.evaluate(() => window.orvulixClipboardProbe.copyValues)
+  ).toEqual([text, 'edited\\nsource']);
+  if (browserName === 'chromium')
+    expect(await page.evaluate(() => navigator.clipboard.readText())).toBe(
+      'edited\\nsource'
+    );
+  expect(
+    await page.evaluate(
+      () => document.documentElement.scrollWidth <= window.innerWidth
+    )
+  ).toBe(true);
+});
+test('text input missing clipboard gives guidance without an uncaught error', async ({
+  page
+}) => {
+  await page.addInitScript(() =>
+    Object.defineProperty(navigator, 'clipboard', {
+      configurable: true,
+      get: () => undefined
+    })
+  );
+  const errors: string[] = [];
+  page.on('pageerror', (error) => errors.push(error.message));
+  await page.goto(route('/string/url-decode-string'));
+  await page.getByTestId('text-input').fill('source');
+  await inputCopy(page).click();
+  await expect(
+    page.getByText(/Clipboard unavailable.*copy it manually/)
+  ).toBeVisible();
+  await inputCopy(page).focus();
+  await page.keyboard.press('Enter');
+  expect(errors).toEqual([]);
+});
+test('text input denied copy recovers with current source', async ({
+  page
+}) => {
+  await nativeProbe(page);
+  await page.goto(route('/string/url-decode-string'));
+  await page.getByTestId('text-input').fill('source');
+  await page.evaluate(() => {
+    window.orvulixClipboardProbe.denyCopy = true;
+  });
+  await inputCopy(page).click();
+  await expect(
+    page.getByText(/Clipboard access failed.*copy it manually/)
+  ).toBeVisible();
+  await page.getByTestId('text-input').fill('latest');
+  await page.evaluate(() => {
+    window.orvulixClipboardProbe.denyCopy = false;
+  });
+  await inputCopy(page).click();
+  await page.waitForFunction(() => window.orvulixClipboardProbe.copyDone === 1);
+  expect(
+    await page.evaluate(() => window.orvulixClipboardProbe.copyValues)
+  ).toEqual(['latest']);
 });
