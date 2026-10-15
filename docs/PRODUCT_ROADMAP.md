@@ -9,23 +9,14 @@ Orvulix is an open-source workspace for useful browser-based tools. We want to h
 
 Our approach is to make existing tools better first, then explore new capabilities that solve meaningful problems. This roadmap describes priorities, not fixed delivery dates.
 
-## Verified delivery snapshot
+## Verified development delivery
 
-Reconciled 2026-10-15 against develop `e4233a0` and main `96494b8`.
-Every PR below is merged and its merge commit is reachable from develop, not main.
-Production release remains separate. Issue research below retains its original
-October 11 snapshot; this delivery reconciliation is not a fresh review of all
-upstream issues. The current clipboard change is described separately below.
-
-| Scope | Verified delivery | Still outside that delivery |
-| --- | --- | --- |
-| Bounded list regex execution | Develop PR #19, `31fb8ac` | Other regex consumers require their own review. |
-| Local HTML image/raster PDF and discovery | Develop PR #20/#22, `96d23b4`/`a32c133` | URL conversion paused; custom fonts/remote rendering deferred. |
-| PNG dimensions/non-inflation | Develop PR #24, `097d594` | Lossless pixel preservation/new encoder not delivered. |
-| Multi-file picker/drop | Develop PR #25, `d96ab5b` | Consumer conversion ownership is separate. |
-| GIF lifecycle/mixed PNG-JPEG fidelity | Develop PR #26/#27, `4a8489c`/`6fab3c3` | Explicit Create, richer progress, further timing UX and quality work remain. |
-| Engineering practices | Develop PR #28, `fd1214d` | Instructions do not guarantee agent compliance or grant additional authority. |
-| Merge PDF lifecycle | Develop PR #29, `e4233a0` | Cancellation is cooperative; other PDF consumers/worker isolation are separate. |
+Reconciled 2026-10-15 against develop `e4233a0` and main `96494b8`. PR19/20/22
+and PR24-29 are merged into develop, not released to main. These cover bounded
+list regex, local HTML conversion/discovery, PNG dimensions, multi-file input,
+GIF reliability, engineering practices and Merge PDF ownership. The authoritative
+[delivery snapshot](FEATURE_BACKLOG.md#verified-delivery-snapshot) records PRs,
+merge commits and remaining scope. The current clipboard change is tracked below.
 
 ## 1. Better everyday tools
 

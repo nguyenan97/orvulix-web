@@ -20,6 +20,12 @@ declare global {
     orvulixClipboardProbe: ClipboardProbe;
   }
 }
+// Positive native clipboard flows require an explicit browser permission setup.
+// Firefox/WebKit rely on the real transient user gesture; Chromium supports grants.
+test.beforeEach(async ({ context, browserName }) => {
+  if (browserName === 'chromium')
+    await context.grantPermissions(['clipboard-read', 'clipboard-write']);
+});
 async function nativeProbe(page: Page) {
   await page.addInitScript(() => {
     const state = (window.orvulixClipboardProbe = {
@@ -45,11 +51,8 @@ async function nativeProbe(page: Page) {
 }
 test('copies visible Unicode/newlines with the native clipboard, while downloads retain raw escapes', async ({
   page,
-  context,
   browserName
 }) => {
-  if (browserName === 'chromium')
-    await context.grantPermissions(['clipboard-read', 'clipboard-write']);
   await nativeProbe(page);
   await page.goto(route('/string/url-decode-string'));
   const raw = 'first\\nsecond\\tViệt Nam 😀';
