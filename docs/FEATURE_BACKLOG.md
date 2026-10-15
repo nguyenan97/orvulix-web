@@ -15,11 +15,11 @@ update it alongside this ordered plan. Technical criteria stay in this document.
 
 ## Verified delivery snapshot
 
-Reconciled 2026-10-15 against develop `e4233a0` and main `96494b8`.
+Reconciled 2026-10-15 against develop `ef29d62` and main `96494b8`.
 Every PR below is merged and its merge commit is reachable from develop, not main.
 Production release remains separate. Issue research below retains its original
 October 11 snapshot; this delivery reconciliation is not a fresh review of all
-upstream issues. The current clipboard change is described separately below.
+upstream issues. PR30 text-result delivery and the current code-result change are described below.
 
 | Scope | Verified delivery | Still outside that delivery |
 | --- | --- | --- |
@@ -29,6 +29,7 @@ upstream issues. The current clipboard change is described separately below.
 | Multi-file picker/drop | Develop PR #25, `d96ab5b` | Consumer conversion ownership is separate. |
 | GIF lifecycle/mixed PNG-JPEG fidelity | Develop PR #26/#27, `4a8489c`/`6fab3c3` | Explicit Create, richer progress, further timing UX and quality work remain. |
 | Engineering practices | Develop PR #28, `fd1214d` | Instructions do not guarantee agent compliance or grant additional authority. |
+| Text-result clipboard | Develop PR #30, `ef29d62` | Other clipboard consumers/old Umbrel reports need their own verification. |
 | Merge PDF lifecycle | Develop PR #29, `e4233a0` | Cancellation is cooperative; other PDF consumers/worker isolation are separate. |
 
 ## Delivery rules
@@ -55,7 +56,7 @@ upstream issues. The current clipboard change is described separately below.
 | --- | --- | --- | --- |
 | Timed regex execution in inherited list tools | [#377](https://github.com/iib0011/omni-tools/issues/377). Merged into develop in PR #19: bounded regex execution for all 11 list tools with regex splitting, including Group at /list/chunk. Typed adapters retain existing transformations; Group and Duplicate also guard dangerous numeric options in both modes; regex preflight includes separators added by Group padding. See [architecture, limits and sync hotspots](BOUNDED_LIST_REGEX.md). | Catastrophic backtracking cannot freeze the UI; invalid syntax, cancellation, timeout and subsequent recovery work. Length limits alone are insufficient. | [PR #383](https://github.com/iib0011/omni-tools/pull/383), [PR #389](https://github.com/iib0011/omni-tools/pull/389), [PR #366](https://github.com/iib0011/omni-tools/pull/366). |
 | PDF Editor privacy audit | [#301](https://github.com/iib0011/omni-tools/issues/301). Verify SimplePDF requests with a local fixture; distinguish asset downloads, analytics, fingerprints and document uploads. Existing privacy copy is not a network audit. | Document observed behavior. If integration sends data, disclose exact categories and require opt-in before loading it. Do not claim local-only without verification. | Recheck SDK behavior/version and upstream discussion before changing it. |
-| Clipboard regression triage (partial) | [#390](https://github.com/iib0011/omni-tools/issues/390). This change fixes shared ToolTextResult display/copy alignment and unavailable/denied API handling. JSON prettify uses ToolCodeResult and remains a separate issue390 triage; other input/code/file clipboard consumers and real insecure-host validation remain follow-ups. | Copied text equals the displayed formatted result; unsupported/denied clipboard access gets an actionable error. | [PR #452](https://github.com/iib0011/omni-tools/pull/452), [PR #430](https://github.com/iib0011/omni-tools/pull/430). |
+| Clipboard regression triage (partial) | [#390](https://github.com/iib0011/omni-tools/issues/390). PR30 merged shared ToolTextResult display/copy alignment and API failure guidance. The current change guards ToolCodeResult without changing formatted values; secure-copy and real insecure-origin policy are tested. This does not establish the root cause of every historical Umbrel report. Input/file clipboard consumers remain follow-ups. | Copied text equals the displayed formatted result; unsupported/denied clipboard access gets an actionable error. | [PR #452](https://github.com/iib0011/omni-tools/pull/452), [PR #430](https://github.com/iib0011/omni-tools/pull/430). |
 
 ## Ordered feature plan
 
@@ -226,9 +227,19 @@ Split PDF or other conversion consumers; release to main is separate.
 
 ## Shared text-result clipboard
 
-Implemented in this change, with delivery tracked by its PR/checkpoint. Copy uses
+Merged into develop in PR30 (`ef29d62`), not released to main. Copy uses
 the displayed text, including textarea newline normalization; keepSpecialCharacters
 preserves literal escapes. Missing/denied/synchronously throwing Clipboard API
 gives manual-copy guidance. Download bytes remain raw. This does not resolve the
 separate JSON prettify issue390 or every clipboard consumer. No fallback, permission
 probing, dependencies or production release. See tasks/text-result-clipboard-roadmap.md.
+
+## Code-result clipboard policy
+
+Implemented in this change; delivery tracked by tasks/code-result-clipboard.md
+and its PR. ToolCodeResult reuses PR30 native clipboard guidance while preserving
+formatted JSON/literal escapes and download bytes. Insecure HTTP cannot use the
+native Clipboard API; show HTTPS/manual-copy guidance instead of an uncaught
+error or deprecated fallback. Upstream issue390 remains open; PR452/430 are open
+and unmerged. Browser observations here do not establish all historical Umbrel
+root causes or promise automatic HTTP copying. No input/file consumer migration.
