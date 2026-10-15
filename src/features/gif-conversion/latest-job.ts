@@ -1,3 +1,4 @@
+import { GifInputError } from './input-error';
 import type { InitialValuesType } from '../../pages/tools/video/gif/images-to-gif/types';
 export interface GifState {
   result: File | null;
@@ -50,13 +51,15 @@ export class LatestGifJob {
       try {
         const result = await this.encode(inputs, snapshot, controller.signal);
         if (current()) this.publish({ result, loading: false, error: '' });
-      } catch {
+      } catch (error) {
         if (current())
           this.publish({
             result: null,
             loading: false,
             error:
-              'GIF conversion failed. Try fewer or smaller supported images.'
+              error instanceof GifInputError
+                ? error.message
+                : 'GIF conversion failed. Try fewer or smaller supported images.'
           });
       }
     }, 1000);

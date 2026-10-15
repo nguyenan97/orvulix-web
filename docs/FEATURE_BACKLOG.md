@@ -188,3 +188,11 @@ latest-result ownership, debounce unmount cleanup and optional cooperative queue
 service cancellation. Encoding/timing/Create/quality remain unchanged. See
 GIF_CONVERSION_LIFECYCLE.md for limits, baseline evidence and the separate mixed-
 format normalization finding. Other conversion consumers remain follow-ups.
+
+## GIF mixed PNG/JPEG fidelity
+
+After merged PR26 lifecycle work, feature/gif-mixed-format-fidelity adds sequential
+RGBA PNG normalization only when PNG and JPEG occur together, preserving the
+existing homogeneous encoder/timing. Equal decoded dimensions and bounded static
+PNG/JPEG are required; errors are actionable. Implemented on this branch, pending
+its feature PR gates/merge. See GIF_MIXED_FORMAT.md for budgets, evidence and limits.

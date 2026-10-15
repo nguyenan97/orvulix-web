@@ -125,3 +125,16 @@ it('cancels pending debounce on unmount and allows new input to recover from err
   expect(publish.mock.calls.at(-1)![0].error).toBe('');
   expect(publish.mock.calls.at(-1)![0].result).not.toBeNull();
 });
+it('shows controlled policy errors and clears them on new input', async () => {
+  const { GifInputError } = await import('./input-error');
+  encode.mockRejectedValueOnce(
+    new GifInputError('Resize images to equal decoded dimensions.')
+  );
+  job.schedule(options, [file()]);
+  await vi.advanceTimersByTimeAsync(1000);
+  expect(publish.mock.calls.at(-1)![0].error).toBe(
+    'Resize images to equal decoded dimensions.'
+  );
+  job.schedule(options, [file()]);
+  expect(publish.mock.calls.at(-1)![0].error).toBe('');
+});

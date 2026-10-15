@@ -62,6 +62,8 @@ Owner: Orvulix maintainer. Mixed PNG/JPEG baseline can produce only the first fr
 (the existing concat path receives different input codecs). This was observed
 before implementation and is not fixed here: a separate normalization/fidelity
 change must preserve homogeneous timing and validate mixed-format full frame order.
+That separate change is implemented on feature/gif-mixed-format-fidelity; see
+GIF_MIXED_FORMAT.md and resolve its merge status through the feature PR.
 Do not describe this lifecycle PR as completing all GIF conversion capabilities.
 
 Other consumers' stale exports/cancellation, shared startup asset ownership and
