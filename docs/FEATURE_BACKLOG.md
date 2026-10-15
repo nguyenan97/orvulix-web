@@ -242,4 +242,6 @@ formatted JSON/literal escapes and download bytes. Insecure HTTP cannot use the
 native Clipboard API; show HTTPS/manual-copy guidance instead of an uncaught
 error or deprecated fallback. Upstream issue390 remains open; PR452/430 are open
 and unmerged. Browser observations here do not establish all historical Umbrel
-root causes or promise automatic HTTP copying. No input/file consumer migration.
+root causes or promise automatic HTTP copying. An unsupported code-result footer
+gesture guard also prevents Monaco's WebKit ancestor handler from throwing; other
+editor/input gestures remain a separate follow-up. No input/file consumer migration.

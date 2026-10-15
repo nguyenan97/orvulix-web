@@ -122,3 +122,45 @@ it('does not attempt native clipboard writes on an insecure origin', async () =>
   );
   expect(writeText).not.toHaveBeenCalled();
 });
+it.each(['click', 'keydown'] as const)(
+  'isolates unsupported %s from Monaco ancestor clipboard handlers',
+  async (kind) => {
+    vi.spyOn(navigator, 'clipboard', 'get').mockReturnValue(
+      undefined as unknown as Clipboard
+    );
+    const ancestor = vi.fn();
+    document.body.addEventListener(kind, ancestor);
+    try {
+      view();
+      const button = screen.getByText('resultFooter.copy');
+      if (kind === 'click') fireEvent.click(button);
+      else fireEvent.keyDown(button, { key: 'Enter' });
+      expect(ancestor).not.toHaveBeenCalled();
+    } finally {
+      document.body.removeEventListener(kind, ancestor);
+    }
+  }
+);
+it.each(['click', 'keydown'] as const)(
+  'preserves supported %s propagation and the native action',
+  async (kind) => {
+    const writeText = vi.fn().mockResolvedValue(undefined);
+    vi.spyOn(navigator, 'clipboard', 'get').mockReturnValue({
+      writeText,
+      write: vi.fn()
+    } as unknown as Clipboard);
+    const ancestor = vi.fn();
+    document.body.addEventListener(kind, ancestor);
+    try {
+      view();
+      const button = screen.getByText('resultFooter.copy');
+      if (kind === 'click') fireEvent.click(button);
+      else fireEvent.keyDown(button, { key: 'Enter' });
+      expect(ancestor).toHaveBeenCalledTimes(1);
+      if (kind === 'click')
+        await waitFor(() => expect(writeText).toHaveBeenCalledWith(formatted));
+    } finally {
+      document.body.removeEventListener(kind, ancestor);
+    }
+  }
+);

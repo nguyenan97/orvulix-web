@@ -12,7 +12,53 @@ declare global {
 }
 const copy = (page: Page) =>
   page.getByRole('button', { name: 'Copy to clipboard', exact: true }).last();
+// Cache the app's actual pinned CDN renderer, not a replacement/editor mock.
+// Asset setup is separate from per-test readiness/clipboard deadlines.
+const monacoOrigin =
+  'https://cdn.jsdelivr.net/npm/monaco-editor@0.52.2/min/vs/';
+const rendererAssets = new Map<string, { body: Buffer; contentType: string }>();
+test.beforeAll(async ({ playwright }) => {
+  const proxy = process.env.HTTPS_PROXY || process.env.https_proxy;
+  const request = await playwright.request.newContext({
+    proxy: proxy ? { server: proxy } : undefined
+  });
+  try {
+    await Promise.all(
+      [
+        'loader.js',
+        'editor/editor.main.js',
+        'editor/editor.main.css',
+        'language/json/jsonMode.js',
+        'base/worker/workerMain.js',
+        'language/json/jsonWorker.js',
+        'base/browser/ui/codicons/codicon/codicon.ttf'
+      ].map(async (path) => {
+        const url = monacoOrigin + path;
+        const response = await request.get(url);
+        expect(response.ok(), `Monaco fixture fetch: ${path}`).toBe(true);
+        rendererAssets.set(url, {
+          body: await response.body(),
+          contentType: response.headers()['content-type']
+        });
+      })
+    );
+  } finally {
+    await request.dispose();
+  }
+});
 test.beforeEach(async ({ context, browserName }) => {
+  await context.route(monacoOrigin + '**', async (route) => {
+    const asset = rendererAssets.get(route.request().url());
+    if (!asset) {
+      await route.continue();
+      return;
+    }
+    await route.fulfill({
+      body: asset.body,
+      contentType: asset.contentType,
+      headers: { 'access-control-allow-origin': '*' }
+    });
+  });
   if (browserName === 'chromium')
     await context.grantPermissions(['clipboard-read', 'clipboard-write']);
 });
@@ -104,6 +150,8 @@ test('real insecure HTTP origin reports missing clipboard access without an unca
   await expect(
     page.getByText(/Clipboard unavailable.*Use HTTPS.*copy it manually/)
   ).toBeVisible();
+  await copy(page).focus();
+  await page.keyboard.press('Enter');
   expect(errors).toEqual([]);
 });
 test('code-result permission denial shows guidance and a later gesture recovers', async ({

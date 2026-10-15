@@ -7,6 +7,7 @@ import { brand } from '../../brand/config'; // ORVULIX-BRAND
 import { useTranslation } from 'react-i18next';
 import Editor from '@monaco-editor/react';
 import mime from 'mime';
+import { guardCodeResultGesture } from '../../features/text-result-clipboard/code-gesture'; // ORVULIX: unsupported Monaco gesture isolation.
 import { writeResultText } from '../../features/text-result-clipboard/write'; // ORVULIX: guarded native code-result copy.
 import {
   globalInputHeight,
@@ -141,7 +142,15 @@ export default function ToolCodeResult({
             />
           </Box>
         )}
-        <ResultFooter handleCopy={handleCopy} handleDownload={handleDownload} />
+        <Box
+          onClick={guardCodeResultGesture}
+          onKeyDown={guardCodeResultGesture}
+        >
+          <ResultFooter
+            handleCopy={handleCopy}
+            handleDownload={handleDownload}
+          />
+        </Box>
       </Box>
     </Box>
   );
