@@ -179,3 +179,12 @@ atomic rejection, serial ordering and preview cleanup. Duplicate files remain
 allowed. No GIF timing/Create/quality or conversion-service lifecycle work is
 included. See UPSTREAM_SYNC.md for budgets, supported formats, validation and
 remaining boundaries. Resolve final merge status through the feature PR.
+
+## Images to GIF lifecycle
+
+PR25 multi-file inputs are merged. Consumer GIF lifecycle is implemented on
+feature/gif-conversion-lifecycle, delivered through PR #26 (resolve merge status there): immediate invalidation,
+latest-result ownership, debounce unmount cleanup and optional cooperative queue/
+service cancellation. Encoding/timing/Create/quality remain unchanged. See
+GIF_CONVERSION_LIFECYCLE.md for limits, baseline evidence and the separate mixed-
+format normalization finding. Other conversion consumers remain follow-ups.

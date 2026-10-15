@@ -1,5 +1,5 @@
-import { Box } from '@mui/material';
-import React, { useState, useCallback } from 'react';
+import { Alert, Box } from '@mui/material';
+import React, { useState } from 'react';
 import ToolFileResult from '@components/result/ToolFileResult';
 import TextFieldWithDesc from 'components/options/TextFieldWithDesc';
 import ToolContent from '@components/ToolContent';
@@ -11,8 +11,7 @@ import SimpleRadio from '@components/options/SimpleRadio';
 import { InitialValuesType } from './types';
 import { updateNumberField } from '@utils/string';
 import { useTranslation } from 'react-i18next';
-import { imagesToGif } from './service';
-import { debounce } from 'lodash';
+import { useGifConversion } from '../../../../../features/gif-conversion/useGifConversion'; // ORVULIX: latest GIF job ownership.
 
 const initialValues: InitialValuesType = {
   frameRateMode: 'fps',
@@ -21,30 +20,14 @@ const initialValues: InitialValuesType = {
 
 export default function ImagesToGif({ title }: ToolComponentProps) {
   const { t } = useTranslation('video');
-  const [input, setInput] = useState<MultiImageInput[]>([]);
-  const [result, setResult] = useState<File | null>(null);
-  const [loading, setLoading] = useState(false);
-
-  const compute = async (
-    optionsValues: InitialValuesType,
-    input: MultiImageInput[]
+  const [input, setFiles] = useState<MultiImageInput[]>([]);
+  const { result, loading, error, compute, invalidate } = useGifConversion();
+  const setInput: React.Dispatch<React.SetStateAction<MultiImageInput[]>> = (
+    next
   ) => {
-    if (!input || input.length === 0) return;
-    setLoading(true);
-    try {
-      const convertedGif = await imagesToGif(
-        input.map((item) => item.file),
-        optionsValues
-      );
-      setResult(convertedGif);
-    } catch (error) {
-      console.error('Error cropping video:', error);
-    } finally {
-      setLoading(false);
-    }
+    invalidate();
+    setFiles(next);
   };
-
-  const debouncedCompute = useCallback(debounce(compute, 1000), []);
 
   return (
     <ToolContent
@@ -60,13 +43,16 @@ export default function ImagesToGif({ title }: ToolComponentProps) {
         />
       }
       resultComponent={
-        <ToolFileResult
-          title={t('gif.imagesToGif.resultTitle')}
-          value={result}
-          extension="gif"
-          loading={loading}
-          loadingText={t('gif.imagesToGif.loadingText')}
-        />
+        <Box>
+          {error && <Alert severity="error">{error}</Alert>}
+          <ToolFileResult
+            title={t('gif.imagesToGif.resultTitle')}
+            value={result}
+            extension="gif"
+            loading={loading}
+            loadingText={t('gif.imagesToGif.loadingText')}
+          />
+        </Box>
       }
       initialValues={initialValues}
       getGroups={({ values, updateField }) => [
@@ -78,14 +64,24 @@ export default function ImagesToGif({ title }: ToolComponentProps) {
                 checked={values.frameRateMode === 'fps'}
                 title={t('gif.imagesToGif.frameRate')}
                 description={t('gif.imagesToGif.frameRateDescription')}
-                onClick={() => updateField('frameRateMode', 'fps')}
+                onClick={() => {
+                  if (values.frameRateMode !== 'fps') {
+                    invalidate();
+                    updateField('frameRateMode', 'fps');
+                  }
+                }}
               />
 
               <SimpleRadio
                 checked={values.frameRateMode === 'delay'}
                 title={t('gif.imagesToGif.frameDelay')}
                 description={t('gif.imagesToGif.frameDelayDescription')}
-                onClick={() => updateField('frameRateMode', 'delay')}
+                onClick={() => {
+                  if (values.frameRateMode !== 'delay') {
+                    invalidate();
+                    updateField('frameRateMode', 'delay');
+                  }
+                }}
               />
 
               <Box mt={2}>
@@ -109,7 +105,10 @@ export default function ImagesToGif({ title }: ToolComponentProps) {
                       Math.max(min, Number(value))
                     ).toString();
 
-                    updateNumberField(clamped, 'frameRateValue', updateField);
+                    if (Number(clamped) !== values.frameRateValue) {
+                      invalidate();
+                      updateNumberField(clamped, 'frameRateValue', updateField);
+                    }
                   }}
                   value={values.frameRateValue}
                 />
@@ -118,7 +117,7 @@ export default function ImagesToGif({ title }: ToolComponentProps) {
           )
         }
       ]}
-      compute={debouncedCompute}
+      compute={compute}
       setInput={setInput}
     />
   );
