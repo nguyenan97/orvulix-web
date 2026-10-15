@@ -2,11 +2,21 @@
 
 **Simple tools. Smarter workflows. Better productivity.**
 
-**Status:** Public roadmap. Planned and exploratory features are not available yet. Updated: October 2026.
+**Status:** Public roadmap with separate development delivery and planned scope.
+Reconciled October 15, 2026. Develop changes are not a production release.
 
 Orvulix is an open-source workspace for useful browser-based tools. We want to help developers, students, creators, and everyday users work with data, documents, images, and text without unnecessary setup.
 
 Our approach is to make existing tools better first, then explore new capabilities that solve meaningful problems. This roadmap describes priorities, not fixed delivery dates.
+
+## Verified development delivery
+
+Reconciled 2026-10-15 against develop `e4233a0` and main `96494b8`. PR19/20/22
+and PR24-29 are merged into develop, not released to main. These cover bounded
+list regex, local HTML conversion/discovery, PNG dimensions, multi-file input,
+GIF reliability, engineering practices and Merge PDF ownership. The authoritative
+[delivery snapshot](FEATURE_BACKLOG.md#verified-delivery-snapshot) records PRs,
+merge commits and remaining scope. The current clipboard change is tracked below.
 
 ## 1. Better everyday tools
 
@@ -16,7 +26,7 @@ Our approach is to make existing tools better first, then explore new capabiliti
 - Make tools easier to find through clearer categories, navigation, and search.
 - Add practical examples, instructions, and actionable error messages.
 - Strengthen accessibility, automated testing, and reliability.
-  This branch isolates regex splitting in all 11 list tools with
+  PR19 merged regex splitting in all 11 list tools with
   [bounded workers](BOUNDED_LIST_REGEX.md), with numeric guards for Group and Duplicate
   and preflight checks for Group padding separator expansion.
 - Improve search visibility with helpful, original content for individual tools.
@@ -83,7 +93,7 @@ We will prioritize previewable changes, clear confirmation, and workflows that c
 
 See [the prioritized upstream issue backlog](FEATURE_BACKLOG.md) for MVP scope,
 acceptance criteria and upstream PRs to review before implementation. These items
-are planned, not shipped. Each implementation uses a feature branch from `develop`
+are planned or partial; verified development subscopes are listed above. Each implementation uses a feature branch from `develop`
 and a PR into `develop`; production releases require separate authorization.
 
 ## How we prioritize
@@ -121,7 +131,7 @@ PR20 pagination gate: merged into develop via PR20. Explicit
 Paginated width-fit uses bounded sequential captures and protected block/row
 boundaries, rejecting oversized/unsafe layout. One page remains default. Review
 actual PDF bytes, cross-browser page seams, deadlines/cleanup and Pages smoke
-before merge; header repetition is merged into develop via PR20. Custom fonts remain deferred.
+for the merged implementation; header repetition is merged into develop via PR20. Custom fonts remain deferred.
 
 
 Page ranges (PR20): merged into develop via PR20. Explicit
@@ -145,14 +155,13 @@ normal develop review and separately authorized main workflow.
 
 PR20 pagination fidelity corrections retain painted border-only boxes and reject
 left-of-viewport content instead of silently cropping it. These are local MVP
-reliability fixes on the feature branch, not a change to remote conversion scope.
+reliability fixes merged into develop in PR20, not a change to remote conversion scope.
 
 ## URL-first Web conversion discovery update
 
 PR20 local HTML conversion and PR21 security remediation are merged into develop,
-not evidence of a production release or URL conversion availability. The current
-feature/web-conversion-ux branch corrects experimental local-tool discovery/copy
-for review. Local HTML tools retain upload/paste/sample/export but are not homepage
+not evidence of a production release or URL conversion availability. PR22 merged
+the experimental local-tool discovery/copy correction into develop. Local HTML tools retain upload/paste/sample/export but are not homepage
 category CTA examples and appear after other browse/related tools. Search remains
 available and unchanged.
 
@@ -164,40 +173,48 @@ or fake URL input exists. See WEB_CONVERSION_PLAN.md for gates and sync hotspots
 
 Follow UPSTREAM_SYNC.md: compare upstream/main against Orvulix develop and port
 one bounded improvement at a time, preserving branding/SEO/Pages/security rules.
-Current feature/upstream-png-dimensions ports PNG dimension correctness (#461),
-not a complete encoder/batch migration or lossless optimizer. Further GIF/drop
-and generic image compression work require separate acceptance/tests. Owner has
+PR24 merged PNG dimension correctness (#461) into develop,
+not a complete encoder/batch migration or lossless optimizer. PR25/26/27 merged bounded drop and GIF reliability work; remaining GIF UX/quality
+and generic image compression need separate acceptance/tests. Owner has
 paused Web/URL conversion; retain existing local HTML tools without extending them.
 
 ### Shared file-input reliability
 
-Multi-file drop adaptation on feature/upstream-multifile-drop covers image/audio/
+Multi-file drop adaptation merged into develop in PR25 covers image/audio/
 video/PDF inputs, including queued budgets, invalid batch recovery and owned URL
 cleanup. It preserves existing tool conversion behavior and does not extend Web/
-URL conversion. Implementation is on the feature branch until its PR is merged;
+URL conversion. PR25 is verified merged;
 consumer conversion cancellation requires a separate reliability task.
 
 ### GIF output ownership
 
-The feature/gif-conversion-lifecycle branch addresses output reappearing after
+PR26 merged into develop and addresses output reappearing after
 Clear during conversion, without changing existing auto-generation or GIF timing.
-Resolve merge status in PR #26; see GIF_CONVERSION_LIFECYCLE.md. This does not
+Merge verified at 4a8489c; see GIF_CONVERSION_LIFECYCLE.md. This does not
 complete GIF quality/timing work, mixed-format fidelity or other converters.
 
 ### Mixed-format GIF reliability
 
-feature/gif-mixed-format-fidelity fixes missing JPEG/PNG content in mixed concat
+PR27 merged into develop and fixes missing JPEG/PNG content in mixed concat
 jobs using bounded sequential normalization, with PR26 lifecycle retained.
-Implementation is on the feature branch until verified PR #27 merge. Different-size
+Merge verified at 6fab3c3. Different-size
 padding/resizing, other formats and quality/timing remain separate work; see
 GIF_MIXED_FORMAT.md.
 
 ## Merge PDF output ownership
 
-Implemented through [PR #29](https://github.com/nguyenan97/orvulix-web/pull/29);
-verify its merged state before assuming delivery. A reproduced Clear
+Merged into develop through [PR #29](https://github.com/nguyenan97/orvulix-web/pull/29). A reproduced Clear
 during merge could republish an old PDF. The bounded owner now invalidates on
 selection edits/Clear/unmount, ignores late completion/error and exposes current
 failures with recovery. File/page order, geometry and automatic merge remain.
 See [scope, budgets and validation](PDF_MERGE_LIFECYCLE.md). This does not extend
 Split PDF or other conversion consumers; release to main is separate.
+
+## Shared text-result copy reliability
+
+The current change aligns copied text with the displayed ToolTextResult value and
+adds manual-copy guidance when native clipboard access fails. Downloads retain
+the original data. Delivery is tracked by this change's PR; this is not a production
+release or completion of JSON prettify/other clipboard investigations. Public
+/roadmap separates verified development delivery through PR29 from planned features;
+see FEATURE_BACKLOG.md for the current partial foundation scope.

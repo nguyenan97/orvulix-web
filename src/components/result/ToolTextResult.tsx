@@ -6,6 +6,7 @@ import ResultFooter from './ResultFooter';
 import { brand } from '../../brand/config'; // ORVULIX-BRAND
 import { replaceSpecialCharacters } from '@utils/string';
 import mime from 'mime';
+import { writeResultText } from '../../features/text-result-clipboard/write'; // ORVULIX: visible-result clipboard contract.
 import { globalInputHeight } from '../../config/uiConfig';
 import { useTranslation } from 'react-i18next';
 
@@ -24,9 +25,11 @@ export default function ToolTextResult({
 }) {
   const { t } = useTranslation();
   const { showSnackBar } = useContext(CustomSnackBarContext);
+  const displayValue = (
+    keepSpecialCharacters ? value : replaceSpecialCharacters(value)
+  ).replace(/\r\n?/g, '\n');
   const handleCopy = () => {
-    navigator.clipboard
-      .writeText(value)
+    writeResultText(displayValue)
       .then(() => showSnackBar(t('toolTextResult.copied'), 'success'))
       .catch((err) => {
         showSnackBar(t('toolTextResult.copyFailed', { error: err }), 'error');
@@ -69,9 +72,7 @@ export default function ToolTextResult({
         </Box>
       ) : (
         <TextField
-          value={
-            keepSpecialCharacters ? value : replaceSpecialCharacters(value)
-          }
+          value={displayValue}
           fullWidth
           multiline
           sx={{

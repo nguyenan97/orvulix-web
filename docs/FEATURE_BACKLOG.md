@@ -1,6 +1,7 @@
 # Orvulix issue-backed feature backlog
 
-Status: planned, not implemented by this document. Reviewed on October 11, 2026.
+Status: planned/partial milestones plus verified development delivery below.
+Delivery reconciled October 15, 2026; upstream issue research dated October 11.
 
 Source: [OmniTools open issues](https://github.com/iib0011/omni-tools/issues).
 The review covered 57 open issues, current open PRs, and Orvulix `develop`.
@@ -11,6 +12,24 @@ dates, adoption metrics or Claude program approval are promised.
 The `/roadmap` page shows user-facing summaries, proposed priority and Planned
 status. Copy lives in `src/seo/roadmap.ts`, shared by React and static prerender;
 update it alongside this ordered plan. Technical criteria stay in this document.
+
+## Verified delivery snapshot
+
+Reconciled 2026-10-15 against develop `e4233a0` and main `96494b8`.
+Every PR below is merged and its merge commit is reachable from develop, not main.
+Production release remains separate. Issue research below retains its original
+October 11 snapshot; this delivery reconciliation is not a fresh review of all
+upstream issues. The current clipboard change is described separately below.
+
+| Scope | Verified delivery | Still outside that delivery |
+| --- | --- | --- |
+| Bounded list regex execution | Develop PR #19, `31fb8ac` | Other regex consumers require their own review. |
+| Local HTML image/raster PDF and discovery | Develop PR #20/#22, `96d23b4`/`a32c133` | URL conversion paused; custom fonts/remote rendering deferred. |
+| PNG dimensions/non-inflation | Develop PR #24, `097d594` | Lossless pixel preservation/new encoder not delivered. |
+| Multi-file picker/drop | Develop PR #25, `d96ab5b` | Consumer conversion ownership is separate. |
+| GIF lifecycle/mixed PNG-JPEG fidelity | Develop PR #26/#27, `4a8489c`/`6fab3c3` | Explicit Create, richer progress, further timing UX and quality work remain. |
+| Engineering practices | Develop PR #28, `fd1214d` | Instructions do not guarantee agent compliance or grant additional authority. |
+| Merge PDF lifecycle | Develop PR #29, `e4233a0` | Cancellation is cooperative; other PDF consumers/worker isolation are separate. |
 
 ## Delivery rules
 
@@ -34,9 +53,9 @@ update it alongside this ordered plan. Technical criteria stay in this document.
 
 | Item | Evidence and scope | Acceptance criteria | Upstream to review |
 | --- | --- | --- | --- |
-| Timed regex execution in inherited list tools | [#377](https://github.com/iib0011/omni-tools/issues/377). This branch implements bounded regex execution for all 11 list tools with regex splitting, including Group at /list/chunk. Typed adapters retain existing transformations; Group and Duplicate also guard dangerous numeric options in both modes; regex preflight includes separators added by Group padding. See [architecture, limits and sync hotspots](BOUNDED_LIST_REGEX.md). | Catastrophic backtracking cannot freeze the UI; invalid syntax, cancellation, timeout and subsequent recovery work. Length limits alone are insufficient. | [PR #383](https://github.com/iib0011/omni-tools/pull/383), [PR #389](https://github.com/iib0011/omni-tools/pull/389), [PR #366](https://github.com/iib0011/omni-tools/pull/366). |
+| Timed regex execution in inherited list tools | [#377](https://github.com/iib0011/omni-tools/issues/377). Merged into develop in PR #19: bounded regex execution for all 11 list tools with regex splitting, including Group at /list/chunk. Typed adapters retain existing transformations; Group and Duplicate also guard dangerous numeric options in both modes; regex preflight includes separators added by Group padding. See [architecture, limits and sync hotspots](BOUNDED_LIST_REGEX.md). | Catastrophic backtracking cannot freeze the UI; invalid syntax, cancellation, timeout and subsequent recovery work. Length limits alone are insufficient. | [PR #383](https://github.com/iib0011/omni-tools/pull/383), [PR #389](https://github.com/iib0011/omni-tools/pull/389), [PR #366](https://github.com/iib0011/omni-tools/pull/366). |
 | PDF Editor privacy audit | [#301](https://github.com/iib0011/omni-tools/issues/301). Verify SimplePDF requests with a local fixture; distinguish asset downloads, analytics, fingerprints and document uploads. Existing privacy copy is not a network audit. | Document observed behavior. If integration sends data, disclose exact categories and require opt-in before loading it. Do not claim local-only without verification. | Recheck SDK behavior/version and upstream discussion before changing it. |
-| Clipboard regression triage | [#390](https://github.com/iib0011/omni-tools/issues/390). Reproduce formatted-output copying on HTTPS and self-hosted HTTP; do not assume all upstream clipboard fixes resolve the reported mismatch. | Copied text equals the displayed formatted result; unsupported/denied clipboard access gets an actionable error. | [PR #452](https://github.com/iib0011/omni-tools/pull/452), [PR #430](https://github.com/iib0011/omni-tools/pull/430). |
+| Clipboard regression triage (partial) | [#390](https://github.com/iib0011/omni-tools/issues/390). This change fixes shared ToolTextResult display/copy alignment and unavailable/denied API handling. JSON prettify uses ToolCodeResult and remains a separate issue390 triage; other input/code/file clipboard consumers and real insecure-host validation remain follow-ups. | Copied text equals the displayed formatted result; unsupported/denied clipboard access gets an actionable error. | [PR #452](https://github.com/iib0011/omni-tools/pull/452), [PR #430](https://github.com/iib0011/omni-tools/pull/430). |
 
 ## Ordered feature plan
 
@@ -52,7 +71,8 @@ see SECURITY_REMEDIATION.md for findings/temporary exceptions. Develop delivery
 is not a production release, upstream acceptance or complete Web conversion.
 
 Difficulty is relative implementation risk, not an estimate of calendar time.
-All items below remain planned until their implementation PR is merged and verified.
+The milestones below remain planned or partial. Merged subscopes do not complete
+the whole milestone; use the verified delivery snapshot above.
 
 | Order | Feature and issue source | MVP and acceptance criteria | Difficulty / sync considerations |
 | --- | --- | --- | --- |
@@ -63,7 +83,7 @@ All items below remain planned until their implementation PR is merged and verif
 | 5 | **Subnet Calculator** - [#231](https://github.com/iib0011/omni-tools/issues/231) | IPv4 CIDR/mask, network, broadcast and host range. Test /0, /31 and /32 with documented semantics. IPv6 is a later phase, not a promised MVP capability. | Medium. Pure standalone arithmetic/parser; no DNS or remote API. |
 | 6 | **Lossless PNG Optimizer** - [#359](https://github.com/iib0011/omni-tools/issues/359), [#295](https://github.com/iib0011/omni-tools/issues/295) | Benchmark a local encoder/WASM first. Preserve dimensions and decoded pixels, define metadata handling, compare sizes and retain the original when output grows. Do not label palette quantization as lossless. Limits, cancellation and pixel-equality fixtures required. | Medium-high. Prefer an isolated optimizer rather than rewriting existing compression. Review [PR #461](https://github.com/iib0011/omni-tools/pull/461); preserving dimensions alone does not prove losslessness. |
 | 7 | **Batch OCR** - [#349](https://github.com/iib0011/omni-tools/issues/349) | Multiple images with language selection before processing, Vietnamese support if the model is available, progress/cancel and ordered TXT/ZIP output. PDF output and automatic language detection deferred. Verify cancellation and cleanup after errors. | Medium. Reuse Tesseract/JSZip already installed. Lazy model downloads and disclose network use. Keep a separate batch module with minimal OCR integration. |
-| 8 | **Images to GIF improvements** - [#433](https://github.com/iib0011/omni-tools/issues/433) | Drag-and-drop with bounded file count, flexible FPS/frame delay, explicit Create and visible progress. Test frame order, timing and invalid files. Quality/file-size optimization is a separate investigation. | Medium. Existing GIF tool is an upstream hotspot. Review [PR #458](https://github.com/iib0011/omni-tools/pull/458) before duplicating its work. |
+| 8 | **Images to GIF improvements** - [#433](https://github.com/iib0011/omni-tools/issues/433) | Partial in develop: bounded multi-file import (PR25), stale-result ownership (PR26), mixed PNG/JPEG fidelity (PR27); existing FPS/delay options remain. Explicit Create, richer progress and further timing UX are not completed. Preserve frame-order/timing/invalid-input tests. Quality/file-size optimization is a separate investigation. | Medium. Existing GIF tool is an upstream hotspot. Review [PR #458](https://github.com/iib0011/omni-tools/pull/458) before duplicating its work. |
 | 9 | **Audio/Video Trim Timeline** - [#268](https://github.com/iib0011/omni-tools/issues/268) | Keyboard-accessible start/end sliders synced to time inputs, selected-range preview and valid-range checks. Test duration boundaries and export accuracy; waveform generation is outside MVP. | Medium. Reusable timeline component with small adapters; review [PR #293](https://github.com/iib0011/omni-tools/pull/293). |
 | 10 | **Local PDF Form Builder** - [#106](https://github.com/iib0011/omni-tools/issues/106), [#244](https://github.com/iib0011/omni-tools/issues/244) | Add named text fields and checkboxes, position them on pages and export an AcroForm PDF. Verify round-trip fields/values, rotated-page coordinates and compatibility with selected PDF readers. No digital signatures or cloud saving. | High. Evaluate existing pdf-lib capability; do not implement through an undisclosed external embed. Review [PR #247](https://github.com/iib0011/omni-tools/pull/247). |
 | 11 | **OCR Table to CSV** - [#234](https://github.com/iib0011/omni-tools/issues/234) | Single-image table extraction with editable rows/columns before CSV download. Handle CSV quoting and warn about spreadsheet formula injection. Never claim perfect extraction. PDF batches and XLSX deferred. | High. Depends on OCR evaluation; use a standalone correction UI and test real table fixtures. |
@@ -139,8 +159,7 @@ batch jobs. These are not features shipped by the local MVP.
 PR20 review corrections: capture/asset elapsed deadlines now reject completion
 past the budget before timer delivery, with late-resource cleanup and recovery
 regressions. The headers UI unit flow is split into independent lifecycle cases;
-FAQ describes the existing separate raster-PDF tool. Implemented on branch, not
-merged; full Web conversion and the deferred register remain unchanged.
+FAQ describes the existing separate raster-PDF tool. Merged into develop via PR20; full Web conversion and the deferred register remain unchanged.
 
 PR20 second review: pagination retains trailing border-only boxes and rejects
 negative horizontal flex overflow. Unit regressions and actual PDF pixel/browser
@@ -150,9 +169,8 @@ scope are unchanged.
 ## URL-first Web conversion discovery update
 
 PR20 local HTML conversion and PR21 security remediation are merged into develop,
-not evidence of a production release or URL conversion availability. The current
-feature/web-conversion-ux branch corrects experimental local-tool discovery/copy
-for review. Local HTML tools retain upload/paste/sample/export but are not homepage
+not evidence of a production release or URL conversion availability. PR22 merged
+the experimental local-tool discovery/copy correction into develop. Local HTML tools retain upload/paste/sample/export but are not homepage
 category CTA examples and appear after other browse/related tools. Search remains
 available and unchanged.
 
@@ -163,27 +181,28 @@ or fake URL input exists. See WEB_CONVERSION_PLAN.md for gates and sync hotspots
 ## Upstream PNG dimension correction
 
 Upstream review against main cf41a30 found #461 merged after the shared 3bbca2f
-baseline. Orvulix is porting only the native-dimension/non-inflation contract on
-feature/upstream-png-dimensions, using existing browser-image-compression rather
+baseline. Orvulix merged the native-dimension/non-inflation contract into develop in PR24,
+using existing browser-image-compression rather
 than copying the new encoder/batch UI. This is not the planned lossless optimizer:
 palette colors/metadata may change. See UPSTREAM_SYNC.md for candidates, boundaries
 and the static-PNG compression limits. GIF/multiple-input drop support (#458) is
-now merged upstream but remains a separate Orvulix task; it is not delivered here.
+merged upstream and its bounded picker/drop adaptation is merged in Orvulix PR25;
+that does not complete GIF creation/timing/quality improvements.
 Web/URL conversion is paused by owner decision, not canceled or rolled back.
 
 ### Multi-file drop implementation checkpoint
 
-Upstream #458 is being adapted on feature/upstream-multifile-drop after merged
-PNG PR #24. All four shared inputs use one bounded picker/drop import pipeline,
+Upstream #458 was selectively adapted and merged into develop in PR25, after
+PNG PR24. All four shared inputs use one bounded picker/drop import pipeline,
 atomic rejection, serial ordering and preview cleanup. Duplicate files remain
 allowed. No GIF timing/Create/quality or conversion-service lifecycle work is
 included. See UPSTREAM_SYNC.md for budgets, supported formats, validation and
-remaining boundaries. Resolve final merge status through the feature PR.
+remaining boundaries. PR25 is verified merged; other consumer lifecycles remain
+separate follow-ups.
 
 ## Images to GIF lifecycle
 
-PR25 multi-file inputs are merged. Consumer GIF lifecycle is implemented on
-feature/gif-conversion-lifecycle, delivered through PR #26 (resolve merge status there): immediate invalidation,
+PR25 multi-file inputs and PR26 consumer GIF lifecycle are merged into develop: immediate invalidation,
 latest-result ownership, debounce unmount cleanup and optional cooperative queue/
 service cancellation. Encoding/timing/Create/quality remain unchanged. See
 GIF_CONVERSION_LIFECYCLE.md for limits, baseline evidence and the separate mixed-
@@ -191,18 +210,25 @@ format normalization finding. Other conversion consumers remain follow-ups.
 
 ## GIF mixed PNG/JPEG fidelity
 
-After merged PR26 lifecycle work, feature/gif-mixed-format-fidelity adds sequential
+After PR26 lifecycle work, merged PR27 adds sequential
 RGBA PNG normalization only when PNG and JPEG occur together, preserving the
 existing homogeneous encoder/timing. Equal decoded dimensions and bounded static
-PNG/JPEG are required; errors are actionable. Implemented on this branch, pending
-PR #27 gates/merge. See GIF_MIXED_FORMAT.md for budgets, evidence and limits.
+PNG/JPEG are required; errors are actionable. PR27 is verified merged into develop. See GIF_MIXED_FORMAT.md for budgets, evidence and limits.
 
 ## Merge PDF output ownership
 
-Implemented through [PR #29](https://github.com/nguyenan97/orvulix-web/pull/29);
-verify its merged state before assuming delivery. A reproduced Clear
+Merged into develop through [PR #29](https://github.com/nguyenan97/orvulix-web/pull/29). A reproduced Clear
 during merge could republish an old PDF. The bounded owner now invalidates on
 selection edits/Clear/unmount, ignores late completion/error and exposes current
 failures with recovery. File/page order, geometry and automatic merge remain.
 See [scope, budgets and validation](PDF_MERGE_LIFECYCLE.md). This does not extend
 Split PDF or other conversion consumers; release to main is separate.
+
+## Shared text-result clipboard
+
+Implemented in this change, with delivery tracked by its PR/checkpoint. Copy uses
+the displayed text, including textarea newline normalization; keepSpecialCharacters
+preserves literal escapes. Missing/denied/synchronously throwing Clipboard API
+gives manual-copy guidance. Download bytes remain raw. This does not resolve the
+separate JSON prettify issue390 or every clipboard consumer. No fallback, permission
+probing, dependencies or production release. See tasks/text-result-clipboard-roadmap.md.
