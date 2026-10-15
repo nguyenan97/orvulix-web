@@ -202,6 +202,9 @@ test('SPA unmount at exec boundary ignores late completion and recovers on revis
     () => document.documentElement.dataset.gifStarted === 'yes'
   );
   await expect(page).toHaveURL(/\/about$/);
+  await expect(
+    page.getByRole('heading', { name: 'About Orvulix', exact: true })
+  ).toBeVisible();
   await page.waitForFunction(
     () => document.documentElement.dataset.gifCompleted === 'yes'
   );

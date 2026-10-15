@@ -162,20 +162,26 @@ test('image picker/drop parity, mixed batch rejection, accessible remove/reset a
   await expect(
     page.getByRole('img', { name: 'blue.png', exact: true })
   ).toHaveCount(0);
-  await page.getByRole('button', { name: 'Select files', exact: true }).focus();
+  const select = page.getByRole('button', {
+    name: 'Select files',
+    exact: true
+  });
   const chooser = page.waitForEvent('filechooser');
-  await page.keyboard.press('Enter');
+  // Keep keyboard activation targeted if an asynchronous PDF preview moves focus.
+  await select.press('Enter');
   await (await chooser).setFiles(red);
   await expect(
     page.getByRole('img', { name: 'red.png', exact: true })
   ).toBeVisible();
-  await page.goto('/pdf/pdf-to-png');
-  await page.locator('input[type=file]').setInputFiles({
+  // Isolate exported-PDF verification from source-tab PDF preview downloads.
+  const viewer = await page.context().newPage();
+  await viewer.goto('/pdf/pdf-to-png');
+  await viewer.locator('input[type=file]').setInputFiles({
     name: 'result.pdf',
     mimeType: 'application/pdf',
     buffer: exported
   });
-  const previews = page.locator('img[alt^="Preview "]');
+  const previews = viewer.locator('img[alt^="Preview "]');
   await expect(previews).toHaveCount(2);
   const colors = [];
   for (let i = 0; i < 2; i++)
@@ -200,6 +206,7 @@ test('image picker/drop parity, mixed batch rejection, accessible remove/reset a
     );
   expect(colors[0]).toEqual([255, 0, 0, 255]);
   expect(colors[1]).toEqual([0, 0, 255, 255]);
+  await viewer.close();
 });
 test('PDF picker/drop preserve page order, reject malformed input and recover after clear', async ({
   page

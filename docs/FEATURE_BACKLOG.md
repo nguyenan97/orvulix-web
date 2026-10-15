@@ -195,4 +195,4 @@ After merged PR26 lifecycle work, feature/gif-mixed-format-fidelity adds sequent
 RGBA PNG normalization only when PNG and JPEG occur together, preserving the
 existing homogeneous encoder/timing. Equal decoded dimensions and bounded static
 PNG/JPEG are required; errors are actionable. Implemented on this branch, pending
-its feature PR gates/merge. See GIF_MIXED_FORMAT.md for budgets, evidence and limits.
+PR #27 gates/merge. See GIF_MIXED_FORMAT.md for budgets, evidence and limits.

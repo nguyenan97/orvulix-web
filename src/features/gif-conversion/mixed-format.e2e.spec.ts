@@ -206,12 +206,21 @@ for (const action of [
     await page.waitForFunction(
       () => document.documentElement.dataset.mixedStarted === 'yes'
     );
-    if (action === 'navigate-normalize')
+    if (action === 'navigate-normalize') {
       await expect(page).toHaveURL(/\/about$/);
+      await expect(
+        page.getByRole('heading', { name: 'About Orvulix', exact: true })
+      ).toBeVisible();
+    }
     await page.waitForFunction(
       () => document.documentElement.dataset.mixedDone === 'yes'
     );
-    if (action === 'navigate-normalize') await page.goBack();
+    if (action === 'navigate-normalize') {
+      await page.goBack();
+      await expect(
+        page.getByRole('button', { name: 'Delete file', exact: true })
+      ).toHaveCount(0);
+    }
     await expect(
       page.getByRole('button', { name: 'Download', exact: true })
     ).toBeDisabled();
@@ -243,4 +252,84 @@ test('corrupt image batch is rejected by importer without publishing a GIF, then
     .locator('input[type=file]')
     .setInputFiles(await fixtures(['png', 'jpeg']));
   expect((await result(page)).frames).toBe(3);
+});
+test('mixed pixel budget and third-codec policy reject real inputs, then recover', async ({
+  page
+}) => {
+  await setup(page);
+  const large = await fixtures(['png', 'jpeg']);
+  large[0].buffer = await new Jimp(2001, 2000, 0xff0000ff).getBufferAsync(
+    Jimp.MIME_PNG
+  );
+  await page.locator('input[type=file]').setInputFiles(large);
+  await page.getByRole('alert').filter({ hasText: '4 megapixels' }).waitFor();
+  await expect(
+    page.getByRole('button', { name: 'Download', exact: true })
+  ).toBeDisabled();
+  await page.getByRole('button', { name: 'Clear', exact: true }).click();
+  await page.locator('input[type=file]').setInputFiles([
+    ...(await fixtures(['png', 'jpeg'])),
+    {
+      name: 'third.svg',
+      mimeType: 'image/svg+xml',
+      buffer: Buffer.from(
+        '<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32"><rect width="32" height="32" fill="green"/></svg>'
+      )
+    }
+  ]);
+  await page
+    .getByRole('alert')
+    .filter({ hasText: 'Remove other image formats' })
+    .waitFor();
+  await expect(
+    page.getByRole('button', { name: 'Download', exact: true })
+  ).toBeDisabled();
+  await page.getByRole('button', { name: 'Clear', exact: true }).click();
+  await page
+    .locator('input[type=file]')
+    .setInputFiles(await fixtures(['png', 'jpeg']));
+  expect((await result(page)).frames).toBe(3);
+});
+test('odd-size mixed frames retain legacy scale geometry and timing', async ({
+  page
+}) => {
+  await setup(page);
+  const make = async (formats: ('png' | 'jpeg')[]) =>
+    Promise.all(
+      formats.map(async (f, i) => ({
+        name: `odd-${i}.${f}`,
+        mimeType: `image/${f}`,
+        buffer: await new Jimp(
+          31,
+          29,
+          i ? 0x0000ffff : 0xff0000ff
+        ).getBufferAsync(`image/${f}`)
+      }))
+    );
+  await page
+    .locator('input[type=file]')
+    .setInputFiles(await make(['png', 'png']));
+  const baseline = await result(page);
+  expect(baseline.width).toBe(31);
+  expect(baseline.height % 2).toBe(0);
+  await page.getByRole('button', { name: 'Clear', exact: true }).click();
+  await page
+    .locator('input[type=file]')
+    .setInputFiles(await make(['png', 'jpeg']));
+  const mixed = await result(page);
+  expect([
+    mixed.width,
+    mixed.height,
+    mixed.frames,
+    mixed.loop,
+    mixed.delays
+  ]).toEqual([
+    baseline.width,
+    baseline.height,
+    baseline.frames,
+    baseline.loop,
+    baseline.delays
+  ]);
+  expect(mixed.centers[0][0]).toBeGreaterThan(200);
+  expect(mixed.centers[1][2]).toBeGreaterThan(200);
 });

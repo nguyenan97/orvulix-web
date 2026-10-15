@@ -188,6 +188,6 @@ complete GIF quality/timing work, mixed-format fidelity or other converters.
 
 feature/gif-mixed-format-fidelity fixes missing JPEG/PNG content in mixed concat
 jobs using bounded sequential normalization, with PR26 lifecycle retained.
-Implementation is on the feature branch until verified PR merge. Different-size
+Implementation is on the feature branch until verified PR #27 merge. Different-size
 padding/resizing, other formats and quality/timing remain separate work; see
 GIF_MIXED_FORMAT.md.
