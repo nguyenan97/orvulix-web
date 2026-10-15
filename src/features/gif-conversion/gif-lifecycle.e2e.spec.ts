@@ -1,7 +1,7 @@
 import { expect, test, Page } from '@playwright/test';
 import { readFile } from 'node:fs/promises';
 import Jimp from 'jimp';
-import { GifReader } from 'omggif';
+import { inspectGifFixture } from './testing/inspect-gif';
 async function engine(page: Page) {
   await page.route(
     'https://unpkg.com/@ffmpeg/core@0.12.6/dist/esm/**',
@@ -46,26 +46,17 @@ async function download(page: Page) {
   return readFile((await result.path())!);
 }
 function decode(bytes: Buffer) {
-  const gif = new GifReader(bytes);
-  const pixels = new Uint8Array(gif.width * gif.height * 4);
-  const colors: number[][] = [],
-    delays: number[] = [];
-  for (let i = 0; i < gif.numFrames(); i++) {
-    const info = gif.frameInfo(i);
-    delays.push(info.delay);
-    gif.decodeAndBlitFrameRGBA(i, pixels);
-    const offset = (16 * gif.width + 16) * 4;
-    colors.push(Array.from(pixels.subarray(offset, offset + 4)));
-  }
-  return {
-    width: gif.width,
-    height: gif.height,
-    frames: gif.numFrames(),
-    loop: gif.loopCount(),
+  const {
+    width,
+    height,
+    frames,
+    loop,
     delays,
-    colors
-  };
+    centers: colors
+  } = inspectGifFixture(bytes);
+  return { width, height, frames, loop, delays, colors };
 }
+
 for (const format of ['png', 'jpeg'] as const)
   for (const mode of ['fps', 'delay'] as const) {
     test(`${format} ${mode} preserves baseline GIF dimensions, frame order, loop and timing`, async ({
