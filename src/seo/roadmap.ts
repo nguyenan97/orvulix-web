@@ -2,11 +2,49 @@ import type { ContentSection } from './types';
 
 export const ROADMAP_BACKLOG_HEADING = 'Planned features';
 export const ROADMAP_BACKLOG_NOTICE =
-  'These features are planned, not available yet. Priority indicates the proposed order, not a release date. Scope and order may change after testing and feedback.';
+  'These milestones are planned or partial, not complete. Priority indicates the proposed order, not a release date. Development subscopes above do not imply production availability; scope and order may change after testing and feedback.';
 export const ROADMAP_FOUNDATION =
-  'Before new features, we will address regex-related browser freezes, review PDF Editor data handling, and investigate clipboard reliability.';
+  'Remaining foundation work includes PDF Editor data handling and clipboard checks beyond shared text results. Bounded list regex execution is merged into develop; production rollout is separate.';
 export const ROADMAP_BACKLOG_URL =
   'https://github.com/nguyenan97/orvulix-web/blob/develop/docs/FEATURE_BACKLOG.md';
+
+// Verified against develop e4233a0 and main 96494b8 on 2026-10-15.
+// These changes are NOT released to main. Recheck Git ancestry when updating.
+export const DEVELOPMENT_HEADING = 'Development updates';
+export const DEVELOPMENT_NOTICE =
+  'Merged into develop through PR #29, not released to production. This snapshot separates delivered development work from the planned features below. Website URL conversion remains paused.';
+export const DEVELOPMENT_UPDATES = [
+  {
+    title: 'Bounded list regex execution',
+    description:
+      'Merged into develop in PR #19. All 11 regex-splitting list tools use bounded workers with timeout, cancellation and recovery.'
+  },
+  {
+    title: 'Local HTML conversion',
+    description:
+      'Merged into develop in PR #20, with discovery corrections in PR #22. Experimental HTML upload/paste to PNG, JPEG and raster PDF; pagination, ranges, supported table headers and presets. PDF text is not searchable/selectable. URL conversion and custom fonts remain deferred.'
+  },
+  {
+    title: 'PNG dimension preservation',
+    description:
+      'Merged into develop in PR #24. Native dimensions and non-inflation checks for existing PNG compression. This is not a lossless optimizer.'
+  },
+  {
+    title: 'Bounded multi-file import',
+    description:
+      'Merged into develop in PR #25. Image, audio, video and PDF inputs support bounded picker/drop batches, ordering, rejection and cleanup. This does not complete every conversion consumer lifecycle.'
+  },
+  {
+    title: 'GIF output reliability',
+    description:
+      'Merged into develop in PR #26 and PR #27. Stale-result prevention and bounded mixed PNG/JPEG normalization. Explicit Create, richer progress and quality work remain separate.'
+  },
+  {
+    title: 'Merge PDF output ownership',
+    description:
+      'Merged into develop in PR #29. Clear, input edits and unmount invalidate old runs; page order and geometry are retained. Cancellation is cooperative, with input/page/output budgets.'
+  }
+] as const;
 
 // Public summaries of docs/FEATURE_BACKLOG.md, in the same proposed order.
 // Keep this module React-free so prerender and UI use the same copy.
@@ -49,7 +87,7 @@ export const PLANNED_FEATURES = [
   {
     title: 'Images to GIF improvements',
     benefit:
-      'Make GIF creation easier with drag-and-drop, flexible frame timing and clear processing feedback.'
+      'Build on multi-file import and GIF reliability fixes in develop. Explicit Create, richer progress and further timing UX remain planned; quality optimization is separate.'
   },
   {
     title: 'Audio/Video Trim Timeline',
@@ -77,6 +115,12 @@ export const plannedFeatureSummary = (benefit: string, index: number) =>
   `Planned. Priority ${index + 1}. ${benefit}`;
 
 export const roadmapSections = (): ContentSection[] => [
+  { heading: DEVELOPMENT_HEADING, kind: 'list', items: [DEVELOPMENT_NOTICE] },
+  {
+    heading: 'Delivered development scope',
+    kind: 'examples',
+    examples: [...DEVELOPMENT_UPDATES]
+  },
   {
     heading: ROADMAP_BACKLOG_HEADING,
     kind: 'list',
