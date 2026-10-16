@@ -266,11 +266,13 @@ test('code file selection preserves source text and empty-file retry with native
 }) => {
   await page.goto(route('/json/prettify'));
   await loadJson(page);
-  const sourceUri = await page.evaluate(() =>
-    (window as MonacoWindow)
-      .monaco!.editor.getModels()
-      .find((model) => model.getValue() === input)!
-      .uri.toString()
+  const sourceUri = await page.evaluate(
+    (expected) =>
+      (window as MonacoWindow)
+        .monaco!.editor.getModels()
+        .find((model) => model.getValue() === expected)!
+        .uri.toString(),
+    input
   );
   const picker = page.locator('input[type=file]');
   const next = '{"new":"Việt Nam 😀","literal":"x\\ny"}';

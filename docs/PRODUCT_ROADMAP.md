@@ -247,11 +247,13 @@ limits and save/share follow-ups; delivery is development-only; production relea
 
 ## Shared text/code file-import ownership
 
-Implemented on the current feature branch, not yet merged: a shared native
+Implementation on `feature/text-file-import-ownership` (PR #34): a shared native
 FileReader owner cancels old reads on edits, replacement files, external value
 changes and unmount. Queued callbacks cannot overwrite newer content. Read errors
 get retry guidance and the picker permits reselecting the same file. Existing
 readAsText decoding and empty files are retained. See
 [tasks/text-file-import-ownership.md](tasks/text-file-import-ownership.md).
-Whole-file allocation/decoding limits, other file input components and pending
-clipboard notification ownership remain separate follow-ups. No production release.
+Merge status is authoritative in PR #34; this is not a production release.
+Whole-file allocation/decoding limits, JSON Prettify stale-result behavior on empty
+source, other file input components and pending
+clipboard notification ownership remain separate follow-ups.

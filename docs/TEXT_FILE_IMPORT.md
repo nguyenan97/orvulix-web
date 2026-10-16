@@ -40,3 +40,10 @@ measure representative editor/tool memory behavior, choose documented byte budge
 and actionable rejection/recovery UX, then test at/beyond limits on three browser
 engines. Other file inputs and pending clipboard notification ownership require
 separate investigations. This lifecycle change does not claim those are resolved.
+
+A pre-existing JSON Prettify follow-up was confirmed during native validation:
+its compute function leaves the prior result when source becomes empty. Owner:
+Orvulix maintainers. A separate output-ownership fix should reproduce that trigger,
+clear stale output/errors on empty/invalid edits and retain formatting/copy/download
+semantics for valid JSON with component and native browser coverage. This task
+asserts the imported source model, and deliberately preserves tool computation.

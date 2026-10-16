@@ -2,11 +2,11 @@
 
 - Updated: 2026-10-16 UTC
 - Branch / base: feature/text-file-import-ownership / develop
-- PR: not opened
-- Phase: developing
+- PR: https://github.com/nguyenan97/orvulix-web/pull/34
+- Phase: CI
 - Delivery mode: develop-merge
 - Authorization: current scoped implementation through exact-head gates only.
-- Last verified base: 663b0dc; uncommitted shared hook, two input integrations and tests.
+- Last verified head: 2b5488a on base 663b0dc. Uncommitted browser argument fix and documentation are included in the next checkpoint commit.
 
 ## Scope and acceptance
 
@@ -52,3 +52,39 @@ remaining initial browser run to avoid repeating the known oracle failure.
 A transient exec transport disconnect recovered; reader process/log persisted.
 Runtime source is unchanged. Next: rerun all54 relevant browser cases, Pages and
 final review/CI. Task PR remains draft; no merge authorization gate is bypassed.
+
+The next browser iteration passed 51 cases but the new source-model lookup used
+an unpassed Node fixture variable in page.evaluate, causing ReferenceError on all
+three engines. Passed the fixture as an explicit browser argument. No runtime
+code/assertion/deadline changed. Revalidate the corrected case plus Pages flows;
+the 51 unaffected cases retain their recorded evidence rather than counting the
+failed suite as a pass.
+
+## Final local review checkpoint
+
+Pages build validates158 HTML files and all15 focused Pages cases pass across
+Chromium/Firefox/WebKit, including the corrected source-model assertion and
+static/React roadmap noindex/no-canonical checks. Production build validates157
+routes/404/sitemap; full units1288/141 and security26/gate pass. Targeted hook
+ESLint, typecheck, text style, whitespace and list-worker audit pass. Production
+browser evidence:51 unaffected cases passed; rerun all54 after the harness fix
+on the restored production artifact, then record final outcome in PR34.
+
+Standards review: one reader identity, cleanup-before-abort, latest committed
+callbacks, event cancellation before publishing edits, small upstream adapters,
+no persistence/dependency/hosting changes. No unresolved task blocker found.
+Requirements review: both text/code adapters covered; decoding, empty imports,
+same-file retry, edit/replacement/reset/unmount and error recovery retained.
+No claim of hard memory bounds or tool-result ownership. Follow-ups with owner
+and acceptance criteria are in TEXT_FILE_IMPORT.md. Self-review is not independent
+approval; current GitHub develop rules do not require an external approval.
+
+Security run38855203238 passes at2b5488a: inherited15 package findings/6 advisories,
+0 unaccepted high/critical, original temporary exception unchanged; CodeQL5 high
+findings match the prior exact rule/path/line baseline. This is not zero findings.
+
+Next: push checkpoint/test fix, run final54 production browser cases, finalize
+PR body with actual results and inspect latest head CI before matched-head merge.
+Fetch/recheck develop and required reviews/rules first. Then verify merge ancestry
+and cleanup only this task branch. Main96494b8 and user sitemap remain untouched.
+PR metadata/Git, not this historical checkpoint, determine current merge state.
