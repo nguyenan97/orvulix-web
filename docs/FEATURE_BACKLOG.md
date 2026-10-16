@@ -15,11 +15,11 @@ update it alongside this ordered plan. Technical criteria stay in this document.
 
 ## Verified delivery snapshot
 
-Reconciled 2026-10-16 against develop `534f2a6` and main `96494b8`.
+Reconciled 2026-10-16 against develop `663b0dc` and main `96494b8`.
 Every PR below is merged and its merge commit is reachable from develop, not main.
 Production release remains separate. Issue research below retains its original
 October 11 snapshot; this delivery reconciliation is not a fresh review of all
-upstream issues. PR30-32 clipboard delivery and the current PDF consent scope are described below.
+upstream issues. PR30-32 clipboard delivery and PR33 PDF consent are described below.
 
 | Scope | Verified delivery | Still outside that delivery |
 | --- | --- | --- |
@@ -32,6 +32,7 @@ upstream issues. PR30-32 clipboard delivery and the current PDF consent scope ar
 | Text-result clipboard | Develop PR #30, `ef29d62` | Other clipboard consumers/old Umbrel reports need their own verification. |
 | Code-result clipboard | Develop PR #31, `17c549d` | Input/file consumers and editor-wide HTTP gestures require separate work. |
 | Input clipboard | Develop PR #32, `534f2a6` | File/diff consumers and editor-wide handlers are separate. |
+| PDF Editor opt-in | Develop PR #33, `663b0dc` | Live audit covers load/render only; save/share/retention remain follow-ups. |
 | Merge PDF lifecycle | Develop PR #29, `e4233a0` | Cancellation is cooperative; other PDF consumers/worker isolation are separate. |
 
 ## Delivery rules
@@ -262,10 +263,24 @@ remain separate. No HTTP copying fallback or production release.
 
 ## PDF Editor consent and bounded privacy audit
 
-Current branch: external SimplePDF editor is disabled until explicit opt-in;
+Merged into develop in PR #33 (`663b0dc`): external SimplePDF editor is disabled until explicit opt-in;
 closing removes the iframe and a new tool mount starts disabled. Disclosure and
 SEO explain observed analytics and document-fingerprint metadata. Synthetic live
 load audit and limits are recorded in [PDF_EDITOR_PRIVACY.md](PDF_EDITOR_PRIVACY.md).
 This is not a complete audit of save/share, accounts, provider retention or future
 remote code. Those are follow-ups, not local-only guarantees. Delivery is tracked
-by tasks/pdf-editor-consent.md and its PR, not marked merged or production here.
+by tasks/pdf-editor-consent.md; this is not released to production.
+
+
+## Shared text/code file-import ownership
+
+Implementation on `feature/text-file-import-ownership` (PR #34): a shared native
+FileReader owner cancels old reads on edits, replacement files, external value
+changes and unmount. Queued callbacks cannot overwrite newer content. Read errors
+get retry guidance and the picker permits reselecting the same file. Existing
+readAsText decoding and empty files are retained. See
+[tasks/text-file-import-ownership.md](tasks/text-file-import-ownership.md).
+Merge status is authoritative in PR #34; this is not a production release.
+Whole-file allocation/decoding limits, JSON Prettify stale-result behavior on empty
+source, other file input components and pending
+clipboard notification ownership remain separate follow-ups.

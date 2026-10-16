@@ -1,5 +1,6 @@
 import { expect, test, type Page } from '@playwright/test';
 import { readFile } from 'node:fs/promises';
+import { deferTextReads } from '../text-file-import/testing/defer-reads';
 const prefix = process.env.COPY_TEST_PREFIX ?? '';
 const route = (path: string) => prefix + path;
 const input = '{"message":"Việt Nam 😀","literal":"a\\nb"}';
@@ -258,4 +259,92 @@ test('JSON code input copies raw source and subsequent editor changes using nati
     expect(await page.evaluate(() => navigator.clipboard.readText())).toBe(
       next
     );
+});
+
+test('code file selection preserves source text and empty-file retry with native decoding', async ({
+  page
+}) => {
+  await page.goto(route('/json/prettify'));
+  await loadJson(page);
+  const sourceUri = await page.evaluate(
+    (expected) =>
+      (window as MonacoWindow)
+        .monaco!.editor.getModels()
+        .find((model) => model.getValue() === expected)!
+        .uri.toString(),
+    input
+  );
+  const picker = page.locator('input[type=file]');
+  const next = '{"new":"Việt Nam 😀","literal":"x\\ny"}';
+  const sample = {
+    name: 'same.json',
+    mimeType: 'application/json',
+    buffer: Buffer.from(next)
+  };
+  await picker.setInputFiles(sample);
+  await page.waitForFunction(
+    (s) =>
+      (window as MonacoWindow).monaco?.editor
+        .getModels()
+        .some((m) => m.getValue() === s),
+    next
+  );
+  await picker.setInputFiles({ ...sample, buffer: Buffer.alloc(0) });
+  await page.waitForFunction((uri) => {
+    const monaco = (window as MonacoWindow).monaco!;
+    return monaco.editor.getModel(monaco.Uri.parse(uri))?.getValue() === '';
+  }, sourceUri);
+  await picker.setInputFiles(sample);
+  await page.waitForFunction(
+    (s) =>
+      (window as MonacoWindow).monaco?.editor
+        .getModels()
+        .some((m) => m.getValue() === s),
+    next
+  );
+});
+
+test('pending code file cannot overwrite later keyboard edits or newer file selection', async ({
+  page
+}) => {
+  const release = await deferTextReads(page);
+  await page.goto(route('/json/prettify'));
+  await page.waitForFunction(
+    () => (window as MonacoWindow).monaco?.editor.getModels().length === 2
+  );
+  const picker = page.locator('input[type=file]');
+  const sample = {
+    name: 'old.json',
+    mimeType: 'application/json',
+    buffer: Buffer.from('{"old":true}')
+  };
+  await picker.setInputFiles(sample);
+  const editor = page
+    .locator('.monaco-editor')
+    .first()
+    .locator('textarea.inputarea');
+  await editor.focus();
+  await editor.pressSequentially('{"edit":true}');
+  await release();
+  await page.waitForFunction(
+    () =>
+      (window as MonacoWindow).monaco?.editor
+        .getModels()
+        .some((m) => m.getValue() === '{"edit":true}')
+  );
+  await picker.setInputFiles(sample);
+  const newest = '{"new":"Việt Nam 😀"}';
+  await picker.setInputFiles({
+    ...sample,
+    name: 'new.json',
+    buffer: Buffer.from(newest)
+  });
+  await release();
+  await page.waitForFunction(
+    (s) =>
+      (window as MonacoWindow).monaco?.editor
+        .getModels()
+        .some((m) => m.getValue() === s),
+    newest
+  );
 });

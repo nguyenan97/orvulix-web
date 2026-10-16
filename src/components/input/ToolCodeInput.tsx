@@ -1,5 +1,6 @@
 import { Box, useTheme } from '@mui/material';
-import React, { useContext, useRef } from 'react';
+import { useContext, useRef } from 'react';
+import { useTextFileImport } from '../../features/text-file-import/useTextFileImport'; // ORVULIX: cancel stale file reads.
 import { CustomSnackBarContext } from '../../contexts/CustomSnackBarContext';
 import InputHeader from '../InputHeader';
 import InputFooter from './InputFooter';
@@ -36,19 +37,9 @@ export default function ToolCodeInput({
       });
   };
 
-  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        const text = e.target?.result;
-        if (typeof text === 'string') {
-          onChange(text);
-        }
-      };
-      reader.readAsText(file);
-    }
-  };
+  const importer = useTextFileImport(value, onChange, (message) =>
+    showSnackBar(message, 'error')
+  );
 
   const handleImportClick = () => {
     fileInputRef.current?.click();
@@ -105,7 +96,7 @@ export default function ToolCodeInput({
             language={language}
             theme={theme.palette.mode === 'dark' ? 'vs-dark' : 'light'}
             value={value}
-            onChange={(value) => onChange(value ?? '')}
+            onChange={(value) => importer.edit(value ?? '')}
             options={{
               automaticLayout: true,
               folding: true,
@@ -133,7 +124,7 @@ export default function ToolCodeInput({
             accept="*"
             ref={fileInputRef}
             style={{ display: 'none' }}
-            onChange={handleFileChange}
+            onChange={importer.pick}
           />
         </Box>
       </Box>

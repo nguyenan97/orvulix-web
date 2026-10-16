@@ -4,15 +4,15 @@ export const ROADMAP_BACKLOG_HEADING = 'Planned features';
 export const ROADMAP_BACKLOG_NOTICE =
   'These milestones are planned or partial, not complete. Priority indicates the proposed order, not a release date. Development subscopes above do not imply production availability; scope and order may change after testing and feedback.';
 export const ROADMAP_FOUNDATION =
-  'Remaining foundation work includes PDF Editor data handling and clipboard checks in other input/file consumers. Bounded list regex execution is merged into develop; production rollout is separate.';
+  'Remaining foundation work includes PDF Editor save/share/retention auditing and clipboard checks in other input/file consumers. Bounded list regex execution is merged into develop; production rollout is separate.';
 export const ROADMAP_BACKLOG_URL =
   'https://github.com/nguyenan97/orvulix-web/blob/develop/docs/FEATURE_BACKLOG.md';
 
-// Verified against develop 534f2a6 and main 96494b8 on 2026-10-16.
+// Verified against develop 663b0dc and main 96494b8 on 2026-10-16.
 // These changes are NOT released to main. Recheck Git ancestry when updating.
 export const DEVELOPMENT_HEADING = 'Development updates';
 export const DEVELOPMENT_NOTICE =
-  'Merged into develop through PR #32, not released to production. This snapshot separates delivered development work from the planned features below. Website URL conversion remains paused.';
+  'Merged into develop through PR #33, not released to production. This snapshot separates delivered development work from the planned features below. Website URL conversion remains paused.';
 export const DEVELOPMENT_UPDATES = [
   {
     title: 'Bounded list regex execution',
@@ -58,6 +58,11 @@ export const DEVELOPMENT_UPDATES = [
     title: 'Input clipboard reliability',
     description:
       'Merged into develop in PR #32. Text/code input Copy retains source values and reports native clipboard failures. Code-input import and copy footers guard unsupported WebKit gestures. File/diff consumers and editor-wide handlers remain separate.'
+  },
+  {
+    title: 'External PDF Editor opt-in',
+    description:
+      'Merged into develop in PR #33. SimplePDF loads only after explicit opt-in, with analytics/document-metadata disclosure. The live audit covers load/render; save/share and retention remain follow-ups.'
   }
 ] as const;
 
