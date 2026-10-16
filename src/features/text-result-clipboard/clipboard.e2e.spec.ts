@@ -154,7 +154,7 @@ test('roadmap static and React views separate verified develop delivery from pla
     await page.goto(route('/roadmap'));
     const development = page.getByRole('region', { name: DEVELOPMENT_HEADING });
     await expect(development).toBeVisible();
-    await expect(development.getByRole('listitem')).toHaveCount(9);
+    await expect(development.getByRole('listitem')).toHaveCount(10);
     for (const target of [page, staticPage]) {
       await expect(
         target.getByText(DEVELOPMENT_NOTICE, { exact: true })

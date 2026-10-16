@@ -11,12 +11,12 @@ Our approach is to make existing tools better first, then explore new capabiliti
 
 ## Verified development delivery
 
-Reconciled 2026-10-16 against develop `534f2a6` and main `96494b8`. PR19/20/22
-and PR24-32 are merged into develop, not released to main. These cover bounded
+Reconciled 2026-10-16 against develop `663b0dc` and main `96494b8`. PR19/20/22
+and PR24-33 are merged into develop, not released to main. These cover bounded
 list regex, local HTML conversion/discovery, PNG dimensions, multi-file input,
 GIF reliability, engineering practices, Merge PDF ownership and text/code-result clipboard reliability. The authoritative
 [delivery snapshot](FEATURE_BACKLOG.md#verified-delivery-snapshot) records PRs,
-merge commits and remaining scope. The current PDF Editor consent scope is tracked below.
+merge commits and remaining scope. PR33 PDF Editor opt-in and its bounded audit are tracked below.
 
 ## 1. Better everyday tools
 
@@ -238,8 +238,20 @@ remain follow-ups; there is no deprecated fallback or wider issue390 claim.
 
 ## PDF Editor external-service consent
 
-The current branch requires enabling SimplePDF before loading its external editor
+PR33 (`663b0dc`) merged into develop and requires enabling SimplePDF before loading its external editor
 and discloses observed analytics/document metadata. Closing removes the embed;
 consent is not persisted. This is a bounded privacy correction, not a new local
 PDF editor or full provider audit. See PDF_EDITOR_PRIVACY.md for measured scope,
-limits and save/share follow-ups; delivery remains tracked by the feature PR.
+limits and save/share follow-ups; delivery is development-only; production release is separate.
+
+
+## Shared text/code file-import ownership
+
+Implemented on the current feature branch, not yet merged: a shared native
+FileReader owner cancels old reads on edits, replacement files, external value
+changes and unmount. Queued callbacks cannot overwrite newer content. Read errors
+get retry guidance and the picker permits reselecting the same file. Existing
+readAsText decoding and empty files are retained. See
+[tasks/text-file-import-ownership.md](tasks/text-file-import-ownership.md).
+Whole-file allocation/decoding limits, other file input components and pending
+clipboard notification ownership remain separate follow-ups. No production release.
