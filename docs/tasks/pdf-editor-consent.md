@@ -2,8 +2,8 @@
 
 - Updated: 2026-10-16 Asia/Bangkok
 - Branch/base: feature/pdf-editor-consent / develop 534f2a6
-- PR: not opened; delivery mode develop-merge under AGENTS.md
-- Phase: validating, implementation uncommitted. Resolve Git/PR state when resuming.
+- PR: https://github.com/nguyenan97/orvulix-web/pull/33; delivery mode develop-merge under AGENTS.md
+- Phase: validation correction, changes uncommitted. Prior head e055142. Resolve Git/PR state when resuming.
 - Preserve untracked public/sitemap.xml SHA256 5f9cf3fbeb7d4acfd9b7f0e79dd10ea184df2f4a8cfb11f6a529cf2f538d7df3.
 
 ## Scope and acceptance
@@ -68,3 +68,16 @@ provider failure, exact same default provider editor URL. Tests distinguish
 controlled gate fixture from live provider rendering; save/share audit deferred
 with owner/acceptance in PDF_EDITOR_PRIVACY.md. Self-review is not independent
 approval. Acceptance and exact-head CI gates still pending.
+
+
+## Validation correction
+
+Initial full unit/CI gate at e055142: 1272 passed / 1 failed, 140 files. Existing
+SEO override test capped all entries at 30; the new mandatory external-service
+disclosure is the 31st. Retain the 20-30 editorial budget excluding only pdf/editor,
+require that separate disclosure explicitly, and keep every existing route/file,
+completeness, wording and model/length/uniqueness validation across all entries.
+Rephrase a negated no-upload guarantee to straightforward provider-policy copy,
+which also satisfies the retained forbidden-wording rule. No broad assertion
+removal or runtime budget relaxation. Recheck focused/full units and fresh build.
+Full units first run have no other failures; use new exact-head CI for full result.

@@ -13,7 +13,7 @@ const content: ToolSeoOverride = {
   notes: [
     'The editor is hosted by SimplePDF, not a local-only Orvulix renderer. It receives analytics and document metadata, including a document fingerprint.',
     'No editor iframe is created until you enable it. The choice is not saved; a new tool visit requires enabling it again.',
-    'Closing removes the editor from this page and cannot recall information already sent. Review the provider policy for file handling; this is not a guarantee that documents never leave your device.',
+    'Closing removes the editor from this page and cannot recall information already sent. Review the provider policy for file handling and retention.',
     'Availability and editing behavior depend on SimplePDF. Other PDF tools have their own data-handling behavior.'
   ],
   faq: [
