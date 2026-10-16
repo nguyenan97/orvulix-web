@@ -3,8 +3,8 @@
 - Updated: 2026-10-16 UTC
 - Branch / base: feature/json-minify-result-ownership / develop
 - Base SHA: 18634f76d9ed9da9f9f0ea83a072838e7b21d8e5
-- PR: not opened
-- Phase: validating
+- PR: https://github.com/nguyenan97/orvulix-web/pull/36
+- Phase: CI
 - Delivery mode: develop-merge, standing AGENTS authorization; no main release
 
 ## Scope and acceptance
@@ -30,20 +30,44 @@ Preserve untracked public/sitemap.xml hash
 
 ## Validation and review
 
-Implemented typed current outcomes, inline error/output adapter and source-derived
-format with the original service unchanged. Focused tests 17 passed; typecheck,
-security:test (26), security:check (15 package findings / 6 advisories, 0 unaccepted
-high/critical and one existing temporary exception), targeted ESLint and Pages
-preparation test passed. Full unit suite and production build running. Production
-and Pages native three-engine flows pending. New browser cases are included by the
-existing CI code-result spec list. Text style/working diff whitespace pass.
-Public roadmap reconciles verified PR35, not a premature claim for this task.
-Review Standards and Requirements separately against the full diff. Self-review
-is not independent approval. Check exact-head CI/rules before authorized merge.
+Runtime/test tree: d6181eb51476fca2e88a87f5b5d84948895b76cc. This checkpoint
+update is documentation-only; final delivery/head/merge evidence belongs in PR36.
+
+- Focused new tests: 17 passed; full suite: 1320 tests / 145 files passed.
+- Typecheck and targeted ESLint passed. Production build: 157 routes plus 404;
+  dirty-source build omitted one lastmod before commit, without route loss.
+- Production native code-editor and roadmap flows: 42 passed across Chromium,
+  Firefox and WebKit, retries 0. Includes both new Minify flows, existing Prettify,
+  native copy/download, insecure-origin policy and static/React roadmap behavior.
+- Security policy tests: 26 passed. Audit: 15 package findings / 6 advisories;
+  0 unaccepted high/critical, one pre-existing temporary exception unchanged.
+- First-head Security CI: 38873867650 passed. CodeQL reports the same five high
+  findings as base: bad-tag-filter at scripts/seo/validate-html.mjs:260;
+  incomplete-multi-character-sanitization at scripts/pages/prepare.mjs:24 and
+  scripts/seo/validate-html.mjs:260; double-escaping at src/seo/SeoContent.test.tsx:18;
+  incomplete-sanitization at string/table-text-converter/service.ts:204. No new
+  finding in task scope. This does not resolve the inherited findings.
+- Pages preparation fixture passed; full Pages build/smoke running/pending.
+- List worker audit passed: 18 pure inputs, emitted 10405 bytes.
+- Text style and full-PR whitespace passed; rerun after this checkpoint commit.
+
+Standards review: isolated typed module; no any, new dependencies, HTML injection,
+queued output/error state, shared-tool migration or deployment changes. No parse
+messages containing source are exposed. Whole-input synchronous allocation and
+already initiated native actions remain explicit limitations (see JSON_MINIFY.md).
+Requirements review: original two behavior regressions red before fix; current
+output/action ownership, native recovery, JSONL bytes/extensions and valid service
+semantics verified. Public roadmap records only previously merged PR35, not this
+branch as delivered. No task-blocking finding found in the full diff. These are
+self-review passes, not independent approval. Actual repository rules still apply.
 
 ## Resume point
 
-Complete running unit/build checks (scratch minify-unit.log, minify-build.log),
-then native three-engine code/roadmap regressions and Pages smoke. Create one PR
-into develop, inspect exact-head CI and full diff, apply merge gates. No PR yet.
-Owned checks only, no persistent app server yet. Never stage user sitemap.
+Check actual Git/PR/CI state before acting. Finish Pages build and run the 12
+Minify/roadmap native cases with COPY_TEST_PREFIX=/orvulix-web using the scratch
+Pages config. Final results must update PR36 body, not be inferred from this file.
+Scratch logs: /workspace/work/minify-{unit,browser,pages-build,pages-browser}.log.
+Then mark PR ready, inspect exact latest-head CI and current develop/main/rules/
+comments. Merge only after all acceptance and CI gates, then verify ancestry and
+safely delete only this feature branch. No main release or manual deployment.
+Preserve user sitemap; it remains untracked with the hash recorded above.
