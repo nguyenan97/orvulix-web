@@ -289,7 +289,7 @@ clipboard notification ownership remain separate follow-ups.
 
 ## JSON Prettify result ownership
 
-Implementation on `feature/json-prettify-result-ownership`, not yet merged:
+Implementation on `feature/json-prettify-result-ownership` (PR #35; its metadata records merge status):
 empty/invalid source has no stale output and cannot be copied/downloaded. Inline
 validation reflects current input and disappears on recovery. Output derives
 synchronously from the current source/Formik options using the existing formatter.

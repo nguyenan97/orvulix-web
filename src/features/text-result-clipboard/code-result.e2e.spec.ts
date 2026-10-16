@@ -367,19 +367,25 @@ test('prettify clears unavailable output/actions and recovers from invalid and e
     mimeType: 'application/json',
     buffer: Buffer.from('{broken')
   });
-  await expect(page.getByRole('alert')).toHaveText('Invalid JSON string');
+  await expect(
+    page.getByRole('alert', { name: 'JSON formatting error' })
+  ).toHaveText('Invalid JSON string');
   await expect(copy(page)).toBeDisabled();
   await expect(download).toBeDisabled();
   expect(await monacoValues()).toEqual(expect.arrayContaining(['{broken', '']));
   await page.getByText('Use Tabs', { exact: true }).first().click();
-  await expect(page.getByRole('alert')).toHaveCount(1);
+  await expect(
+    page.getByRole('alert', { name: 'JSON formatting error' })
+  ).toHaveCount(1);
   await expect(download).toBeDisabled();
   await picker.setInputFiles({
     name: 'empty.json',
     mimeType: 'application/json',
     buffer: Buffer.alloc(0)
   });
-  await expect(page.getByRole('alert')).toHaveCount(0);
+  await expect(
+    page.getByRole('alert', { name: 'JSON formatting error' })
+  ).toHaveCount(0);
   await expect.poll(monacoValues).toEqual(['', '']);
   await expect(copy(page)).toBeDisabled();
   await picker.setInputFiles({
@@ -388,7 +394,9 @@ test('prettify clears unavailable output/actions and recovers from invalid and e
     buffer: Buffer.from('{"new":"Việt Nam 😀","literal":"x\\ny"}')
   });
   await expect(download).toBeEnabled();
-  await expect(page.getByRole('alert')).toHaveCount(0);
+  await expect(
+    page.getByRole('alert', { name: 'JSON formatting error' })
+  ).toHaveCount(0);
   const expected = '{\n\t"new": "Việt Nam 😀",\n\t"literal": "x\\ny"\n}';
   const event = page.waitForEvent('download');
   await download.click();
@@ -423,14 +431,20 @@ test('prettify keyboard clearing invalidates output and current errors without s
       .monaco!.editor.getModels()
       .every((m) => m.getValue() === '')
   );
-  await expect(page.getByRole('alert')).toHaveCount(0);
+  await expect(
+    page.getByRole('alert', { name: 'JSON formatting error' })
+  ).toHaveCount(0);
   await editor.pressSequentially('invalid');
-  await expect(page.getByRole('alert')).toHaveText('Invalid JSON string');
+  await expect(
+    page.getByRole('alert', { name: 'JSON formatting error' })
+  ).toHaveText('Invalid JSON string');
   await expect(copy(page)).toBeDisabled();
   await page
     .getByRole('heading', { name: 'Beautify an Ugly JSON Array', exact: true })
     .click();
-  await expect(page.getByRole('alert')).toHaveCount(0);
+  await expect(
+    page.getByRole('alert', { name: 'JSON formatting error' })
+  ).toHaveCount(0);
   const expected = '[\n    1,\n    2,\n    3\n]';
   await page.waitForFunction(
     (s) =>

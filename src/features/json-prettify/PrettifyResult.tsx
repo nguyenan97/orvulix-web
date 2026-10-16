@@ -24,8 +24,12 @@ export function PrettifyResult({
   );
   return (
     <Box>
-      {result.status === 'invalid' && (
-        <Alert severity="error" sx={{ mb: 1 }}>
+      {'message' in result && (
+        <Alert
+          severity="error"
+          aria-label="JSON formatting error"
+          sx={{ mb: 1 }}
+        >
           {result.message}
         </Alert>
       )}

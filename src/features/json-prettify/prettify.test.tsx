@@ -70,7 +70,9 @@ describe('JSON Prettify current result ownership', () => {
     v.edit(source);
     v.edit('{invalid');
     expect(screen.getByTestId('code-result')).toHaveValue('');
-    expect(screen.getByRole('alert')).toHaveTextContent('Invalid JSON string');
+    expect(
+      screen.getByRole('alert', { name: 'JSON formatting error' })
+    ).toHaveTextContent('Invalid JSON string');
     expect(
       screen.getByText('resultFooter.download').closest('button')
     ).toBeDisabled();

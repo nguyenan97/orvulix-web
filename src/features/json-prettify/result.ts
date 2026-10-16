@@ -3,7 +3,7 @@ import type { InitialValuesType } from '../../pages/tools/json/prettify/types';
 
 export type PrettifyResult =
   | { status: 'empty'; value: '' }
-  | { status: 'invalid'; value: ''; message: string }
+  | { status: 'invalid' | 'unavailable'; value: ''; message: string }
   | { status: 'valid'; value: string };
 
 /** Preserve the existing formatter; own only the current input/options outcome. */
@@ -14,7 +14,15 @@ export function evaluatePrettify(
   if (input === '') return { status: 'empty', value: '' };
   try {
     return { status: 'valid', value: beautifyJson(input, options) };
-  } catch {
-    return { status: 'invalid', value: '', message: 'Invalid JSON string' };
+  } catch (error) {
+    const invalid =
+      error instanceof Error && error.message === 'Invalid JSON string';
+    return {
+      status: invalid ? 'invalid' : 'unavailable',
+      value: '',
+      message: invalid
+        ? 'Invalid JSON string'
+        : 'Could not format this JSON. Try a smaller or less deeply nested input.'
+    };
   }
 }

@@ -11,7 +11,7 @@ tests reproduce both transitions against the original page.
 ## Current outcome
 
 `src/features/json-prettify/result.ts` delegates formatting to the existing service
-and returns a typed empty/invalid/valid outcome. The result component reads the
+and returns a typed empty/invalid/unavailable/valid outcome. The result component reads the
 current source and Formik indentation primitives in the same render. It memoizes
 that pure calculation without queued result/error state. Monaco may apply its
 value prop during its own editor lifecycle; action availability already belongs
@@ -21,7 +21,10 @@ Empty source clears output/message and disables actions. Whitespace-only source
 is invalid, preserving native parser semantics. Invalid source clears output and
 shows one generic inline MUI alert. Valid input/options replace the output and
 remove validation immediately, without a parse-error snackbar surviving recovery.
-Other notifications, such as clipboard errors, retain their existing lifecycle.
+A valid but unsupported formatting operation gets generic size/depth guidance,
+not a false syntax claim. Other notifications, such as clipboard errors, retain
+their existing lifecycle. An already initiated native clipboard/download gesture
+is not revoked by later edits; pending notice ownership remains separate.
 
 The page's legacy ToolContent compute callback is deliberately a named no-op.
 ToolContent still owns Formik/options/examples; only this result child derives the
