@@ -39,3 +39,16 @@ No hard memory/CPU cap is claimed; whole-file text loading remains a follow-up.
 Finish edge-case and native tests, then docs/validation. Preserve user-owned
 public/sitemap.xml untracked (SHA256 5f9cf3fbeb7d4acfd9b7f0e79dd10ea184df2f4a8cfb11f6a529cf2f538d7df3).
 No independent review claimed. Main/production/deployment policies untouched.
+
+## Validation checkpoint after first browser iteration
+
+PR34 head 653e8f3. Full units: 1288/141 pass; production build157/404,
+security26/gate and targeted hook ESLint pass. First browser iteration found a
+new test oracle error: empty imported source was incorrectly expected to clear
+all Monaco models, including the inherited JSON result which compute intentionally
+leaves unchanged on empty input. Corrected to assert the identified source model
+is empty; do not change tool computation in this lifecycle task. Stopped the
+remaining initial browser run to avoid repeating the known oracle failure.
+A transient exec transport disconnect recovered; reader process/log persisted.
+Runtime source is unchanged. Next: rerun all54 relevant browser cases, Pages and
+final review/CI. Task PR remains draft; no merge authorization gate is bypassed.

@@ -261,11 +261,17 @@ test('JSON code input copies raw source and subsequent editor changes using nati
     );
 });
 
-test('code file selection preserves the latest file and empty-file retry with native decoding', async ({
+test('code file selection preserves source text and empty-file retry with native decoding', async ({
   page
 }) => {
   await page.goto(route('/json/prettify'));
   await loadJson(page);
+  const sourceUri = await page.evaluate(() =>
+    (window as MonacoWindow)
+      .monaco!.editor.getModels()
+      .find((model) => model.getValue() === input)!
+      .uri.toString()
+  );
   const picker = page.locator('input[type=file]');
   const next = '{"new":"Việt Nam 😀","literal":"x\\ny"}';
   const sample = {
@@ -282,12 +288,10 @@ test('code file selection preserves the latest file and empty-file retry with na
     next
   );
   await picker.setInputFiles({ ...sample, buffer: Buffer.alloc(0) });
-  await page.waitForFunction(
-    () =>
-      (window as MonacoWindow).monaco?.editor
-        .getModels()
-        .every((m) => m.getValue() === '')
-  );
+  await page.waitForFunction((uri) => {
+    const monaco = (window as MonacoWindow).monaco!;
+    return monaco.editor.getModel(monaco.Uri.parse(uri))?.getValue() === '';
+  }, sourceUri);
   await picker.setInputFiles(sample);
   await page.waitForFunction(
     (s) =>
