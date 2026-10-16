@@ -43,7 +43,7 @@ separate investigations. This lifecycle change does not claim those are resolved
 
 A pre-existing JSON Prettify follow-up was confirmed during native validation:
 its compute function leaves the prior result when source becomes empty. Owner:
-Orvulix maintainers. A separate output-ownership fix should reproduce that trigger,
+Orvulix maintainers. The JSON Prettify result-ownership branch addresses that trigger (see JSON_PRETTIFY.md); its PR determines merge status. The scoped fix must
 clear stale output/errors on empty/invalid edits and retain formatting/copy/download
 semantics for valid JSON with component and native browser coverage. This task
 asserts the imported source model, and deliberately preserves tool computation.

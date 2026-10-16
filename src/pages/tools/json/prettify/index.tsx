@@ -1,8 +1,10 @@
 import { Box } from '@mui/material';
 import React, { useState } from 'react';
 import ToolCodeInput from '@components/input/ToolCodeInput';
-import ToolCodeResult from '@components/result/ToolCodeResult';
-import { beautifyJson } from './service';
+import {
+  PrettifyResult,
+  resultIsDerived
+} from '../../../../features/json-prettify/PrettifyResult'; // ORVULIX: current input/options own result.
 import { CardExampleType } from '@components/examples/ToolExamples';
 import { ToolComponentProps } from '@tools/defineTool';
 import RadioWithTextField from '@components/options/RadioWithTextField';
@@ -109,11 +111,6 @@ const exampleCards: CardExampleType<InitialValuesType>[] = [
 export default function PrettifyJson({ title }: ToolComponentProps) {
   const { t } = useTranslation('json');
   const [input, setInput] = useState<string>('');
-  const [result, setResult] = useState<string>('');
-
-  const compute = (optionsValues: InitialValuesType, input: any) => {
-    if (input) setResult(beautifyJson(input, optionsValues));
-  };
 
   return (
     <ToolContent
@@ -128,11 +125,7 @@ export default function PrettifyJson({ title }: ToolComponentProps) {
         />
       }
       resultComponent={
-        <ToolCodeResult
-          title={t('prettify.resultTitle')}
-          value={result}
-          language="json"
-        />
+        <PrettifyResult title={t('prettify.resultTitle')} input={input} />
       }
       initialValues={initialValues}
       getGroups={({ values, updateField }) => [
@@ -161,7 +154,7 @@ export default function PrettifyJson({ title }: ToolComponentProps) {
           )
         }
       ]}
-      compute={compute}
+      compute={resultIsDerived}
       setInput={setInput}
       exampleCards={exampleCards}
       toolInfo={{

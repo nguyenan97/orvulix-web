@@ -15,7 +15,7 @@ update it alongside this ordered plan. Technical criteria stay in this document.
 
 ## Verified delivery snapshot
 
-Reconciled 2026-10-16 against develop `663b0dc` and main `96494b8`.
+Reconciled 2026-10-16 against develop `2c91155` and main `96494b8`.
 Every PR below is merged and its merge commit is reachable from develop, not main.
 Production release remains separate. Issue research below retains its original
 October 11 snapshot; this delivery reconciliation is not a fresh review of all
@@ -32,6 +32,7 @@ upstream issues. PR30-32 clipboard delivery and PR33 PDF consent are described b
 | Text-result clipboard | Develop PR #30, `ef29d62` | Other clipboard consumers/old Umbrel reports need their own verification. |
 | Code-result clipboard | Develop PR #31, `17c549d` | Input/file consumers and editor-wide HTTP gestures require separate work. |
 | Input clipboard | Develop PR #32, `534f2a6` | File/diff consumers and editor-wide handlers are separate. |
+| Shared text/code file import | Develop PR #34, `2c91155` | Whole-file budgets, other file inputs and native clipboard intermittency remain separate. |
 | PDF Editor opt-in | Develop PR #33, `663b0dc` | Live audit covers load/render only; save/share/retention remain follow-ups. |
 | Merge PDF lifecycle | Develop PR #29, `e4233a0` | Cancellation is cooperative; other PDF consumers/worker isolation are separate. |
 
@@ -284,3 +285,15 @@ Merge status is authoritative in PR #34; this is not a production release.
 Whole-file allocation/decoding limits, JSON Prettify stale-result behavior on empty
 source, other file input components and pending
 clipboard notification ownership remain separate follow-ups.
+
+
+## JSON Prettify result ownership
+
+Implementation on `feature/json-prettify-result-ownership`, not yet merged:
+empty/invalid source has no stale output and cannot be copied/downloaded. Inline
+validation reflects current input and disappears on recovery. Output derives
+synchronously from the current source/Formik options using the existing formatter.
+This does not migrate shared ToolContent, other tools, parser precision or resource
+limits. See [task checkpoint](tasks/json-prettify-result-ownership.md). PR34 file
+import ownership is merged into develop; this result-ownership correction is
+separate and not released to production.

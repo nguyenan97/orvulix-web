@@ -8,11 +8,11 @@ export const ROADMAP_FOUNDATION =
 export const ROADMAP_BACKLOG_URL =
   'https://github.com/nguyenan97/orvulix-web/blob/develop/docs/FEATURE_BACKLOG.md';
 
-// Verified against develop 663b0dc and main 96494b8 on 2026-10-16.
+// Verified against develop 2c91155 and main 96494b8 on 2026-10-16.
 // These changes are NOT released to main. Recheck Git ancestry when updating.
 export const DEVELOPMENT_HEADING = 'Development updates';
 export const DEVELOPMENT_NOTICE =
-  'Merged into develop through PR #33, not released to production. This snapshot separates delivered development work from the planned features below. Website URL conversion remains paused.';
+  'Merged into develop through PR #34, not released to production. This snapshot separates delivered development work from the planned features below. Website URL conversion remains paused.';
 export const DEVELOPMENT_UPDATES = [
   {
     title: 'Bounded list regex execution',
@@ -63,6 +63,11 @@ export const DEVELOPMENT_UPDATES = [
     title: 'External PDF Editor opt-in',
     description:
       'Merged into develop in PR #33. SimplePDF loads only after explicit opt-in, with analytics/document-metadata disclosure. The live audit covers load/render; save/share and retention remain follow-ups.'
+  },
+  {
+    title: 'Text and code file import ownership',
+    description:
+      'Merged into develop in PR #34. Old text-file reads cannot overwrite later edits, selections or resets. Read errors and same-file retry are handled. Whole-file limits and clipboard intermittency remain follow-ups.'
   }
 ] as const;
 

@@ -348,3 +348,103 @@ test('pending code file cannot overwrite later keyboard edits or newer file sele
     newest
   );
 });
+
+test('prettify clears unavailable output/actions and recovers from invalid and empty files', async ({
+  page
+}) => {
+  await page.goto(route('/json/prettify'));
+  await loadJson(page);
+  const monacoValues = () =>
+    page.evaluate(() =>
+      (window as MonacoWindow)
+        .monaco!.editor.getModels()
+        .map((m) => m.getValue())
+    );
+  const picker = page.locator('input[type=file]');
+  const download = page.getByRole('button', { name: 'Download', exact: true });
+  await picker.setInputFiles({
+    name: 'bad.json',
+    mimeType: 'application/json',
+    buffer: Buffer.from('{broken')
+  });
+  await expect(page.getByRole('alert')).toHaveText('Invalid JSON string');
+  await expect(copy(page)).toBeDisabled();
+  await expect(download).toBeDisabled();
+  expect(await monacoValues()).toEqual(expect.arrayContaining(['{broken', '']));
+  await page.getByText('Use Tabs', { exact: true }).first().click();
+  await expect(page.getByRole('alert')).toHaveCount(1);
+  await expect(download).toBeDisabled();
+  await picker.setInputFiles({
+    name: 'empty.json',
+    mimeType: 'application/json',
+    buffer: Buffer.alloc(0)
+  });
+  await expect(page.getByRole('alert')).toHaveCount(0);
+  await expect.poll(monacoValues).toEqual(['', '']);
+  await expect(copy(page)).toBeDisabled();
+  await picker.setInputFiles({
+    name: 'recovery.json',
+    mimeType: 'application/json',
+    buffer: Buffer.from('{"new":"Việt Nam 😀","literal":"x\\ny"}')
+  });
+  await expect(download).toBeEnabled();
+  await expect(page.getByRole('alert')).toHaveCount(0);
+  const expected = '{\n\t"new": "Việt Nam 😀",\n\t"literal": "x\\ny"\n}';
+  const event = page.waitForEvent('download');
+  await download.click();
+  expect(await readFile((await (await event).path())!, 'utf8')).toBe(expected);
+  expect(await monacoValues()).toContain(expected);
+});
+
+test('prettify keyboard clearing invalidates output and current errors without stale downloads', async ({
+  page
+}) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.emulateMedia({ colorScheme: 'dark' });
+  await page.goto(route('/json/prettify'));
+  await loadJson(page);
+  const editor = page
+    .locator('.monaco-editor')
+    .first()
+    .locator('textarea.inputarea');
+  await editor.focus();
+  await editor.press(
+    await page.evaluate(() =>
+      navigator.userAgent.includes('Macintosh') ? 'Meta+A' : 'Control+A'
+    )
+  );
+  await editor.press('Backspace');
+  await expect(copy(page)).toBeDisabled();
+  await expect(
+    page.getByRole('button', { name: 'Download', exact: true })
+  ).toBeDisabled();
+  await page.waitForFunction(() =>
+    (window as MonacoWindow)
+      .monaco!.editor.getModels()
+      .every((m) => m.getValue() === '')
+  );
+  await expect(page.getByRole('alert')).toHaveCount(0);
+  await editor.pressSequentially('invalid');
+  await expect(page.getByRole('alert')).toHaveText('Invalid JSON string');
+  await expect(copy(page)).toBeDisabled();
+  await page
+    .getByRole('heading', { name: 'Beautify an Ugly JSON Array', exact: true })
+    .click();
+  await expect(page.getByRole('alert')).toHaveCount(0);
+  const expected = '[\n    1,\n    2,\n    3\n]';
+  await page.waitForFunction(
+    (s) =>
+      (window as MonacoWindow)
+        .monaco!.editor.getModels()
+        .some((m) => m.getValue() === s),
+    expected
+  );
+  const event = page.waitForEvent('download');
+  await page.getByRole('button', { name: 'Download', exact: true }).click();
+  expect(await readFile((await (await event).path())!, 'utf8')).toBe(expected);
+  expect(
+    await page.evaluate(
+      () => document.documentElement.scrollWidth <= innerWidth
+    )
+  ).toBe(true);
+});
