@@ -47,3 +47,22 @@ Orvulix maintainers. A separate output-ownership fix should reproduce that trigg
 clear stale output/errors on empty/invalid edits and retain formatting/copy/download
 semantics for valid JSON with component and native browser coverage. This task
 asserts the imported source model, and deliberately preserves tool computation.
+
+### Existing Firefox native-clipboard intermittency
+
+At01e4a8f the full production browser run passed53/54: the existing mobile-dark
+text-input copy case timed out waiting for the native clipboard promise after a
+successful import. The same case/timeout is present in the pre-task PR32 run
+(input-copy-browser-final.log,44/45). Without application/test changes, the current
+case passed3 isolated diagnostic repetitions, then the full Firefox18-case suite
+passed. All9 new cross-engine import cases and all15 Pages cases passed.
+
+Disposition: non-blocking pre-existing clipboard intermittency for this develop
+import-lifecycle delivery, not a resolved bug or proof of a browser/platform root
+cause. The first53/54 result remains reported. Owner: Orvulix maintainers. Follow-up
+acceptance: capture native write start/settle/rejection, focus/activation and page
+ownership across full cross-engine runs; reproduce and fix the confirmed cause or
+define actionable pending-write UX, keeping real native writes/assertions and
+unchanged retries/deadlines. Do not suppress the test or count diagnostic reruns
+as a passing original suite. Scratch log names identify historical evidence only;
+the PR records outcomes durably without committing synthetic clipboard payloads.

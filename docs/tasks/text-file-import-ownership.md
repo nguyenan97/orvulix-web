@@ -88,3 +88,20 @@ PR body with actual results and inspect latest head CI before matched-head merge
 Fetch/recheck develop and required reviews/rules first. Then verify merge ancestry
 and cleanup only this task branch. Main96494b8 and user sitemap remain untouched.
 PR metadata/Git, not this historical checkpoint, determine current merge state.
+
+## Browser validation disposition at01e4a8f
+
+Final full production run:53/54, with the existing Firefox mobile-dark text-input
+native clipboard completion timeout. Import value was correct; new import cases
+all pass. The pre-task PR32 full run has the identical case/timeout (44/45), before
+this FileReader owner existed. Unchanged current case:3 isolated diagnostic passes;
+unchanged full Firefox suite:18/18. All15 Pages cases pass. Root cause is unconfirmed,
+not attributed to this task or declared fixed. Owner/acceptance/non-blocking
+pre-existing disposition are documented in TEXT_FILE_IMPORT.md and must be kept
+in the PR report. No retries/timeouts/assertions or runtime source changed.
+
+This documentation-only checkpoint supersedes the pending local54-run step above.
+Next: inspect exact new head CI, finalize PR with53/54 plus diagnostics (never54/54),
+recheck base/rules and merge/cleanup when all current-task gates pass. Local unit,
+production/Pages builds and browser evidence are reusable for unchanged runtime.
+Latest PR metadata records CI/merge outcome after this historical checkpoint.
