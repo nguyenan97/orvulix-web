@@ -11,8 +11,8 @@ Our approach is to make existing tools better first, then explore new capabiliti
 
 ## Verified development delivery
 
-Reconciled 2026-10-16 against develop `663b0dc` and main `96494b8`. PR19/20/22
-and PR24-33 are merged into develop, not released to main. These cover bounded
+Reconciled 2026-10-16 against develop `2c91155` and main `96494b8`. PR19/20/22
+and PR24-34 are merged into develop, not released to main. These cover bounded
 list regex, local HTML conversion/discovery, PNG dimensions, multi-file input,
 GIF reliability, engineering practices, Merge PDF ownership and text/code-result clipboard reliability. The authoritative
 [delivery snapshot](FEATURE_BACKLOG.md#verified-delivery-snapshot) records PRs,
@@ -257,3 +257,15 @@ Merge status is authoritative in PR #34; this is not a production release.
 Whole-file allocation/decoding limits, JSON Prettify stale-result behavior on empty
 source, other file input components and pending
 clipboard notification ownership remain separate follow-ups.
+
+
+## JSON Prettify result ownership
+
+Implementation on `feature/json-prettify-result-ownership` (PR #35; its metadata records merge status):
+empty/invalid source has no stale output and cannot be copied/downloaded. Inline
+validation reflects current input and disappears on recovery. Output derives
+synchronously from the current source/Formik options using the existing formatter.
+This does not migrate shared ToolContent, other tools, parser precision or resource
+limits. See [task checkpoint](tasks/json-prettify-result-ownership.md). PR34 file
+import ownership is merged into develop; this result-ownership correction is
+separate and not released to production.

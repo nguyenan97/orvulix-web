@@ -19,19 +19,22 @@ export default function ToolCodeResult({
   value,
   language,
   extension = language,
-  loading
+  loading,
+  disabled = false
 }: {
   title?: string;
   value: string;
   language: string;
   extension?: string;
   loading?: boolean;
+  disabled?: boolean; // ORVULIX: opt-in validity of a derived result.
 }) {
   const { t } = useTranslation();
   const { showSnackBar } = useContext(CustomSnackBarContext);
   const theme = useTheme();
 
   const handleCopy = () => {
+    if (disabled) return;
     writeResultText(value)
       .then(() => showSnackBar(t('toolTextResult.copied'), 'success'))
       .catch((err) => {
@@ -40,6 +43,7 @@ export default function ToolCodeResult({
   };
 
   const handleDownload = () => {
+    if (disabled) return;
     const filename = `${brand.downloadPrefix}.${extension}`;
 
     const mimeType = mime.getType(extension) || 'text/plain';
@@ -148,6 +152,7 @@ export default function ToolCodeResult({
         >
           <ResultFooter
             handleCopy={handleCopy}
+            disabled={disabled}
             handleDownload={handleDownload}
           />
         </Box>
