@@ -15,7 +15,7 @@ update it alongside this ordered plan. Technical criteria stay in this document.
 
 ## Verified delivery snapshot
 
-Reconciled 2026-10-16 against develop `2c91155` and main `96494b8`.
+Reconciled 2026-10-16 against develop `5937a46` and main `96494b8`.
 Every PR below is merged and its merge commit is reachable from develop, not main.
 Production release remains separate. Issue research below retains its original
 October 11 snapshot; this delivery reconciliation is not a fresh review of all
@@ -35,6 +35,8 @@ upstream issues. PR30-32 clipboard delivery and PR33 PDF consent are described b
 | Shared text/code file import | Develop PR #34, `2c91155` | Whole-file budgets, other file inputs and native clipboard intermittency remain separate. |
 | PDF Editor opt-in | Develop PR #33, `663b0dc` | Live audit covers load/render only; save/share/retention remain follow-ups. |
 | Merge PDF lifecycle | Develop PR #29, `e4233a0` | Cancellation is cooperative; other PDF consumers/worker isolation are separate. |
+| JSON Prettify current output | Develop PR #35, `18634f7` | Whole-input synchronous parsing and other consumers remain separate. |
+| JSON Minify current output | Develop PR #36, `5937a46` | Whole-input limits and other tools/clipboard notification ownership remain separate. |
 
 ## Delivery rules
 
@@ -301,12 +303,24 @@ separate and not released to production.
 
 ## JSON Minify result ownership
 
-Implementation on `feature/json-minify-result-ownership`: empty/invalid input
+Merged into develop in PR #36 (`5937a46`): empty/invalid input
 clears output and disables export, with current inline errors and valid recovery.
 JSON/JSONL format, extensions and the existing service semantics are retained.
 See [JSON_MINIFY.md](JSON_MINIFY.md) and
 [task checkpoint](tasks/json-minify-result-ownership.md) for evidence and limits.
 PR metadata records merge status; this is not a production release. Whole-input
 resource limits and other tool/result/clipboard migrations remain separate.
-Public roadmap now records verified PR35 delivery at develop `18634f7`, distinct
-from this branch's implementation and the 12 planned feature milestones.
+Public roadmap now records verified PR36 delivery at develop `5937a46`,
+separate from production and the 12 planned feature milestones.
+
+
+## JSON Sort own-key preservation
+
+Implementation on `feature/json-sort-own-keys`: key sorting preserves literal
+`__proto__` data in objects, object-array rows and JSONL rather than silently
+omitting it during export. Existing shallow sorting, order, formatting and value
+mode remain unchanged. This is a data-integrity fix, not a global prototype
+pollution claim or completion of JSON Sort lifecycle/resource work.
+See [JSON_SORT_INTEGRITY.md](JSON_SORT_INTEGRITY.md) and
+[task checkpoint](tasks/json-sort-own-keys.md). PR metadata records merge status;
+this is not a production release. Public roadmap reconciles already merged PR36.

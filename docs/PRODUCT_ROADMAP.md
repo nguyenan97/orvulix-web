@@ -273,12 +273,24 @@ separate and not released to production.
 
 ## JSON Minify result ownership
 
-Implementation on `feature/json-minify-result-ownership`: empty/invalid input
+Merged into develop in PR #36 (`5937a46`): empty/invalid input
 clears output and disables export, with current inline errors and valid recovery.
 JSON/JSONL format, extensions and the existing service semantics are retained.
 See [JSON_MINIFY.md](JSON_MINIFY.md) and
 [task checkpoint](tasks/json-minify-result-ownership.md) for evidence and limits.
 PR metadata records merge status; this is not a production release. Whole-input
 resource limits and other tool/result/clipboard migrations remain separate.
-Public roadmap now records verified PR35 delivery at develop `18634f7`, distinct
-from this branch's implementation and the 12 planned feature milestones.
+Public roadmap now records verified PR36 delivery at develop `5937a46`,
+separate from production and the 12 planned feature milestones.
+
+
+## JSON Sort own-key preservation
+
+Implementation on `feature/json-sort-own-keys`: key sorting preserves literal
+`__proto__` data in objects, object-array rows and JSONL rather than silently
+omitting it during export. Existing shallow sorting, order, formatting and value
+mode remain unchanged. This is a data-integrity fix, not a global prototype
+pollution claim or completion of JSON Sort lifecycle/resource work.
+See [JSON_SORT_INTEGRITY.md](JSON_SORT_INTEGRITY.md) and
+[task checkpoint](tasks/json-sort-own-keys.md). PR metadata records merge status;
+this is not a production release. Public roadmap reconciles already merged PR36.
