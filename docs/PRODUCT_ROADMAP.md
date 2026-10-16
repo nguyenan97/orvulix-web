@@ -11,12 +11,12 @@ Our approach is to make existing tools better first, then explore new capabiliti
 
 ## Verified development delivery
 
-Reconciled 2026-10-15 against develop `17c549d` and main `96494b8`. PR19/20/22
-and PR24-31 are merged into develop, not released to main. These cover bounded
+Reconciled 2026-10-16 against develop `534f2a6` and main `96494b8`. PR19/20/22
+and PR24-32 are merged into develop, not released to main. These cover bounded
 list regex, local HTML conversion/discovery, PNG dimensions, multi-file input,
 GIF reliability, engineering practices, Merge PDF ownership and text/code-result clipboard reliability. The authoritative
 [delivery snapshot](FEATURE_BACKLOG.md#verified-delivery-snapshot) records PRs,
-merge commits and remaining scope. The current input-footer extension is tracked below.
+merge commits and remaining scope. The current PDF Editor consent scope is tracked below.
 
 ## 1. Better everyday tools
 
@@ -216,7 +216,7 @@ PR30 merged a change that aligns copied text with the displayed ToolTextResult v
 adds manual-copy guidance when native clipboard access fails. Downloads retain
 the original data. PR30 is merged into develop; this is not a production
 release or completion of JSON prettify/other clipboard investigations. Public
-/roadmap separates verified development delivery through PR31 from planned features;
+/roadmap separates verified development delivery through PR32 from planned features;
 see FEATURE_BACKLOG.md for the current partial foundation scope.
 
 ### Code-result follow-up
@@ -229,8 +229,17 @@ fully resolved. No production release, HTTP fallback or formatter rewrite.
 
 ### Shared input footer follow-up
 
-The current feature branch extends guarded native copy to text/code input footers,
-retaining exact source text, editing and file import. This is not yet merged or
-released. Actual-origin/code-editor tests and delivery are tracked in
+PR32 merged guarded native copy into text/code input footers,
+retaining exact source text, editing and file import. This is merged into develop,
+not released to main. Actual-origin/code-editor tests and delivery are tracked in
 tasks/input-clipboard.md. Other clipboard consumers and editor-wide HTTP gestures
 remain follow-ups; there is no deprecated fallback or wider issue390 claim.
+
+
+## PDF Editor external-service consent
+
+The current branch requires enabling SimplePDF before loading its external editor
+and discloses observed analytics/document metadata. Closing removes the embed;
+consent is not persisted. This is a bounded privacy correction, not a new local
+PDF editor or full provider audit. See PDF_EDITOR_PRIVACY.md for measured scope,
+limits and save/share follow-ups; delivery remains tracked by the feature PR.

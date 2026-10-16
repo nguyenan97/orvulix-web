@@ -154,7 +154,7 @@ test('roadmap static and React views separate verified develop delivery from pla
     await page.goto(route('/roadmap'));
     const development = page.getByRole('region', { name: DEVELOPMENT_HEADING });
     await expect(development).toBeVisible();
-    await expect(development.getByRole('listitem')).toHaveCount(8);
+    await expect(development.getByRole('listitem')).toHaveCount(9);
     for (const target of [page, staticPage]) {
       await expect(
         target.getByText(DEVELOPMENT_NOTICE, { exact: true })
@@ -221,13 +221,11 @@ test('text input copies raw imported source and updated input using native clipb
   await nativeProbe(page);
   await page.goto(route('/string/url-decode-string'));
   const text = 'Việt Nam 😀\\nnext\tvalue';
-  await page
-    .locator('input[type=file]')
-    .setInputFiles({
-      name: 'source.txt',
-      mimeType: 'text/plain',
-      buffer: Buffer.from(text)
-    });
+  await page.locator('input[type=file]').setInputFiles({
+    name: 'source.txt',
+    mimeType: 'text/plain',
+    buffer: Buffer.from(text)
+  });
   await expect(page.getByTestId('text-input')).toHaveValue(text);
   await inputCopy(page).click();
   await page.waitForFunction(() => window.orvulixClipboardProbe.copyDone === 1);

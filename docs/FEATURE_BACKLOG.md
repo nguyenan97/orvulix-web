@@ -1,7 +1,7 @@
 # Orvulix issue-backed feature backlog
 
 Status: planned/partial milestones plus verified development delivery below.
-Delivery reconciled October 15, 2026; upstream issue research dated October 11.
+Delivery reconciled October 16, 2026; upstream issue research dated October 11.
 
 Source: [OmniTools open issues](https://github.com/iib0011/omni-tools/issues).
 The review covered 57 open issues, current open PRs, and Orvulix `develop`.
@@ -15,11 +15,11 @@ update it alongside this ordered plan. Technical criteria stay in this document.
 
 ## Verified delivery snapshot
 
-Reconciled 2026-10-15 against develop `17c549d` and main `96494b8`.
+Reconciled 2026-10-16 against develop `534f2a6` and main `96494b8`.
 Every PR below is merged and its merge commit is reachable from develop, not main.
 Production release remains separate. Issue research below retains its original
 October 11 snapshot; this delivery reconciliation is not a fresh review of all
-upstream issues. PR30/31 result delivery and the current input-footer change are described below.
+upstream issues. PR30-32 clipboard delivery and the current PDF consent scope are described below.
 
 | Scope | Verified delivery | Still outside that delivery |
 | --- | --- | --- |
@@ -31,6 +31,7 @@ upstream issues. PR30/31 result delivery and the current input-footer change are
 | Engineering practices | Develop PR #28, `fd1214d` | Instructions do not guarantee agent compliance or grant additional authority. |
 | Text-result clipboard | Develop PR #30, `ef29d62` | Other clipboard consumers/old Umbrel reports need their own verification. |
 | Code-result clipboard | Develop PR #31, `17c549d` | Input/file consumers and editor-wide HTTP gestures require separate work. |
+| Input clipboard | Develop PR #32, `534f2a6` | File/diff consumers and editor-wide handlers are separate. |
 | Merge PDF lifecycle | Develop PR #29, `e4233a0` | Cancellation is cooperative; other PDF consumers/worker isolation are separate. |
 
 ## Delivery rules
@@ -250,10 +251,21 @@ editor/input gestures remain a separate follow-up. No input/file consumer migrat
 
 ## Shared input clipboard guidance
 
-Implemented on the current feature branch, not yet merged. ToolTextInput and
+Merged into develop in PR32 (`534f2a6`), not released to main. ToolTextInput and
 ToolCodeInput reuse the existing native writer without decoding or formatting
 source values. Missing/insecure/denied/synchronously throwing API gives guidance;
 code-input footer gestures share PR31's unsupported ancestor guard. Input edits
 and file import remain intact. See tasks/input-clipboard.md for actual evidence.
 File/diff-result consumers, editor-wide HTTP handlers and file-reader lifecycle
 remain separate. No HTTP copying fallback or production release.
+
+
+## PDF Editor consent and bounded privacy audit
+
+Current branch: external SimplePDF editor is disabled until explicit opt-in;
+closing removes the iframe and a new tool mount starts disabled. Disclosure and
+SEO explain observed analytics and document-fingerprint metadata. Synthetic live
+load audit and limits are recorded in [PDF_EDITOR_PRIVACY.md](PDF_EDITOR_PRIVACY.md).
+This is not a complete audit of save/share, accounts, provider retention or future
+remote code. Those are follow-ups, not local-only guarantees. Delivery is tracked
+by tasks/pdf-editor-consent.md and its PR, not marked merged or production here.

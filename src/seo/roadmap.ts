@@ -8,11 +8,11 @@ export const ROADMAP_FOUNDATION =
 export const ROADMAP_BACKLOG_URL =
   'https://github.com/nguyenan97/orvulix-web/blob/develop/docs/FEATURE_BACKLOG.md';
 
-// Verified against develop 17c549d and main 96494b8 on 2026-10-15.
+// Verified against develop 534f2a6 and main 96494b8 on 2026-10-16.
 // These changes are NOT released to main. Recheck Git ancestry when updating.
 export const DEVELOPMENT_HEADING = 'Development updates';
 export const DEVELOPMENT_NOTICE =
-  'Merged into develop through PR #31, not released to production. This snapshot separates delivered development work from the planned features below. Website URL conversion remains paused.';
+  'Merged into develop through PR #32, not released to production. This snapshot separates delivered development work from the planned features below. Website URL conversion remains paused.';
 export const DEVELOPMENT_UPDATES = [
   {
     title: 'Bounded list regex execution',
@@ -53,6 +53,11 @@ export const DEVELOPMENT_UPDATES = [
     title: 'Code-result clipboard reliability',
     description:
       'Merged into develop in PR #31. Formatted JSON and literal escapes are preserved during native copy and download. Unsupported code-result footer gestures show manual-copy guidance without a WebKit ancestor error. Input/file consumers and other editor gestures remain separate.'
+  },
+  {
+    title: 'Input clipboard reliability',
+    description:
+      'Merged into develop in PR #32. Text/code input Copy retains source values and reports native clipboard failures. Code-input import and copy footers guard unsupported WebKit gestures. File/diff consumers and editor-wide handlers remain separate.'
   }
 ] as const;
 

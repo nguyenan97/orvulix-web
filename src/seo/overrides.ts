@@ -8,6 +8,7 @@ import jsonJsonToCsv from './tool-content/json/json-to-csv';
 import csvCsvToJson from './tool-content/csv/csv-to-json';
 import timeConvertUnixToDate from './tool-content/time/convert-unix-to-date';
 import timeCrontabGuru from './tool-content/time/crontab-guru';
+import pdfEditor from './tool-content/pdf/editor'; // ORVULIX-PRIVACY
 import pdfMergePdf from './tool-content/pdf/merge-pdf';
 import pdfSplitPdf from './tool-content/pdf/split-pdf';
 import pdfCompressPdf from './tool-content/pdf/compress-pdf';
@@ -48,6 +49,7 @@ export const TOOL_OVERRIDES: Record<string, ToolSeoOverride> = {
   'csv/csv-to-json': csvCsvToJson,
   'time/convert-unix-to-date': timeConvertUnixToDate,
   'time/crontab-guru': timeCrontabGuru,
+  'pdf/editor': pdfEditor, // ORVULIX-PRIVACY
   'pdf/merge-pdf': pdfMergePdf,
   'pdf/split-pdf': pdfSplitPdf,
   'pdf/compress-pdf': pdfCompressPdf,
