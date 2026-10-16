@@ -600,13 +600,11 @@ test('JSON sort keeps prototype-named own data in ascending and descending nativ
     .click();
   const source =
     '{"z":0,"toString":"Việt Nam 😀","constructor":false,"__proto__":{"nested":{"z":1,"a":2}},"a":"x\\ny"}';
-  await page
-    .locator('input[type=file]')
-    .setInputFiles({
-      name: 'own-keys.json',
-      mimeType: 'application/json',
-      buffer: Buffer.from(source)
-    });
+  await page.locator('input[type=file]').setInputFiles({
+    name: 'own-keys.json',
+    mimeType: 'application/json',
+    buffer: Buffer.from(source)
+  });
   const ascending =
     '{\n  "__proto__": {\n    "nested": {\n      "z": 1,\n      "a": 2\n    }\n  },\n  "a": "x\\ny",\n  "constructor": false,\n  "toString": "Việt Nam 😀",\n  "z": 0\n}';
   await page.waitForFunction(
@@ -626,11 +624,17 @@ test('JSON sort keeps prototype-named own data in ascending and descending nativ
   const first = await firstEvent;
   expect(first.suggestedFilename()).toMatch(/\.json$/);
   expect(await readFile((await first.path())!, 'utf8')).toBe(ascending);
-  const order = page.getByRole('combobox').last();
+  // Example cards render their own controls; they apply the sample on click.
+  const order = page
+    .getByRole('combobox')
+    .and(page.locator(':not(#examples *)'))
+    .last();
+  await expect(order).toHaveText('Ascending (A → Z)');
   await order.click();
   await page
     .getByRole('option', { name: 'Descending (Z → A)', exact: true })
     .click();
+  await expect(order).toHaveText('Descending (Z → A)');
   const descending =
     '{\n  "z": 0,\n  "toString": "Việt Nam 😀",\n  "constructor": false,\n  "a": "x\\ny",\n  "__proto__": {\n    "nested": {\n      "z": 1,\n      "a": 2\n    }\n  }\n}';
   await page.waitForFunction(

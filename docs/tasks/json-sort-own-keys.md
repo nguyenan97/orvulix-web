@@ -55,7 +55,14 @@ head/delivery; pending checks below must not be inferred as passed.
   passed 6/6, test phase 3.09s, without changing source/assertions/timeout. Cause is
   unconfirmed; do not label the failed run green or assert CPU contention as fact.
 - Full suite is now running sequentially without local build/browser concurrency.
-  Native three-engine production and Pages flows remain pending. Pages preparation
+  Sequential full suite passed 1331/1331 tests in 146 files (186.46s), with
+unchanged assertions/timeouts. Root cause of the initial timeout remains unconfirmed.
+First native production run: 9 passed / 3 failed, one descending flow in each engine.
+Evidence: global .last() combobox selected an example-card control, reapplied the
+zebra sample and left its portal open. The UI snapshot confirms this; actual JSON
+construction/ascending exports had passed. Test locator now excludes #examples and
+asserts live control text before/after selection; output assertions unchanged.
+Rerun production flow after this correction; Pages flows remain pending. Pages preparation
   fixture passed. Existing CI list already includes the extended code-result spec.
 - Text style and full-PR whitespace passed; rerun after this checkpoint commit.
 
@@ -72,7 +79,7 @@ self-review passes, not independent approval. Check actual repository review rul
 
 ## Resume point
 
-Wait for /workspace/work/sort-keys-unit-sequential.log. Then run the native
+Sequential full suite completed green; rerun the corrected native
 code-result spec plus roadmap cases on Chromium/Firefox/WebKit (production build
 already available), retries 0. Only afterwards run Pages build and the 12 JSON Sort/
 roadmap prefix cases. Do not overwrite dist during browser tests.
