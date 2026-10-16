@@ -8,11 +8,11 @@ export const ROADMAP_FOUNDATION =
 export const ROADMAP_BACKLOG_URL =
   'https://github.com/nguyenan97/orvulix-web/blob/develop/docs/FEATURE_BACKLOG.md';
 
-// Verified against develop 2c91155 and main 96494b8 on 2026-10-16.
+// Verified against develop 18634f7 and main 96494b8 on 2026-10-16.
 // These changes are NOT released to main. Recheck Git ancestry when updating.
 export const DEVELOPMENT_HEADING = 'Development updates';
 export const DEVELOPMENT_NOTICE =
-  'Merged into develop through PR #34, not released to production. This snapshot separates delivered development work from the planned features below. Website URL conversion remains paused.';
+  'Merged into develop through PR #35, not released to production. This snapshot separates delivered development work from the planned features below. Website URL conversion remains paused.';
 export const DEVELOPMENT_UPDATES = [
   {
     title: 'Bounded list regex execution',
@@ -68,6 +68,11 @@ export const DEVELOPMENT_UPDATES = [
     title: 'Text and code file import ownership',
     description:
       'Merged into develop in PR #34. Old text-file reads cannot overwrite later edits, selections or resets. Read errors and same-file retry are handled. Whole-file limits and clipboard intermittency remain follow-ups.'
+  },
+  {
+    title: 'JSON Prettify result ownership',
+    description:
+      'Merged into develop in PR #35. Empty or invalid source clears old output and disables result actions. Inline validation follows current source and indentation. Native parsing and whole-input resource limits remain separate.'
   }
 ] as const;
 

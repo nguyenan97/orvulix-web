@@ -282,14 +282,14 @@ get retry guidance and the picker permits reselecting the same file. Existing
 readAsText decoding and empty files are retained. See
 [tasks/text-file-import-ownership.md](tasks/text-file-import-ownership.md).
 Merge status is authoritative in PR #34; this is not a production release.
-Whole-file allocation/decoding limits, JSON Prettify stale-result behavior on empty
-source, other file input components and pending
-clipboard notification ownership remain separate follow-ups.
+Whole-file allocation/decoding limits, other file input components and pending
+clipboard notification ownership remain separate follow-ups. JSON Prettify
+result ownership was separately delivered in PR35.
 
 
 ## JSON Prettify result ownership
 
-Implementation on `feature/json-prettify-result-ownership` (PR #35; its metadata records merge status):
+Merged into develop in PR #35 (`18634f7`):
 empty/invalid source has no stale output and cannot be copied/downloaded. Inline
 validation reflects current input and disappears on recovery. Output derives
 synchronously from the current source/Formik options using the existing formatter.
@@ -297,3 +297,16 @@ This does not migrate shared ToolContent, other tools, parser precision or resou
 limits. See [task checkpoint](tasks/json-prettify-result-ownership.md). PR34 file
 import ownership is merged into develop; this result-ownership correction is
 separate and not released to production.
+
+
+## JSON Minify result ownership
+
+Implementation on `feature/json-minify-result-ownership`: empty/invalid input
+clears output and disables export, with current inline errors and valid recovery.
+JSON/JSONL format, extensions and the existing service semantics are retained.
+See [JSON_MINIFY.md](JSON_MINIFY.md) and
+[task checkpoint](tasks/json-minify-result-ownership.md) for evidence and limits.
+PR metadata records merge status; this is not a production release. Whole-input
+resource limits and other tool/result/clipboard migrations remain separate.
+Public roadmap now records verified PR35 delivery at develop `18634f7`, distinct
+from this branch's implementation and the 12 planned feature milestones.
