@@ -30,7 +30,8 @@ it('records only the verified development scopes and their actual delivery PRs',
     'GIF output reliability',
     'Merge PDF output ownership',
     'Text-result clipboard reliability',
-    'Code-result clipboard reliability'
+    'Code-result clipboard reliability',
+    'Input clipboard reliability'
   ]);
   for (const [index, prs] of [
     [19],
@@ -40,7 +41,8 @@ it('records only the verified development scopes and their actual delivery PRs',
     [26, 27],
     [29],
     [30],
-    [31]
+    [31],
+    [32]
   ].entries())
     for (const pr of prs)
       expect(DEVELOPMENT_UPDATES[index].description).toContain(`PR #${pr}`);
@@ -53,7 +55,7 @@ it('retains planned milestones separately from partial development delivery', ()
     sections.find(
       (section) => section.heading === 'Delivered development scope'
     )?.examples
-  ).toHaveLength(8);
+  ).toHaveLength(9);
   expect(
     sections.find((section) => section.heading === 'Proposed order')?.examples
   ).toHaveLength(12);

@@ -27,9 +27,21 @@ describe('tool SEO overrides', () => {
     }
   });
 
+  it('requires the separate PDF editor external-service disclosure', () => {
+    const disclosure = TOOL_OVERRIDES['pdf/editor'];
+    expect(disclosure).toBeDefined();
+    expect(disclosure.description).toContain('external PDF editor');
+    expect(disclosure.notes.join(' ')).toContain('document fingerprint');
+    expect(disclosure.notes.join(' ')).toContain('until you enable it');
+  });
+
   it('keeps hand-written content complete and free of unverifiable wording', () => {
-    expect(Object.keys(TOOL_OVERRIDES).length).toBeGreaterThanOrEqual(20);
-    expect(Object.keys(TOOL_OVERRIDES).length).toBeLessThanOrEqual(30);
+    // Keep the original editorial budget; pdf/editor is an audited privacy disclosure.
+    const editorial = Object.keys(TOOL_OVERRIDES).filter(
+      (path) => path !== 'pdf/editor'
+    );
+    expect(editorial.length).toBeGreaterThanOrEqual(20);
+    expect(editorial.length).toBeLessThanOrEqual(30);
     for (const [path, override] of Object.entries(TOOL_OVERRIDES)) {
       expect(override.title.endsWith(' | Orvulix'), path).toBe(true);
       expect(override.howTo.length, path).toBeGreaterThanOrEqual(3);

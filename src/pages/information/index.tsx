@@ -87,8 +87,9 @@ const content: Record<Page, { title: string; paragraphs: string[] }> = {
       'Some utilities may load third-party scripts, libraries, models, or other resources. Data processing and network behavior may differ between tools; review the specific tool and avoid sensitive inputs unless you understand its behavior.',
       'Downloading a library, worker or model from a third-party CDN is different from uploading your input. Those providers may receive technical request data when resources are fetched; whether your content leaves the browser depends on the specific tool and must be checked separately.',
       'The local JSON Assistant and Regex Assistant demos keep input in page memory and, for regex testing, a local worker. They do not persist inputs to browser storage or send them to an AI provider. Sample explanations and suggestions are authored, not AI-generated. A live Claude integration is not available; any future provider connection will require separate disclosures and consent before sending data.',
+      'PDF Editor uses an optional SimplePDF integration. It stays off until you enable it. SimplePDF receives analytics and document metadata, including a document fingerprint. Review its privacy policy before opening sensitive files; closing the editor cannot recall data already sent.', // ORVULIX-PRIVACY
       'We do not currently offer user accounts or a dedicated privacy request form. For privacy questions, email founder@orvulix.io.vn.',
-      'This policy may be updated as features and integrations change. Last updated: October 11, 2026.'
+      'This policy may be updated as features and integrations change. Last updated: October 16, 2026.'
     ]
   },
   terms: {

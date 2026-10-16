@@ -1,8 +1,7 @@
 import React from 'react';
-import { Box } from '@mui/material';
 import ToolContent from '@components/ToolContent';
 import { ToolComponentProps } from '@tools/defineTool';
-import { EmbedPDF } from '@simplepdf/react-embed-pdf';
+import ExternalPdfEditor from '../../../../features/pdf-editor-consent/ExternalPdfEditor'; // ORVULIX-PRIVACY
 
 export default function PdfEditor({ title }: ToolComponentProps) {
   return (
@@ -11,15 +10,11 @@ export default function PdfEditor({ title }: ToolComponentProps) {
       initialValues={{}}
       getGroups={null}
       input={null}
-      inputComponent={
-        <Box sx={{ width: '100%', height: '80vh' }}>
-          <EmbedPDF mode="inline" style={{ width: '100%', height: '100%' }} />
-        </Box>
-      }
+      inputComponent={<ExternalPdfEditor />} // ORVULIX-PRIVACY
       toolInfo={{
         title: 'PDF Editor',
         description:
-          'Edit, annotate, highlight, fill forms, and export your PDFs entirely in the browser. Add text, drawings, signatures, and more to your PDF documents with this powerful online editor.'
+          'Enable the external SimplePDF editor to annotate, fill forms, sign and export PDFs. Review its data handling before opening sensitive documents.'
       }}
       compute={() => {
         /* no background compute required */
