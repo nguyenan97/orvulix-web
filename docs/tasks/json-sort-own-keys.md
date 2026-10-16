@@ -54,16 +54,19 @@ head/delivery; pending checks below must not be inferred as passed.
   URLs' timed out at 5000ms. After build/full run finished, isolated whole file
   passed 6/6, test phase 3.09s, without changing source/assertions/timeout. Cause is
   unconfirmed; do not label the failed run green or assert CPU contention as fact.
-- Full suite is now running sequentially without local build/browser concurrency.
-  Sequential full suite passed 1331/1331 tests in 146 files (186.46s), with
-unchanged assertions/timeouts. Root cause of the initial timeout remains unconfirmed.
-First native production run: 9 passed / 3 failed, one descending flow in each engine.
-Evidence: global .last() combobox selected an example-card control, reapplied the
-zebra sample and left its portal open. The UI snapshot confirms this; actual JSON
-construction/ascending exports had passed. Test locator now excludes #examples and
-asserts live control text before/after selection; output assertions unchanged.
-Rerun production flow after this correction; Pages flows remain pending. Pages preparation
-  fixture passed. Existing CI list already includes the extended code-result spec.
+- Sequential full suite passed 1331/1331 tests in 146 files (186.46s), with
+  unchanged assertions/timeouts. Root cause of the initial timeout remains
+  unconfirmed; the earlier concurrent run is still recorded as failed.
+- First native production run: 9 passed / 3 failed, one descending flow per
+  engine. The global last-combobox locator selected an example-card control,
+  reapplied its zebra sample and left its portal open, confirmed by UI snapshots.
+  Corrected locator excludes #examples and asserts live control text before/after
+  selection. Output assertions/timeouts unchanged. Latest native production run
+  at bb7bb10 passed all 12 JSON Sort/roadmap cases across Chromium/Firefox/WebKit,
+  retries 0, including actual clipboard/download bytes. The failed run is not
+  counted as green. Scratch snapshots retained separately before rerun.
+- Pages build/smoke still pending. Pages preparation fixture passed. Existing CI
+  already includes the extended code-result spec; final exact-head CI pending.
 - Text style and full-PR whitespace passed; rerun after this checkpoint commit.
 
 Standards review: own-data-property construction avoids the inherited setter;
@@ -73,16 +76,16 @@ is not a memory optimization or hard resource-bound claim. Caller receives only
 serialized text, preserving the existing API. Requirements review: own data for
 six __proto__ value kinds, object-array/NDJSON row order, shallow nested values,
 normal key direction, integer keys and unchanged value mode have service evidence.
-Native clipboard/download/options evidence is still required. No blocking defect
-found in inspected code; acceptance/CI gates are not yet complete. These are
+Native clipboard/download/options evidence now passes. No blocking defect found
+in inspected code; Pages and exact-head CI gates are not yet complete. These are
 self-review passes, not independent approval. Check actual repository review rules.
 
 ## Resume point
 
-Sequential full suite completed green; rerun the corrected native
-code-result spec plus roadmap cases on Chromium/Firefox/WebKit (production build
-already available), retries 0. Only afterwards run Pages build and the 12 JSON Sort/
-roadmap prefix cases. Do not overwrite dist during browser tests.
+Production unit/native validation completed as detailed above. Finish Pages build
+and the 12 JSON Sort/roadmap prefix cases across the same three engines. Do not
+change/overwrite dist while browser tests run. Final head adds only this checkpoint;
+resolve its SHA from Git/PR rather than pretending it is recorded in itself.
 Scratch logs use sort-keys-*.log under /workspace/work. Update PR37 body with actual
 checks/failure disposition and exact latest-head CI; checkpoint predates completion.
 If the unchanged HTML timeout recurs, diagnose with new evidence rather than
