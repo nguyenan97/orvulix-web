@@ -9,9 +9,8 @@ const sortObject = (
     const cmp = a.localeCompare(b);
     return order === 'asc' ? cmp : -cmp;
   });
-  const result: Record<string, unknown> = {};
-  for (const key of sortedKeys) result[key] = obj[key];
-  return result;
+  // ORVULIX: define own data keys without invoking inherited __proto__ setters.
+  return Object.fromEntries(sortedKeys.map((key) => [key, obj[key]]));
 };
 
 /**

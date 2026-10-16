@@ -583,3 +583,144 @@ test('minify mobile dark keyboard edits clear output and example selection recov
     )
   ).toBe(true);
 });
+
+test('JSON sort keeps prototype-named own data in ascending and descending native exports', async ({
+  page
+}) => {
+  await probe(page);
+  await page.goto(route('/json/sort'));
+  await page.waitForFunction(
+    () => (window as MonacoWindow).monaco?.editor.getModels().length === 2
+  );
+  await page
+    .getByRole('heading', {
+      name: 'Sort object keys alphabetically',
+      exact: true
+    })
+    .click();
+  const source =
+    '{"z":0,"toString":"Việt Nam 😀","constructor":false,"__proto__":{"nested":{"z":1,"a":2}},"a":"x\\ny"}';
+  await page.locator('input[type=file]').setInputFiles({
+    name: 'own-keys.json',
+    mimeType: 'application/json',
+    buffer: Buffer.from(source)
+  });
+  const ascending =
+    '{\n  "__proto__": {\n    "nested": {\n      "z": 1,\n      "a": 2\n    }\n  },\n  "a": "x\\ny",\n  "constructor": false,\n  "toString": "Việt Nam 😀",\n  "z": 0\n}';
+  await page.waitForFunction(
+    (value) =>
+      (window as MonacoWindow)
+        .monaco!.editor.getModels()
+        .some((m) => m.getValue() === value),
+    ascending
+  );
+  await copy(page).click();
+  await page.waitForFunction(() => window.codeCopyProbe.completed === 1);
+  expect(await page.evaluate(() => window.codeCopyProbe.values)).toEqual([
+    ascending
+  ]);
+  const firstEvent = page.waitForEvent('download');
+  await page.getByRole('button', { name: 'Download', exact: true }).click();
+  const first = await firstEvent;
+  expect(first.suggestedFilename()).toMatch(/\.json$/);
+  expect(await readFile((await first.path())!, 'utf8')).toBe(ascending);
+  // Example cards render their own controls; they apply the sample on click.
+  const order = page
+    .getByRole('combobox')
+    .and(page.locator(':not(#examples *)'))
+    .last();
+  await expect(order).toHaveText('Ascending (A → Z)');
+  await order.click();
+  await page
+    .getByRole('option', { name: 'Descending (Z → A)', exact: true })
+    .click();
+  await expect(order).toHaveText('Descending (Z → A)');
+  const descending =
+    '{\n  "z": 0,\n  "toString": "Việt Nam 😀",\n  "constructor": false,\n  "a": "x\\ny",\n  "__proto__": {\n    "nested": {\n      "z": 1,\n      "a": 2\n    }\n  }\n}';
+  await page.waitForFunction(
+    (value) =>
+      (window as MonacoWindow)
+        .monaco!.editor.getModels()
+        .some((m) => m.getValue() === value),
+    descending
+  );
+  const secondEvent = page.waitForEvent('download');
+  await page.getByRole('button', { name: 'Download', exact: true }).click();
+  const bytes = await readFile((await (await secondEvent).path())!, 'utf8');
+  expect(bytes).toBe(descending);
+  const output = JSON.parse(bytes);
+  expect(Object.prototype.hasOwnProperty.call(output, '__proto__')).toBe(true);
+  expect(output).toEqual(JSON.parse(source));
+});
+
+test('JSON sort mobile dark preserves each JSONL row and switches to JSON array exports', async ({
+  page
+}) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.emulateMedia({ colorScheme: 'dark' });
+  await page.goto(route('/json/sort'));
+  await page.waitForFunction(
+    () => (window as MonacoWindow).monaco?.editor.getModels().length === 2
+  );
+  await page
+    .getByRole('heading', {
+      name: 'Sort object keys alphabetically',
+      exact: true
+    })
+    .click();
+  const picker = page.locator('input[type=file]');
+  await picker.setInputFiles({
+    name: 'rows.jsonl',
+    mimeType: 'text/plain',
+    buffer: Buffer.from(
+      '{"z":2,"__proto__":null}\r\n\r\n{"z":1,"__proto__":["Việt Nam 😀"]}\n'
+    )
+  });
+  const expected =
+    '{"__proto__":null,"z":2}\n{"__proto__":["Việt Nam 😀"],"z":1}';
+  await page.waitForFunction(
+    (value) =>
+      (window as MonacoWindow)
+        .monaco!.editor.getModels()
+        .some((m) => m.getValue() === value),
+    expected
+  );
+  const event = page.waitForEvent('download');
+  const button = page.getByRole('button', { name: 'Download', exact: true });
+  await button.focus();
+  await page.keyboard.press('Enter');
+  const downloaded = await event;
+  expect(downloaded.suggestedFilename()).toMatch(/\.jsonl$/);
+  const bytes = await readFile((await downloaded.path())!, 'utf8');
+  expect(bytes).toBe(expected);
+  const rows = bytes.split('\n').map((line) => JSON.parse(line));
+  for (const row of rows)
+    expect(Object.prototype.hasOwnProperty.call(row, '__proto__')).toBe(true);
+  expect(rows).toEqual(
+    JSON.parse('[{"__proto__":null,"z":2},{"__proto__":["Việt Nam 😀"],"z":1}]')
+  );
+  await picker.setInputFiles({
+    name: 'rows.json',
+    mimeType: 'application/json',
+    buffer: Buffer.from('[{"z":3,"__proto__":false},{"z":4,"__proto__":0}]')
+  });
+  const array =
+    '[\n  {\n    "__proto__": false,\n    "z": 3\n  },\n  {\n    "__proto__": 0,\n    "z": 4\n  }\n]';
+  await page.waitForFunction(
+    (value) =>
+      (window as MonacoWindow)
+        .monaco!.editor.getModels()
+        .some((m) => m.getValue() === value),
+    array
+  );
+  const recoveredEvent = page.waitForEvent('download');
+  await button.click();
+  const json = await recoveredEvent;
+  expect(json.suggestedFilename()).toMatch(/\.json$/);
+  expect(await readFile((await json.path())!, 'utf8')).toBe(array);
+  expect(
+    await page.evaluate(
+      () => document.documentElement.scrollWidth <= innerWidth
+    )
+  ).toBe(true);
+});

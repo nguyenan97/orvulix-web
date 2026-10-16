@@ -34,7 +34,8 @@ it('records only the verified development scopes and their actual delivery PRs',
     'Input clipboard reliability',
     'External PDF Editor opt-in',
     'Text and code file import ownership',
-    'JSON Prettify result ownership'
+    'JSON Prettify result ownership',
+    'JSON Minify result ownership'
   ]);
   for (const [index, prs] of [
     [19],
@@ -48,7 +49,8 @@ it('records only the verified development scopes and their actual delivery PRs',
     [32],
     [33],
     [34],
-    [35]
+    [35],
+    [36]
   ].entries())
     for (const pr of prs)
       expect(DEVELOPMENT_UPDATES[index].description).toContain(`PR #${pr}`);
@@ -61,7 +63,7 @@ it('retains planned milestones separately from partial development delivery', ()
     sections.find(
       (section) => section.heading === 'Delivered development scope'
     )?.examples
-  ).toHaveLength(12);
+  ).toHaveLength(13);
   expect(
     sections.find((section) => section.heading === 'Proposed order')?.examples
   ).toHaveLength(12);
