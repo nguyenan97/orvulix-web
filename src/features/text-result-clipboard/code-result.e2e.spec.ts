@@ -462,3 +462,124 @@ test('prettify keyboard clearing invalidates output and current errors without s
     )
   ).toBe(true);
 });
+
+test('minify current JSONL output exports real bytes and invalid/empty files cannot export stale data', async ({
+  page
+}) => {
+  await probe(page);
+  await page.goto(route('/json/minify'));
+  await page.waitForFunction(
+    () => (window as MonacoWindow).monaco?.editor.getModels().length === 2
+  );
+  const picker = page.locator('input[type=file]');
+  const download = page.getByRole('button', { name: 'Download', exact: true });
+  const error = page.getByRole('alert', { name: 'JSON minification error' });
+  const upload = (source: string) =>
+    picker.setInputFiles({
+      name: 'source.jsonl',
+      mimeType: 'text/plain',
+      buffer: Buffer.from(source)
+    });
+  await expect(copy(page)).toBeDisabled();
+  await expect(download).toBeDisabled();
+  const expected = '{"message":"Việt Nam 😀","literal":"a\\nb"}\nfalse\nnull';
+  await upload(
+    ' { "message" : "Việt Nam 😀", "literal" : "a\\nb" }\r\n\r\nfalse\nnull\n'
+  );
+  await expect(download).toBeEnabled();
+  await copy(page).click();
+  await page.waitForFunction(() => window.codeCopyProbe.completed === 1);
+  expect(await page.evaluate(() => window.codeCopyProbe.values)).toEqual([
+    expected
+  ]);
+  const event = page.waitForEvent('download');
+  await download.click();
+  const file = await event;
+  expect(file.suggestedFilename()).toMatch(/\.jsonl$/);
+  const bytes = await readFile((await file.path())!, 'utf8');
+  expect(bytes).toBe(expected);
+  expect(bytes.split('\n').map((line) => JSON.parse(line))).toEqual([
+    { message: 'Việt Nam 😀', literal: 'a\nb' },
+    false,
+    null
+  ]);
+  await upload('{"secret":1}\n{broken');
+  await expect(error).toHaveText('Invalid JSON or JSON Lines input.');
+  await expect(copy(page)).toBeDisabled();
+  await expect(download).toBeDisabled();
+  await page.waitForFunction(() =>
+    (window as MonacoWindow)
+      .monaco!.editor.getModels()
+      .some((m) => m.getValue() === '')
+  );
+  await upload('');
+  await expect(error).toHaveCount(0);
+  await page.waitForFunction(() =>
+    (window as MonacoWindow)
+      .monaco!.editor.getModels()
+      .every((m) => m.getValue() === '')
+  );
+  await expect(download).toBeDisabled();
+  await upload(' { "recovery" : "Việt Nam 😀" } ');
+  await expect(download).toBeEnabled();
+  const recovered = page.waitForEvent('download');
+  await download.click();
+  const recoveredFile = await recovered;
+  expect(recoveredFile.suggestedFilename()).toMatch(/\.json$/);
+  expect(await readFile((await recoveredFile.path())!, 'utf8')).toBe(
+    '{"recovery":"Việt Nam 😀"}'
+  );
+  await expect(error).toHaveCount(0);
+});
+
+test('minify mobile dark keyboard edits clear output and example selection recovers current JSON', async ({
+  page
+}) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.emulateMedia({ colorScheme: 'dark' });
+  await page.goto(route('/json/minify'));
+  await page.waitForFunction(
+    () => (window as MonacoWindow).monaco?.editor.getModels().length === 2
+  );
+  const editor = page
+    .locator('.monaco-editor')
+    .first()
+    .locator('textarea.inputarea');
+  const download = page.getByRole('button', { name: 'Download', exact: true });
+  await editor.focus();
+  await editor.pressSequentially('false');
+  await expect(download).toBeEnabled();
+  await editor.press(
+    await page.evaluate(() =>
+      navigator.userAgent.includes('Macintosh') ? 'Meta+A' : 'Control+A'
+    )
+  );
+  await editor.press('Backspace');
+  await expect(download).toBeDisabled();
+  await expect(copy(page)).toBeDisabled();
+  await page.waitForFunction(() =>
+    (window as MonacoWindow)
+      .monaco!.editor.getModels()
+      .every((m) => m.getValue() === '')
+  );
+  await editor.pressSequentially('invalid');
+  await expect(
+    page.getByRole('alert', { name: 'JSON minification error' })
+  ).toHaveText('Invalid JSON or JSON Lines input.');
+  await page
+    .getByRole('heading', { name: 'Minify a Simple JSON Object', exact: true })
+    .click();
+  await expect(
+    page.getByRole('alert', { name: 'JSON minification error' })
+  ).toHaveCount(0);
+  const event = page.waitForEvent('download');
+  await download.click();
+  expect(await readFile((await (await event).path())!, 'utf8')).toBe(
+    '{"name":"John Doe","age":30,"city":"New York"}'
+  );
+  expect(
+    await page.evaluate(
+      () => document.documentElement.scrollWidth <= innerWidth
+    )
+  ).toBe(true);
+});
