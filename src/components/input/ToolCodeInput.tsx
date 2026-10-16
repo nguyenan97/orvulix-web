@@ -4,6 +4,8 @@ import { CustomSnackBarContext } from '../../contexts/CustomSnackBarContext';
 import InputHeader from '../InputHeader';
 import InputFooter from './InputFooter';
 import { useTranslation } from 'react-i18next';
+import { guardCodeClipboardGesture } from '../../features/text-result-clipboard/code-gesture'; // ORVULIX: unsupported code-footer gestures.
+import { writeResultText } from '../../features/text-result-clipboard/write'; // ORVULIX: guarded native input copy.
 import Editor from '@monaco-editor/react';
 import {
   globalInputHeight,
@@ -27,8 +29,7 @@ export default function ToolCodeInput({
   const theme = useTheme();
 
   const handleCopy = () => {
-    navigator.clipboard
-      .writeText(value)
+    writeResultText(value)
       .then(() => showSnackBar(t('toolTextInput.copied'), 'success'))
       .catch((err) => {
         showSnackBar(t('toolTextInput.copyFailed', { error: err }), 'error');
@@ -119,14 +120,22 @@ export default function ToolCodeInput({
             }}
           />
         </Box>
-        <InputFooter handleCopy={handleCopy} handleImport={handleImportClick} />
-        <input
-          type="file"
-          accept="*"
-          ref={fileInputRef}
-          style={{ display: 'none' }}
-          onChange={handleFileChange}
-        />
+        <Box
+          onClick={guardCodeClipboardGesture}
+          onKeyDown={guardCodeClipboardGesture}
+        >
+          <InputFooter
+            handleCopy={handleCopy}
+            handleImport={handleImportClick}
+          />
+          <input
+            type="file"
+            accept="*"
+            ref={fileInputRef}
+            style={{ display: 'none' }}
+            onChange={handleFileChange}
+          />
+        </Box>
       </Box>
     </Box>
   );

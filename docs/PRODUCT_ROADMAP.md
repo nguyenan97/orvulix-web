@@ -11,12 +11,12 @@ Our approach is to make existing tools better first, then explore new capabiliti
 
 ## Verified development delivery
 
-Reconciled 2026-10-15 against develop `ef29d62` and main `96494b8`. PR19/20/22
-and PR24-30 are merged into develop, not released to main. These cover bounded
+Reconciled 2026-10-15 against develop `17c549d` and main `96494b8`. PR19/20/22
+and PR24-31 are merged into develop, not released to main. These cover bounded
 list regex, local HTML conversion/discovery, PNG dimensions, multi-file input,
-GIF reliability, engineering practices, Merge PDF ownership and text-result clipboard reliability. The authoritative
+GIF reliability, engineering practices, Merge PDF ownership and text/code-result clipboard reliability. The authoritative
 [delivery snapshot](FEATURE_BACKLOG.md#verified-delivery-snapshot) records PRs,
-merge commits and remaining scope. The current code-result extension is tracked below.
+merge commits and remaining scope. The current input-footer extension is tracked below.
 
 ## 1. Better everyday tools
 
@@ -216,13 +216,21 @@ PR30 merged a change that aligns copied text with the displayed ToolTextResult v
 adds manual-copy guidance when native clipboard access fails. Downloads retain
 the original data. PR30 is merged into develop; this is not a production
 release or completion of JSON prettify/other clipboard investigations. Public
-/roadmap separates verified development delivery through PR30 from planned features;
+/roadmap separates verified development delivery through PR31 from planned features;
 see FEATURE_BACKLOG.md for the current partial foundation scope.
 
 ### Code-result follow-up
 
-The current change adds the same native clipboard failure guidance to code results
+PR31 merged the same native clipboard failure guidance into code results
 without transforming formatted code. Secure-origin JSON copy and insecure-origin
-manual-copy guidance are validated separately. Implementation/delivery is tracked
-by its PR; historical issue390 and input/file consumer investigation are not marked
+manual-copy guidance are validated separately. PR31 is merged into develop, not main; historical issue390 and input/file consumer investigation are not marked
 fully resolved. No production release, HTTP fallback or formatter rewrite.
+
+
+### Shared input footer follow-up
+
+The current feature branch extends guarded native copy to text/code input footers,
+retaining exact source text, editing and file import. This is not yet merged or
+released. Actual-origin/code-editor tests and delivery are tracked in
+tasks/input-clipboard.md. Other clipboard consumers and editor-wide HTTP gestures
+remain follow-ups; there is no deprecated fallback or wider issue390 claim.
