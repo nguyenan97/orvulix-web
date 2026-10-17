@@ -48,6 +48,7 @@ export default function WorkflowBuilder() {
   const [selected, setSelected] = useState<StepType>('uppercase');
   const [importError, setImportError] = useState<ErrorCode | null>(null);
   const [imported, setImported] = useState(false);
+  const [selectedOutput, setSelectedOutput] = useState(0);
   const file = useRef<HTMLInputElement>(null);
   const { showSnackBar } = useContext(CustomSnackBarContext);
   const workflow = useWorkflow(input, recipe);
@@ -65,6 +66,7 @@ export default function WorkflowBuilder() {
     setDraft(next);
   }
   const outputs = workflow.result?.outputs ?? [];
+  const preview = Math.min(selectedOutput, Math.max(0, outputs.length - 1));
   const success = workflow.result?.kind === 'success';
   const final = success ? outputs[outputs.length - 1] : '';
   const canRun =
@@ -73,9 +75,10 @@ export default function WorkflowBuilder() {
     recipe.steps.length > 0 &&
     !workflow.running;
   async function copy() {
-    if (!success) return;
+    const value = workflow.getFinal();
+    if (value === undefined) return;
     try {
-      await writeResultText(final);
+      await writeResultText(value);
       showSnackBar('Text copied', 'success');
     } catch (error) {
       showSnackBar(
@@ -92,12 +95,15 @@ export default function WorkflowBuilder() {
           `${brand.downloadPrefix}-workflow.json`,
           'application/json;charset=utf-8'
         );
-      else if (success)
+      else {
+        const value = workflow.getFinal();
+        if (value === undefined) return;
         downloadText(
-          final,
+          value,
           `${brand.downloadPrefix}-workflow.txt`,
           'text/plain;charset=utf-8'
         );
+      }
     } catch {
       showSnackBar('Could not create this download. Try again.', 'error');
     }
@@ -251,28 +257,42 @@ export default function WorkflowBuilder() {
           <Typography component="h2" variant="h6">
             Intermediate outputs
           </Typography>
-          {outputs.map((output, index) => (
-            <TextField
-              key={index}
-              label={`Step ${index + 1} output: ${
-                STEP_LABELS[recipe.steps[index].type]
-              }`}
-              value={output}
-              multiline
-              minRows={2}
-              maxRows={8}
-              fullWidth
-              InputProps={{ readOnly: true }}
-            />
-          ))}
+          {outputs.length > 0 && (
+            <>
+              <TextField
+                select
+                label="Intermediate step"
+                value={preview}
+                onChange={(event) =>
+                  setSelectedOutput(Number(event.target.value))
+                }
+              >
+                {outputs.map((output, index) => (
+                  <MenuItem key={index} value={index}>
+                    Step {index + 1}: {STEP_LABELS[recipe.steps[index].type]} (
+                    {output.length} units)
+                  </MenuItem>
+                ))}
+              </TextField>
+              <TextField
+                label={`Step ${preview + 1} output: ${
+                  STEP_LABELS[recipe.steps[preview].type]
+                }`}
+                value={outputs[preview]}
+                multiline
+                rows={4}
+                fullWidth
+                InputProps={{ readOnly: true }}
+              />
+            </>
+          )}
         </Stack>
       </Box>
       <TextField
         label="Final result"
         value={final}
         multiline
-        minRows={5}
-        maxRows={12}
+        rows={6}
         fullWidth
         InputProps={{ readOnly: true }}
         inputProps={{ 'data-testid': 'workflow-result' }}

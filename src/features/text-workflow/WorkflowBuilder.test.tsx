@@ -109,6 +109,10 @@ describe('workflow page with real runner/engine and controlled worker I/O', () =
     run();
     await waitFor(() => expect(final()).toHaveValue('ABC'));
     expect(screen.getByLabelText('Step 1 output: Trim')).toHaveValue('abc');
+    fireEvent.mouseDown(
+      screen.getByRole('combobox', { name: /^Intermediate step/ })
+    );
+    fireEvent.click(screen.getByRole('option', { name: /^Step 2:/ }));
     expect(screen.getByLabelText('Step 2 output: Uppercase')).toHaveValue(
       'ABC'
     );
@@ -120,7 +124,7 @@ describe('workflow page with real runner/engine and controlled worker I/O', () =
       screen.getByRole('heading', { name: 'Step 1: Uppercase' })
     ).toBeInTheDocument();
     expect(
-      screen.getByRole('heading', { name: 'Step 1: Uppercase', exact: true })
+      screen.getByRole('heading', { name: 'Step 1: Uppercase' })
     ).toHaveFocus();
     fireEvent.click(screen.getByRole('button', { name: 'Run workflow' }));
     const old = WorkerProbe.instances.at(-1)!,

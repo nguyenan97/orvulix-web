@@ -226,6 +226,18 @@ describe('text workflow engine', () => {
       ]).toEqual(['output-size', 2, 2]);
     const sixteen = Array.from({ length: 16 }, () => newStep('uppercase'));
     expect(run('a'.repeat(LIMITS.input), ...sixteen).kind).toBe('success');
+    const browserBoundary = run(
+      ' ' + 'a'.repeat(65_535),
+      newStep('url'),
+      ...Array.from({ length: 15 }, () => newStep('trim'))
+    );
+    expect(browserBoundary.kind).toBe('error');
+    if (browserBoundary.kind === 'error')
+      expect([
+        browserBoundary.error,
+        browserBoundary.failedStep,
+        browserBoundary.outputs.length
+      ]).toEqual(['retained-size', 15, 15]);
     const retained = run(
       ' '.repeat(LIMITS.input),
       newStep('url'),

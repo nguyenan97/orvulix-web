@@ -19,6 +19,7 @@ const dedup = {
 const encode = (type: string) => ({ type, options: { mode: 'encode' } });
 const decode = (type: string) => ({ type, options: { mode: 'decode' } });
 interface Probe {
+  blockRequests: boolean;
   created: number;
   terminated: number;
   active: number;
@@ -59,6 +60,7 @@ test.beforeEach(async ({ page, context, browserName }) => {
     await context.grantPermissions(['clipboard-read', 'clipboard-write']);
   await page.addInitScript(() => {
     const probe: Probe = (window.orvulixWorkflowProbe = {
+      blockRequests: false,
       created: 0,
       terminated: 0,
       active: 0,
@@ -77,6 +79,9 @@ test.beforeEach(async ({ page, context, browserName }) => {
         probe.terminated++;
         probe.active--;
         super.terminate();
+      }
+      postMessage(message: unknown) {
+        if (!probe.blockRequests) super.postMessage(message);
       }
     };
     const NativeReader = window.FileReader;
@@ -106,9 +111,13 @@ test('literal Unicode text survives native copy, raw download, denied permission
   page,
   browserName
 }) => {
-  const text = String.raw`a\nb\t Việt 😀`;
+  const text = String.raw`a\nb\t Việt 😀 <img src=x onerror="window.workflowInjected=1">`;
   await page.getByTestId('text-input').fill(`  ${text}  `);
   await run(page, text);
+  await expect(page.locator('img[src="x"]')).toHaveCount(0);
+  expect(
+    await page.evaluate(() => Object.hasOwn(window, 'workflowInjected'))
+  ).toBe(false);
   const copy = page.getByRole('button', {
     name: 'Copy final result',
     exact: true
@@ -167,12 +176,23 @@ test('all six transformations expose ordered intermediates and configuration-onl
     'RExST1cgT0xMRUg=',
     'RExST1cgT0xMRUg%3D'
   ];
-  for (const [index, value] of expected.entries())
+  const created = await page.evaluate(
+    () => window.orvulixWorkflowProbe.created
+  );
+  for (const [index, value] of expected.entries()) {
+    await page.getByRole('combobox', { name: /^Intermediate step/ }).click();
+    await page
+      .getByRole('option', { name: new RegExp(`^Step ${index + 1}:`) })
+      .click();
     await expect(
       page.getByRole('textbox', {
         name: new RegExp(`^Step ${index + 1} output:`)
       })
     ).toHaveValue(value);
+  }
+  expect(await page.evaluate(() => window.orvulixWorkflowProbe.created)).toBe(
+    created
+  );
   const event = page.waitForEvent('download');
   await page
     .getByRole('button', { name: 'Export recipe', exact: true })
@@ -263,9 +283,7 @@ test('failed steps retain only current intermediates and recover after options/s
   ).toBeDisabled();
   await page.getByTestId('text-input').fill('  %61  ');
   await run(page, 'A');
-  await page
-    .getByRole('combobox', { name: 'Step 2 mode', exact: true })
-    .click();
+  await page.getByRole('combobox', { name: /^Step 2 mode\b/ }).click();
   await page.getByRole('option', { name: 'Encode', exact: true }).click();
   await expect(
     page.getByRole('button', { name: 'Copy final result' })
@@ -277,6 +295,29 @@ test('failed steps retain only current intermediates and recover after options/s
   await expect(page.getByText(/Step 1: Invalid Base64/)).toBeVisible();
   await page.getByTestId('text-input').fill('V m n h u 4 d 0 I P C f m I A=');
   await run(page, 'Việt 😀');
+  await importSteps(page, [dedup]);
+  await page.getByTestId('text-input').fill(' b \na\n\nb\na\n');
+  await page.getByRole('combobox', { name: /^Step 1 blank lines\b/ }).click();
+  await page
+    .getByRole('option', { name: 'Preserve all blank lines', exact: true })
+    .click();
+  await page
+    .getByRole('checkbox', { name: 'Step 1: Trim lines', exact: true })
+    .check();
+  await page
+    .getByRole('checkbox', { name: 'Step 1: Sort lines', exact: true })
+    .check();
+  await run(page, '\n\na\nb');
+  await page
+    .getByRole('combobox', { name: /^Step 1 duplicate mode\b/ })
+    .click();
+  await page
+    .getByRole('option', { name: 'Keep only unique lines', exact: true })
+    .click();
+  await expect(
+    page.getByRole('button', { name: 'Copy final result' })
+  ).toBeDisabled();
+  await run(page, '\n');
 });
 
 test('input edits and navigation terminate native workers before old replies can publish', async ({
@@ -325,6 +366,11 @@ test('exact admission budgets remain responsive; one-over input and retained out
   await importSteps(page, Array(16).fill(upper));
   await page.getByTestId('text-input').fill('a'.repeat(65_536));
   await run(page, 'A'.repeat(65_536));
+  await expect(
+    page
+      .getByRole('region', { name: 'Intermediate outputs' })
+      .getByRole('textbox')
+  ).toHaveCount(1);
   await expect(
     page.getByRole('button', { name: 'Add step', exact: true })
   ).toBeDisabled();
@@ -375,6 +421,39 @@ test('mobile dark keyboard editing preserves accessible focus and layout', async
       () => document.documentElement.scrollWidth <= innerWidth
     )
   ).toBe(true);
+});
+
+test('Cancel and deadline terminate real workers with withheld I/O and allow recovery', async ({
+  page
+}) => {
+  await importSteps(page, [upper]);
+  await page.getByTestId('text-input').fill('recover');
+  await page.evaluate(() => {
+    window.orvulixWorkflowProbe.blockRequests = true;
+  });
+  await page.getByRole('button', { name: 'Run workflow', exact: true }).click();
+  await page.getByRole('button', { name: 'Cancel run', exact: true }).click();
+  await expect
+    .poll(() => page.evaluate(() => window.orvulixWorkflowProbe.active))
+    .toBe(0);
+  await expect(
+    page.getByRole('button', { name: 'Copy final result' })
+  ).toBeDisabled();
+  await page.getByRole('button', { name: 'Run workflow', exact: true }).click();
+  await page.waitForFunction(() => window.orvulixWorkflowProbe.active === 0);
+  await expect(
+    page.getByText(/Workflow timed out after 5 seconds/)
+  ).toBeVisible();
+  await expect(
+    page.getByRole('button', { name: 'Download final result' })
+  ).toBeDisabled();
+  await page.evaluate(() => {
+    window.orvulixWorkflowProbe.blockRequests = false;
+  });
+  await run(page, 'RECOVER');
+  expect(
+    await page.evaluate(() => window.orvulixWorkflowProbe.terminated)
+  ).toBe(3);
 });
 
 test('new route has matching static content and metadata with Pages isolation', async ({

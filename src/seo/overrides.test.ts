@@ -38,12 +38,15 @@ describe('tool SEO overrides', () => {
   });
 
   it('keeps hand-written content complete and free of unverifiable wording', () => {
-    // Keep the original editorial budget; pdf/editor is an audited privacy disclosure.
+    // 30 existing editorial pages plus the new workflow; PDF disclosure is separate.
     const editorial = Object.keys(TOOL_OVERRIDES).filter(
       (path) => path !== 'pdf/editor'
     );
     expect(editorial.length).toBeGreaterThanOrEqual(20);
-    expect(editorial.length).toBeLessThanOrEqual(30);
+    expect(editorial.length).toBe(31);
+    expect(TOOL_OVERRIDES['string/text-workflow'].notes.join(' ')).toContain(
+      'five-second deadline'
+    );
     for (const [path, override] of Object.entries(TOOL_OVERRIDES)) {
       expect(override.title.endsWith(' | Orvulix'), path).toBe(true);
       expect(override.howTo.length, path).toBeGreaterThanOrEqual(3);

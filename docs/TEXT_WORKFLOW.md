@@ -15,6 +15,11 @@ the current worker. Late replies cannot restore old output. A successful empty
 string is exportable; idle, running and failed runs have no final exports. A failed
 step retains only successful intermediates from that run.
 
+Select an intermediate step to inspect its full text. Only one intermediate and
+the final textarea are mounted, so a maximum-size run does not render up to sixteen
+large controls at once. Changing the selected preview never reruns the worker or
+changes export ownership.
+
 | Operation | Contract |
 | --- | --- |
 | Trim | `String.trim()` on the entire text. |

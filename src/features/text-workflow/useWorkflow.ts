@@ -9,8 +9,10 @@ export function useWorkflow(
   runner = runWorkflow
 ) {
   const active = useRef<AbortController | null>(null);
+  const published = useRef<string | undefined>(undefined);
   const [state, setState] = useState<Run | null>(null);
   const stop = useCallback(() => {
+    published.current = undefined;
     const controller = active.current;
     active.current = null;
     controller?.abort();
@@ -32,6 +34,8 @@ export function useWorkflow(
       .then((result) => {
         if (active.current !== controller) return;
         active.current = null;
+        published.current =
+          result.kind === 'success' ? result.outputs.at(-1) : undefined;
         setState({ input, recipe, result });
       })
       .catch((error) => {
@@ -52,7 +56,9 @@ export function useWorkflow(
   // Also guard rendering before layout cleanup can cancel an external replacement.
   const current =
     state?.input === input && state.recipe === recipe ? state : null;
+  const getFinal = useCallback(() => published.current, []);
   return {
+    getFinal,
     run,
     cancel,
     result: current?.result ?? null,

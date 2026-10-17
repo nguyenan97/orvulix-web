@@ -48,6 +48,11 @@ describe('React workflow ownership', () => {
       kind: 'success',
       outputs: ['new']
     });
+    expect(hook.result.current.getFinal()).toBe('new');
+    act(() => {
+      hook.result.current.cancel();
+      expect(hook.result.current.getFinal()).toBeUndefined();
+    });
     hook.rerender({
       input: 'new',
       config: { version: 1, steps: [newStep('uppercase')] }
