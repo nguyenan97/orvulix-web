@@ -94,12 +94,214 @@ describe('removeDuplicateLines function', () => {
         trimTextLines: false
       };
       const result = removeDuplicateLines(input, options);
-      // This test needs careful consideration of the expected behavior
-      expect(result).not.toContain('line2\nline2');
-      expect(result).toContain('line1');
-      expect(result).toContain('line2');
-      expect(result).toContain('line3');
+      expect(result).toBe('line1\n\nline2\n\nline3');
     });
+  });
+
+  // Literal expectations cover the interactions, not a second implementation.
+  const input = ' b \na\n\nb\n  \na\nc\nc\n';
+  const combinations: {
+    mode: DuplicateRemoverOptions['mode'];
+    newlines: DuplicateRemoverOptions['newlines'];
+    trimTextLines: boolean;
+    output: string;
+    sorted: string;
+  }[] = [
+    {
+      mode: 'all',
+      newlines: 'preserve',
+      trimTextLines: false,
+      output: ' b \na\n\nb\n  \nc\n',
+      sorted: '\n\n  \n b \na\nb\nc'
+    },
+    {
+      mode: 'all',
+      newlines: 'filter',
+      trimTextLines: false,
+      output: ' b \na\n\nb\n  \nc',
+      sorted: '\n  \n b \na\nb\nc'
+    },
+    {
+      mode: 'all',
+      newlines: 'delete',
+      trimTextLines: false,
+      output: ' b \na\nb\nc',
+      sorted: ' b \na\nb\nc'
+    },
+    {
+      mode: 'consecutive',
+      newlines: 'preserve',
+      trimTextLines: false,
+      output: ' b \na\n\nb\n  \na\nc\n',
+      sorted: '\n\n  \n b \na\na\nb\nc'
+    },
+    {
+      mode: 'consecutive',
+      newlines: 'filter',
+      trimTextLines: false,
+      output: ' b \na\n\nb\n  \na\nc\n',
+      sorted: '\n\n  \n b \na\na\nb\nc'
+    },
+    {
+      mode: 'consecutive',
+      newlines: 'delete',
+      trimTextLines: false,
+      output: ' b \na\nb\na\nc',
+      sorted: ' b \na\na\nb\nc'
+    },
+    {
+      mode: 'unique',
+      newlines: 'preserve',
+      trimTextLines: false,
+      output: ' b \n\nb\n  \n',
+      sorted: '\n\n  \n b \nb'
+    },
+    {
+      mode: 'unique',
+      newlines: 'filter',
+      trimTextLines: false,
+      output: ' b \nb\n  ',
+      sorted: '  \n b \nb'
+    },
+    {
+      mode: 'unique',
+      newlines: 'delete',
+      trimTextLines: false,
+      output: ' b \nb',
+      sorted: ' b \nb'
+    },
+    {
+      mode: 'all',
+      newlines: 'preserve',
+      trimTextLines: true,
+      output: 'b\na\n\n\nc\n',
+      sorted: '\n\n\na\nb\nc'
+    },
+    {
+      mode: 'all',
+      newlines: 'filter',
+      trimTextLines: true,
+      output: 'b\na\n\nc',
+      sorted: '\na\nb\nc'
+    },
+    {
+      mode: 'all',
+      newlines: 'delete',
+      trimTextLines: true,
+      output: 'b\na\nc',
+      sorted: 'a\nb\nc'
+    },
+    {
+      mode: 'consecutive',
+      newlines: 'preserve',
+      trimTextLines: true,
+      output: 'b\na\n\nb\n\na\nc\n',
+      sorted: '\n\n\na\na\nb\nb\nc'
+    },
+    {
+      mode: 'consecutive',
+      newlines: 'filter',
+      trimTextLines: true,
+      output: 'b\na\n\nb\n\na\nc\n',
+      sorted: '\n\n\na\na\nb\nb\nc'
+    },
+    {
+      mode: 'consecutive',
+      newlines: 'delete',
+      trimTextLines: true,
+      output: 'b\na\nb\na\nc',
+      sorted: 'a\na\nb\nb\nc'
+    },
+    {
+      mode: 'unique',
+      newlines: 'preserve',
+      trimTextLines: true,
+      output: '\n\n',
+      sorted: '\n\n'
+    },
+    {
+      mode: 'unique',
+      newlines: 'filter',
+      trimTextLines: true,
+      output: '',
+      sorted: ''
+    },
+    {
+      mode: 'unique',
+      newlines: 'delete',
+      trimTextLines: true,
+      output: '',
+      sorted: ''
+    }
+  ];
+
+  describe.each(combinations)(
+    '$mode / $newlines / trim=$trimTextLines',
+    ({ output, sorted, ...options }) => {
+      it.each([false, true])(
+        'returns the exact output with sort=%s',
+        (sortLines) => {
+          expect(removeDuplicateLines(input, { ...options, sortLines })).toBe(
+            sortLines ? sorted : output
+          );
+        }
+      );
+    }
+  );
+
+  it.each(['\n', '\r\n', '\r'])(
+    'handles %j line separators without retaining CR characters',
+    (separator) => {
+      expect(
+        removeDuplicateLines(
+          ['Tiếng Việt 😀', '', 'Tiếng Việt 😀', 'Khác', ''].join(separator),
+          {
+            mode: 'all',
+            newlines: 'preserve',
+            trimTextLines: false,
+            sortLines: false
+          }
+        )
+      ).toBe('Tiếng Việt 😀\n\nKhác\n');
+    }
+  );
+
+  it.each(['all', 'consecutive', 'unique'] as const)(
+    'preserves every blank line with mode=%s',
+    (mode) => {
+      expect(
+        removeDuplicateLines('\n \n\t\n', {
+          mode,
+          newlines: 'preserve',
+          trimTextLines: false,
+          sortLines: false
+        })
+      ).toBe('\n \n\t\n');
+    }
+  );
+
+  it('lets preserved blank lines interrupt consecutive runs', () => {
+    const options = {
+      mode: 'consecutive',
+      newlines: 'preserve',
+      trimTextLines: true,
+      sortLines: false
+    } as const;
+    expect(removeDuplicateLines('a\n \na\na', options)).toBe('a\n\na');
+    expect(
+      removeDuplicateLines('a\n \na\na', { ...options, newlines: 'delete' })
+    ).toBe('a');
+  });
+
+  it('keeps comparison case-sensitive and leaves options and later calls independent', () => {
+    const options = Object.freeze({
+      mode: 'all',
+      newlines: 'preserve',
+      trimTextLines: true,
+      sortLines: false
+    } as const);
+    expect(removeDuplicateLines(' A \na\nA\n😀\n😀', options)).toBe('A\na\n😀');
+    expect(removeDuplicateLines('A\nA', options)).toBe('A');
   });
 
   // Test for sorting

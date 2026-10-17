@@ -8,11 +8,11 @@ export const ROADMAP_FOUNDATION =
 export const ROADMAP_BACKLOG_URL =
   'https://github.com/nguyenan97/orvulix-web/blob/develop/docs/FEATURE_BACKLOG.md';
 
-// Verified against develop 5937a46 and main 96494b8 on 2026-10-16.
+// Verified against develop 2330dd67 and main 96494b8 on 2026-10-17.
 // These changes are NOT released to main. Recheck Git ancestry when updating.
 export const DEVELOPMENT_HEADING = 'Development updates';
 export const DEVELOPMENT_NOTICE =
-  'Merged into develop through PR #36, not released to production. This snapshot separates delivered development work from the planned features below. Website URL conversion remains paused.';
+  'Merged into develop through PR #38, not released to production. This snapshot separates delivered development work from the planned features below. Website URL conversion remains paused.';
 export const DEVELOPMENT_UPDATES = [
   {
     title: 'Bounded list regex execution',
@@ -67,17 +67,22 @@ export const DEVELOPMENT_UPDATES = [
   {
     title: 'Text and code file import ownership',
     description:
-      'Merged into develop in PR #34. Old text-file reads cannot overwrite later edits, selections or resets. Read errors and same-file retry are handled. Whole-file limits and clipboard intermittency remain follow-ups.'
+      'Merged into develop in PR #34, with size admission and delayed-commit fixes in PR #38. Old text-file reads cannot overwrite later edits, selections or resets. Read errors and same-file retry are handled. Other file consumers and clipboard intermittency remain follow-ups.'
   },
   {
     title: 'JSON Prettify result ownership',
     description:
-      'Merged into develop in PR #35. Empty or invalid source clears old output and disables result actions. Inline validation follows current source and indentation. Native parsing and whole-input resource limits remain separate.'
+      'Merged into develop in PR #35, with input/depth/token/output limits in PR #38. Empty or invalid source clears old output and disables result actions. Inline validation follows current source and indentation. Parsing is synchronous; larger-document worker isolation remains separate.'
   },
   {
     title: 'JSON Minify result ownership',
     description:
-      'Merged into develop in PR #36. Empty or invalid source clears old output and disables exports; inline errors follow current input. JSON/JSONL formats and extensions are preserved. Whole-input resource limits and other tools remain separate.'
+      'Merged into develop in PR #36, with input/depth/token/output limits in PR #38. Empty or invalid source clears old output and disables exports; inline errors follow current input. JSON/JSONL formats and extensions are preserved. Other tools and worker isolation remain separate.'
+  },
+  {
+    title: 'JSON Sort current output and resource limits',
+    description:
+      'Merged into develop in PR #37 and PR #38. Sort retains own keys, derives results from current input/options and blocks stale exports. Shared Prettify/Minify/Sort budgets bound source, depth, tokens and serialized output; these are not a strict heap/time quota.'
   }
 ] as const;
 
