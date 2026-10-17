@@ -35,7 +35,7 @@ Unit coverage uses the actual service plus real ToolContent/Formik page adapters
 stubbing only Monaco. It tests invalid/empty transitions, JSONL/JSON formats,
 primitive values, blank lines, duplicate keys, native numeric precision, Unicode,
 message privacy, invalid actions and recovery. A parseable deeply nested value
-reproduces stringify failure separately from invalid syntax.
+is now rejected by the admission gate separately from invalid syntax.
 
 Native tests use the actual pinned Monaco renderer, native file reads/keyboard
 edits, native clipboard and downloaded bytes. They cover JSONL -> invalid -> empty
@@ -43,15 +43,15 @@ edits, native clipboard and downloaded bytes. They cover JSONL -> invalid -> emp
 recovery on Chromium/Firefox/WebKit. Pages checks retain prefixed routes and noindex.
 The deterministic page tests do not claim to prove every native editor behavior.
 
-Parsing/stringification and editor rendering still process whole input synchronously;
+The [foundation task](JSON_RESOURCE_LIMITS.md) adds source/depth/token/output
+admission limits. Parsing/stringification and editor rendering remain synchronous;
 there is no byte/CPU deadline, worker isolation or hard memory quota. Already
 initiated clipboard/download gestures are not revoked by later edits; pending
 clipboard notification ownership remains a separate follow-up. Existing Firefox
 clipboard intermittency is tracked in TEXT_FILE_IMPORT.md, not declared resolved.
 
-Owner: Orvulix maintainers. Follow-up acceptance for parser budgets: measure real
-input/CPU/allocation costs, define supported JSON/JSONL limits and cancellation or
-rejection UX, then test timeout/recovery without silently changing accepted data.
+Owner: Orvulix maintainers. Larger documents require separately evaluated worker
+isolation/cancellation, allocation measurements and recovery tests.
 Other tools require their own observed regressions before migration.
 
 ## Upstream sync hotspots

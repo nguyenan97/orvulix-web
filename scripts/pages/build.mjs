@@ -1,5 +1,6 @@
 import { spawnSync } from 'node:child_process';
 import { preparePages } from './prepare.mjs';
+import { npmCommand } from '../npm-command.mjs';
 
 const base = process.env.PAGES_BASE_PATH || '/orvulix-web/';
 if (!/^\/[a-zA-Z0-9._-]+\/$/.test(base))
@@ -12,7 +13,7 @@ const run = (command, args, extraEnv = {}) => {
   if (result.error) throw result.error;
   if (result.status !== 0) process.exit(result.status ?? 1);
 };
-run('npm', ['run', 'typecheck']);
+run(...npmCommand(['run', 'typecheck']));
 run('node', ['node_modules/vite/bin/vite.js', 'build', '--base', base], {
   VITE_PAGES_DEV: 'true'
 });

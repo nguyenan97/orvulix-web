@@ -1,6 +1,7 @@
 import { expect, test, type Page } from '@playwright/test';
 import { readFile } from 'node:fs/promises';
 import { deferTextReads } from '../text-file-import/testing/defer-reads';
+import { nativeClipboardText } from './testing/native-text';
 const prefix = process.env.COPY_TEST_PREFIX ?? '';
 const route = (path: string) => prefix + path;
 const input = '{"message":"Việt Nam 😀","literal":"a\\nb"}';
@@ -117,7 +118,7 @@ test('JSON prettify copies formatted output with valid literal escapes using nat
   ]);
   if (browserName === 'chromium')
     expect(await page.evaluate(() => navigator.clipboard.readText())).toBe(
-      formatted
+      nativeClipboardText(formatted)
     );
   const event = page.waitForEvent('download');
   await page.getByRole('button', { name: 'Download', exact: true }).click();
@@ -257,7 +258,7 @@ test('JSON code input copies raw source and subsequent editor changes using nati
   ]);
   if (browserName === 'chromium')
     expect(await page.evaluate(() => navigator.clipboard.readText())).toBe(
-      next
+      nativeClipboardText(next)
     );
 });
 
@@ -724,3 +725,126 @@ test('JSON sort mobile dark preserves each JSONL row and switches to JSON array 
     )
   ).toBe(true);
 });
+
+test('JSON sort clears stale/error exports, follows live options and recovers current JSONL', async ({
+  page
+}) => {
+  await page.goto(route('/json/sort'));
+  await page.waitForFunction(
+    () => (window as MonacoWindow).monaco?.editor.getModels().length === 2
+  );
+  const picker = page.locator('input[type=file]');
+  const download = page.getByRole('button', { name: 'Download', exact: true });
+  const error = page.getByRole('alert', { name: 'JSON sorting error' });
+  const upload = (source: string) =>
+    picker.setInputFiles({
+      name: 'sort.jsonl',
+      mimeType: 'text/plain',
+      buffer: Buffer.from(source)
+    });
+  await expect(download).toBeDisabled();
+  await expect(copy(page)).toBeDisabled();
+  await page
+    .getByRole('heading', {
+      name: 'Sort object keys alphabetically',
+      exact: true
+    })
+    .click();
+  await upload('{"z":1,"a":2}');
+  await expect(download).toBeEnabled();
+  await upload('');
+  await expect(download).toBeDisabled();
+  await expect(copy(page)).toBeDisabled();
+  await expect(error).toHaveCount(0);
+  for (const source of [
+    '{private',
+    'null',
+    '['.repeat(65) + '0' + ']'.repeat(65)
+  ]) {
+    await upload(source);
+    await expect(error).toBeVisible();
+    await expect(download).toBeDisabled();
+    await expect(copy(page)).toBeDisabled();
+  }
+  // A live option change must recompute validity even without a source edit.
+  await upload('{"z":1,"a":2}');
+  const mode = page
+    .getByRole('combobox')
+    .and(page.locator(':not(#examples *)'))
+    .filter({
+      hasText: /^(Sort object keys alphabetically|Sort array by key value)$/
+    });
+  await expect(mode).toHaveCount(1);
+  await expect(mode).toHaveText('Sort object keys alphabetically');
+  await mode.click();
+  await page
+    .getByRole('option', { name: 'Sort array by key value', exact: true })
+    .click();
+  await expect(error).toHaveText('Input must be a JSON array');
+  await expect(download).toBeDisabled();
+  await mode.click();
+  await page
+    .getByRole('option', {
+      name: 'Sort object keys alphabetically',
+      exact: true
+    })
+    .click();
+  await expect(error).toHaveCount(0);
+  await expect(download).toBeEnabled();
+  await upload('{"z":1,"__proto__":false}\n{"a":2}');
+  const event = page.waitForEvent('download');
+  await download.click();
+  const file = await event;
+  expect(file.suggestedFilename()).toMatch(/\.jsonl$/);
+  expect(await readFile((await file.path())!, 'utf8')).toBe(
+    '{"__proto__":false,"z":1}\n{"a":2}'
+  );
+});
+
+for (const tool of ['prettify', 'minify', 'sort'])
+  test(`${tool} refuses oversized JSON and text files and recovers without stale exports`, async ({
+    page
+  }) => {
+    await page.goto(route('/json/' + tool));
+    await page.waitForFunction(
+      () => (window as MonacoWindow).monaco?.editor.getModels().length === 2
+    );
+    const picker = page.locator('input[type=file]');
+    const upload = (source: string) =>
+      picker.setInputFiles({
+        name: 'source.json',
+        mimeType: 'application/json',
+        buffer: Buffer.from(source)
+      });
+    const source = '[{"a":1}]';
+    const download = page.getByRole('button', {
+      name: 'Download',
+      exact: true
+    });
+    await upload(source);
+    await expect(download).toBeEnabled();
+    await upload('"' + 'x'.repeat(262144) + '"');
+    await expect(
+      page.getByRole('alert').filter({ hasText: /JSON input is too large/ })
+    ).toBeVisible();
+    await expect(download).toBeDisabled();
+    await expect(copy(page)).toBeDisabled();
+    await upload('x'.repeat(1048577));
+    await expect(
+      page.getByText(
+        'Text file is too large (limit: 1 MiB). Choose a smaller file.',
+        { exact: true }
+      )
+    ).toBeVisible();
+    await expect(download).toBeDisabled();
+    await upload(source);
+    await expect(download).toBeEnabled();
+    await expect(
+      page.getByRole('alert').filter({ hasText: /JSON input is too large/ })
+    ).toHaveCount(0);
+    const event = page.waitForEvent('download');
+    await download.click();
+    expect(
+      JSON.parse(await readFile((await (await event).path())!, 'utf8'))
+    ).toEqual([{ a: 1 }]);
+  });

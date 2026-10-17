@@ -23,7 +23,7 @@
     "prepare": "husky install",
     "security:audit": "node scripts/security/check-audit.mjs --report",
     "security:check": "node scripts/security/check-audit.mjs",
-    "security:test": "node --test scripts/security/*.test.mjs"
+    "security:test": "node --test scripts/security/check-audit.test.mjs scripts/security/summarize-codeql.test.mjs"
   },
   "dependencies": {
     "@emotion/react": "^11.11.4",

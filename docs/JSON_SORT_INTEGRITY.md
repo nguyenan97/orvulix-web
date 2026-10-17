@@ -45,14 +45,13 @@ and the exact head are recorded by the task checkpoint/PR, not inferred here.
 
 ## Limits and follow-ups
 
-Owner: Orvulix maintainers. JSON Sort still has the separately observed inherited
-empty-input stale-output and exportable-error behavior. A later lifecycle task must
-reproduce it through the page, define source/options/output/action ownership and
-retain supported JSON/JSONL sorting with component and native recovery tests.
-This construction fix does not resolve that issue. Shape handling (null/primitive
+The separate [foundation task](JSON_RESOURCE_LIMITS.md) addresses empty-input
+stale output, exportable errors and resource admission with component/native
+regressions. This construction fix alone did not resolve those issues.
+Owner: Orvulix maintainers. Shape handling (null/primitive
 rows), missing-key policy and Unicode collation require separate contracts before
 changing behavior. Parsing/sorting/stringification remain synchronous whole-input
-operations, without a hard CPU/memory cap or worker isolation.
+operations with admission limits, without a hard CPU/heap quota or worker isolation.
 
 Upstream sync hotspot: retain own-data-property construction in sortObject when
 syncing its service. Keep real-service tests in src/features/json-sort and native

@@ -1,5 +1,6 @@
 import { expect, test, type Page } from '@playwright/test';
 import { readFile } from 'node:fs/promises';
+import { nativeClipboardText } from './testing/native-text';
 import {
   DEVELOPMENT_HEADING,
   DEVELOPMENT_NOTICE,
@@ -67,7 +68,7 @@ test('copies visible Unicode/newlines with the native clipboard, while downloads
   ).toEqual(['first\nsecond\tViệt Nam 😀']);
   if (browserName === 'chromium')
     expect(await page.evaluate(() => navigator.clipboard.readText())).toBe(
-      'first\nsecond\tViệt Nam 😀'
+      nativeClipboardText('first\nsecond\tViệt Nam 😀')
     );
   const download = page.waitForEvent('download');
   await page.getByRole('button', { name: 'Download', exact: true }).click();

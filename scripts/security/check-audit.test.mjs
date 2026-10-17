@@ -231,7 +231,11 @@ test('conflicting exit status and audit totals are rejected', () => {
 });
 test('audit invocation is bounded, uses no shell and can omit dev dependencies', () => {
   runAudit(true, (command, args, options) => {
-    assert.equal(command, 'npm');
+    assert.equal(
+      command,
+      process.platform === 'win32' ? process.execPath : 'npm'
+    );
+    if (process.platform === 'win32') assert.match(args[0], /npm-cli\.js$/);
     assert.ok(args.includes('--omit=dev'));
     assert.equal(options.shell, false);
     assert.equal(options.timeout, 120_000);

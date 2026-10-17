@@ -56,7 +56,7 @@ describe('current JSON Minify outcome', () => {
     for (const source of ['\n { "a" : 1 }\n', '[\n1,\n2\n]'])
       expect(evaluateMinify(source).format).toBe('json');
   });
-  it('distinguishes unsupported stringification depth from invalid syntax and recovers', () => {
+  it('distinguishes excessive nesting from invalid syntax and recovers', () => {
     const source = '['.repeat(20000) + '0' + ']'.repeat(20000);
     expect(() => JSON.parse(source)).not.toThrow();
     expect(evaluateMinify(source)).toEqual({
@@ -64,7 +64,7 @@ describe('current JSON Minify outcome', () => {
       value: '',
       format: 'json',
       message:
-        'Could not minify this input. Try smaller or less deeply nested JSON.'
+        'JSON nesting exceeds 64 levels. Use a less deeply nested document.'
     });
     expect(evaluateMinify('false')).toEqual({
       status: 'valid',

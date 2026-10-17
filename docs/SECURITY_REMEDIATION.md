@@ -1,7 +1,31 @@
 # Dependency security remediation
 
-Status: implemented on feature/security-hardening, not merged or deployed.
-Audit/release research date: 2026-10-14. Counts are snapshots, not policy thresholds.
+Status: original remediation merged into develop through PR #21 (`2ac35d2`).
+Production release status is separate. Original audit/research date: 2026-10-14;
+the reassessment below is current for this task. Counts are snapshots, not policy thresholds.
+
+## Foundation reassessment: 2026-10-17
+
+Current lockfile audit: 15 package findings, 6 unique advisories; no unaccepted
+high/critical, one existing temporary braces exception. npm still reports 3.0.3
+as latest; [GHSA-vfj7-8cjw-p6xm](https://github.com/advisories/GHSA-vfj7-8cjw-p6xm)
+still reports no patched version. npm explain traces it through Tailwind 3's
+chokidar/micromatch and eslint-plugin-tailwindcss's fast-glob. No browser input
+path was identified into those build/lint globs. This does not remove the risk
+from untrusted repository patterns or prove all dependencies safe.
+
+The exception remains exact and expires 2026-11-13; it has not been extended or
+hidden. Owner nguyenan97 must evaluate a Tailwind/tooling migration or an upstream
+patched release before expiry; acceptance is removing the affected dependency
+paths and passing CSS/browser/build/lint/audit checks without weakening policy.
+
+The foundation task also fixes Windows audit startup: shell:false cannot execute
+npm.cmd directly, producing ENOENT before an audit. Windows now invokes npm's JS
+CLI with the current Node executable, retaining timeout, output budget, schema and
+exit-code validation. The security test command lists both existing test files
+explicitly because Node 20 on Windows does not expand its previous shell glob.
+Pages build reuses the same npm invocation helper. No dependency, exception,
+production hosting or security gate thresholds changed.
 
 ## Threat model and exposure
 

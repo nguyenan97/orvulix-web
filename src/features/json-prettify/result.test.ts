@@ -41,14 +41,14 @@ describe('prettify outcome contract', () => {
       evaluatePrettify('{"a":1}', { ...options, indentationType: 'tab' })
     ).toEqual({ status: 'valid', value: '{\n\t"a": 1\n}' });
   });
-  it('does not label parseable deeply nested JSON as invalid syntax when formatting fails', () => {
+  it('rejects parseable excessive nesting before formatting and recovers', () => {
     const source = '['.repeat(20000) + '0' + ']'.repeat(20000);
     expect(() => JSON.parse(source)).not.toThrow();
     expect(evaluatePrettify(source, { ...options, spacesCount: 0 })).toEqual({
       status: 'unavailable',
       value: '',
       message:
-        'Could not format this JSON. Try a smaller or less deeply nested input.'
+        'JSON nesting exceeds 64 levels. Use a less deeply nested document.'
     });
     expect(evaluatePrettify('0', options)).toEqual({
       status: 'valid',
