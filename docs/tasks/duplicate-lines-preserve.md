@@ -2,14 +2,15 @@
 
 - Updated: 2026-10-17 Asia/Bangkok
 - Branch / base: feature/duplicate-lines-preserve / develop at 2330dd676396d384673225dc42bd155dafb43fcc
-- PR: not opened
-- Phase: validating
+- PR: https://github.com/nguyenan97/orvulix-web/pull/39
+- Phase: CI
 - Delivery mode: develop-merge
 - Authorization: fix the confirmed duplicate-lines defects thoroughly; standing
   workflow permits this task's develop merge after gates. No main/release or new
   backlog feature.
-- Last verified tree: base 2330dd67 plus uncommitted service/tests, roadmap/backlog,
-  focused browser CI command and this checkpoint.
+- Last verified application tree: e1e207e767e7e41df8fc7fce8962d6b1cd2146aa.
+  Follow-up changes are this checkpoint and the Pages static-test URL only;
+  resolve latest head/CI from PR metadata when resuming.
 
 ## Scope and acceptance
 
@@ -43,7 +44,15 @@ follow-through if no unrelated integration is needed.
   feature was reclassified as delivered.
 - Built production browser checks: 9 / 9 passed on Chromium, Firefox and WebKit,
   retries 0 (two duplicate-lines flows plus static/React roadmap per engine).
-- Pending: Pages artifact smoke, exact-head CI, merge and cleanup.
+- Pages build passed: 158 dev HTML files under /orvulix-web/. Prefix/noindex and
+  no canonical verified on root, roadmap, duplicate-lines and 404 artifacts.
+- Pages browser checks: 9 / 9 passed on all three engines, retries 0. The first
+  harness attempt failed to start from work/ (fixed explicit cwd). Next run had
+  six tool passes and three no-JS roadmap failures: Vite preview serves fallback
+  index for the extensionless directory URL. HTTP probes confirmed /roadmap/
+  serves the correct static document. Test now uses the trailing slash for Pages;
+  same static and React assertions retained. No product routing change.
+- Pending: latest-head CI, merge and cleanup.
 
 ## Validation and review
 
@@ -63,9 +72,17 @@ follow-through if no unrelated integration is needed.
   clipboard/download bytes cover all reported defects. Exact-output expectations
   replace the missed invariant. No task-blocking finding remains in reviewed code;
   this is self-review, not independent approval.
+- Security CI on e1e207e passed, run 39031395554. SARIF retains the same five
+  reviewed baseline findings at unchanged validator/test/table-converter paths;
+  no new finding in this task. Existing dispositions remain in SECURITY_REMEDIATION.
+- Develop rules read: deletion/non-fast-forward safeguards; PR reviewDecision
+  empty. Recheck actual rules/reviews/head/base immediately before merging.
 
 ## Resume point
 
-Finish Pages build (session 19582), smoke prefix/noindex, commit and draft PR.
-Owned Vite dev session 30126 (port 5173). Production browser server exited with
-session 32588; no persistent production preview requested.
+Push the checkpoint/Pages-test follow-up on the same PR, mark ready, wait for
+the exact latest head's required CI. Fetch develop and review full PR again, then
+matched-head merge only if all gates pass; verify merge/tree and branch cleanup.
+Owned Vite dev session 30126 (port 5173). Production and Pages test servers exited;
+no persistent preview requested. Task-owned work files: duplicate-lines-pr.md and
+duplicate-lines-pages.config.ts only. Remove safely after delivery.

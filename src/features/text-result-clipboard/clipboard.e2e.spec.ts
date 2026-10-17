@@ -151,7 +151,8 @@ test('roadmap static and React views separate verified develop delivery from pla
   const noJs = await browser.newContext({ javaScriptEnabled: false });
   try {
     const staticPage = await noJs.newPage();
-    await staticPage.goto(`${baseURL}${route('/roadmap')}`);
+    // Pages artifacts use directory indexes; Vite preview needs the trailing slash.
+    await staticPage.goto(`${baseURL}${route('/roadmap')}${prefix ? '/' : ''}`);
     await page.goto(route('/roadmap'));
     const development = page.getByRole('region', { name: DEVELOPMENT_HEADING });
     await expect(development).toBeVisible();
