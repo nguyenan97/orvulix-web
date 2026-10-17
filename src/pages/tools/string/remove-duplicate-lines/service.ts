@@ -18,8 +18,8 @@ export default function removeDuplicateLines(
   text: string,
   options: DuplicateRemoverOptions
 ): string {
-  // Split the text into individual lines
-  let lines = text.split('\n');
+  // Treat LF, CRLF and CR as line separators; output consistently uses LF.
+  let lines = text.split(/\r\n|\n|\r/);
 
   // Process newlines based on option
   if (options.newlines === 'delete') {
@@ -32,6 +32,11 @@ export default function removeDuplicateLines(
     lines = lines.map((line) => line.trim());
   }
 
+  // Preserve blank entries during filtering, not by rebuilding from raw input.
+  // A blank still separates runs in consecutive mode. Sorting applies afterwards.
+  const preserveBlank = (line: string) =>
+    options.newlines === 'preserve' && line.trim() === '';
+
   // Remove duplicates based on mode
   let processedLines: string[] = [];
 
@@ -39,6 +44,7 @@ export default function removeDuplicateLines(
     // Remove all duplicates, keeping only first occurrence
     const seen = new Set<string>();
     processedLines = lines.filter((line) => {
+      if (preserveBlank(line)) return true;
       if (seen.has(line)) {
         return false;
       }
@@ -48,7 +54,7 @@ export default function removeDuplicateLines(
   } else if (options.mode === 'consecutive') {
     // Remove only consecutive duplicates
     processedLines = lines.filter((line, index, arr) => {
-      return index === 0 || line !== arr[index - 1];
+      return preserveBlank(line) || index === 0 || line !== arr[index - 1];
     });
   } else if (options.mode === 'unique') {
     // Leave only absolutely unique lines
@@ -57,23 +63,14 @@ export default function removeDuplicateLines(
       lineCount.set(line, (lineCount.get(line) || 0) + 1);
     });
 
-    processedLines = lines.filter((line) => lineCount.get(line) === 1);
+    processedLines = lines.filter(
+      (line) => preserveBlank(line) || lineCount.get(line) === 1
+    );
   }
 
   // Sort lines if option is selected
   if (options.sortLines) {
     processedLines.sort();
-  }
-
-  // Process newlines for output
-  if (options.newlines === 'filter') {
-    // Process newlines as regular lines (already done by default)
-  } else if (options.newlines === 'preserve') {
-    // Make sure empty lines are preserved in the output
-    processedLines = text.split('\n').map((line) => {
-      if (line.trim() === '') return line;
-      return processedLines.includes(line) ? line : '';
-    });
   }
 
   return processedLines.join('\n');

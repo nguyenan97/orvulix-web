@@ -1,7 +1,7 @@
 # Orvulix issue-backed feature backlog
 
 Status: planned/partial milestones plus verified development delivery below.
-Delivery reconciled October 16, 2026; upstream issue research dated October 11.
+Delivery reconciled October 17, 2026; upstream issue research dated October 11.
 
 Source: [OmniTools open issues](https://github.com/iib0011/omni-tools/issues).
 The review covered 57 open issues, current open PRs, and Orvulix `develop`.
@@ -15,7 +15,7 @@ update it alongside this ordered plan. Technical criteria stay in this document.
 
 ## Verified delivery snapshot
 
-Reconciled 2026-10-16 against develop `5937a46` and main `96494b8`.
+Reconciled 2026-10-17 against develop `2330dd67` and main `96494b8`.
 Every PR below is merged and its merge commit is reachable from develop, not main.
 Production release remains separate. Issue research below retains its original
 October 11 snapshot; this delivery reconciliation is not a fresh review of all
@@ -32,11 +32,12 @@ upstream issues. PR30-32 clipboard delivery and PR33 PDF consent are described b
 | Text-result clipboard | Develop PR #30, `ef29d62` | Other clipboard consumers/old Umbrel reports need their own verification. |
 | Code-result clipboard | Develop PR #31, `17c549d` | Input/file consumers and editor-wide HTTP gestures require separate work. |
 | Input clipboard | Develop PR #32, `534f2a6` | File/diff consumers and editor-wide handlers are separate. |
-| Shared text/code file import | Develop PR #34, `2c91155` | Whole-file budgets, other file inputs and native clipboard intermittency remain separate. |
+| Shared text/code file import | Develop PR #34/#38, `2c91155`/`2330dd67` | Other file inputs and native clipboard intermittency remain separate; shared text imports now have admission budgets and delayed-commit guards. |
 | PDF Editor opt-in | Develop PR #33, `663b0dc` | Live audit covers load/render only; save/share/retention remain follow-ups. |
 | Merge PDF lifecycle | Develop PR #29, `e4233a0` | Cancellation is cooperative; other PDF consumers/worker isolation are separate. |
-| JSON Prettify current output | Develop PR #35, `18634f7` | Whole-input synchronous parsing and other consumers remain separate. |
-| JSON Minify current output | Develop PR #36, `5937a46` | Whole-input limits and other tools/clipboard notification ownership remain separate. |
+| JSON Prettify current output | Develop PR #35/#38, `18634f7`/`2330dd67` | Parsing remains synchronous within source/depth/token/output budgets; other consumers and larger-document workers remain separate. |
+| JSON Minify current output | Develop PR #36/#38, `5937a46`/`2330dd67` | Source/depth/token/output budgets are delivered; other tools/clipboard notification ownership remain separate. |
+| JSON Sort current output and resource limits | Develop PR #37/#38, `c94aaf26`/`2330dd67` | Own-key sorting, current input/options ownership and shared JSON budgets are delivered; strict heap/time quotas and other consumers remain separate. |
 
 ## Delivery rules
 
