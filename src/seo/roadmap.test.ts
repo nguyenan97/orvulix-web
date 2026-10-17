@@ -15,9 +15,22 @@ describe('public roadmap scope', () => {
     expect(plannedFeatureSummary(feature.benefit, 0, feature.status)).toBe(
       'Text-only MVP implemented for development. Priority 1. Six ordered transformations, intermediate previews and settings-only recipe import/export. Broader cross-tool and media workflows remain planned; production release is separate.'
     );
-    expect(plannedFeatureSummary(PLANNED_FEATURES[1].benefit, 1)).toMatch(
-      /^Planned\. Priority 2\./
+    expect(
+      plannedFeatureSummary(
+        PLANNED_FEATURES[1].benefit,
+        1,
+        PLANNED_FEATURES[1].status
+      )
+    ).toMatch(
+      /^Bounded command converter implemented for development\. Priority 2\./
     );
+    expect(
+      plannedFeatureSummary(
+        PLANNED_FEATURES[2].benefit,
+        2,
+        PLANNED_FEATURES[2].status
+      )
+    ).toMatch(/^Planned\. Priority 3\./);
   });
   it('keeps feature names and proposed order aligned with the technical backlog', () => {
     const backlog = readFileSync('docs/FEATURE_BACKLOG.md', 'utf8');

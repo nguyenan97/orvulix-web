@@ -162,6 +162,10 @@ export const filterToolsByUserTypes = (
   if (userTypes.length === 0) return tools;
 
   return tools.filter((tool) => {
+    // Converters now includes developer utilities; explicit audiences override its media default.
+    if (tool.type === 'converters' && tool.userTypes?.length) {
+      return tool.userTypes.some((userType) => userTypes.includes(userType));
+    }
     if (CATEGORIES_USER_TYPES_MAPPINGS[tool.type]) {
       return userTypes.includes(CATEGORIES_USER_TYPES_MAPPINGS[tool.type]!);
     }
