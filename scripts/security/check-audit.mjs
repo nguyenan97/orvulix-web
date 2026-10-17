@@ -1,6 +1,7 @@
 import { readFileSync } from 'node:fs';
 import { spawnSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
+import { npmCommand } from '../npm-command.mjs';
 
 const root = fileURLToPath(new URL('../../', import.meta.url));
 const levels = ['info', 'low', 'moderate', 'high', 'critical'];
@@ -172,22 +173,19 @@ export function evaluateAudit(
 }
 
 export function runAudit(omitDev = false, execute = spawnSync) {
-  const result = execute(
-    'npm',
-    [
-      'audit',
-      '--json',
-      '--audit-level=low',
-      ...(omitDev ? ['--omit=dev'] : [])
-    ],
-    {
-      cwd: root,
-      encoding: 'utf8',
-      timeout: 120_000,
-      maxBuffer: 8 * 1024 * 1024,
-      shell: false
-    }
-  );
+  const [command, args] = npmCommand([
+    'audit',
+    '--json',
+    '--audit-level=low',
+    ...(omitDev ? ['--omit=dev'] : [])
+  ]);
+  const result = execute(command, args, {
+    cwd: root,
+    encoding: 'utf8',
+    timeout: 120_000,
+    maxBuffer: 8 * 1024 * 1024,
+    shell: false
+  });
   if (result.error || result.signal || ![0, 1].includes(result.status))
     fail(
       'npm audit could not complete. Check registry access and retry; no clean result was recorded.'

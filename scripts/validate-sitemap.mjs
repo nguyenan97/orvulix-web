@@ -1,5 +1,5 @@
 import { readFile, readdir, stat } from 'node:fs/promises';
-import { join, relative } from 'node:path';
+import { join, relative, sep } from 'node:path';
 import { loadSeoSite } from './seo/prerender.mjs';
 
 const origin = 'https://orvulix.io.vn';
@@ -21,7 +21,7 @@ async function htmlRoutes(directory) {
     const path = join(directory, entry.name);
     if (entry.isDirectory()) routes.push(...(await htmlRoutes(path)));
     else if (entry.name.endsWith('.html')) {
-      const file = relative(dist, path);
+      const file = relative(dist, path).split(sep).join('/');
       if (file === '404.html' || (await fromPublic(file))) continue;
       routes.push(file === 'index.html' ? '/' : `/${file.slice(0, -'.html'.length)}`);
     }

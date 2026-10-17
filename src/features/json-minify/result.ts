@@ -1,5 +1,10 @@
 import { minifyJson } from '../../pages/tools/json/minify/service';
 import type { JsonFormat } from '../../utils/json';
+import {
+  checkJsonInput,
+  checkJsonOutput,
+  JsonBudgetError
+} from '../json-resources/budget';
 
 export type MinifyOutcome =
   | { status: 'empty'; value: ''; format: 'json' }
@@ -15,8 +20,9 @@ export type MinifyOutcome =
 export function evaluateMinify(input: string): MinifyOutcome {
   if (input === '') return { status: 'empty', value: '', format: 'json' };
   try {
+    checkJsonInput(input);
     const { result, format } = minifyJson(input);
-    return { status: 'valid', value: result, format };
+    return { status: 'valid', value: checkJsonOutput(result), format };
   } catch (error) {
     // parseJsonInput wraps syntax failures with these controlled prefixes.
     // Do not display its native message: it may contain user-supplied text.
@@ -27,9 +33,12 @@ export function evaluateMinify(input: string): MinifyOutcome {
       status: invalid ? 'invalid' : 'unavailable',
       value: '',
       format: 'json',
-      message: invalid
-        ? 'Invalid JSON or JSON Lines input.'
-        : 'Could not minify this input. Try smaller or less deeply nested JSON.'
+      message:
+        error instanceof JsonBudgetError
+          ? error.message
+          : invalid
+            ? 'Invalid JSON or JSON Lines input.'
+            : 'Could not minify this input. Try smaller or less deeply nested JSON.'
     };
   }
 }

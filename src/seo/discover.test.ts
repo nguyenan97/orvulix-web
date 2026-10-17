@@ -58,7 +58,9 @@ describe('SEO tool discovery', () => {
       "export const tool = defineTool('string', { path: someVariable, i18n: {} });"
     );
     await expect(discoverTools(root)).rejects.toThrow(
-      /src\/pages\/tools\/string\/broken\/meta\.ts: expected exactly one literal path/
+      `${join(
+        'src/pages/tools/string/broken/meta.ts'
+      )}: expected exactly one literal path`
     );
   });
 

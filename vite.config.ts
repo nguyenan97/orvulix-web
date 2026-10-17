@@ -19,6 +19,8 @@ export default defineConfig({
     exclude: ['@ffmpeg/ffmpeg', '@ffmpeg/util']
   },
   test: {
+    // These Node-only build validators need no Vite transforms or browser globals.
+    server: { deps: { external: [/\/scripts\/seo\/.*\.mjs$/] } },
     globals: true,
     environment: 'happy-dom', // ORVULIX-SECURITY: patched; sanitizer fidelity tests use jsdom.
     // ORVULIX-SECURITY: unit emulators do not execute input scripts or load resources; native browser tests cover real frame behavior.

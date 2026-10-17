@@ -15,7 +15,9 @@ const contentFiles = (directory: string): string[] =>
 describe('tool SEO overrides', () => {
   it('registers every tool-content file under its own route path', () => {
     const files = contentFiles(CONTENT_DIR)
-      .map((file) => relative(CONTENT_DIR, file).replace(/\.ts$/, ''))
+      .map((file) =>
+        relative(CONTENT_DIR, file).replace(/\\/g, '/').replace(/\.ts$/, '')
+      )
       .sort();
     expect(Object.keys(TOOL_OVERRIDES).sort()).toEqual(files);
   });

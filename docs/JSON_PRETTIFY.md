@@ -37,8 +37,9 @@ forwarding existing ResultFooter support. Other consumers keep their prior defau
 No parser/formatter or option-parsing rewrite. Native JSON.parse/stringify behavior
 is retained for false/0/null/strings, duplicate keys, Unicode/literal escapes,
 indentation and numeric precision. This is not lossless JSON processing. Parsing,
-formatting and Monaco still consume whole input synchronously; no hard resource
-quota, deadline or worker isolation is claimed.
+formatting and Monaco remain synchronous. The separate
+[foundation task](JSON_RESOURCE_LIMITS.md) adds source/depth/token/output admission
+limits; no hard heap quota, CPU deadline or worker isolation is claimed.
 
 Pure tests characterize relevant outcomes and existing semantics; actual-page
 component tests use real ToolContent/Formik/formatter, stubbing only the editor
@@ -58,7 +59,7 @@ ToolContent migration, locales, routing, hosting settings or dependencies change
 Owner: Orvulix maintainers. Other tools may retain results after failed computation;
 review each actual consumer before a separate migration. Acceptance: reproduce the
 specific trigger, define output/error/action ownership and retain its valid service
-semantics with component/native tests. Resource limits require measured byte/CPU
-budgets and rejection/recovery UX before being advertised. PR34's inherited Firefox
+semantics with component/native tests. Larger-document worker support requires
+separate measurement and cancellation/recovery UX. PR34's inherited Firefox
 native-clipboard intermittency remains separately documented in TEXT_FILE_IMPORT.md;
 this result correction does not establish or fix its cause.

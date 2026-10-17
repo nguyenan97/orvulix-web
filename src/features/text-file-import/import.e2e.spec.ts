@@ -50,3 +50,30 @@ test('text file retries, stale reads, edit ownership and navigation recovery', a
   await release();
   await expect(input).toHaveValue('Việt Nam 😀\n literal\\n');
 });
+
+test('text import rejects more than 1 MiB before reading and preserves current edits', async ({
+  page
+}) => {
+  await page.goto(prefix + '/string/url-decode-string');
+  const input = page.getByTestId('text-input');
+  await input.fill('keep current text');
+  const picker = page.locator('input[type=file]');
+  await picker.setInputFiles({
+    name: 'large.txt',
+    mimeType: 'text/plain',
+    buffer: Buffer.alloc(1048577, 65)
+  });
+  await expect(
+    page.getByText(
+      'Text file is too large (limit: 1 MiB). Choose a smaller file.',
+      { exact: true }
+    )
+  ).toBeVisible();
+  await expect(input).toHaveValue('keep current text');
+  await picker.setInputFiles({
+    name: 'large.txt',
+    mimeType: 'text/plain',
+    buffer: Buffer.from('Việt Nam 😀')
+  });
+  await expect(input).toHaveValue('Việt Nam 😀');
+});

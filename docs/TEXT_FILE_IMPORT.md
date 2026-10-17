@@ -15,7 +15,9 @@ used even when a parent rerenders without changing the value.
 
 The hook preserves native readAsText behavior: default browser decoding/BOM rules,
 empty files and decoded Unicode/literal escape text. It adds no normalization,
-parsing, persistence, file upload, extension restrictions or arbitrary size cap.
+parsing, persistence, file upload or extension restrictions. The separate
+[foundation task](JSON_RESOURCE_LIMITS.md) adds a 1 MiB pre-read byte cap and a
+1,048,576-unit decoded-text cap, with explicit rejection and no truncation.
 The input/editor may normalize newline presentation as before. Whole-file decoding
 and subsequent editor/service processing can still allocate or block; aborting a
 FileReader does not preempt downstream synchronous application work.
@@ -35,11 +37,10 @@ Integrations: two shared input components (picker and edit callbacks); test CI's
 focused browser list. No tool services, locales, router, SEO generation or hosting
 configuration changed. Reconcile this adapter if upstream changes input contracts.
 
-Follow-up owner: Orvulix maintainers. Before declaring text imports resource-bounded,
-measure representative editor/tool memory behavior, choose documented byte budgets
-and actionable rejection/recovery UX, then test at/beyond limits on three browser
-engines. Other file inputs and pending clipboard notification ownership require
-separate investigations. This lifecycle change does not claim those are resolved.
+Follow-up owner: Orvulix maintainers. File admission does not preempt downstream
+editor/tool work or constrain pasted input in unrelated consumers. Other file
+inputs, larger-document worker support and pending clipboard notification
+ownership require separate investigations.
 
 A pre-existing JSON Prettify follow-up was confirmed during native validation:
 its compute function leaves the prior result when source becomes empty. Owner:

@@ -70,10 +70,10 @@ for (const kind of ['text', 'code'] as const)
         </CustomSnackBarContext.Provider>
       );
       const rendered = render(ui());
-      const pick = () => {
+      const pick = (file = new File(['sample'], 'sample.txt')) => {
         const input = rendered.container.querySelector('input[type=file]')!;
         fireEvent.change(input, {
-          target: { files: [new File(['sample'], 'sample.txt')] }
+          target: { files: [file] }
         });
         return Reader.instances.at(-1)!;
       };
@@ -85,6 +85,42 @@ for (const kind of ['text', 'code'] as const)
         update: (value: string) => rendered.rerender(ui(value))
       };
     }
+    it('rejects oversized files before creating a reader and cancels the previous read', () => {
+      const v = view();
+      const old = v.pick();
+      const late = old.onload!;
+      v.pick(new File([new Uint8Array(1024 * 1024 + 1)], 'large.txt'));
+      expect(Reader.instances).toHaveLength(1);
+      expect(old.abort).toHaveBeenCalledOnce();
+      expect(v.notice).toHaveBeenCalledWith(
+        expect.stringContaining('1 MiB'),
+        'error'
+      );
+      act(() => {
+        old.result = 'old';
+        late({ target: old });
+      });
+      expect(v.change).not.toHaveBeenCalled();
+      const next = v.pick(
+        new File([new Uint8Array(1024 * 1024)], 'boundary.txt')
+      );
+      act(() => next.complete('recovered'));
+      expect(v.change).toHaveBeenCalledExactlyOnceWith('recovered');
+    });
+    it('rejects excessive decoded text instead of publishing a truncated value', () => {
+      const v = view();
+      const old = v.pick();
+      act(() => old.complete('x'.repeat(1024 * 1024 + 1)));
+      expect(v.change).not.toHaveBeenCalled();
+      expect(v.notice).toHaveBeenCalledWith(
+        expect.stringContaining('1 MiB'),
+        'error'
+      );
+      expect(old.onload).toBeNull();
+      const next = v.pick();
+      act(() => next.complete(''));
+      expect(v.change).toHaveBeenCalledExactlyOnceWith('');
+    });
     it('does not overwrite a later user edit with a pending file', () => {
       const v = view();
       const reader = v.pick();

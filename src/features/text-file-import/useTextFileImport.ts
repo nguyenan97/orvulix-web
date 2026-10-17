@@ -2,6 +2,9 @@ import { ChangeEvent, useCallback, useLayoutEffect, useRef } from 'react';
 
 const READ_ERROR =
   'Could not read this file. Choose a readable text file and try again.';
+export const TEXT_FILE_BYTES = 1024 * 1024;
+const SIZE_ERROR =
+  'Text file is too large (limit: 1 MiB). Choose a smaller file.';
 
 /** Own one native text read. No persistence, transcoding or silent size truncation. */
 export function useTextFileImport(
@@ -38,6 +41,10 @@ export function useTextFileImport(
       event.currentTarget.value = ''; // Selecting the same file again must fire change.
       if (!file) return; // Dismissing the picker does not cancel an existing read.
       cancel();
+      if (file.size > TEXT_FILE_BYTES) {
+        callbacks.current.onError(SIZE_ERROR);
+        return;
+      }
       try {
         const reader = new FileReader();
         active.current = reader;
@@ -51,6 +58,11 @@ export function useTextFileImport(
           const text = reader.result;
           if (typeof text !== 'string') {
             fail();
+            return;
+          }
+          if (text.length > TEXT_FILE_BYTES) {
+            cancel();
+            callbacks.current.onError(SIZE_ERROR);
             return;
           }
           cancel();
