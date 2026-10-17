@@ -111,13 +111,13 @@ test('ports, mounts, existing networks, restart and argv are preserved in a comp
   await page
     .getByTestId('text-input')
     .fill(
-      "docker run -it --name web -p 127.0.0.1:8080:80 -v data:/data:ro -e 'A=hello world' --network shared-net --restart unless-stopped nginx:alpine echo '' --flag"
+      "docker run -it --name web -p 127.0.0.1:8080:80 -v data:/data:ro -v /tmp:/files:ro -e 'A=hello world' --network shared-net --restart unless-stopped nginx:alpine echo '' --flag"
     );
   await page
     .getByRole('button', { name: 'Convert command', exact: true })
     .click();
   const expected =
-    '"services":\n  "app":\n    "image": "nginx:alpine"\n    "stdin_open": true\n    "tty": true\n    "container_name": "web"\n    "restart": "unless-stopped"\n    "ports":\n      - "127.0.0.1:8080:80"\n    "volumes":\n      -\n        "type": "volume"\n        "source": "volume_1"\n        "target": "/data"\n        "read_only": true\n    "environment":\n      - "A=hello world"\n    "networks":\n      - "existing_network"\n    "command":\n      - "echo"\n      - ""\n      - "--flag"\n"volumes":\n  "volume_1":\n    "name": "data"\n"networks":\n  "existing_network":\n    "name": "shared-net"\n    "external": true\n';
+    '"services":\n  "app":\n    "image": "nginx:alpine"\n    "stdin_open": true\n    "tty": true\n    "container_name": "web"\n    "restart": "unless-stopped"\n    "ports":\n      - "127.0.0.1:8080:80"\n    "volumes":\n      -\n        "type": "volume"\n        "source": "volume_1"\n        "target": "/data"\n        "read_only": true\n      -\n        "type": "bind"\n        "source": "/tmp"\n        "target": "/files"\n        "read_only": true\n        "bind":\n          "create_host_path": true\n    "environment":\n      - "A=hello world"\n    "networks":\n      - "existing_network"\n    "command":\n      - "echo"\n      - ""\n      - "--flag"\n"volumes":\n  "volume_1":\n    "name": "data"\n"networks":\n  "existing_network":\n    "name": "shared-net"\n    "external": true\n';
   await expect(page.getByTestId('compose-output')).toHaveValue(expected);
   const downloadEvent = page.waitForEvent('download');
   await page.getByRole('button', { name: 'Download Compose YAML' }).click();

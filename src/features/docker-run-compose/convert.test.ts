@@ -45,6 +45,9 @@ describe('Docker run to Compose', () => {
     );
     expect(result.yaml).toContain(String.raw`"source": "C:\\host files"`);
     expect(result.yaml).toContain(
+      '"bind":\n          "create_host_path": true'
+    );
+    expect(result.yaml).toContain(
       '"type": "volume"\n        "target": "/cache"'
     );
     expect(

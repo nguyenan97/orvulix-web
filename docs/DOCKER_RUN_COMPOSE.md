@@ -81,6 +81,8 @@ expansion and execution syntax is rejected. Supply resolved values, or single-qu
 literal dollars. No shell history, .env file, image or Docker daemon is accessed.
 Bind sources support absolute POSIX paths or quoted Windows drive paths; container
 targets must be absolute POSIX paths. Only ro/rw volume modes are supported.
+Bind mappings explicitly set create_host_path to true to retain docker run -v
+host-directory creation behavior. The converter itself never creates host paths.
 Named volumes are declared with explicit Docker names; review existing volume
 driver/options before running Compose. Custom networks must already exist.
 Compose lifecycle/defaults can differ from a one-off CLI invocation; review output

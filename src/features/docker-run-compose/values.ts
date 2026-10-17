@@ -113,6 +113,7 @@ export function mountYaml(
     type: value.kind,
     ...(source === undefined ? {} : { source }),
     target: value.target,
-    read_only: value.readOnly
+    read_only: value.readOnly,
+    ...(value.kind === 'bind' ? { bind: { create_host_path: true } } : {})
   };
 }
