@@ -40,6 +40,15 @@ upstream issues. PR30-32 clipboard delivery and PR33 PDF consent are described b
 
 ## Delivery rules
 
+Foundation follow-through is tracked in [PR #38](https://github.com/nguyenan97/orvulix-web/pull/38):
+current-source/options ownership for JSON Sort, bounded Prettify/Minify/Sort input
+and output, bounded shared text/code file admission and a late own-commit reader
+race. See [limits and behavior](JSON_RESOURCE_LIMITS.md) and the
+[validation checkpoint](tasks/json-foundation-hardening.md). PR metadata records
+merge status; this is separate from production and does not start the next planned
+feature. Larger-document workers, unrelated tool consumers and the existing
+braces tooling exception remain outside that delivery.
+
 - Start from updated `develop`, implement on `feature/*`, and open PRs into
   `develop`. Do not push task commits directly to `develop` or open feature PRs
   into `main`. A production release requires separate authorization.

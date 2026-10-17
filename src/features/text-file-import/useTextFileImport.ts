@@ -13,6 +13,7 @@ export function useTextFileImport(
   onError: (message: string) => void
 ) {
   const active = useRef<FileReader | null>(null);
+  const published = useRef<{ value: string } | null>(null);
   const callbacks = useRef({ onChange, onError });
   useLayoutEffect(() => {
     callbacks.current = { onChange, onError };
@@ -24,15 +25,24 @@ export function useTextFileImport(
     reader.onload = reader.onerror = reader.onabort = null;
     if (reader.readyState === 1) reader.abort();
   }, []);
-  // External resets/options can replace value without an input gesture.
-  useLayoutEffect(() => cancel, [value, cancel]);
+  const publish = useCallback((text: string) => {
+    published.current = { value: text };
+    callbacks.current.onChange(text);
+  }, []);
+  useLayoutEffect(() => cancel, [cancel]);
+  // A preceding own change may commit after the next reader has started. Only
+  // external value replacement invalidates that reader, not our own acknowledgement.
+  useLayoutEffect(() => {
+    if (published.current?.value !== value) cancel();
+    published.current = null;
+  }, [value, cancel]);
 
   const edit = useCallback(
     (text: string) => {
       cancel();
-      callbacks.current.onChange(text);
+      publish(text);
     },
-    [cancel]
+    [cancel, publish]
   );
 
   const pick = useCallback(
@@ -66,7 +76,7 @@ export function useTextFileImport(
             return;
           }
           cancel();
-          callbacks.current.onChange(text);
+          publish(text);
         };
         reader.onerror = fail;
         reader.onabort = fail;
@@ -76,7 +86,7 @@ export function useTextFileImport(
         callbacks.current.onError(READ_ERROR);
       }
     },
-    [cancel]
+    [cancel, publish]
   );
   return { pick, edit };
 }

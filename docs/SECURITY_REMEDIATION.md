@@ -1,7 +1,8 @@
 # Dependency security remediation
 
-Status: implemented on feature/security-hardening, not merged or deployed.
-Audit/release research date: 2026-10-14. Counts are snapshots, not policy thresholds.
+Status: original remediation merged into develop through PR #21 (`2ac35d2`).
+Production release status is separate. Original audit/research date: 2026-10-14;
+the reassessment below is current for this task. Counts are snapshots, not policy thresholds.
 
 ## Foundation reassessment: 2026-10-17
 

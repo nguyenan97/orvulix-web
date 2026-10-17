@@ -132,6 +132,29 @@ for (const kind of ['text', 'code'] as const)
       expect(v.change.mock.calls).toEqual([['new edit']]);
       expect(reader.abort).toHaveBeenCalledOnce();
     });
+    it('does not cancel a newer reader when its own preceding change commits late', () => {
+      const v = view();
+      const first = v.pick();
+      act(() => first.complete('first'));
+      const next = v.pick();
+      // Model React committing the preceding onChange after the next pick.
+      v.update('first');
+      expect(next.abort).not.toHaveBeenCalled();
+      act(() => next.complete(''));
+      expect(v.change.mock.calls).toEqual([['first'], ['']]);
+    });
+    it('recognizes its own delayed keyboard edit without canceling a newer read', () => {
+      const v = view();
+      fireEvent.change(
+        screen.getByTestId(kind === 'text' ? 'text-input' : 'code-input'),
+        { target: { value: 'edited' } }
+      );
+      const next = v.pick();
+      v.update('edited');
+      expect(next.abort).not.toHaveBeenCalled();
+      act(() => next.complete('latest'));
+      expect(v.change.mock.calls).toEqual([['edited'], ['latest']]);
+    });
     it('only accepts the latest selected file, even with a queued old callback', () => {
       const v = view();
       const old = v.pick();

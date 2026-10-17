@@ -27,6 +27,10 @@ empty files, Unicode and native readAsText decoding remain supported. JSON
 admission also applies to typed/pasted text, examples and imported files. File
 admission alone does not bound arbitrary pasted input in other tools.
 
+A late React commit of an import/edit published by this hook is acknowledged
+without canceling a newer reader. External value replacements still invalidate
+pending reads. This closes a separately reproduced shared-input ownership race.
+
 ## Resource model and verification
 
 The lexical scan uses constant auxiliary space and stops at the first exceeded

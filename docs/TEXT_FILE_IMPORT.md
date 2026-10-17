@@ -2,8 +2,11 @@
 
 `src/features/text-file-import/useTextFileImport.ts` owns one native FileReader per
 mounted ToolTextInput/ToolCodeInput. Selecting a file replaces the current read.
-Typing cancels before publishing the edit; an external value change and unmount
-cancel during layout-effect cleanup. A no-file picker event leaves a current read
+Typing cancels before publishing the edit; an external value replacement and unmount
+cancel in layout effects. A commit acknowledging the hook's own preceding change
+does not cancel a newer reader. One pending publication value distinguishes that
+acknowledgement from an external reset, without retaining a history of file text.
+A no-file picker event leaves a current read
 intact. Resetting the hidden input value permits retrying the same file.
 
 Reader identity guards queued callbacks. Cleanup clears handlers and identity
@@ -25,7 +28,8 @@ FileReader does not preempt downstream synchronous application work.
 ## Tests and boundaries
 
 Component tests exercise both adapters with controlled reader completion/error
-and queued late callbacks. Monaco alone is stubbed in those unit tests. Browser
+and queued late callbacks, including a newer read started before the preceding
+onChange value commits. Monaco alone is stubbed in those unit tests. Browser
 flows use the actual editor and native FileReader decoding; a test-only startup
 gate orders reads against edits, replacement selections and SPA unmount without
 sleep/timing races. Existing clipboard browser cases retain actual native writes.
