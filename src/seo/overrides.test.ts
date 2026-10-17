@@ -38,12 +38,12 @@ describe('tool SEO overrides', () => {
   });
 
   it('keeps hand-written content complete and free of unverifiable wording', () => {
-    // 30 existing editorial pages plus the new workflow; PDF disclosure is separate.
+    // 30 original editorial pages plus workflow and Docker; PDF disclosure is separate.
     const editorial = Object.keys(TOOL_OVERRIDES).filter(
       (path) => path !== 'pdf/editor'
     );
     expect(editorial.length).toBeGreaterThanOrEqual(20);
-    expect(editorial.length).toBe(31);
+    expect(editorial.length).toBe(32);
     expect(TOOL_OVERRIDES['string/text-workflow'].notes.join(' ')).toContain(
       'five-second deadline'
     );

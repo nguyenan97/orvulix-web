@@ -76,6 +76,12 @@ braces tooling exception remain outside that delivery.
 
 ## Ordered feature plan
 
+Docker Run to Compose's bounded Linux-container MVP is implemented in the current
+development change. The [plan, execution prompt and contracts](DOCKER_RUN_COMPOSE.md)
+define the whitelist, literal quoting/interpolation, unsupported syntax and budgets.
+See [delivery checkpoint](tasks/docker-run-compose.md) and PR metadata for actual
+develop delivery. Full Docker CLI/shell support and production release are separate.
+
 Text Workflow Builder's text-only MVP is implemented in the current development
 change: six transformations, worker lifecycle/budgets, intermediate previews and
 settings-only recipes. See [behavior and limits](TEXT_WORKFLOW.md) and

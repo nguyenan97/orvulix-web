@@ -101,6 +101,7 @@ export const PLANNED_FEATURES: readonly {
   },
   {
     title: 'Docker Run to Compose',
+    status: 'Bounded command converter implemented for development',
     benefit:
       'Turn common docker run options into Compose YAML, with warnings for unsupported options. Commands will not be executed.'
   },

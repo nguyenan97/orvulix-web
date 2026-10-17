@@ -1,4 +1,9 @@
 {
+  "dockerRunCompose": {
+    "title": "Docker Run to Compose",
+    "description": "Convert a Docker run command into Compose YAML in your browser. Preserve quoted values, inspect unsupported options and download the result.",
+    "shortDescription": "Convert Docker run commands to Compose YAML."
+  },
   "audioConverter": {
     "description": "Convert audio files between different formats.",
     "inputTitle": "Audio Input",
