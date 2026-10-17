@@ -11,6 +11,13 @@ Our approach is to make existing tools better first, then explore new capabiliti
 
 ## Verified development delivery
 
+Text Workflow Builder now has an implemented text-only MVP in the current
+development change. Six transformations run in a bounded, cancellable worker with
+intermediate previews and settings-only JSON recipes. See [contracts and limits](TEXT_WORKFLOW.md)
+and [delivery checkpoint](tasks/text-workflow-builder.md); PR metadata/CI record
+actual develop delivery. Cross-tool/media workflows and production release remain
+separate. This does not change the dated delivery snapshot below.
+
 Reconciled 2026-10-16 against develop `2c91155` and main `96494b8`. PR19/20/22
 and PR24-34 are merged into develop, not released to main. These cover bounded
 list regex, local HTML conversion/discovery, PNG dimensions, multi-file input,

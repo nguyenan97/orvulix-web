@@ -1,4 +1,9 @@
 {
+  "textWorkflow": {
+    "title": "Text Workflow Builder",
+    "description": "Combine text transformations into reusable steps, inspect intermediate outputs and import or export recipes in your browser.",
+    "shortDescription": "Build and run reusable text workflows."
+  },
   "base64": {
     "decode": "Base64 Decode",
     "description": "Encode or decode text using Base64 encoding.",

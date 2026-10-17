@@ -88,11 +88,16 @@ export const DEVELOPMENT_UPDATES = [
 
 // Public summaries of docs/FEATURE_BACKLOG.md, in the same proposed order.
 // Keep this module React-free so prerender and UI use the same copy.
-export const PLANNED_FEATURES = [
+export const PLANNED_FEATURES: readonly {
+  title: string;
+  benefit: string;
+  status?: string;
+}[] = [
   {
     title: 'Text Workflow Builder',
+    status: 'Text-only MVP implemented for development',
     benefit:
-      'Combine text transformations into reusable steps and preview each result without copying between tools.'
+      'Six ordered transformations, intermediate previews and settings-only recipe import/export. Broader cross-tool and media workflows remain planned; production release is separate.'
   },
   {
     title: 'Docker Run to Compose',
@@ -151,8 +156,11 @@ export const PLANNED_FEATURES = [
   }
 ] as const;
 
-export const plannedFeatureSummary = (benefit: string, index: number) =>
-  `Planned. Priority ${index + 1}. ${benefit}`;
+export const plannedFeatureSummary = (
+  benefit: string,
+  index: number,
+  status = 'Planned'
+) => `${status}. Priority ${index + 1}. ${benefit}`;
 
 export const roadmapSections = (): ContentSection[] => [
   { heading: DEVELOPMENT_HEADING, kind: 'list', items: [DEVELOPMENT_NOTICE] },
@@ -171,7 +179,7 @@ export const roadmapSections = (): ContentSection[] => [
     kind: 'examples',
     examples: PLANNED_FEATURES.map((feature, index) => ({
       title: feature.title,
-      description: plannedFeatureSummary(feature.benefit, index)
+      description: plannedFeatureSummary(feature.benefit, index, feature.status)
     }))
   }
 ];

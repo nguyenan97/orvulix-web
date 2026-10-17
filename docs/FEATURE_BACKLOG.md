@@ -76,6 +76,13 @@ braces tooling exception remain outside that delivery.
 
 ## Ordered feature plan
 
+Text Workflow Builder's text-only MVP is implemented in the current development
+change: six transformations, worker lifecycle/budgets, intermediate previews and
+settings-only recipes. See [behavior and limits](TEXT_WORKFLOW.md) and
+[delivery checkpoint](tasks/text-workflow-builder.md). PR metadata and CI identify
+the actual develop delivery state; this does not mark cross-tool/media workflows
+or production rollout complete. The ordering below retains the milestone history.
+
 Owner-requested Web/HTML conversion has a separate phased
 [research and implementation plan](WEB_CONVERSION_PLAN.md). PR20 is merged into
 develop: local HTML to PNG/JPEG and raster PDF, safe static HTML/inline styles,

@@ -73,7 +73,7 @@ export default function RoadmapBacklog() {
                 {feature.title}
               </Typography>
               <Typography>
-                {plannedFeatureSummary(feature.benefit, index)}
+                {plannedFeatureSummary(feature.benefit, index, feature.status)}
               </Typography>
             </Paper>
           ))}
