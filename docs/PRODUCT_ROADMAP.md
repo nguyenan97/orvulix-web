@@ -11,6 +11,12 @@ Our approach is to make existing tools better first, then explore new capabiliti
 
 ## Verified development delivery
 
+Docker Run to Compose has a bounded browser-local implementation for a documented
+Linux-container command subset, including literal-safe YAML and current-result
+exports. [Plan and supported scope](DOCKER_RUN_COMPOSE.md) and
+[delivery checkpoint](tasks/docker-run-compose.md) distinguish the actual PR/CI
+delivery state from full Docker CLI support and production rollout.
+
 Text Workflow Builder now has an implemented text-only MVP in the current
 development change. Six transformations run in a bounded, cancellable worker with
 intermediate previews and settings-only JSON recipes. See [contracts and limits](TEXT_WORKFLOW.md)
