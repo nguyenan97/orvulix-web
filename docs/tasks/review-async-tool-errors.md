@@ -1,6 +1,6 @@
 # Task checkpoint: review-async-tool-errors
 
-- Branch/base: feature/review-async-tool-errors / develop 4f56ef6c
+- Branch/base: feature/review-async-tool-errors / develop 3d3e9dee
 - Phase: reviewing; delivery mode develop-merge; PR pending.
 - Scope: review R12, user requested all confirmed fixes.
 
@@ -41,3 +41,9 @@ shared-contract interactions, exact-head CI then matched-head merge/cleanup.
 R04 merged; integrated 4f56ef6c while R11 PR49 runs CI. Combined ToolContent,
 derived CSV result, default clipboard and JSON comparison tests pass 37/37.
 Next: integrate R11 once merged (independent codec files), then push this PR.
+
+R11 PR49 merged at 3d3e9dee. Integrated current develop, retaining async and WebP
+focused CI steps. No ToolContent runtime or native error fixture changed since
+0fd101c full build/unit/browser evidence; independent WebP service change only.
+Final full-diff review confirms current error ownership and no callback-identity
+loop. Next: exact-head full CI on one PR, matched-head merge and cleanup.
