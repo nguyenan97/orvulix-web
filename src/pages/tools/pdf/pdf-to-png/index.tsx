@@ -1,69 +1,65 @@
 import { useState } from 'react';
+import { Alert, Box } from '@mui/material';
+import { usePdfConversion } from '../../../../features/pdf-conversion/usePdfConversion';
 import ToolContent from '@components/ToolContent';
 import ToolPdfInput from '@components/input/ToolPdfInput';
 import { ToolComponentProps } from '@tools/defineTool';
 import { convertPdfToPngImages } from './service';
 import ToolMultiFileResult from '@components/result/ToolMultiFileResult';
 
-type ImagePreview = {
-  blob: Blob;
-  url: string;
-  filename: string;
-};
+async function convert(file: File, signal: AbortSignal) {
+  const { images, zipFile } = await convertPdfToPngImages(file, signal);
+  return {
+    files: images.map(
+      (image) => new File([image.blob], image.filename, { type: 'image/png' })
+    ),
+    zipFile
+  };
+}
 
 export default function PdfToPng({ title }: ToolComponentProps) {
   const [input, setInput] = useState<File | null>(null);
-  const [images, setImages] = useState<ImagePreview[]>([]);
-  const [zipBlob, setZipBlob] = useState<File | null>(null);
-  const [loading, setLoading] = useState(false);
-
-  const compute = async (_: {}, file: File | null) => {
-    if (!file) return;
-    setLoading(true);
-    setImages([]);
-    setZipBlob(null);
-    try {
-      const { images, zipFile } = await convertPdfToPngImages(file);
-      setImages(images);
-      setZipBlob(zipFile);
-    } catch (err) {
-      console.error('Conversion failed:', err);
-    } finally {
-      setLoading(false);
-    }
+  const job = usePdfConversion(convert);
+  const changeInput = (file: File | null) => {
+    job.invalidate();
+    setInput(file);
   };
 
   return (
     <ToolContent
       title={title}
       input={input}
-      setInput={setInput}
       initialValues={{}}
-      compute={compute}
+      compute={job.compute}
       inputComponent={
         <ToolPdfInput
           value={input}
-          onChange={setInput}
+          onChange={changeInput}
           accept={['application/pdf']}
           title="Upload a PDF"
         />
       }
       resultComponent={
-        <ToolMultiFileResult
-          title="Converted PNG Pages"
-          value={images.map((img) => {
-            return new File([img.blob], img.filename, { type: 'image/png' });
-          })}
-          zipFile={zipBlob}
-          loading={loading}
-          loadingText="Converting PDF pages"
-        />
+        <Box>
+          {job.error && (
+            <Alert severity="error" aria-label="PDF conversion error">
+              {job.error}
+            </Alert>
+          )}
+          <ToolMultiFileResult
+            title="Converted PNG Pages"
+            value={job.result?.files ?? []}
+            zipFile={job.result?.zipFile ?? null}
+            loading={job.loading}
+            loadingText="Converting PDF pages"
+          />
+        </Box>
       }
       getGroups={null}
       toolInfo={{
         title: 'Convert PDF pages into PNG images',
         description:
-          'Upload your PDF and get each page rendered as a high-quality PNG. You can preview, download individually, or get all images in a ZIP.'
+          'Upload a readable PDF up to 32 MiB and 500 pages. Conversion has a 30 second deadline. Render limits: 4096 per side, 8 Mi pixels per page, 32 Mi pixels total, 64 MiB PNG/ZIP output. Preview, download individually, or get all pages in a ZIP.'
       }}
     />
   );
