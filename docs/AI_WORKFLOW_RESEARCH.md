@@ -9,6 +9,8 @@ were reviewed; the repository was clean at d5c6f6c before this work.
 
 | Repository / pinned snapshot | Stars | License | Useful practice | Local decision |
 | --- | ---: | --- | --- | --- |
+| [alan2207/bulletproof-react](https://github.com/alan2207/bulletproof-react/tree/9506629ed003a561c6627735480cce4994244bb4) | 35,986 | MIT | Feature-local modules and directional dependencies in React | Adapt boundaries to existing features; no starter-template replacement or mass folder migration. |
+| [Sairyss/domain-driven-hexagon](https://github.com/Sairyss/domain-driven-hexagon/tree/5c2d15a7e2d69e83dfddf28468ee9f30e02c30de) | 14,984 | MIT | Domain invariants, module ownership and ports/adapters tradeoffs | Adapt pure rules and explicit effect ownership; defer backend repositories, CQRS and aggregate infrastructure until requirements justify them. |
 | [mattpocock/skills](https://github.com/mattpocock/skills/tree/49dd158d1076134a641b33efb035946536778336) | 295,163 | MIT | TDD, diagnosis, small interfaces and two-axis review | Keep existing pinned adaptation in ENGINEERING_PRACTICES; do not install globally. |
 | [obra/superpowers](https://github.com/obra/superpowers/tree/bb92a77741419a4ab5f06e711a283343f1ada0c3) | 301,250 | MIT | Red/green slices, systematic debugging and evidence before completion | Adapt techniques; reject deleting working code to recreate TDD history and automatic agent orchestration. |
 | [github/spec-kit](https://github.com/github/spec-kit/tree/c6a4c18f1d01a8bec241c618eb6dfea952508744) | 141,682 | MIT | Behavioral specs and requirement-to-test traceability | Adapt acceptance IDs into existing checkpoints; defer CLI/templates. Reject mandatory standalone library/CLI for every SPA feature. |
@@ -25,6 +27,9 @@ but not selected for a second generic skill-authoring layer; the installed
 skill-creator already provides the needed format/validation workflow.
 
 ## Primary material reviewed
+
+- [bulletproof-react: project structure](https://github.com/alan2207/bulletproof-react/blob/9506629ed003a561c6627735480cce4994244bb4/docs/project-structure.md)
+- [domain-driven-hexagon: architecture, modules and complexity tradeoffs](https://github.com/Sairyss/domain-driven-hexagon/blob/5c2d15a7e2d69e83dfddf28468ee9f30e02c30de/README.md)
 
 - [mattpocock/skills: skills/engineering/tdd/SKILL.md](https://github.com/mattpocock/skills/blob/49dd158d1076134a641b33efb035946536778336/skills/engineering/tdd/SKILL.md)
 - [obra/superpowers: skills/test-driven-development/SKILL.md](https://github.com/obra/superpowers/blob/bb92a77741419a4ab5f06e711a283343f1ada0c3/skills/test-driven-development/SKILL.md)

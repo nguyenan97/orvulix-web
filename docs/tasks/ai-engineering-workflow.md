@@ -2,8 +2,8 @@
 
 - Updated: 2026-10-18 Asia/Bangkok
 - Branch / base: feature/ai-engineering-workflow / develop
-- PR: not opened
-- Phase: reviewing
+- PR: https://github.com/nguyenan97/orvulix-web/pull/42
+- Phase: CI
 - Delivery mode: develop-merge
 - Authorization: research and improve project agent skills and software delivery;
   standing develop merge authorization applies. No production release.
@@ -26,7 +26,7 @@
 Discovery: dependency audit and CodeQL already exist. CodeQL summary is not a
 severity gate; five reviewed high-scored results have existing dispositions in
 SECURITY_REMEDIATION.md. Do not suppress or relabel them for this task.
-Research metadata fetched directly with GitHub API. Seven selected repositories
+Research metadata fetched directly with GitHub API. Nine selected repositories
 have dated stars, pinned commits and license/disposition records. Added two focused
 skills, human delivery/security guides, contributor/release pointers and PR/task
 templates. Added checksum-pinned Gitleaks history/checkout scan and CI clean/leak
@@ -56,9 +56,15 @@ Local evidence on the uncommitted task tree above the initial base:
   approval or an empirical guarantee of future agent behavior.
 
 No application runtime changes. CI retains existing full build/tests/browser gates.
-Pending: staged full diff/style review, draft PR, latest-head CI and matched-head merge.
+Initial implementation committed as 7526bfb; draft PR42 opened. Architecture
+research was extended with Bulletproof React and Domain-Driven Hexagon to ground
+the design guidance in application engineering as well as agent workflows.
+Current follow-up changes are documentation/checkpoint only; prior scanner and
+security test evidence remains applicable, latest-head CI still required.
+Pending: final review/commit, latest-head CI and matched-head merge.
 
 ## Resume point
 
-Stage only task files, rerun style, commit and open one draft develop PR.
+Validate final documentation additions, commit/push to PR42, mark ready and inspect
+latest-head CI. Merge only when existing acceptance/review/CI gates pass.
 No owned server/process/worktree. Reconcile Git/PR/CI before continuing.

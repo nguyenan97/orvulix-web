@@ -67,6 +67,12 @@ I/O/codec details. Keep types near their owner; avoid shared mutable state and
 deep imports into another feature's internals. Export only a useful typed contract.
 Do not impose these layers on trivial stateless tools or rewrite untouched code.
 
+Compose independent features at their application/route boundary. Shared modules
+should not depend back on feature/UI implementations. Keep direct imports narrow;
+do not add a feature-wide barrel export for convenience without considering Vite
+tree-shaking and circular dependency costs. These boundaries are review guidance
+today, not an assertion that an architecture linter enforces the inherited tree.
+
 Strategic DDD is useful now: explicit terminology, boundaries, invariants and
 ownership. Value objects can be plain validated TypeScript values. Entities,
 aggregates, repositories, domain events and CQRS require actual identity,
