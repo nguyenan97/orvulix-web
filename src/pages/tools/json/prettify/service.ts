@@ -5,7 +5,7 @@ export const beautifyJson = (text: string, options: InitialValuesType) => {
   let parsedJson;
   try {
     parsedJson = JSON.parse(text);
-  } catch (e) {
+  } catch {
     throw new Error('Invalid JSON string');
   }
 

@@ -124,7 +124,7 @@ export default function Reverse({ title }: ToolComponentProps) {
       title: t('reverse.splitterMode'),
       component: (
         <Box>
-          {splitOperators.map(({ title, description, type }) => (
+          {splitOperators.map(({ type }) => (
             <SimpleRadio
               key={type}
               onClick={() => updateField('splitOperatorType', type)}

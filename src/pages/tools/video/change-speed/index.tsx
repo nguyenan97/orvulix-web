@@ -1,6 +1,6 @@
 import useDebounce from '../../../../hooks/useDebounce';
 import { Box, Slider, Typography } from '@mui/material';
-import React, { useState, useCallback } from 'react';
+import React, { useState } from 'react';
 import ToolContent from '@components/ToolContent';
 import { ToolComponentProps } from '@tools/defineTool';
 import { GetGroupsType } from '@components/options/ToolOptions';

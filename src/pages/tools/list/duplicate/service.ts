@@ -71,7 +71,6 @@ export function duplicateList(
   )
     throw new Error('Copies must be finite and at most 1000.'); // ORVULIX-RELIABILITY
   let array: string[];
-  let result: string[];
   switch (splitOperatorType) {
     case 'symbol':
       array = input.split(splitSeparator);
@@ -82,6 +81,6 @@ export function duplicateList(
         .filter((item) => item !== '');
       break;
   }
-  result = duplicate(array, concatenate, reverse, copy);
+  const result = duplicate(array, concatenate, reverse, copy);
   return result.join(joinSeparator);
 }

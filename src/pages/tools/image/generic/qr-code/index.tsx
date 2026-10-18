@@ -1,5 +1,5 @@
 import useDebounce from '../../../../../hooks/useDebounce';
-import React, { useCallback, useState } from 'react';
+import React, { useState } from 'react';
 import { Box, MenuItem, TextField } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import ToolContent from '@components/ToolContent';
@@ -9,7 +9,7 @@ import TextFieldWithDesc from '@components/options/TextFieldWithDesc';
 import { InitialValuesType, QRCodeType, WifiEncryptionType } from './types';
 import ColorSelector from '@components/options/ColorSelector';
 import ToolFileResult from '@components/result/ToolFileResult';
-import { debounce } from 'lodash';
+
 import { generateQrCodeFile } from './service';
 
 const initialValues: InitialValuesType = {

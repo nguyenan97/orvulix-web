@@ -13,7 +13,7 @@ import { updateNumberField } from '@utils/string';
 import { Box } from '@mui/material';
 import SimpleRadio from '@components/options/SimpleRadio';
 import { InitialValuesType } from './types';
-import { debounce } from 'lodash';
+
 import { useTranslation } from 'react-i18next';
 import { getImageDimensions, getMaxAreaPosition } from '@utils/image';
 

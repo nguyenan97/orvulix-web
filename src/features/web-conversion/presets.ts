@@ -13,7 +13,15 @@ export type ConversionPreset =
       layout: 'one' | 'paginated';
       pdf: PdfOptions;
     });
-const { filename: _filename, ...imageDefaults } = DEFAULT_OPTIONS;
+const imageDefaults: Omit<ImageOptions, 'filename'> = {
+  width: DEFAULT_OPTIONS.width,
+  height: DEFAULT_OPTIONS.height,
+  scale: DEFAULT_OPTIONS.scale,
+  format: DEFAULT_OPTIONS.format,
+  background: DEFAULT_OPTIONS.background,
+  quality: DEFAULT_OPTIONS.quality,
+  cropPolicy: DEFAULT_OPTIONS.cropPolicy
+};
 export const CONVERSION_PRESETS: readonly ConversionPreset[] = [
   {
     id: 'square-png',

@@ -245,10 +245,9 @@ test('range edits during selected capture cancel old job; mobile/dark/keyboard, 
     let count = 0;
     HTMLCanvasElement.prototype.toBlob = function (cb, type, q) {
       if (++count === 2) {
-        const canvas = this;
-        Reflect.set(window, '__held', canvas);
+        Reflect.set(window, '__held', this);
         Reflect.set(window, '__release', () =>
-          original.call(canvas, cb, type, q)
+          original.call(this, cb, type, q)
         );
       } else original.call(this, cb, type, q);
     };

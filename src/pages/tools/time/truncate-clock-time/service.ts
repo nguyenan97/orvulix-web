@@ -28,7 +28,8 @@ function compute(
     : timeArray.slice(0, 1);
 
   if (zeroPrint) {
-    onlySeconds ? slicedArray.push('0') : slicedArray.push('0', '0');
+    if (onlySeconds) slicedArray.push('0');
+    else slicedArray.push('0', '0');
   }
 
   return zeroPadding

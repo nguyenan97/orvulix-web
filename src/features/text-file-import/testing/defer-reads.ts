@@ -11,13 +11,12 @@ export async function deferTextReads(page: Page) {
       }
     });
     FileReader.prototype.readAsText = function (file, encoding) {
-      const reader = this;
       pending.push(
         () =>
           new Promise<void>((resolve, reject) => {
-            reader.addEventListener('loadend', () => resolve(), { once: true });
+            this.addEventListener('loadend', () => resolve(), { once: true });
             try {
-              native.call(reader, file, encoding);
+              native.call(this, file, encoding);
             } catch (error) {
               reject(error);
             }

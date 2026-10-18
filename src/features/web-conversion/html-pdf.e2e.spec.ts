@@ -34,13 +34,11 @@ async function rasterize(
     ((height * h) / 600) * 2
   ]);
   await page.goto('/pdf/pdf-to-png');
-  await page
-    .locator('input[type=file]')
-    .setInputFiles({
-      name: 'raster.pdf',
-      mimeType: 'application/pdf',
-      buffer: bytes
-    });
+  await page.locator('input[type=file]').setInputFiles({
+    name: 'raster.pdf',
+    mimeType: 'application/pdf',
+    buffer: bytes
+  });
   const preview = page.locator('img[alt="Preview 0"]');
   await expect(preview).toBeVisible();
   return preview.evaluate(
@@ -103,15 +101,11 @@ for (const [paper, orientation, width, height] of [
     ])
       await page.getByLabel(`${side} margin (mm)`).fill(value);
     await page.getByLabel('Filename', { exact: true }).fill('Nguyễn An.pdf');
-    await page
-      .getByLabel('Upload HTML file')
-      .setInputFiles({
-        name: 'invoice.html',
-        mimeType: 'text/html',
-        buffer: Buffer.from(
-          `<!doctype html><html><body>${SAMPLE}</body></html>`
-        )
-      });
+    await page.getByLabel('Upload HTML file').setInputFiles({
+      name: 'invoice.html',
+      mimeType: 'text/html',
+      buffer: Buffer.from(`<!doctype html><html><body>${SAMPLE}</body></html>`)
+    });
     await page.getByRole('button', { name: 'Preview', exact: true }).click();
     const frame = page.frameLocator('iframe[title="Sanitized HTML preview"]');
     await expect(frame.getByText('Total: $400')).toBeVisible();
@@ -252,13 +246,11 @@ test('strict crossing-row/horizontal boundaries, invalid input/margins and limit
     .fill('<div style="width:1280px">Wide</div>');
   await page.getByRole('button', { name: 'Preview', exact: true }).click();
   await expect(page.getByText(/Content exceeds the image width/)).toBeVisible();
-  await page
-    .getByLabel('Upload HTML file')
-    .setInputFiles({
-      name: 'too-large.html',
-      mimeType: 'text/html',
-      buffer: Buffer.alloc(65537, 97)
-    });
+  await page.getByLabel('Upload HTML file').setInputFiles({
+    name: 'too-large.html',
+    mimeType: 'text/html',
+    buffer: Buffer.alloc(65537, 97)
+  });
   await expect(page.getByText(/at most 64 KiB/)).toBeVisible();
   await page.getByLabel('HTML markup').fill('<p>Recovered</p>');
   await page.getByRole('button', { name: 'Convert to PDF' }).click();

@@ -7,7 +7,7 @@ import ToolMultipleImageInput, {
 import ColorSelector from 'components/options/ColorSelector';
 import ToolFileResult from '@components/result/ToolFileResult';
 import ToolMultiFileResult from '@components/result/ToolMultiFileResult';
-import React, { useState, useContext, useCallback } from 'react';
+import React, { useState, useContext } from 'react';
 import * as Yup from 'yup';
 import ToolContent from '@components/ToolContent';
 import { ToolComponentProps } from '@tools/defineTool';

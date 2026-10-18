@@ -1,6 +1,6 @@
 import useDebounce from '../../../../hooks/useDebounce';
 import { Box, Typography, Slider } from '@mui/material';
-import React, { useEffect, useState, useCallback } from 'react';
+import React, { useEffect, useState } from 'react';
 import * as Yup from 'yup';
 import ToolFileResult from '@components/result/ToolFileResult';
 import ToolContent from '@components/ToolContent';

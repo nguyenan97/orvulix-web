@@ -21,12 +21,7 @@ vi.mock('react-i18next', () => ({
       typeof fallback === 'string' ? fallback : key
   })
 }));
-const components = {
-  image: ImageInput,
-  audio: AudioInput,
-  video: VideoInput,
-  pdf: PdfInput
-};
+
 function Host({ kind }: { kind: FileKind }) {
   const [value, setValue] = useState<InputFile[]>([]);
   const props = {

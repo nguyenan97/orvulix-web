@@ -80,7 +80,7 @@ export default function ConvertJgpToPng({ title }: ToolComponentProps) {
       try {
         //@ts-ignore
         rgb = Color(optionsValues.color).rgb().array();
-      } catch (err) {
+      } catch {
         return;
       }
 

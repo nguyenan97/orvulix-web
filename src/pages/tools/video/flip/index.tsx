@@ -1,12 +1,12 @@
 import useDebounce from '../../../../hooks/useDebounce';
 import { Box } from '@mui/material';
-import { useCallback, useState } from 'react';
+import { useState } from 'react';
 import * as Yup from 'yup';
 import ToolFileResult from '@components/result/ToolFileResult';
 import ToolContent from '@components/ToolContent';
 import { ToolComponentProps } from '@tools/defineTool';
 import { GetGroupsType } from '@components/options/ToolOptions';
-import { debounce } from 'lodash';
+
 import ToolVideoInput from '@components/input/ToolVideoInput';
 import { flipVideo } from './service';
 import { FlipOrientation, InitialValuesType } from './types';
