@@ -2,8 +2,8 @@
 
 - Updated: 2026-10-18, Asia/Bangkok
 - Branch / base: feature/review-delivery-controls / develop at 163b54b0
-- PR: pending
-- Phase: reviewing
+- PR: https://github.com/nguyenan97/orvulix-web/pull/44
+- Phase: CI
 - Delivery mode: develop-merge
 - Authorization: owner requested all review findings fixed, then explicitly chose
   required PR + green CI, zero required approvals and no bypass actors.
@@ -38,7 +38,15 @@ and non-fast-forward ruleset 24693146 is unchanged.
 Docs/config only: JSON syntax, text style and full-diff self-review required;
 normal exact-head CI remains required. No invented application runtime tests.
 
+Local validation passed: JSON formatting, check-text-style and staged diff check.
+Both active branch-rule API readbacks include PR and strict required checks.
+Full-diff standards/requirements self-review: desired payloads match readback,
+preserve existing protections and require no deployment check. No open blocker.
+Verified implementation/policy head 4fc40a1; this checkpoint update changes docs
+only. Resolve final head from Git/PR. Self-review is not independent approval.
+
 ## Resume
 
-Verify active branch rule readback, then commit/push/draft PR. Review full diff and latest
-head CI before authorized develop merge and branch cleanup.
+Wait for final-head CI, observe blocked/pending state, then matched-head develop
+merge only after all gates pass. Verify merged ancestry/head and clean up only
+feature/review-delivery-controls. No running local servers/resources.
