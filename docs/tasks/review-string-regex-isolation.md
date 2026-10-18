@@ -1,6 +1,6 @@
 # Task checkpoint: review-string-regex-isolation
 
-- Branch/base: feature/review-string-regex-isolation / develop b7bf878f
+- Branch/base: feature/review-string-regex-isolation / develop 34da6993
 - Phase: reviewing; PR pending; develop-merge; user requested R08 among all fixes.
 
 Replacer/Split/Palindrome execute arbitrary regex on the UI thread. Existing list
@@ -55,3 +55,9 @@ suite passes 170 files/1652 tests (maxWorkers=4, 83.86s), no deadline/retry/CI c
 The string runtime is unchanged from three-engine build/browser evidence 9a10a59;
 independent PDF.js services/preview files changed in base. Next: integrate R07 after
 PR52 merges, run affected checks, push one PR and require exact-head CI/merge.
+
+PR52 merged at 34da6993. Integrated Ghostscript with only additive Pages CI
+conflict, retaining both focused steps. Worker implementations and consumers are
+separate; affected combined worker/current-owner suites verify integration before
+push. Prior runtime browser/full-unit evidence remains scoped as above; latest
+integrated head must pass required CI before matched-head merge and cleanup.
