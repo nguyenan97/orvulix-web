@@ -1,0 +1,2328 @@
+{
+  "browser": "140.0.7339.186",
+  "profile": {
+    "viewport": {
+      "width": 390,
+      "height": 844
+    },
+    "deviceScaleFactor": 1,
+    "cpuSlowdown": 4,
+    "latencyMs": 150,
+    "downloadBytesPerSecond": 200000,
+    "uploadBytesPerSecond": 93750,
+    "observationAfterReadyMs": 2000
+  },
+  "routes": [
+    {
+      "route": "/",
+      "before": {
+        "lcpMs": 3880,
+        "cls": 0.10426540284360189,
+        "readyMs": 3859.600000000093,
+        "headingMs": 3857.1999999997206,
+        "fcpMs": 620,
+        "jsBytes": 250126,
+        "cssBytes": 3296,
+        "requests": 36,
+        "longTasks": 10,
+        "blockingOver50Ms": 452
+      },
+      "after": {
+        "lcpMs": 3808,
+        "cls": 0.0013033128111107465,
+        "readyMs": 3776.5,
+        "headingMs": 3774.7999999998137,
+        "fcpMs": 624,
+        "jsBytes": 230732,
+        "cssBytes": 3296,
+        "requests": 33,
+        "longTasks": 6,
+        "blockingOver50Ms": 508
+      }
+    },
+    {
+      "route": "/string/reverse",
+      "before": {
+        "lcpMs": 4984,
+        "cls": 0.20586929158754813,
+        "readyMs": 4923.100000000093,
+        "headingMs": 4921.300000000279,
+        "fcpMs": 672,
+        "jsBytes": 298550,
+        "cssBytes": 3296,
+        "requests": 47,
+        "longTasks": 13,
+        "blockingOver50Ms": 838
+      },
+      "after": {
+        "lcpMs": 3924,
+        "cls": 0.007876328794384845,
+        "readyMs": 3880.5999999996275,
+        "headingMs": 3879.5999999996275,
+        "fcpMs": 616,
+        "jsBytes": 268569,
+        "cssBytes": 3296,
+        "requests": 34,
+        "longTasks": 5,
+        "blockingOver50Ms": 387
+      }
+    },
+    {
+      "route": "/pdf/split-pdf",
+      "before": {
+        "lcpMs": 5920,
+        "cls": 0.26848019430761283,
+        "readyMs": 5882.600000000093,
+        "headingMs": 5882.4000000003725,
+        "fcpMs": 672,
+        "jsBytes": 492580,
+        "cssBytes": 3296,
+        "requests": 39,
+        "longTasks": 14,
+        "blockingOver50Ms": 941
+      },
+      "after": {
+        "lcpMs": 4692,
+        "cls": 0.00000776494519440264,
+        "readyMs": 4655.799999999814,
+        "headingMs": 4655.799999999814,
+        "fcpMs": 652,
+        "jsBytes": 435580,
+        "cssBytes": 3296,
+        "requests": 25,
+        "longTasks": 7,
+        "blockingOver50Ms": 502
+      }
+    }
+  ],
+  "phases": [
+    {
+      "measuredAt": "2026-10-18T02:41:36.770Z",
+      "samples": [
+        {
+          "route": "/",
+          "iteration": 1,
+          "lcpMs": 3880,
+          "cls": 0.10426540284360189,
+          "readyMs": 3859.600000000093,
+          "headingMs": 3857.1999999997206,
+          "fcpMs": 620,
+          "jsBytes": 250126,
+          "cssBytes": 3296,
+          "requests": 36,
+          "longTasks": 10,
+          "blockingOver50Ms": 452,
+          "errors": [],
+          "overflow": false
+        },
+        {
+          "route": "/",
+          "iteration": 2,
+          "lcpMs": 3776,
+          "cls": 0.10426540284360189,
+          "readyMs": 3750.5,
+          "headingMs": 3749.100000000093,
+          "fcpMs": 580,
+          "jsBytes": 250126,
+          "cssBytes": 3296,
+          "requests": 36,
+          "longTasks": 7,
+          "blockingOver50Ms": 291,
+          "errors": [],
+          "overflow": false
+        },
+        {
+          "route": "/",
+          "iteration": 3,
+          "lcpMs": 4120,
+          "cls": 0.10426540284360189,
+          "readyMs": 4082.100000000093,
+          "headingMs": 4080.2999999998137,
+          "fcpMs": 624,
+          "jsBytes": 250126,
+          "cssBytes": 3296,
+          "requests": 36,
+          "longTasks": 10,
+          "blockingOver50Ms": 536,
+          "errors": [],
+          "overflow": false
+        },
+        {
+          "route": "/string/reverse",
+          "iteration": 1,
+          "lcpMs": 4580,
+          "cls": 0.20586929158754813,
+          "readyMs": 4530.200000000186,
+          "headingMs": 4528.800000000279,
+          "fcpMs": 620,
+          "jsBytes": 298550,
+          "cssBytes": 3296,
+          "requests": 47,
+          "longTasks": 11,
+          "blockingOver50Ms": 460,
+          "errors": [],
+          "overflow": false
+        },
+        {
+          "route": "/string/reverse",
+          "iteration": 2,
+          "lcpMs": 5956,
+          "cls": 0.20586929158754813,
+          "readyMs": 5914.299999999814,
+          "headingMs": 5913.299999999814,
+          "fcpMs": 684,
+          "jsBytes": 298550,
+          "cssBytes": 3296,
+          "requests": 47,
+          "longTasks": 13,
+          "blockingOver50Ms": 1874,
+          "errors": [],
+          "overflow": false
+        },
+        {
+          "route": "/string/reverse",
+          "iteration": 3,
+          "lcpMs": 4984,
+          "cls": 0.20586929158754813,
+          "readyMs": 4923.100000000093,
+          "headingMs": 4921.300000000279,
+          "fcpMs": 672,
+          "jsBytes": 298550,
+          "cssBytes": 3296,
+          "requests": 47,
+          "longTasks": 15,
+          "blockingOver50Ms": 838,
+          "errors": [],
+          "overflow": false
+        },
+        {
+          "route": "/pdf/split-pdf",
+          "iteration": 1,
+          "lcpMs": 5940,
+          "cls": 0.26848019430761283,
+          "readyMs": 5912.699999999721,
+          "headingMs": 5912.699999999721,
+          "fcpMs": 692,
+          "jsBytes": 492580,
+          "cssBytes": 3296,
+          "requests": 39,
+          "longTasks": 15,
+          "blockingOver50Ms": 941,
+          "errors": [],
+          "overflow": false
+        },
+        {
+          "route": "/pdf/split-pdf",
+          "iteration": 2,
+          "lcpMs": 5920,
+          "cls": 0.26814183482413084,
+          "readyMs": 5882.600000000093,
+          "headingMs": 5882.4000000003725,
+          "fcpMs": 672,
+          "jsBytes": 492580,
+          "cssBytes": 3296,
+          "requests": 39,
+          "longTasks": 14,
+          "blockingOver50Ms": 963,
+          "errors": [],
+          "overflow": false
+        },
+        {
+          "route": "/pdf/split-pdf",
+          "iteration": 3,
+          "lcpMs": 5660,
+          "cls": 0.2709379584051087,
+          "readyMs": 5627.700000000186,
+          "headingMs": 5627.700000000186,
+          "fcpMs": 628,
+          "jsBytes": 492580,
+          "cssBytes": 3296,
+          "requests": 39,
+          "longTasks": 11,
+          "blockingOver50Ms": 660,
+          "errors": [],
+          "overflow": false
+        }
+      ],
+      "waterfalls": [
+        {
+          "route": "/",
+          "requests": [
+            {
+              "url": "http://127.0.0.1:4173/",
+              "type": "Document",
+              "status": 200,
+              "bytes": 2635,
+              "startMs": 0,
+              "endMs": 182.60400000008303
+            },
+            {
+              "url": "http://127.0.0.1:4173/assets/fonts/quicksand/Quicksand-VariableFont_wght.ttf",
+              "type": "Font",
+              "status": 200,
+              "bytes": 126944,
+              "startMs": 212.11200000016106,
+              "endMs": 1655.8420000001206
+            },
+            {
+              "url": "http://127.0.0.1:4173/assets/fonts/quicksand/quick-sand.css",
+              "type": "Stylesheet",
+              "status": 200,
+              "bytes": 652,
+              "startMs": 214.2439999997805,
+              "endMs": 396.8099999997321
+            },
+            {
+              "url": "http://127.0.0.1:4173/assets/index-BcWlH6cN.js",
+              "type": "Script",
+              "status": 200,
+              "bytes": 194529,
+              "startMs": 215.52900000006048,
+              "endMs": 2017.9259999999886
+            },
+            {
+              "url": "http://127.0.0.1:4173/assets/index-H94NME18.css",
+              "type": "Stylesheet",
+              "status": 200,
+              "bytes": 2644,
+              "startMs": 216.54099999977916,
+              "endMs": 427.73799999986295
+            },
+            {
+              "url": "http://127.0.0.1:4173/locales/en/translation.json",
+              "type": "Fetch",
+              "status": 200,
+              "bytes": 4182,
+              "startMs": 2179.779999999937,
+              "endMs": 2362.716999999975,
+              "parent": "http://127.0.0.1:4173/assets/index-BcWlH6cN.js"
+            },
+            {
+              "url": "http://127.0.0.1:4173/locales/en/string.json",
+              "type": "Fetch",
+              "status": 200,
+              "bytes": 7721,
+              "startMs": 2314.495999999963,
+              "endMs": 2627.1819999997206,
+              "parent": "http://127.0.0.1:4173/assets/index-BcWlH6cN.js"
+            },
+            {
+              "url": "http://127.0.0.1:4173/locales/en/number.json",
+              "type": "Fetch",
+              "status": 200,
+              "bytes": 4165,
+              "startMs": 2315.7169999999496,
+              "endMs": 2566.081999999824,
+              "parent": "http://127.0.0.1:4173/assets/index-BcWlH6cN.js"
+            },
+            {
+              "url": "http://127.0.0.1:4173/locales/en/video.json",
+              "type": "Fetch",
+              "status": 200,
+              "bytes": 3110,
+              "startMs": 2319.078999999874,
+              "endMs": 2578.1929999998283,
+              "parent": "http://127.0.0.1:4173/assets/index-BcWlH6cN.js"
+            },
+            {
+              "url": "http://127.0.0.1:4173/locales/en/list.json",
+              "type": "Fetch",
+              "status": 200,
+              "bytes": 3742,
+              "startMs": 2322.0390000001316,
+              "endMs": 2580.8830000000853,
+              "parent": "http://127.0.0.1:4173/assets/index-BcWlH6cN.js"
+            },
+            {
+              "url": "http://127.0.0.1:4173/locales/en/json.json",
+              "type": "Fetch",
+              "status": 200,
+              "bytes": 2975,
+              "startMs": 2323.4959999999774,
+              "endMs": 2565.164999999979,
+              "parent": "http://127.0.0.1:4173/assets/index-BcWlH6cN.js"
+            },
+            {
+              "url": "http://127.0.0.1:4173/locales/en/time.json",
+              "type": "Fetch",
+              "status": 200,
+              "bytes": 4385,
+              "startMs": 2325.3899999999703,
+              "endMs": 2611.7810000000645,
+              "parent": "http://127.0.0.1:4173/assets/index-BcWlH6cN.js"
+            },
+            {
+              "url": "http://127.0.0.1:4173/locales/en/csv.json",
+              "type": "Fetch",
+              "status": 200,
+              "bytes": 4064,
+              "startMs": 2330.392999999731,
+              "endMs": 2768.814999999904,
+              "parent": "http://127.0.0.1:4173/assets/index-BcWlH6cN.js"
+            },
+            {
+              "url": "http://127.0.0.1:4173/locales/en/pdf.json",
+              "type": "Fetch",
+              "status": 200,
+              "bytes": 2671,
+              "startMs": 2333.5799999999836,
+              "endMs": 2768.579000000045,
+              "parent": "http://127.0.0.1:4173/assets/index-BcWlH6cN.js"
+            },
+            {
+              "url": "http://127.0.0.1:4173/locales/en/audio.json",
+              "type": "Fetch",
+              "status": 200,
+              "bytes": 1367,
+              "startMs": 2335.3250000000116,
+              "endMs": 2739.4679999997607,
+              "parent": "http://127.0.0.1:4173/assets/index-BcWlH6cN.js"
+            },
+            {
+              "url": "http://127.0.0.1:4173/locales/en/xml.json",
+              "type": "Fetch",
+              "status": 200,
+              "bytes": 907,
+              "startMs": 2411.9769999997516,
+              "endMs": 2769.072000000051,
+              "parent": "http://127.0.0.1:4173/assets/index-BcWlH6cN.js"
+            },
+            {
+              "url": "http://127.0.0.1:4173/assets/overrides-81hr_PQ9.js",
+              "type": "Script",
+              "status": 200,
+              "bytes": 25268,
+              "startMs": 2680.1519999999073,
+              "endMs": 3016.87099999981,
+              "parent": "http://127.0.0.1:4173/assets/index-BcWlH6cN.js"
+            },
+            {
+              "url": "http://127.0.0.1:4173/locales/en/image.json",
+              "type": "Fetch",
+              "status": 200,
+              "bytes": 4981,
+              "startMs": 2727.313999999751,
+              "endMs": 2953.704000000016,
+              "parent": "http://127.0.0.1:4173/assets/index-BcWlH6cN.js"
+            },
+            {
+              "url": "http://127.0.0.1:4173/locales/en/converters.json",
+              "type": "Fetch",
+              "status": 200,
+              "bytes": 1138,
+              "startMs": 2730.6399999997666,
+              "endMs": 2908.97300000006,
+              "parent": "http://127.0.0.1:4173/assets/index-BcWlH6cN.js"
+            },
+            {
+              "url": "http://127.0.0.1:4173/assets/index-Bo3TplRt.js",
+              "type": "Script",
+              "status": 200,
+              "bytes": 2145,
+              "startMs": 3062.323000000106,
+              "endMs": 3283.875999999964,
+              "parent": "http://127.0.0.1:4173/assets/index-BcWlH6cN.js"
+            },
+            {
+              "url": "http://127.0.0.1:4173/assets/UserTypeFilter-BM-_rvcl.js",
+              "type": "Script",
+              "status": 200,
+              "bytes": 3344,
+              "startMs": 3066.987000000154,
+              "endMs": 3314.237999999932,
+              "parent": "http://127.0.0.1:4173/assets/index-BcWlH6cN.js"
+            },
+            {
+              "url": "http://127.0.0.1:4173/assets/Autocomplete-DE6_p_7t.js",
+              "type": "Script",
+              "status": 200,
+              "bytes": 10989,
+              "startMs": 3068.03200000013,
+              "endMs": 3391.837000000123,
+              "parent": "http://127.0.0.1:4173/assets/index-BcWlH6cN.js"
+            },
+            {
+              "url": "http://127.0.0.1:4173/assets/Close-C14hfUP8.js",
+              "type": "Script",
+              "status": 200,
+              "bytes": 525,
+              "startMs": 3069.254000000001,
+              "endMs": 3252.5030000001607,
+              "parent": "http://127.0.0.1:4173/assets/index-BcWlH6cN.js"
+            },
+            {
+              "url": "http://127.0.0.1:4173/assets/Popper-CGm1slE3.js",
+              "type": "Script",
+              "status": 200,
+              "bytes": 2343,
+              "startMs": 3070.488999999725,
+              "endMs": 3298.8930000001346,
+              "parent": "http://127.0.0.1:4173/assets/index-BcWlH6cN.js"
+            },
+            {
+              "url": "http://127.0.0.1:4173/assets/popper-CMBiYTiD.js",
+              "type": "Script",
+              "status": 200,
+              "bytes": 7887,
+              "startMs": 3072.1889999999803,
+              "endMs": 3376.1129999998047,
+              "parent": "http://127.0.0.1:4173/assets/index-BcWlH6cN.js"
+            },
+            {
+              "url": "http://127.0.0.1:4173/assets/TextField-DyFa1Z7i.js",
+              "type": "Script",
+              "status": 200,
+              "bytes": 3096,
+              "startMs": 3075.984999999946,
+              "endMs": 3437.9760000001625,
+              "parent": "http://127.0.0.1:4173/assets/index-BcWlH6cN.js"
+            },
+            {
+              "url": "https://api.iconify.design/material-symbols-light.json?icons=csv-outline%2Cgif-rounded%2Cimage-outline-rounded",
+              "type": "Fetch",
+              "status": 200,
+              "bytes": 1220,
+              "startMs": 3970.1279999999315,
+              "endMs": 4278.361000000132,
+              "parent": "http://127.0.0.1:4173/assets/index-BcWlH6cN.js"
+            },
+            {
+              "url": "https://api.iconify.design/tabler.json?icons=pdf",
+              "type": "Fetch",
+              "status": 200,
+              "bytes": 855,
+              "startMs": 3972.827999999936,
+              "endMs": 4263.235999999779,
+              "parent": "http://127.0.0.1:4173/assets/index-BcWlH6cN.js"
+            },
+            {
+              "url": "https://api.iconify.design/solar.json?icons=list-bold-duotone%2Ctext-bold-duotone",
+              "type": "Fetch",
+              "status": 200,
+              "bytes": 952,
+              "startMs": 3978.375000000142,
+              "endMs": 4278.566999999839,
+              "parent": "http://127.0.0.1:4173/assets/index-BcWlH6cN.js"
+            },
+            {
+              "url": "https://api.iconify.design/lets-icons.json?icons=json-light%2Cvideo-light",
+              "type": "Fetch",
+              "status": 200,
+              "bytes": 661,
+              "startMs": 3981.412999999975,
+              "endMs": 4263.46199999989,
+              "parent": "http://127.0.0.1:4173/assets/index-BcWlH6cN.js"
+            },
+            {
+              "url": "https://api.iconify.design/fluent-mdl2.json?icons=date-time",
+              "type": "Fetch",
+              "status": 200,
+              "bytes": 788,
+              "startMs": 3983.542999999827,
+              "endMs": 4309.390999999778,
+              "parent": "http://127.0.0.1:4173/assets/index-BcWlH6cN.js"
+            },
+            {
+              "url": "https://api.iconify.design/ic.json?icons=twotone-audiotrack",
+              "type": "Fetch",
+              "status": 200,
+              "bytes": 829,
+              "startMs": 3986.10699999972,
+              "endMs": 4324.446999999964,
+              "parent": "http://127.0.0.1:4173/assets/index-BcWlH6cN.js"
+            },
+            {
+              "url": "https://api.iconify.design/lsicon.json?icons=number-filled",
+              "type": "Fetch",
+              "status": 200,
+              "bytes": 483,
+              "startMs": 3987.5080000001617,
+              "endMs": 4294.027999999798,
+              "parent": "http://127.0.0.1:4173/assets/index-BcWlH6cN.js"
+            },
+            {
+              "url": "https://api.iconify.design/ph.json?icons=file-png-thin",
+              "type": "Fetch",
+              "status": 200,
+              "bytes": 727,
+              "startMs": 3988.561000000118,
+              "endMs": 4294.296000000031,
+              "parent": "http://127.0.0.1:4173/assets/index-BcWlH6cN.js"
+            },
+            {
+              "url": "https://api.iconify.design/mdi-light.json?icons=xml",
+              "type": "Fetch",
+              "status": 200,
+              "bytes": 512,
+              "startMs": 3989.9900000000343,
+              "endMs": 4309.128999999757,
+              "parent": "http://127.0.0.1:4173/assets/index-BcWlH6cN.js"
+            },
+            {
+              "url": "https://api.iconify.design/streamline-plump.json?icons=convert-pdf-1",
+              "type": "Fetch",
+              "status": 200,
+              "bytes": 1214,
+              "startMs": 3991.240999999718,
+              "endMs": 4324.604999999792,
+              "parent": "http://127.0.0.1:4173/assets/index-BcWlH6cN.js"
+            }
+          ]
+        },
+        {
+          "route": "/string/reverse",
+          "requests": [
+            {
+              "url": "http://127.0.0.1:4173/string/reverse",
+              "type": "Document",
+              "status": 200,
+              "bytes": 2923,
+              "startMs": 0,
+              "endMs": 167.69399999975576
+            },
+            {
+              "url": "http://127.0.0.1:4173/assets/fonts/quicksand/Quicksand-VariableFont_wght.ttf",
+              "type": "Font",
+              "status": 200,
+              "bytes": 126944,
+              "startMs": 187.8950000000259,
+              "endMs": 1645.2629999998862
+            },
+            {
+              "url": "http://127.0.0.1:4173/assets/fonts/quicksand/quick-sand.css",
+              "type": "Stylesheet",
+              "status": 200,
+              "bytes": 652,
+              "startMs": 189.12999999975,
+              "endMs": 370.24499999961336
+            },
+            {
+              "url": "http://127.0.0.1:4173/assets/index-BcWlH6cN.js",
+              "type": "Script",
+              "status": 200,
+              "bytes": 194529,
+              "startMs": 189.95300000005955,
+              "endMs": 1986.493999999766
+            },
+            {
+              "url": "http://127.0.0.1:4173/assets/index-H94NME18.css",
+              "type": "Stylesheet",
+              "status": 200,
+              "bytes": 2644,
+              "startMs": 190.77199999992445,
+              "endMs": 417.2209999996994
+            },
+            {
+              "url": "http://127.0.0.1:4173/locales/en/translation.json",
+              "type": "Fetch",
+              "status": 200,
+              "bytes": 4182,
+              "startMs": 2145.1210000000174,
+              "endMs": 2343.2769999999437,
+              "parent": "http://127.0.0.1:4173/assets/index-BcWlH6cN.js"
+            },
+            {
+              "url": "http://127.0.0.1:4173/locales/en/string.json",
+              "type": "Fetch",
+              "status": 200,
+              "bytes": 7721,
+              "startMs": 2249.630999999681,
+              "endMs": 2558.932999999797,
+              "parent": "http://127.0.0.1:4173/assets/index-BcWlH6cN.js"
+            },
+            {
+              "url": "http://127.0.0.1:4173/locales/en/number.json",
+              "type": "Fetch",
+              "status": 200,
+              "bytes": 4165,
+              "startMs": 2250.8719999996174,
+              "endMs": 2480.4669999998623,
+              "parent": "http://127.0.0.1:4173/assets/index-BcWlH6cN.js"
+            },
+            {
+              "url": "http://127.0.0.1:4173/locales/en/video.json",
+              "type": "Fetch",
+              "status": 200,
+              "bytes": 3110,
+              "startMs": 2252.0869999998467,
+              "endMs": 2497.6769999998396,
+              "parent": "http://127.0.0.1:4173/assets/index-BcWlH6cN.js"
+            },
+            {
+              "url": "http://127.0.0.1:4173/locales/en/list.json",
+              "type": "Fetch",
+              "status": 200,
+              "bytes": 3742,
+              "startMs": 2253.284999999778,
+              "endMs": 2512.5880000000507,
+              "parent": "http://127.0.0.1:4173/assets/index-BcWlH6cN.js"
+            },
+            {
+              "url": "http://127.0.0.1:4173/locales/en/json.json",
+              "type": "Fetch",
+              "status": 200,
+              "bytes": 2975,
+              "startMs": 2254.3510000000424,
+              "endMs": 2497.9019999996126,
+              "parent": "http://127.0.0.1:4173/assets/index-BcWlH6cN.js"
+            },
+            {
+              "url": "http://127.0.0.1:4173/locales/en/time.json",
+              "type": "Fetch",
+              "status": 200,
+              "bytes": 4385,
+              "startMs": 2255.5889999998726,
+              "endMs": 2559.150000000045,
+              "parent": "http://127.0.0.1:4173/assets/index-BcWlH6cN.js"
+            },
+            {
+              "url": "http://127.0.0.1:4173/locales/en/csv.json",
+              "type": "Fetch",
+              "status": 200,
+              "bytes": 4064,
+              "startMs": 2256.673999999748,
+              "endMs": 2681.793999999627,
+              "parent": "http://127.0.0.1:4173/assets/index-BcWlH6cN.js"
+            },
+            {
+              "url": "http://127.0.0.1:4173/locales/en/pdf.json",
+              "type": "Fetch",
+              "status": 200,
+              "bytes": 2671,
+              "startMs": 2257.8809999999976,
+              "endMs": 2699.536999999964,
+              "parent": "http://127.0.0.1:4173/assets/index-BcWlH6cN.js"
+            },
+            {
+              "url": "http://127.0.0.1:4173/locales/en/audio.json",
+              "type": "Fetch",
+              "status": 200,
+              "bytes": 1367,
+              "startMs": 2258.922999999868,
+              "endMs": 2668.5459999998784,
+              "parent": "http://127.0.0.1:4173/assets/index-BcWlH6cN.js"
+            },
+            {
+              "url": "http://127.0.0.1:4173/locales/en/xml.json",
+              "type": "Fetch",
+              "status": 200,
+              "bytes": 907,
+              "startMs": 2352.5359999998727,
+              "endMs": 2683.606999999938,
+              "parent": "http://127.0.0.1:4173/assets/index-BcWlH6cN.js"
+            },
+            {
+              "url": "http://127.0.0.1:4173/assets/overrides-81hr_PQ9.js",
+              "type": "Script",
+              "status": 200,
+              "bytes": 25268,
+              "startMs": 2479.255999999623,
+              "endMs": 3010.609999999815,
+              "parent": "http://127.0.0.1:4173/assets/index-BcWlH6cN.js"
+            },
+            {
+              "url": "http://127.0.0.1:4173/assets/english-fallback-C6PIi3SP.js",
+              "type": "Script",
+              "status": 200,
+              "bytes": 36411,
+              "startMs": 2480.287999999746,
+              "endMs": 3071.527999999944,
+              "parent": "http://127.0.0.1:4173/assets/index-BcWlH6cN.js"
+            },
+            {
+              "url": "http://127.0.0.1:4173/locales/en/image.json",
+              "type": "Fetch",
+              "status": 200,
+              "bytes": 4981,
+              "startMs": 2511.492999999973,
+              "endMs": 2917.923999999857,
+              "parent": "http://127.0.0.1:4173/assets/index-BcWlH6cN.js"
+            },
+            {
+              "url": "http://127.0.0.1:4173/locales/en/converters.json",
+              "type": "Fetch",
+              "status": 200,
+              "bytes": 1138,
+              "startMs": 2520.4789999997956,
+              "endMs": 2855.9439999999086,
+              "parent": "http://127.0.0.1:4173/assets/index-BcWlH6cN.js"
+            },
+            {
+              "url": "http://127.0.0.1:4173/assets/index-Ck9ebn_8.js",
+              "type": "Script",
+              "status": 200,
+              "bytes": 1491,
+              "startMs": 3280.949999999848,
+              "endMs": 3462.7519999999095,
+              "parent": "http://127.0.0.1:4173/assets/index-BcWlH6cN.js"
+            },
+            {
+              "url": "http://127.0.0.1:4173/assets/ToolTextInput-DmxjRG3P.js",
+              "type": "Script",
+              "status": 200,
+              "bytes": 1001,
+              "startMs": 3284.6199999999044,
+              "endMs": 3462.8929999998945,
+              "parent": "http://127.0.0.1:4173/assets/index-BcWlH6cN.js"
+            },
+            {
+              "url": "http://127.0.0.1:4173/assets/useTextFileImport-BBimCWxo.js",
+              "type": "Script",
+              "status": 200,
+              "bytes": 989,
+              "startMs": 3286.0499999997046,
+              "endMs": 3463.049999999839,
+              "parent": "http://127.0.0.1:4173/assets/index-BcWlH6cN.js"
+            },
+            {
+              "url": "http://127.0.0.1:4173/assets/ContentPaste-PuCB4sgm.js",
+              "type": "Script",
+              "status": 200,
+              "bytes": 936,
+              "startMs": 3287.8670000000056,
+              "endMs": 3478.2259999997223,
+              "parent": "http://127.0.0.1:4173/assets/index-BcWlH6cN.js"
+            },
+            {
+              "url": "http://127.0.0.1:4173/assets/InputFooter-C9JmlRLE.js",
+              "type": "Script",
+              "status": 200,
+              "bytes": 954,
+              "startMs": 3290.3369999999086,
+              "endMs": 3478.3809999998994,
+              "parent": "http://127.0.0.1:4173/assets/index-BcWlH6cN.js"
+            },
+            {
+              "url": "http://127.0.0.1:4173/assets/write-CvWEbVJl.js",
+              "type": "Script",
+              "status": 200,
+              "bytes": 692,
+              "startMs": 3291.570999999749,
+              "endMs": 3493.163999999979,
+              "parent": "http://127.0.0.1:4173/assets/index-BcWlH6cN.js"
+            },
+            {
+              "url": "http://127.0.0.1:4173/assets/TextField-DyFa1Z7i.js",
+              "type": "Script",
+              "status": 200,
+              "bytes": 3096,
+              "startMs": 3293.3759999996255,
+              "endMs": 3696.4129999996658,
+              "parent": "http://127.0.0.1:4173/assets/index-BcWlH6cN.js"
+            },
+            {
+              "url": "http://127.0.0.1:4173/assets/ToolTextResult-BwzzdmWx.js",
+              "type": "Script",
+              "status": 200,
+              "bytes": 1198,
+              "startMs": 3294.6249999999964,
+              "endMs": 3634.32499999999,
+              "parent": "http://127.0.0.1:4173/assets/index-BcWlH6cN.js"
+            },
+            {
+              "url": "http://127.0.0.1:4173/assets/ResultFooter-DtnARrQk.js",
+              "type": "Script",
+              "status": 200,
+              "bytes": 1988,
+              "startMs": 3295.8269999999175,
+              "endMs": 3680.9519999997065,
+              "parent": "http://127.0.0.1:4173/assets/index-BcWlH6cN.js"
+            },
+            {
+              "url": "http://127.0.0.1:4173/assets/index-D0txp6_X.js",
+              "type": "Script",
+              "status": 200,
+              "bytes": 11719,
+              "startMs": 3297.037999999702,
+              "endMs": 3743.430999999873,
+              "parent": "http://127.0.0.1:4173/assets/index-BcWlH6cN.js"
+            },
+            {
+              "url": "http://127.0.0.1:4173/assets/CheckboxWithDesc-DbFFch9A.js",
+              "type": "Script",
+              "status": 200,
+              "bytes": 734,
+              "startMs": 3297.877999999855,
+              "endMs": 3649.3579999996655,
+              "parent": "http://127.0.0.1:4173/assets/index-BcWlH6cN.js"
+            },
+            {
+              "url": "http://127.0.0.1:4173/assets/FormControlLabel-sG-AJU3f.js",
+              "type": "Script",
+              "status": 200,
+              "bytes": 1573,
+              "startMs": 3299.090999999862,
+              "endMs": 3712.1479999996154,
+              "parent": "http://127.0.0.1:4173/assets/index-BcWlH6cN.js"
+            },
+            {
+              "url": "http://127.0.0.1:4173/assets/Checkbox-CCF285rc.js",
+              "type": "Script",
+              "status": 200,
+              "bytes": 1549,
+              "startMs": 3300.1299999996263,
+              "endMs": 3805.9549999998126,
+              "parent": "http://127.0.0.1:4173/assets/index-BcWlH6cN.js"
+            },
+            {
+              "url": "http://127.0.0.1:4173/assets/SwitchBase-CyO_3fUA.js",
+              "type": "Script",
+              "status": 200,
+              "bytes": 1440,
+              "startMs": 3301.1559999999918,
+              "endMs": 3821.9559999997728,
+              "parent": "http://127.0.0.1:4173/assets/index-BcWlH6cN.js"
+            },
+            {
+              "url": "http://127.0.0.1:4173/assets/ToolContent-C-rJktr8.js",
+              "type": "Script",
+              "status": 200,
+              "bytes": 12982,
+              "startMs": 3302.343999999721,
+              "endMs": 3900.8059999996476,
+              "parent": "http://127.0.0.1:4173/assets/index-BcWlH6cN.js"
+            },
+            {
+              "url": "https://api.iconify.design/mdi.json?icons=bookmark-plus-outline%2Clink-edit%2Csource-branch%2Cunicode",
+              "type": "Fetch",
+              "status": 200,
+              "bytes": 1416,
+              "startMs": 4679.783999999927,
+              "endMs": 4980.602999999974,
+              "parent": "http://127.0.0.1:4173/assets/index-BcWlH6cN.js"
+            },
+            {
+              "url": "https://api.iconify.design/material-symbols-light.json?icons=alternate-email%2Ccall-split%2Ccontent-cut%2Cfind-replace%2Cformat-quote%2Cformat-textdirection-l-to-r%2Cjoin%2Crepeat%2Creplay%2Csearch%2Cshuffle%2Cswap-horiz",
+              "type": "Fetch",
+              "status": 200,
+              "bytes": 2398,
+              "startMs": 4681.862999999794,
+              "endMs": 5057.4039999996785,
+              "parent": "http://127.0.0.1:4173/assets/index-BcWlH6cN.js"
+            },
+            {
+              "url": "https://api.iconify.design/pepicons-print.json?icons=duplicate-off",
+              "type": "Fetch",
+              "status": 200,
+              "bytes": 1001,
+              "startMs": 4684.090999999626,
+              "endMs": 4964.379999999892,
+              "parent": "http://127.0.0.1:4173/assets/index-BcWlH6cN.js"
+            },
+            {
+              "url": "https://api.iconify.design/arcticons.json?icons=encrypt-text%2Cmorse",
+              "type": "Fetch",
+              "status": 200,
+              "bytes": 639,
+              "startMs": 4685.316999999941,
+              "endMs": 5011.117999999897,
+              "parent": "http://127.0.0.1:4173/assets/index-BcWlH6cN.js"
+            },
+            {
+              "url": "https://api.iconify.design/carbon.json?icons=rotate",
+              "type": "Fetch",
+              "status": 200,
+              "bytes": 597,
+              "startMs": 4686.363999999685,
+              "endMs": 4964.594000000034,
+              "parent": "http://127.0.0.1:4173/assets/index-BcWlH6cN.js"
+            },
+            {
+              "url": "https://api.iconify.design/hugeicons.json?icons=encrypt%2Ctext-footnote",
+              "type": "Fetch",
+              "status": 200,
+              "bytes": 985,
+              "startMs": 4687.591999999768,
+              "endMs": 4980.403000000024,
+              "parent": "http://127.0.0.1:4173/assets/index-BcWlH6cN.js"
+            },
+            {
+              "url": "https://api.iconify.design/tabler.json?icons=number-64-small",
+              "type": "Fetch",
+              "status": 200,
+              "bytes": 501,
+              "startMs": 4689.024999999674,
+              "endMs": 5043.14099999965,
+              "parent": "http://127.0.0.1:4173/assets/index-BcWlH6cN.js"
+            },
+            {
+              "url": "https://api.iconify.design/fluent.json?icons=document-landscape-data-24-filled%2Ctable-cell-center-arrow-repeat-all-20-regular",
+              "type": "Fetch",
+              "status": 200,
+              "bytes": 1188,
+              "startMs": 4690.454999999929,
+              "endMs": 5026.513999999679,
+              "parent": "http://127.0.0.1:4173/assets/index-BcWlH6cN.js"
+            },
+            {
+              "url": "https://api.iconify.design/material-symbols.json?icons=key%2Cvisibility-off",
+              "type": "Fetch",
+              "status": 200,
+              "bytes": 816,
+              "startMs": 4691.881999999623,
+              "endMs": 5011.354999999639,
+              "parent": "http://127.0.0.1:4173/assets/index-BcWlH6cN.js"
+            },
+            {
+              "url": "https://api.iconify.design/ic.json?icons=baseline-percentage%2Ctwotone-difference",
+              "type": "Fetch",
+              "status": 200,
+              "bytes": 654,
+              "startMs": 4693.300999999792,
+              "endMs": 5043.330999999853,
+              "parent": "http://127.0.0.1:4173/assets/index-BcWlH6cN.js"
+            },
+            {
+              "url": "https://api.iconify.design/codicon.json?icons=symbol-string",
+              "type": "Fetch",
+              "status": 200,
+              "bytes": 884,
+              "startMs": 4694.521999999779,
+              "endMs": 4996.153000000049,
+              "parent": "http://127.0.0.1:4173/assets/index-BcWlH6cN.js"
+            },
+            {
+              "url": "https://api.iconify.design/solar.json?icons=link-bold-duotone",
+              "type": "Fetch",
+              "status": 200,
+              "bytes": 989,
+              "startMs": 4695.559999999659,
+              "endMs": 4995.981999999913,
+              "parent": "http://127.0.0.1:4173/assets/index-BcWlH6cN.js"
+            }
+          ]
+        },
+        {
+          "route": "/pdf/split-pdf",
+          "requests": [
+            {
+              "url": "http://127.0.0.1:4173/pdf/split-pdf",
+              "type": "Document",
+              "status": 200,
+              "bytes": 3049,
+              "startMs": 0,
+              "endMs": 176.4299999999821
+            },
+            {
+              "url": "http://127.0.0.1:4173/assets/fonts/quicksand/Quicksand-VariableFont_wght.ttf",
+              "type": "Font",
+              "status": 200,
+              "bytes": 126944,
+              "startMs": 202.66700000001947,
+              "endMs": 1649.8320000000604
+            },
+            {
+              "url": "http://127.0.0.1:4173/assets/fonts/quicksand/quick-sand.css",
+              "type": "Stylesheet",
+              "status": 200,
+              "bytes": 652,
+              "startMs": 204.5180000000073,
+              "endMs": 370.75499999991735
+            },
+            {
+              "url": "http://127.0.0.1:4173/assets/index-BcWlH6cN.js",
+              "type": "Script",
+              "status": 200,
+              "bytes": 194529,
+              "startMs": 205.7729999996809,
+              "endMs": 1995.5230000000483
+            },
+            {
+              "url": "http://127.0.0.1:4173/assets/index-H94NME18.css",
+              "type": "Stylesheet",
+              "status": 200,
+              "bytes": 2644,
+              "startMs": 206.99199999990014,
+              "endMs": 417.7719999997862
+            },
+            {
+              "url": "http://127.0.0.1:4173/locales/en/translation.json",
+              "type": "Fetch",
+              "status": 200,
+              "bytes": 4182,
+              "startMs": 2186.005000000023,
+              "endMs": 2376.342999999906,
+              "parent": "http://127.0.0.1:4173/assets/index-BcWlH6cN.js"
+            },
+            {
+              "url": "http://127.0.0.1:4173/locales/en/string.json",
+              "type": "Fetch",
+              "status": 200,
+              "bytes": 7721,
+              "startMs": 2319.3519999999808,
+              "endMs": 2638.3569999998144,
+              "parent": "http://127.0.0.1:4173/assets/index-BcWlH6cN.js"
+            },
+            {
+              "url": "http://127.0.0.1:4173/locales/en/number.json",
+              "type": "Fetch",
+              "status": 200,
+              "bytes": 4165,
+              "startMs": 2321.183000000019,
+              "endMs": 2585.8049999997093,
+              "parent": "http://127.0.0.1:4173/assets/index-BcWlH6cN.js"
+            },
+            {
+              "url": "http://127.0.0.1:4173/locales/en/video.json",
+              "type": "Fetch",
+              "status": 200,
+              "bytes": 3110,
+              "startMs": 2323.0389999998806,
+              "endMs": 2591.4090000001124,
+              "parent": "http://127.0.0.1:4173/assets/index-BcWlH6cN.js"
+            },
+            {
+              "url": "http://127.0.0.1:4173/locales/en/list.json",
+              "type": "Fetch",
+              "status": 200,
+              "bytes": 3742,
+              "startMs": 2324.8969999999645,
+              "endMs": 2611.3970000001245,
+              "parent": "http://127.0.0.1:4173/assets/index-BcWlH6cN.js"
+            },
+            {
+              "url": "http://127.0.0.1:4173/locales/en/json.json",
+              "type": "Fetch",
+              "status": 200,
+              "bytes": 2975,
+              "startMs": 2326.5440000000126,
+              "endMs": 2579.7849999999016,
+              "parent": "http://127.0.0.1:4173/assets/index-BcWlH6cN.js"
+            },
+            {
+              "url": "http://127.0.0.1:4173/locales/en/time.json",
+              "type": "Fetch",
+              "status": 200,
+              "bytes": 4385,
+              "startMs": 2328.580999999758,
+              "endMs": 2627.3369999998977,
+              "parent": "http://127.0.0.1:4173/assets/index-BcWlH6cN.js"
+            },
+            {
+              "url": "http://127.0.0.1:4173/locales/en/csv.json",
+              "type": "Fetch",
+              "status": 200,
+              "bytes": 4064,
+              "startMs": 2330.4619999998977,
+              "endMs": 2800.3799999996772,
+              "parent": "http://127.0.0.1:4173/assets/index-BcWlH6cN.js"
+            },
+            {
+              "url": "http://127.0.0.1:4173/locales/en/pdf.json",
+              "type": "Fetch",
+              "status": 200,
+              "bytes": 2671,
+              "startMs": 2332.0850000000064,
+              "endMs": 2770.9179999997104,
+              "parent": "http://127.0.0.1:4173/assets/index-BcWlH6cN.js"
+            },
+            {
+              "url": "http://127.0.0.1:4173/locales/en/audio.json",
+              "type": "Fetch",
+              "status": 200,
+              "bytes": 1367,
+              "startMs": 2333.530999999766,
+              "endMs": 2768.790000000081,
+              "parent": "http://127.0.0.1:4173/assets/index-BcWlH6cN.js"
+            },
+            {
+              "url": "http://127.0.0.1:4173/locales/en/xml.json",
+              "type": "Fetch",
+              "status": 200,
+              "bytes": 907,
+              "startMs": 2415.797999999995,
+              "endMs": 2784.385999999813,
+              "parent": "http://127.0.0.1:4173/assets/index-BcWlH6cN.js"
+            },
+            {
+              "url": "http://127.0.0.1:4173/assets/overrides-81hr_PQ9.js",
+              "type": "Script",
+              "status": 200,
+              "bytes": 25268,
+              "startMs": 2584.4750000001113,
+              "endMs": 3080.7569999997213,
+              "parent": "http://127.0.0.1:4173/assets/index-BcWlH6cN.js"
+            },
+            {
+              "url": "http://127.0.0.1:4173/assets/english-fallback-C6PIi3SP.js",
+              "type": "Script",
+              "status": 200,
+              "bytes": 36411,
+              "startMs": 2585.9089999999014,
+              "endMs": 3142.0530000000326,
+              "parent": "http://127.0.0.1:4173/assets/index-BcWlH6cN.js"
+            },
+            {
+              "url": "http://127.0.0.1:4173/locales/en/image.json",
+              "type": "Fetch",
+              "status": 200,
+              "bytes": 4981,
+              "startMs": 2627.759999999853,
+              "endMs": 3004.1739999996935,
+              "parent": "http://127.0.0.1:4173/assets/index-BcWlH6cN.js"
+            },
+            {
+              "url": "http://127.0.0.1:4173/locales/en/converters.json",
+              "type": "Fetch",
+              "status": 200,
+              "bytes": 1138,
+              "startMs": 2631.6499999998086,
+              "endMs": 2942.000999999891,
+              "parent": "http://127.0.0.1:4173/assets/index-BcWlH6cN.js"
+            },
+            {
+              "url": "http://127.0.0.1:4173/assets/index-kgdBY7AT.js",
+              "type": "Script",
+              "status": 200,
+              "bytes": 1922,
+              "startMs": 3475.709999999708,
+              "endMs": 3704.337000000123,
+              "parent": "http://127.0.0.1:4173/assets/index-BcWlH6cN.js"
+            },
+            {
+              "url": "http://127.0.0.1:4173/assets/ToolFileResult-pkDKv8OH.js",
+              "type": "Script",
+              "status": 200,
+              "bytes": 1532,
+              "startMs": 3480.8389999998326,
+              "endMs": 3704.1180000001077,
+              "parent": "http://127.0.0.1:4173/assets/index-BcWlH6cN.js"
+            },
+            {
+              "url": "http://127.0.0.1:4173/assets/ContentPaste-PuCB4sgm.js",
+              "type": "Script",
+              "status": 200,
+              "bytes": 936,
+              "startMs": 3482.285999999931,
+              "endMs": 3672.798999999941,
+              "parent": "http://127.0.0.1:4173/assets/index-BcWlH6cN.js"
+            },
+            {
+              "url": "http://127.0.0.1:4173/assets/grey-pattern-DMflWW5d.js",
+              "type": "Script",
+              "status": 200,
+              "bytes": 379,
+              "startMs": 3483.6999999997715,
+              "endMs": 3672.931999999946,
+              "parent": "http://127.0.0.1:4173/assets/index-BcWlH6cN.js"
+            },
+            {
+              "url": "http://127.0.0.1:4173/assets/ResultFooter-DtnARrQk.js",
+              "type": "Script",
+              "status": 200,
+              "bytes": 1988,
+              "startMs": 3485.1599999997234,
+              "endMs": 3719.763000000057,
+              "parent": "http://127.0.0.1:4173/assets/index-BcWlH6cN.js"
+            },
+            {
+              "url": "http://127.0.0.1:4173/assets/TextFieldWithDesc-DNyZ5sMA.js",
+              "type": "Script",
+              "status": 200,
+              "bytes": 676,
+              "startMs": 3486.778999999842,
+              "endMs": 3688.4769999996934,
+              "parent": "http://127.0.0.1:4173/assets/index-BcWlH6cN.js"
+            },
+            {
+              "url": "http://127.0.0.1:4173/assets/TextField-DyFa1Z7i.js",
+              "type": "Script",
+              "status": 200,
+              "bytes": 3096,
+              "startMs": 3488.4170000000267,
+              "endMs": 3907.7330000000075,
+              "parent": "http://127.0.0.1:4173/assets/index-BcWlH6cN.js"
+            },
+            {
+              "url": "http://127.0.0.1:4173/assets/ToolContent-C-rJktr8.js",
+              "type": "Script",
+              "status": 200,
+              "bytes": 12982,
+              "startMs": 3490.3220000001056,
+              "endMs": 4002.1710000000894,
+              "parent": "http://127.0.0.1:4173/assets/index-BcWlH6cN.js"
+            },
+            {
+              "url": "http://127.0.0.1:4173/assets/index-5aDXGBoV.js",
+              "type": "Script",
+              "status": 200,
+              "bytes": 182241,
+              "startMs": 3492.5720000001093,
+              "endMs": 5007.880999999998,
+              "parent": "http://127.0.0.1:4173/assets/index-BcWlH6cN.js"
+            },
+            {
+              "url": "http://127.0.0.1:4173/assets/ToolPdfInput-DM8fwmW3.js",
+              "type": "Script",
+              "status": 200,
+              "bytes": 614,
+              "startMs": 3494.4439999999304,
+              "endMs": 3876.9250000000284,
+              "parent": "http://127.0.0.1:4173/assets/index-BcWlH6cN.js"
+            },
+            {
+              "url": "http://127.0.0.1:4173/assets/BaseFileInput-OOc4h5rL.js",
+              "type": "Script",
+              "status": 200,
+              "bytes": 1939,
+              "startMs": 3495.879000000059,
+              "endMs": 3923.9199999997254,
+              "parent": "http://127.0.0.1:4173/assets/index-BcWlH6cN.js"
+            },
+            {
+              "url": "http://127.0.0.1:4173/assets/InputFooter-C9JmlRLE.js",
+              "type": "Script",
+              "status": 200,
+              "bytes": 954,
+              "startMs": 3497.1419999997124,
+              "endMs": 3908.1889999997657,
+              "parent": "http://127.0.0.1:4173/assets/index-BcWlH6cN.js"
+            },
+            {
+              "url": "http://127.0.0.1:4173/assets/lodash-C2WEUQdt.js",
+              "type": "Script",
+              "status": 200,
+              "bytes": 27113,
+              "startMs": 3498.779000000013,
+              "endMs": 4316.229999999905,
+              "parent": "http://127.0.0.1:4173/assets/index-BcWlH6cN.js"
+            },
+            {
+              "url": "https://api.iconify.design/mdi.json?icons=bookmark-plus-outline%2Cfile-document-edit%2Cimage-multiple",
+              "type": "Fetch",
+              "status": 200,
+              "bytes": 707,
+              "startMs": 6007.049999999708,
+              "endMs": 6294.260000000122,
+              "parent": "http://127.0.0.1:4173/assets/index-BcWlH6cN.js"
+            },
+            {
+              "url": "https://api.iconify.design/material-symbols-light.json?icons=call-split-rounded%2Cmerge",
+              "type": "Fetch",
+              "status": 200,
+              "bytes": 802,
+              "startMs": 6008.6999999998625,
+              "endMs": 6282.252999999855,
+              "parent": "http://127.0.0.1:4173/assets/index-BcWlH6cN.js"
+            },
+            {
+              "url": "https://api.iconify.design/carbon.json?icons=rotate",
+              "type": "Fetch",
+              "status": 200,
+              "bytes": 971,
+              "startMs": 6010.334000000057,
+              "endMs": 6281.959999999799,
+              "parent": "http://127.0.0.1:4173/assets/index-BcWlH6cN.js"
+            },
+            {
+              "url": "https://api.iconify.design/material-symbols.json?icons=compress%2Cimport-contacts%2Clock",
+              "type": "Fetch",
+              "status": 200,
+              "bytes": 896,
+              "startMs": 6011.763999999857,
+              "endMs": 6313.986999999997,
+              "parent": "http://127.0.0.1:4173/assets/index-BcWlH6cN.js"
+            },
+            {
+              "url": "https://api.iconify.design/ph.json?icons=file-code-thin%2Cfile-pdf-thin",
+              "type": "Fetch",
+              "status": 200,
+              "bytes": 761,
+              "startMs": 6013.194000000112,
+              "endMs": 6313.816999999744,
+              "parent": "http://127.0.0.1:4173/assets/index-BcWlH6cN.js"
+            },
+            {
+              "url": "https://api.iconify.design/ic.json?icons=twotone-picture-as-pdf",
+              "type": "Fetch",
+              "status": 200,
+              "bytes": 639,
+              "startMs": 6015.493999999762,
+              "endMs": 6297.929999999724,
+              "parent": "http://127.0.0.1:4173/assets/index-BcWlH6cN.js"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "measuredAt": "2026-10-18T03:33:14.944Z",
+      "samples": [
+        {
+          "route": "/",
+          "iteration": 1,
+          "lcpMs": 3568,
+          "cls": 0.0013033128111107465,
+          "readyMs": 3551,
+          "headingMs": 3549.2000000001863,
+          "fcpMs": 600,
+          "jsBytes": 230732,
+          "cssBytes": 3296,
+          "requests": 33,
+          "longTasks": 6,
+          "blockingOver50Ms": 361,
+          "errors": [],
+          "overflow": false
+        },
+        {
+          "route": "/",
+          "iteration": 2,
+          "lcpMs": 3808,
+          "cls": 0.0013033128111107465,
+          "readyMs": 3776.5,
+          "headingMs": 3774.7999999998137,
+          "fcpMs": 624,
+          "jsBytes": 230732,
+          "cssBytes": 3296,
+          "requests": 33,
+          "longTasks": 6,
+          "blockingOver50Ms": 508,
+          "errors": [],
+          "overflow": false
+        },
+        {
+          "route": "/",
+          "iteration": 3,
+          "lcpMs": 3992,
+          "cls": 0.0013033128111107465,
+          "readyMs": 3956.899999999441,
+          "headingMs": 3952.899999999441,
+          "fcpMs": 636,
+          "jsBytes": 230732,
+          "cssBytes": 3296,
+          "requests": 33,
+          "longTasks": 6,
+          "blockingOver50Ms": 640,
+          "errors": [],
+          "overflow": false
+        },
+        {
+          "route": "/string/reverse",
+          "iteration": 1,
+          "lcpMs": 3904,
+          "cls": 0.007876328794384845,
+          "readyMs": 3860.7000000001863,
+          "headingMs": 3858.7999999998137,
+          "fcpMs": 612,
+          "jsBytes": 268569,
+          "cssBytes": 3296,
+          "requests": 34,
+          "longTasks": 5,
+          "blockingOver50Ms": 354,
+          "errors": [],
+          "overflow": false
+        },
+        {
+          "route": "/string/reverse",
+          "iteration": 2,
+          "lcpMs": 3988,
+          "cls": 0.007876328794384845,
+          "readyMs": 3938,
+          "headingMs": 3936.4000000003725,
+          "fcpMs": 624,
+          "jsBytes": 268569,
+          "cssBytes": 3296,
+          "requests": 34,
+          "longTasks": 6,
+          "blockingOver50Ms": 418,
+          "errors": [],
+          "overflow": false
+        },
+        {
+          "route": "/string/reverse",
+          "iteration": 3,
+          "lcpMs": 3924,
+          "cls": 0.007876328794384845,
+          "readyMs": 3880.5999999996275,
+          "headingMs": 3879.5999999996275,
+          "fcpMs": 616,
+          "jsBytes": 268569,
+          "cssBytes": 3296,
+          "requests": 34,
+          "longTasks": 5,
+          "blockingOver50Ms": 387,
+          "errors": [],
+          "overflow": false
+        },
+        {
+          "route": "/pdf/split-pdf",
+          "iteration": 1,
+          "lcpMs": 5384,
+          "cls": 0.00000776494519440264,
+          "readyMs": 5350.399999999441,
+          "headingMs": 5350.399999999441,
+          "fcpMs": 676,
+          "jsBytes": 435580,
+          "cssBytes": 3296,
+          "requests": 25,
+          "longTasks": 7,
+          "blockingOver50Ms": 904,
+          "errors": [],
+          "overflow": false
+        },
+        {
+          "route": "/pdf/split-pdf",
+          "iteration": 2,
+          "lcpMs": 4692,
+          "cls": 0.00000776494519440264,
+          "readyMs": 4655.799999999814,
+          "headingMs": 4655.799999999814,
+          "fcpMs": 616,
+          "jsBytes": 435580,
+          "cssBytes": 3296,
+          "requests": 25,
+          "longTasks": 7,
+          "blockingOver50Ms": 502,
+          "errors": [],
+          "overflow": false
+        },
+        {
+          "route": "/pdf/split-pdf",
+          "iteration": 3,
+          "lcpMs": 4496,
+          "cls": 0.00000776494519440264,
+          "readyMs": 4470,
+          "headingMs": 4470,
+          "fcpMs": 652,
+          "jsBytes": 435580,
+          "cssBytes": 3296,
+          "requests": 25,
+          "longTasks": 5,
+          "blockingOver50Ms": 372,
+          "errors": [],
+          "overflow": false
+        }
+      ],
+      "waterfalls": [
+        {
+          "route": "/",
+          "requests": [
+            {
+              "url": "http://127.0.0.1:4173/",
+              "type": "Document",
+              "status": 200,
+              "bytes": 2636,
+              "startMs": 0,
+              "endMs": 172.41899999953603
+            },
+            {
+              "url": "http://127.0.0.1:4173/assets/fonts/quicksand/Quicksand-VariableFont_wght.ttf",
+              "type": "Font",
+              "status": 200,
+              "bytes": 126944,
+              "startMs": 194.7840000002543,
+              "endMs": 1652.231999999458
+            },
+            {
+              "url": "http://127.0.0.1:4173/assets/fonts/quicksand/quick-sand.css",
+              "type": "Stylesheet",
+              "status": 200,
+              "bytes": 652,
+              "startMs": 195.83400000010442,
+              "endMs": 382.24999999965803
+            },
+            {
+              "url": "http://127.0.0.1:4173/assets/index-SD5xERBc.js",
+              "type": "Script",
+              "status": 200,
+              "bytes": 200958,
+              "startMs": 196.4559999996709,
+              "endMs": 2038.9530000002196
+            },
+            {
+              "url": "http://127.0.0.1:4173/assets/index-H94NME18.css",
+              "type": "Stylesheet",
+              "status": 200,
+              "bytes": 2644,
+              "startMs": 197.28399999985413,
+              "endMs": 413.36799999953655
+            },
+            {
+              "url": "http://127.0.0.1:4173/assets/index-Cc4ebHia.js",
+              "type": "Script",
+              "status": 200,
+              "bytes": 2130,
+              "startMs": 2312.090999999782,
+              "endMs": 2542.3489999993762,
+              "parent": "http://127.0.0.1:4173/assets/index-SD5xERBc.js"
+            },
+            {
+              "url": "http://127.0.0.1:4173/assets/UserTypeFilter-BULpi5-i.js",
+              "type": "Script",
+              "status": 200,
+              "bytes": 3345,
+              "startMs": 2320.0729999998657,
+              "endMs": 2589.404999999715,
+              "parent": "http://127.0.0.1:4173/assets/index-SD5xERBc.js"
+            },
+            {
+              "url": "http://127.0.0.1:4173/assets/Autocomplete-TSrilqWs.js",
+              "type": "Script",
+              "status": 200,
+              "bytes": 10973,
+              "startMs": 2323.4599999996135,
+              "endMs": 2665.9309999995457,
+              "parent": "http://127.0.0.1:4173/assets/index-SD5xERBc.js"
+            },
+            {
+              "url": "http://127.0.0.1:4173/assets/Popper-CV2aAI0l.js",
+              "type": "Script",
+              "status": 200,
+              "bytes": 2342,
+              "startMs": 2327.9099999999744,
+              "endMs": 2557.6869999995324,
+              "parent": "http://127.0.0.1:4173/assets/index-SD5xERBc.js"
+            },
+            {
+              "url": "http://127.0.0.1:4173/assets/popper-CMBiYTiD.js",
+              "type": "Script",
+              "status": 200,
+              "bytes": 7887,
+              "startMs": 2330.4440000001705,
+              "endMs": 2650.7769999998345,
+              "parent": "http://127.0.0.1:4173/assets/index-SD5xERBc.js"
+            },
+            {
+              "url": "http://127.0.0.1:4173/assets/TextField-DwasRnUK.js",
+              "type": "Script",
+              "status": 200,
+              "bytes": 3097,
+              "startMs": 2332.495999999992,
+              "endMs": 2604.674000000159,
+              "parent": "http://127.0.0.1:4173/assets/index-SD5xERBc.js"
+            },
+            {
+              "url": "http://127.0.0.1:4173/locales/en/string.json",
+              "type": "Fetch",
+              "status": 200,
+              "bytes": 7721,
+              "startMs": 2692.4840000001495,
+              "endMs": 3008.0559999996694,
+              "parent": "http://127.0.0.1:4173/assets/index-SD5xERBc.js"
+            },
+            {
+              "url": "http://127.0.0.1:4173/locales/en/number.json",
+              "type": "Fetch",
+              "status": 200,
+              "bytes": 4165,
+              "startMs": 2693.6900000000605,
+              "endMs": 2937.503999999535,
+              "parent": "http://127.0.0.1:4173/assets/index-SD5xERBc.js"
+            },
+            {
+              "url": "http://127.0.0.1:4173/locales/en/video.json",
+              "type": "Fetch",
+              "status": 200,
+              "bytes": 3110,
+              "startMs": 2695.3089999997246,
+              "endMs": 2960.997000000134,
+              "parent": "http://127.0.0.1:4173/assets/index-SD5xERBc.js"
+            },
+            {
+              "url": "http://127.0.0.1:4173/locales/en/list.json",
+              "type": "Fetch",
+              "status": 200,
+              "bytes": 3742,
+              "startMs": 2697.167000000263,
+              "endMs": 2976.232999999411,
+              "parent": "http://127.0.0.1:4173/assets/index-SD5xERBc.js"
+            },
+            {
+              "url": "http://127.0.0.1:4173/locales/en/json.json",
+              "type": "Fetch",
+              "status": 200,
+              "bytes": 2975,
+              "startMs": 2699.3149999998423,
+              "endMs": 2930.213999999978,
+              "parent": "http://127.0.0.1:4173/assets/index-SD5xERBc.js"
+            },
+            {
+              "url": "http://127.0.0.1:4173/locales/en/time.json",
+              "type": "Fetch",
+              "status": 200,
+              "bytes": 4385,
+              "startMs": 2700.7290000001376,
+              "endMs": 2976.474999999482,
+              "parent": "http://127.0.0.1:4173/assets/index-SD5xERBc.js"
+            },
+            {
+              "url": "http://127.0.0.1:4173/locales/en/csv.json",
+              "type": "Fetch",
+              "status": 200,
+              "bytes": 4064,
+              "startMs": 2701.9920000002458,
+              "endMs": 3117.9590000001554,
+              "parent": "http://127.0.0.1:4173/assets/index-SD5xERBc.js"
+            },
+            {
+              "url": "http://127.0.0.1:4173/locales/en/pdf.json",
+              "type": "Fetch",
+              "status": 200,
+              "bytes": 2671,
+              "startMs": 2703.4389999998893,
+              "endMs": 3133.904999999686,
+              "parent": "http://127.0.0.1:4173/assets/index-SD5xERBc.js"
+            },
+            {
+              "url": "http://127.0.0.1:4173/locales/en/audio.json",
+              "type": "Fetch",
+              "status": 200,
+              "bytes": 1367,
+              "startMs": 2704.9079999997048,
+              "endMs": 3134.143999999651,
+              "parent": "http://127.0.0.1:4173/assets/index-SD5xERBc.js"
+            },
+            {
+              "url": "http://127.0.0.1:4173/locales/en/xml.json",
+              "type": "Fetch",
+              "status": 200,
+              "bytes": 907,
+              "startMs": 2706.1210000001665,
+              "endMs": 3149.2040000002817,
+              "parent": "http://127.0.0.1:4173/assets/index-SD5xERBc.js"
+            },
+            {
+              "url": "http://127.0.0.1:4173/locales/en/image.json",
+              "type": "Fetch",
+              "status": 200,
+              "bytes": 4981,
+              "startMs": 2936.482000000069,
+              "endMs": 3180.0450000000637,
+              "parent": "http://127.0.0.1:4173/assets/index-SD5xERBc.js"
+            },
+            {
+              "url": "http://127.0.0.1:4173/locales/en/converters.json",
+              "type": "Fetch",
+              "status": 200,
+              "bytes": 1138,
+              "startMs": 2940.987999999379,
+              "endMs": 3180.2349999998114,
+              "parent": "http://127.0.0.1:4173/assets/index-SD5xERBc.js"
+            },
+            {
+              "url": "https://api.iconify.design/material-symbols-light.json?icons=csv-outline%2Cgif-rounded%2Cimage-outline-rounded",
+              "type": "Fetch",
+              "status": 200,
+              "bytes": 1223,
+              "startMs": 3637.499999999818,
+              "endMs": 3944.6859999998196,
+              "parent": "http://127.0.0.1:4173/assets/index-SD5xERBc.js"
+            },
+            {
+              "url": "https://api.iconify.design/tabler.json?icons=pdf",
+              "type": "Fetch",
+              "status": 200,
+              "bytes": 485,
+              "startMs": 3638.9090000002398,
+              "endMs": 3931.185999999798,
+              "parent": "http://127.0.0.1:4173/assets/index-SD5xERBc.js"
+            },
+            {
+              "url": "https://api.iconify.design/solar.json?icons=list-bold-duotone%2Ctext-bold-duotone",
+              "type": "Fetch",
+              "status": 200,
+              "bytes": 1316,
+              "startMs": 3639.9639999999636,
+              "endMs": 3903.5189999995055,
+              "parent": "http://127.0.0.1:4173/assets/index-SD5xERBc.js"
+            },
+            {
+              "url": "https://api.iconify.design/lets-icons.json?icons=json-light%2Cvideo-light",
+              "type": "Fetch",
+              "status": 200,
+              "bytes": 661,
+              "startMs": 3641.179000000193,
+              "endMs": 3931.069000000207,
+              "parent": "http://127.0.0.1:4173/assets/index-SD5xERBc.js"
+            },
+            {
+              "url": "https://api.iconify.design/fluent-mdl2.json?icons=date-time",
+              "type": "Fetch",
+              "status": 200,
+              "bytes": 785,
+              "startMs": 3642.4239999996644,
+              "endMs": 3930.862000000161,
+              "parent": "http://127.0.0.1:4173/assets/index-SD5xERBc.js"
+            },
+            {
+              "url": "https://api.iconify.design/ic.json?icons=twotone-audiotrack",
+              "type": "Fetch",
+              "status": 200,
+              "bytes": 533,
+              "startMs": 3643.608999999742,
+              "endMs": 3959.6279999996113,
+              "parent": "http://127.0.0.1:4173/assets/index-SD5xERBc.js"
+            },
+            {
+              "url": "https://api.iconify.design/lsicon.json?icons=number-filled",
+              "type": "Fetch",
+              "status": 200,
+              "bytes": 481,
+              "startMs": 3644.6470000000772,
+              "endMs": 3959.498999999596,
+              "parent": "http://127.0.0.1:4173/assets/index-SD5xERBc.js"
+            },
+            {
+              "url": "https://api.iconify.design/ph.json?icons=file-png-thin",
+              "type": "Fetch",
+              "status": 200,
+              "bytes": 1077,
+              "startMs": 3645.6719999996494,
+              "endMs": 3975.5209999993895,
+              "parent": "http://127.0.0.1:4173/assets/index-SD5xERBc.js"
+            },
+            {
+              "url": "https://api.iconify.design/mdi-light.json?icons=xml",
+              "type": "Fetch",
+              "status": 200,
+              "bytes": 504,
+              "startMs": 3646.8720000002577,
+              "endMs": 3944.52899999942,
+              "parent": "http://127.0.0.1:4173/assets/index-SD5xERBc.js"
+            },
+            {
+              "url": "https://api.iconify.design/streamline-plump.json?icons=convert-pdf-1",
+              "type": "Fetch",
+              "status": 200,
+              "bytes": 1227,
+              "startMs": 3648.102000000108,
+              "endMs": 3975.677999999789,
+              "parent": "http://127.0.0.1:4173/assets/index-SD5xERBc.js"
+            }
+          ]
+        },
+        {
+          "route": "/string/reverse",
+          "requests": [
+            {
+              "url": "http://127.0.0.1:4173/string/reverse",
+              "type": "Document",
+              "status": 200,
+              "bytes": 2923,
+              "startMs": 0,
+              "endMs": 178.41299999963667
+            },
+            {
+              "url": "http://127.0.0.1:4173/assets/fonts/quicksand/Quicksand-VariableFont_wght.ttf",
+              "type": "Font",
+              "status": 200,
+              "bytes": 126944,
+              "startMs": 196.81299999956536,
+              "endMs": 1650.0509999996211
+            },
+            {
+              "url": "http://127.0.0.1:4173/assets/fonts/quicksand/quick-sand.css",
+              "type": "Stylesheet",
+              "status": 200,
+              "bytes": 652,
+              "startMs": 197.84199999958219,
+              "endMs": 390.0340000000142
+            },
+            {
+              "url": "http://127.0.0.1:4173/assets/index-SD5xERBc.js",
+              "type": "Script",
+              "status": 200,
+              "bytes": 200958,
+              "startMs": 199.04399999995803,
+              "endMs": 2038.9759999998205
+            },
+            {
+              "url": "http://127.0.0.1:4173/assets/index-H94NME18.css",
+              "type": "Stylesheet",
+              "status": 200,
+              "bytes": 2644,
+              "startMs": 199.68299999982264,
+              "endMs": 424.0829999998823
+            },
+            {
+              "url": "http://127.0.0.1:4173/locales/en/string.json",
+              "type": "Fetch",
+              "status": 200,
+              "bytes": 7721,
+              "startMs": 2323.3179999997446,
+              "endMs": 2529.853999999432,
+              "parent": "http://127.0.0.1:4173/assets/index-SD5xERBc.js"
+            },
+            {
+              "url": "http://127.0.0.1:4173/assets/overrides-81hr_PQ9.js",
+              "type": "Script",
+              "status": 200,
+              "bytes": 25268,
+              "startMs": 2410.4239999996935,
+              "endMs": 2698.469999999361,
+              "parent": "http://127.0.0.1:4173/assets/index-SD5xERBc.js"
+            },
+            {
+              "url": "http://127.0.0.1:4173/assets/index-Jqmqlaj4.js",
+              "type": "Script",
+              "status": 200,
+              "bytes": 1487,
+              "startMs": 2691.0369999995964,
+              "endMs": 2877.110999999786,
+              "parent": "http://127.0.0.1:4173/assets/index-SD5xERBc.js"
+            },
+            {
+              "url": "http://127.0.0.1:4173/assets/ToolTextInput-rQciCRBz.js",
+              "type": "Script",
+              "status": 200,
+              "bytes": 1003,
+              "startMs": 2694.488999999521,
+              "endMs": 2876.940000000104,
+              "parent": "http://127.0.0.1:4173/assets/index-SD5xERBc.js"
+            },
+            {
+              "url": "http://127.0.0.1:4173/assets/useTextFileImport-Cv_x86bU.js",
+              "type": "Script",
+              "status": 200,
+              "bytes": 986,
+              "startMs": 2695.7229999998162,
+              "endMs": 2877.6749999997264,
+              "parent": "http://127.0.0.1:4173/assets/index-SD5xERBc.js"
+            },
+            {
+              "url": "http://127.0.0.1:4173/assets/ContentPaste-KobFEY5T.js",
+              "type": "Script",
+              "status": 200,
+              "bytes": 936,
+              "startMs": 2696.9249999992826,
+              "endMs": 2892.820999999458,
+              "parent": "http://127.0.0.1:4173/assets/index-SD5xERBc.js"
+            },
+            {
+              "url": "http://127.0.0.1:4173/assets/InputFooter-CSWmmng-.js",
+              "type": "Script",
+              "status": 200,
+              "bytes": 956,
+              "startMs": 2698.3599999994112,
+              "endMs": 2892.979999999625,
+              "parent": "http://127.0.0.1:4173/assets/index-SD5xERBc.js"
+            },
+            {
+              "url": "http://127.0.0.1:4173/assets/write-CvWEbVJl.js",
+              "type": "Script",
+              "status": 200,
+              "bytes": 692,
+              "startMs": 2699.6009999993476,
+              "endMs": 2908.309999999801,
+              "parent": "http://127.0.0.1:4173/assets/index-SD5xERBc.js"
+            },
+            {
+              "url": "http://127.0.0.1:4173/assets/TextField-DwasRnUK.js",
+              "type": "Script",
+              "status": 200,
+              "bytes": 3097,
+              "startMs": 2701.0169999994105,
+              "endMs": 3112.602999999581,
+              "parent": "http://127.0.0.1:4173/assets/index-SD5xERBc.js"
+            },
+            {
+              "url": "http://127.0.0.1:4173/assets/ToolTextResult-a13jcKiY.js",
+              "type": "Script",
+              "status": 200,
+              "bytes": 1198,
+              "startMs": 2702.064999999493,
+              "endMs": 3050.504999999248,
+              "parent": "http://127.0.0.1:4173/assets/index-SD5xERBc.js"
+            },
+            {
+              "url": "http://127.0.0.1:4173/assets/ResultFooter-DdrFgf5P.js",
+              "type": "Script",
+              "status": 200,
+              "bytes": 1991,
+              "startMs": 2703.2890000000407,
+              "endMs": 3082.0969999995214,
+              "parent": "http://127.0.0.1:4173/assets/index-SD5xERBc.js"
+            },
+            {
+              "url": "http://127.0.0.1:4173/assets/index-D0txp6_X.js",
+              "type": "Script",
+              "status": 200,
+              "bytes": 11719,
+              "startMs": 2704.478999999992,
+              "endMs": 3158.5239999994883,
+              "parent": "http://127.0.0.1:4173/assets/index-SD5xERBc.js"
+            },
+            {
+              "url": "http://127.0.0.1:4173/assets/CheckboxWithDesc-CbvH6fKK.js",
+              "type": "Script",
+              "status": 200,
+              "bytes": 734,
+              "startMs": 2705.323000000135,
+              "endMs": 3066.251999999622,
+              "parent": "http://127.0.0.1:4173/assets/index-SD5xERBc.js"
+            },
+            {
+              "url": "http://127.0.0.1:4173/assets/FormControlLabel-6U6iXuFU.js",
+              "type": "Script",
+              "status": 200,
+              "bytes": 1574,
+              "startMs": 2706.3239999997677,
+              "endMs": 3128.0280000000857,
+              "parent": "http://127.0.0.1:4173/assets/index-SD5xERBc.js"
+            },
+            {
+              "url": "http://127.0.0.1:4173/assets/Checkbox-Dxpv2sra.js",
+              "type": "Script",
+              "status": 200,
+              "bytes": 1548,
+              "startMs": 2707.1579999992537,
+              "endMs": 3231.0569999999643,
+              "parent": "http://127.0.0.1:4173/assets/index-SD5xERBc.js"
+            },
+            {
+              "url": "http://127.0.0.1:4173/assets/SwitchBase-CbhtTtC1.js",
+              "type": "Script",
+              "status": 200,
+              "bytes": 1440,
+              "startMs": 2708.158999999796,
+              "endMs": 3247.172999999748,
+              "parent": "http://127.0.0.1:4173/assets/index-SD5xERBc.js"
+            },
+            {
+              "url": "http://127.0.0.1:4173/assets/ToolContent-BLDC9yxf.js",
+              "type": "Script",
+              "status": 200,
+              "bytes": 12982,
+              "startMs": 2708.9799999994284,
+              "endMs": 3325.8029999997234,
+              "parent": "http://127.0.0.1:4173/assets/index-SD5xERBc.js"
+            },
+            {
+              "url": "https://api.iconify.design/mdi.json?icons=bookmark-plus-outline%2Clink-edit%2Csource-branch%2Cunicode",
+              "type": "Fetch",
+              "status": 200,
+              "bytes": 1425,
+              "startMs": 3971.027999999933,
+              "endMs": 4265.892999999778,
+              "parent": "http://127.0.0.1:4173/assets/index-SD5xERBc.js"
+            },
+            {
+              "url": "https://api.iconify.design/material-symbols-light.json?icons=alternate-email%2Ccall-split%2Ccontent-cut%2Cfind-replace%2Cformat-quote%2Cformat-textdirection-l-to-r%2Cjoin%2Crepeat%2Creplay%2Csearch%2Cshuffle%2Cswap-horiz",
+              "type": "Fetch",
+              "status": 200,
+              "bytes": 2404,
+              "startMs": 3972.8759999998147,
+              "endMs": 4341.531000000032,
+              "parent": "http://127.0.0.1:4173/assets/index-SD5xERBc.js"
+            },
+            {
+              "url": "https://api.iconify.design/pepicons-print.json?icons=duplicate-off",
+              "type": "Fetch",
+              "status": 200,
+              "bytes": 629,
+              "startMs": 3974.685999999565,
+              "endMs": 4280.741999999918,
+              "parent": "http://127.0.0.1:4173/assets/index-SD5xERBc.js"
+            },
+            {
+              "url": "https://api.iconify.design/arcticons.json?icons=encrypt-text%2Cmorse",
+              "type": "Fetch",
+              "status": 200,
+              "bytes": 1010,
+              "startMs": 3975.7089999993696,
+              "endMs": 4265.742999999929,
+              "parent": "http://127.0.0.1:4173/assets/index-SD5xERBc.js"
+            },
+            {
+              "url": "https://api.iconify.design/carbon.json?icons=rotate",
+              "type": "Fetch",
+              "status": 200,
+              "bytes": 626,
+              "startMs": 3976.7480000000432,
+              "endMs": 4265.9960000000865,
+              "parent": "http://127.0.0.1:4173/assets/index-SD5xERBc.js"
+            },
+            {
+              "url": "https://api.iconify.design/hugeicons.json?icons=encrypt%2Ctext-footnote",
+              "type": "Fetch",
+              "status": 200,
+              "bytes": 956,
+              "startMs": 3977.7549999998882,
+              "endMs": 4280.603999999585,
+              "parent": "http://127.0.0.1:4173/assets/index-SD5xERBc.js"
+            },
+            {
+              "url": "https://api.iconify.design/tabler.json?icons=number-64-small",
+              "type": "Fetch",
+              "status": 200,
+              "bytes": 494,
+              "startMs": 3978.7829999995665,
+              "endMs": 4326.129999999466,
+              "parent": "http://127.0.0.1:4173/assets/index-SD5xERBc.js"
+            },
+            {
+              "url": "https://api.iconify.design/fluent.json?icons=document-landscape-data-24-filled%2Ctable-cell-center-arrow-repeat-all-20-regular",
+              "type": "Fetch",
+              "status": 200,
+              "bytes": 891,
+              "startMs": 3979.9769999999626,
+              "endMs": 4295.98999999962,
+              "parent": "http://127.0.0.1:4173/assets/index-SD5xERBc.js"
+            },
+            {
+              "url": "https://api.iconify.design/material-symbols.json?icons=key%2Cvisibility-off",
+              "type": "Fetch",
+              "status": 200,
+              "bytes": 817,
+              "startMs": 3981.0099999995145,
+              "endMs": 4311.18399999923,
+              "parent": "http://127.0.0.1:4173/assets/index-SD5xERBc.js"
+            },
+            {
+              "url": "https://api.iconify.design/ic.json?icons=baseline-percentage%2Ctwotone-difference",
+              "type": "Fetch",
+              "status": 200,
+              "bytes": 649,
+              "startMs": 3982.034999999996,
+              "endMs": 4296.158999999534,
+              "parent": "http://127.0.0.1:4173/assets/index-SD5xERBc.js"
+            },
+            {
+              "url": "https://api.iconify.design/codicon.json?icons=symbol-string",
+              "type": "Fetch",
+              "status": 200,
+              "bytes": 1239,
+              "startMs": 3983.0519999995886,
+              "endMs": 4325.988999999936,
+              "parent": "http://127.0.0.1:4173/assets/index-SD5xERBc.js"
+            },
+            {
+              "url": "https://api.iconify.design/solar.json?icons=link-bold-duotone",
+              "type": "Fetch",
+              "status": 200,
+              "bytes": 987,
+              "startMs": 3984.0519999997923,
+              "endMs": 4341.364999999314,
+              "parent": "http://127.0.0.1:4173/assets/index-SD5xERBc.js"
+            }
+          ]
+        },
+        {
+          "route": "/pdf/split-pdf",
+          "requests": [
+            {
+              "url": "http://127.0.0.1:4173/pdf/split-pdf",
+              "type": "Document",
+              "status": 200,
+              "bytes": 3049,
+              "startMs": 0,
+              "endMs": 187.1369999998933
+            },
+            {
+              "url": "http://127.0.0.1:4173/assets/fonts/quicksand/Quicksand-VariableFont_wght.ttf",
+              "type": "Font",
+              "status": 200,
+              "bytes": 126944,
+              "startMs": 202.44800000000396,
+              "endMs": 1667.702000000645
+            },
+            {
+              "url": "http://127.0.0.1:4173/assets/fonts/quicksand/quick-sand.css",
+              "type": "Stylesheet",
+              "status": 200,
+              "bytes": 652,
+              "startMs": 203.66199999989476,
+              "endMs": 382.1940000007089
+            },
+            {
+              "url": "http://127.0.0.1:4173/assets/index-SD5xERBc.js",
+              "type": "Script",
+              "status": 200,
+              "bytes": 200958,
+              "startMs": 205.09100000072067,
+              "endMs": 2034.1480000006413
+            },
+            {
+              "url": "http://127.0.0.1:4173/assets/index-H94NME18.css",
+              "type": "Stylesheet",
+              "status": 200,
+              "bytes": 2644,
+              "startMs": 205.91700000022684,
+              "endMs": 438.43199999992066
+            },
+            {
+              "url": "http://127.0.0.1:4173/locales/en/pdf.json",
+              "type": "Fetch",
+              "status": 200,
+              "bytes": 2671,
+              "startMs": 2625.5440000004455,
+              "endMs": 2810.719000000063,
+              "parent": "http://127.0.0.1:4173/assets/index-SD5xERBc.js"
+            },
+            {
+              "url": "http://127.0.0.1:4173/assets/overrides-81hr_PQ9.js",
+              "type": "Script",
+              "status": 200,
+              "bytes": 25268,
+              "startMs": 2747.5130000002537,
+              "endMs": 3029.438000000482,
+              "parent": "http://127.0.0.1:4173/assets/index-SD5xERBc.js"
+            },
+            {
+              "url": "http://127.0.0.1:4173/assets/index-DjCVl1FV.js",
+              "type": "Script",
+              "status": 200,
+              "bytes": 2036,
+              "startMs": 3192.952000000332,
+              "endMs": 3403.392000000167,
+              "parent": "http://127.0.0.1:4173/assets/index-SD5xERBc.js"
+            },
+            {
+              "url": "http://127.0.0.1:4173/assets/ToolFileResult-sYXk8VRE.js",
+              "type": "Script",
+              "status": 200,
+              "bytes": 1531,
+              "startMs": 3199.322000000393,
+              "endMs": 3417.916000000332,
+              "parent": "http://127.0.0.1:4173/assets/index-SD5xERBc.js"
+            },
+            {
+              "url": "http://127.0.0.1:4173/assets/ContentPaste-KobFEY5T.js",
+              "type": "Script",
+              "status": 200,
+              "bytes": 936,
+              "startMs": 3201.9960000006904,
+              "endMs": 3387.0530000003782,
+              "parent": "http://127.0.0.1:4173/assets/index-SD5xERBc.js"
+            },
+            {
+              "url": "http://127.0.0.1:4173/assets/grey-pattern-DMflWW5d.js",
+              "type": "Script",
+              "status": 200,
+              "bytes": 379,
+              "startMs": 3204.9470000001747,
+              "endMs": 3387.2810000002573,
+              "parent": "http://127.0.0.1:4173/assets/index-SD5xERBc.js"
+            },
+            {
+              "url": "http://127.0.0.1:4173/assets/ResultFooter-DdrFgf5P.js",
+              "type": "Script",
+              "status": 200,
+              "bytes": 1991,
+              "startMs": 3207.462000000305,
+              "endMs": 3418.2770000006713,
+              "parent": "http://127.0.0.1:4173/assets/index-SD5xERBc.js"
+            },
+            {
+              "url": "http://127.0.0.1:4173/assets/TextFieldWithDesc-DfppqMvt.js",
+              "type": "Script",
+              "status": 200,
+              "bytes": 676,
+              "startMs": 3209.5210000006773,
+              "endMs": 3403.038000000379,
+              "parent": "http://127.0.0.1:4173/assets/index-SD5xERBc.js"
+            },
+            {
+              "url": "http://127.0.0.1:4173/assets/TextField-DwasRnUK.js",
+              "type": "Script",
+              "status": 200,
+              "bytes": 3097,
+              "startMs": 3212.242000000515,
+              "endMs": 3621.0310000005848,
+              "parent": "http://127.0.0.1:4173/assets/index-SD5xERBc.js"
+            },
+            {
+              "url": "http://127.0.0.1:4173/assets/ToolContent-BLDC9yxf.js",
+              "type": "Script",
+              "status": 200,
+              "bytes": 12982,
+              "startMs": 3215.175000000272,
+              "endMs": 3731.582000000344,
+              "parent": "http://127.0.0.1:4173/assets/index-SD5xERBc.js"
+            },
+            {
+              "url": "http://127.0.0.1:4173/assets/index-DHDuCCyV.js",
+              "type": "Script",
+              "status": 200,
+              "bytes": 182241,
+              "startMs": 3217.501000000084,
+              "endMs": 4610.113000000638,
+              "parent": "http://127.0.0.1:4173/assets/index-SD5xERBc.js"
+            },
+            {
+              "url": "http://127.0.0.1:4173/assets/ToolPdfInput-kP2ZRuQh.js",
+              "type": "Script",
+              "status": 200,
+              "bytes": 614,
+              "startMs": 3219.338000000789,
+              "endMs": 3574.8300000004747,
+              "parent": "http://127.0.0.1:4173/assets/index-SD5xERBc.js"
+            },
+            {
+              "url": "http://127.0.0.1:4173/assets/BaseFileInput-lrZzFtWk.js",
+              "type": "Script",
+              "status": 200,
+              "bytes": 1915,
+              "startMs": 3221.4600000006612,
+              "endMs": 3637.1820000003936,
+              "parent": "http://127.0.0.1:4173/assets/index-SD5xERBc.js"
+            },
+            {
+              "url": "http://127.0.0.1:4173/assets/InputFooter-CSWmmng-.js",
+              "type": "Script",
+              "status": 200,
+              "bytes": 956,
+              "startMs": 3223.330000000715,
+              "endMs": 3605.546000000686,
+              "parent": "http://127.0.0.1:4173/assets/index-SD5xERBc.js"
+            },
+            {
+              "url": "https://api.iconify.design/mdi.json?icons=bookmark-plus-outline%2Cfile-document-edit%2Cimage-multiple",
+              "type": "Fetch",
+              "status": 200,
+              "bytes": 716,
+              "startMs": 5450.640000000021,
+              "endMs": 5733.8720000007015,
+              "parent": "http://127.0.0.1:4173/assets/index-SD5xERBc.js"
+            },
+            {
+              "url": "https://api.iconify.design/material-symbols-light.json?icons=call-split-rounded%2Cmerge",
+              "type": "Fetch",
+              "status": 200,
+              "bytes": 766,
+              "startMs": 5452.889000000141,
+              "endMs": 5765.35800000056,
+              "parent": "http://127.0.0.1:4173/assets/index-SD5xERBc.js"
+            },
+            {
+              "url": "https://api.iconify.design/carbon.json?icons=rotate",
+              "type": "Fetch",
+              "status": 200,
+              "bytes": 627,
+              "startMs": 5455.144999999902,
+              "endMs": 5749.732000000222,
+              "parent": "http://127.0.0.1:4173/assets/index-SD5xERBc.js"
+            },
+            {
+              "url": "https://api.iconify.design/material-symbols.json?icons=compress%2Cimport-contacts%2Clock",
+              "type": "Fetch",
+              "status": 200,
+              "bytes": 1262,
+              "startMs": 5457.169000000249,
+              "endMs": 5733.547000000726,
+              "parent": "http://127.0.0.1:4173/assets/index-SD5xERBc.js"
+            },
+            {
+              "url": "https://api.iconify.design/ph.json?icons=file-code-thin%2Cfile-pdf-thin",
+              "type": "Fetch",
+              "status": 200,
+              "bytes": 765,
+              "startMs": 5458.642999999938,
+              "endMs": 5765.151000000515,
+              "parent": "http://127.0.0.1:4173/assets/index-SD5xERBc.js"
+            },
+            {
+              "url": "https://api.iconify.design/ic.json?icons=twotone-picture-as-pdf",
+              "type": "Fetch",
+              "status": 200,
+              "bytes": 638,
+              "startMs": 5460.723000000144,
+              "endMs": 5749.50600000011,
+              "parent": "http://127.0.0.1:4173/assets/index-SD5xERBc.js"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

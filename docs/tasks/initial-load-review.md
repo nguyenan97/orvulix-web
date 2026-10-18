@@ -2,8 +2,8 @@
 
 - Updated: 2026-10-18 Asia/Bangkok
 - Branch/base: feature/initial-load-review / develop at a74c46c0
-- PR: not opened
-- Phase: implementation and validation
+- PR: https://github.com/nguyenan97/orvulix-web/pull/43 (draft)
+- Phase: final validation, report and exact-head CI
 - Delivery mode: develop-merge, current review/fixes only; no new feature or prod release.
 - Initially clean; no unrelated user changes.
 
@@ -23,7 +23,7 @@
 
 Stack confirmed React 18, Vite 6, TypeScript, MUI, React Router 6,
 Vitest 4 and Playwright 1.55.1 installed. Baseline production build passed;
-137 tools, 14 categories, 159 indexable routes. No application changes yet.
+137 tools, 14 categories, 159 indexable routes at discovery.
 Baseline measured with fresh Chromium contexts, 390x844/DPR1/mobile/light/en-US,
 CDP cache disabled, CPU4x, 200,000 B/s down/93,750 B/s up/150ms, 3 runs per route,
 2s observation after control ready. Median LCP 3880/4984/5920ms (home/reverse/PDF).
@@ -56,6 +56,7 @@ Confirmed findings and scoped fixes:
   then moving outside the viewport when content arrives. A held-chunk test reproduced
   footer y756 < viewport844. Reserve one viewport for loading and bookmark geometry.
 
+Historical validation log (superseded by latest checkpoint below):
 Four regression tests failed against unchanged baseline dist: blocked namespace,
 251px shift, missing recovery alert, inaccessible mobile menu. Theme test's initial
 body assertion alone was not a reliable red reproduction; added frame synchronization
@@ -91,11 +92,30 @@ WASM/model loaded on homepage baseline; no speculative codec rechunking performe
 
 ## Resources and next step
 
-Initial preview 39184 stopped; initial failing test session 57785 completed.
-Current production build 54019 passed and local unit processes completed.
-No browser suite currently owns preview 4173. Latest build session 46742 is pending;
-finish/rebuild after final Loading markup cleanup before native tests/benchmark.
-This checkpoint and runtime changes remain uncommitted until the next commit.
-Benchmark contexts close after runs. Finish validation, remeasure without concurrent
-build/tests, save comparison, inspect Pages paths and open one develop PR.
-Do not treat local lab results as production CDN/field evidence.
+Latest runtime commit 752391157eb77c40c9c905eddf0f3a019a6355ca is pushed in PR43.
+Final measurement completed without concurrent local tests/build. Comparison and
+review in docs/INITIAL_LOAD_REVIEW.md and docs/initial-load-performance.json.
+LCP medians before/after: home3880/3808, Reverse4984/3924, PDF5920/4692ms.
+CLS medians after: 0.00130/0.00788/0.000008. Home LCP improvement inconclusive;
+home blocking median 452/508ms, explicitly not presented as CPU improvement.
+
+Native latest runtime 39-case suite: 38 passed, one WebKit PDF selected-range
+mismatch (all3pages rather than1,3). Three isolated traced runs and subsequent
+8-case WebKit suite passed. Added range value assertions before/after upload,
+keeping exact PDF bytes/page assertions. No runtime speculation, retries or deadline
+changes. Final complete suite with assertions passed39/39 across all three engines,
+retries0/traceon. No unresolved reproducible task-blocking finding remains.
+
+Production preview and Pages base/noindex/navigation/mobile smokes passed.
+Pages build validated160devHTMLfiles. Owned previews28645/57751 stopped.
+Production rebuild session55001 passed. PR head7523911 CI unit/build/security/
+startup regression, existing full browser step and Pages build all passed.
+New docs/test assertions are being committed; measured runtime unchanged.
+
+Read-only ESLint/style/diff checks passed; full-diff self-review and residual owners/
+acceptance recorded in report. Latest fetched develop remainsa74c46c0.
+No owned dev/preview/browser process remains.
+Next: commit/push final evidence, update/ready samePR, inspect exact latest-head CI
+and current develop.
+Merge matched head only after gates, verify reachability and clean task branch.
+No production deploy/scan and no next feature. See report for scoped follow-ups.

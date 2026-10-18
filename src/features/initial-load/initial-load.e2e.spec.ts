@@ -77,13 +77,16 @@ test('Split PDF exports selected pages and clear invalidates the previous downlo
   pdf.addPage([400, 500]);
   await page.goto('/pdf/split-pdf');
   const tool = page.locator('#tool');
-  await page.getByPlaceholder('e.g., 1,5-8').first().fill('1,3');
+  const range = page.getByPlaceholder('e.g., 1,5-8').first();
+  await range.fill('1,3');
+  await expect(range).toHaveValue('1,3');
   await tool.locator('input[type=file]').setInputFiles({
     name: 'three-pages.pdf',
     mimeType: 'application/pdf',
     buffer: Buffer.from(await pdf.save())
   });
   const download = tool.getByRole('button', { name: 'Download', exact: true });
+  await expect(range).toHaveValue('1,3');
   await expect(download).toBeEnabled();
   const pending = page.waitForEvent('download');
   await download.click();
