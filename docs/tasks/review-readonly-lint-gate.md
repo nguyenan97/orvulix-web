@@ -1,6 +1,6 @@
 # Task checkpoint: review-readonly-lint-gate
 
-- Branch/base: feature/review-readonly-lint-gate / develop 34da6993
+- Branch/base: feature/review-readonly-lint-gate / develop 226cf0a9
 - Phase: developing; PR pending; develop-merge; user requested R14 among all fixes.
 
 Review snapshot had 270 errors/26 warnings; current explicit read-only baseline
@@ -55,3 +55,21 @@ numeric effect convergence, latest callbacks and timer ownership. Existing async
 codecs are not newly abortable; this task claims cancellation of queued timers only.
 Next: finish full unit run, integrate R08/R13 develop, final lint and review, then
 one PR with exact-head CI and authorized develop merge/cleanup.
+
+Integrated R08 develop 226cf0a9 with no conflict. All application lint now passes
+with zero errors/warnings. Actual npm run lint has identical before/after hashes
+over 1282 tracked/unignored files; generated codec canonical hash also matches the
+documented baseline (r14-readonly.json). No application rule severity changed.
+Combined affected string worker/service suites pass 56/56. Full suite before that
+independent worker integration passed 172 files/1682 tests (maxWorkers=4,129.70s).
+Final integrated full suite is running; no deadline/retry/CI worker changes.
+
+Review pass 2 confirms each adapter retains its 1000ms delay (crop 2000ms), numeric
+state converges and preserves selected display units, lexical-this test fixtures
+retain the native receiver, filename control replacement preserves reserved/Unicode
+behavior, and dead reorder/validation helpers had no consumers. The old unstyled
+range-slider-container class had no CSS/consumer in the repository; removed only
+the unused class, preserving inline slider layout. Empty options use explicit
+Record<string, never>. Existing CRLF-only JSON validator blob is normalized by
+the repository Git/format hooks; no logic change beyond the empty-options type.
+Next: await R13 CI/merge, integrate docs-only base, final required CI and cleanup.
