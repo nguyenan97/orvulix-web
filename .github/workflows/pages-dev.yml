@@ -62,6 +62,10 @@ jobs:
         run: npx playwright test src/pages/tools/converters/convert-to-webp/background.e2e.spec.ts --project=chromium --workers=1
         env:
           PLAYWRIGHT_USE_EXISTING_BUILD: 'true'
+      - name: Verify bounded string processing
+        run: npx playwright test src/features/string-regex/isolation.e2e.spec.ts --project=chromium --workers=1
+        env:
+          PLAYWRIGHT_USE_EXISTING_BUILD: 'true'
       # Worker deadlines include startup; isolate ReDoS cases from other worker startups.
       - name: Verify SEO, local demos, image downloads and bounded list processing
         run: npx playwright test src/features/docker-run-compose/docker.e2e.spec.ts src/features/text-workflow/workflow.e2e.spec.ts src/pages/tools/string/remove-duplicate-lines/remove-duplicate-lines.e2e.spec.ts src/features/text-file-import/import.e2e.spec.ts src/features/pdf-editor-consent/editor.e2e.spec.ts src/features/text-result-clipboard/code-result.e2e.spec.ts src/features/text-result-clipboard/clipboard.e2e.spec.ts src/features/pdf-merge/merge.e2e.spec.ts src/features/gif-conversion/mixed-format.e2e.spec.ts src/features/gif-conversion/gif-lifecycle.e2e.spec.ts src/features/multifile-drop/multifile-drop.e2e.spec.ts src/features/png-compression/png-compression.e2e.spec.ts src/features/tool-discovery/discovery.e2e.spec.ts src/security/security.e2e.spec.ts src/seo/seo.e2e.spec.ts src/ai/json-assistant/json-assistant.e2e.spec.ts src/ai/regex-assistant/regex-assistant.e2e.spec.ts src/pages/tools/image/png/convert-jgp-to-png/convert-jgp-to-png.e2e.spec.ts src/workers/list-regex/list-regex.e2e.spec.ts src/features/web-conversion/html-to-image.e2e.spec.ts src/features/web-conversion/html-pdf.e2e.spec.ts src/features/web-conversion/pagination.e2e.spec.ts src/features/web-conversion/page-ranges.e2e.spec.ts src/features/web-conversion/table-headers.e2e.spec.ts src/features/web-conversion/presets.e2e.spec.ts src/features/web-conversion/deadline.e2e.spec.ts src/features/web-conversion/pdf-baseline/pdf-baseline.e2e.spec.ts --project=chromium --workers=1
