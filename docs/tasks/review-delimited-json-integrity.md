@@ -1,7 +1,7 @@
 # Task checkpoint: review-delimited-json-integrity
 
 - Updated: 2026-10-18, Asia/Bangkok
-- Branch / base: feature/review-delimited-json-integrity / develop b368b48d
+- Branch / base: feature/review-delimited-json-integrity / develop ec6abf15
 - PR: pending
 - Phase: reviewing
 - Delivery mode: develop-merge
@@ -60,4 +60,9 @@ deadline/retry/CI changes. Final build passes 159 routes plus 404 including upda
 SEO content. A prior integrated build hit Windows ENOTEMPTY clearing dist/assets;
 rerun after stopping owned preview passed. Interrupted overlapping unit startup
 was not counted as passing evidence; the successful full run was sequential.
-R03 PR47 is running exact-head CI.
+R03 PR47 merged at ec6abf15. Integrated that base at 273b4ad, retaining all three
+focused Pages checks. Combined CSV/TSV/clipboard/JSON regressions pass 58/58.
+The source/runtime diff for this slice is unchanged from validated 255b216; base
+only changes independent JSON comparison files and additive CI. Full latest-head
+CI must validate the final integrated tree. Next: push/open PR, inspect gates,
+matched-head merge and branch cleanup when green.
