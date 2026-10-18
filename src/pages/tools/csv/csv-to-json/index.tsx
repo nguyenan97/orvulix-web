@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
 import ToolContent from '@components/ToolContent';
 import ToolTextInput from '@components/input/ToolTextInput';
-import ToolTextResult from '@components/result/ToolTextResult';
-import { convertCsvToJson } from './service';
+import {
+  DelimitedResult,
+  resultIsDerived
+} from '../../../../features/delimited-json/Result';
 import { CardExampleType } from '@components/examples/ToolExamples';
 import { ToolComponentProps } from '@tools/defineTool';
 import { Box } from '@mui/material';
@@ -115,39 +117,13 @@ id,name,active
 export default function CsvToJson({ title }: ToolComponentProps) {
   const { t } = useTranslation('csv');
   const [input, setInput] = useState<string>('');
-  const [result, setResult] = useState<string>('');
-
-  const compute = (values: InitialValuesType, input: string) => {
-    if (input) {
-      try {
-        const jsonResult = convertCsvToJson(input, {
-          delimiter: values.delimiter,
-          quote: values.quote,
-          comment: values.comment,
-          useHeaders: values.useHeaders,
-          skipEmptyLines: values.skipEmptyLines,
-          dynamicTypes: values.dynamicTypes
-        });
-        setResult(jsonResult);
-      } catch (error) {
-        setResult(
-          `${t('csvToJson.error')}: ${
-            error instanceof Error
-              ? error.message
-              : t('csvToJson.invalidCsvFormat')
-          }`
-        );
-      }
-    }
-  };
-
   return (
     <ToolContent
       title={title}
       input={input}
       setInput={setInput}
       initialValues={initialValues}
-      compute={compute}
+      compute={resultIsDerived}
       exampleCards={exampleCards}
       inputComponent={
         <ToolTextInput
@@ -157,11 +133,7 @@ export default function CsvToJson({ title }: ToolComponentProps) {
         />
       }
       resultComponent={
-        <ToolTextResult
-          title={t('csvToJson.resultTitle')}
-          value={result}
-          extension={'json'}
-        />
+        <DelimitedResult title={t('csvToJson.resultTitle')} input={input} />
       }
       getGroups={({ values, updateField }) => [
         {
