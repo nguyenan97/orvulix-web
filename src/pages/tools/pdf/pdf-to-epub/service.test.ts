@@ -6,9 +6,11 @@ const fixture = vi.hoisted(() => ({ text: '' }));
 vi.mock('pdfjs-dist', () => ({
   GlobalWorkerOptions: {},
   getDocument: () => ({
+    destroy: async () => undefined,
     promise: Promise.resolve({
       numPages: 1,
       getPage: async () => ({
+        cleanup: () => undefined,
         getTextContent: async () => ({ items: [{ str: fixture.text }] })
       })
     })

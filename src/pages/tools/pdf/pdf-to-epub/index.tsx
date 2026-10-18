@@ -1,4 +1,6 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
+import { Alert, Box } from '@mui/material';
+import { usePdfConversion } from '../../../../features/pdf-conversion/usePdfConversion';
 import ToolFileResult from '@components/result/ToolFileResult';
 import ToolContent from '@components/ToolContent';
 import { ToolComponentProps } from '@tools/defineTool';
@@ -7,51 +9,46 @@ import { convertPdfToEpub } from './service';
 
 export default function PdfToEpub({ title }: ToolComponentProps) {
   const [input, setInput] = useState<File | null>(null);
-  const [result, setResult] = useState<File | null>(null);
-  const [isProcessing, setIsProcessing] = useState<boolean>(false);
-
-  const compute = async (options: {}, input: File | null) => {
-    if (!input) return;
-    try {
-      setIsProcessing(true);
-      setResult(null);
-      const epub = await convertPdfToEpub(input);
-      setResult(epub);
-    } catch (error) {
-      console.error('Failed to convert PDF to EPUB:', error);
-    } finally {
-      setIsProcessing(false);
-    }
+  const job = usePdfConversion(convertPdfToEpub);
+  const changeInput = (file: File | null) => {
+    job.invalidate();
+    setInput(file);
   };
 
   return (
     <ToolContent
       title={title}
       input={input}
-      setInput={setInput}
       initialValues={{}}
-      compute={compute}
+      compute={job.compute}
       inputComponent={
         <ToolPdfInput
           value={input}
-          onChange={(file) => setInput(file)}
+          onChange={changeInput}
           accept={['application/pdf']}
           title={'Input PDF'}
         />
       }
       getGroups={null}
       resultComponent={
-        <ToolFileResult
-          title={'EPUB Output'}
-          value={result}
-          extension={'epub'}
-          loading={isProcessing}
-          loadingText={'Converting PDF to EPUB...'}
-        />
+        <Box>
+          {job.error && (
+            <Alert severity="error" aria-label="PDF conversion error">
+              {job.error}
+            </Alert>
+          )}
+          <ToolFileResult
+            title={'EPUB Output'}
+            value={job.result}
+            extension={'epub'}
+            loading={job.loading}
+            loadingText={'Converting PDF to EPUB...'}
+          />
+        </Box>
       }
       toolInfo={{
         title: 'How to Use PDF to EPUB?',
-        description: `Upload a PDF file and this tool will convert it into an EPUB format, suitable for most e-reader devices.`
+        description: `Upload a readable PDF up to 32 MiB and 500 pages. Conversion has a 30 second deadline, a 2 Mi UTF-16 text limit and a 16 MiB EPUB output limit. Text is preserved as literal XML content for e-reader devices.`
       }}
     />
   );
