@@ -55,5 +55,9 @@ R02 PR46 has merged at b368b48d. R03 branch awaits base integration/delivery.
 
 Base integration checkpoint: merged R02/R09 current develop at b368b48d into
 9444e2c and preserved the independent EPUB plus CSV/TSV CI steps. Full local unit
-and final build run on this integrated tree; inspect actual results before PR.
+suite passes 163 files / 1584 tests with local maxWorkers=4 (101.35s), without
+deadline/retry/CI changes. Final build passes 159 routes plus 404 including updated
+SEO content. A prior integrated build hit Windows ENOTEMPTY clearing dist/assets;
+rerun after stopping owned preview passed. Interrupted overlapping unit startup
+was not counted as passing evidence; the successful full run was sequential.
 R03 PR47 is running exact-head CI.
