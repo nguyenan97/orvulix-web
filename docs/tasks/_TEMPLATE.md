@@ -12,6 +12,13 @@
 
 <Before/after behavior, non-goals and checkable criteria.>
 
+Risk tier: docs/simple | behavior | trust/resource boundary | architecture.
+For behavioral work, map acceptance IDs: Given/When/Then -> test/fixture or manual
+steps -> command/result/SHA. Identify domain invariant, ownership and changed
+trust/resource boundaries; link feature spec/ADR when warranted. See
+[engineering delivery](../ENGINEERING_DELIVERY.md). Do not invent runtime criteria
+for docs-only work. Track important unresolved product decisions explicitly.
+
 ## Completed and pending
 
 <Actual implementation/evidence; separate planned/deferred items.>

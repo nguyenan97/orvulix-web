@@ -20,6 +20,14 @@ arrives; do not self-approve as another identity or bypass protection.
 
 # One-task lifecycle
 
+Use [engineering delivery](../../../docs/ENGINEERING_DELIVERY.md) for task sizing,
+specification/acceptance traceability, DDD boundaries, BDD/TDD and operational
+readiness. For changed domain contracts or substantial design, consult
+`../architecture-design/SKILL.md`; for trust boundaries, dependencies, CI or release
+preparation consult `../secure-delivery/SKILL.md`. The guide and these skills add
+engineering evidence, not new merge/deploy authority. Small docs/copy tasks do not
+need invented runtime tests or architectural artifacts.
+
 1. Discover: inspect working tree, current PRs, latest develop, instructions,
    implementation/backlog and relevant issues. Preserve user work. Continue an
    existing task on its existing head; new tasks branch from fast-forwarded develop.

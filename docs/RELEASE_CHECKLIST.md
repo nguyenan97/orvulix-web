@@ -7,6 +7,12 @@ Do not deploy just to validate code or enable Netlify branch deploys/previews.
 
 ## Before release
 
+- Use [engineering delivery](ENGINEERING_DELIVERY.md) for acceptance traceability
+  and [secure delivery](SECURE_DELIVERY.md) for scan results, dispositions and
+  unresolved readiness gaps. Record the approved revision, previous release,
+  rollback route and operational owner. A completed AI task or green analysis
+  job alone does not establish production readiness.
+
 - Fetch origin and review the complete `origin/main...origin/develop` diff and
   commits, not only the latest feature. Confirm licensing, attribution, brand,
   contact, privacy and AI disclosures are accurate. Preserve unrelated user work.
