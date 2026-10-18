@@ -5,9 +5,11 @@ import './Loading.css';
 function Loading() {
   return (
     <Box
+      role="status"
       sx={{
         width: '100%',
-        height: 0.8 * window.innerHeight,
+        // Keep the footer out of the first viewport until route content arrives.
+        minHeight: '100vh',
         display: 'flex',
         flexDirection: 'column',
         justifyContent: 'center',
@@ -25,7 +27,7 @@ function Loading() {
       >
         <div className="bounce1" />
         <div className="bounce2" />
-        <div className="bounce3" />
+        <div />
       </Box>
     </Box>
   );

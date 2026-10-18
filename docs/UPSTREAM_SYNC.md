@@ -1,5 +1,16 @@
 # Selective upstream sync
 
+Initial-load review integration note (2026-10-18): retain route elements rather
+than invoking every tool wrapper in components/App.tsx, active namespace selection
+in tools/defineTool.tsx and seo/RouteSeo.tsx, bundled English shell strings in
+i18n/index.ts, accessible Navbar controls and reserved responsive ToolHeader icon
+space and Loading footer geometry. Client SEO constructs only the active page
+using the shared model; preserve full build-time validation. Split PDF additionally invalidates stale jobs/metadata/output on input
+changes. Local error boundary, tests and measurements live under
+features/initial-load and scripts/performance. Explicit module-preload recovery
+also handles WebKit's failed preload cache. Compare these intentional fixes
+before replacing inherited integration files in a future upstream sync.
+
 Review snapshot: 2026-10-14. Source is iib0011/omni-tools main at
 [cf41a30](https://github.com/iib0011/omni-tools/commit/cf41a30dda37e1f33deeeb03f959295c249c2beb).
 Orvulix integration base is develop at a32c133. Common merge-base is
