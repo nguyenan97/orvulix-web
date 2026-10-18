@@ -76,6 +76,13 @@ description: Communication, project context and technical review standards for a
 
 # Engineering discipline reference
 
+For maintainers and AI assistants, [engineering delivery](../../../docs/ENGINEERING_DELIVERY.md)
+connects specs, domain boundaries, BDD/TDD, review and operation. Its
+[research record](../../../docs/AI_WORKFLOW_RESEARCH.md) documents pinned upstream
+sources and adopt/defer/reject decisions. Select applicable security controls from
+[secure delivery](../../../docs/SECURE_DELIVERY.md); distinguish executed scans,
+blocking checks, reviewed findings and externally configured protections.
+
 For test design, bug diagnosis, behavior-preserving refactors and diff reviews,
 consult the Applied practices section of `docs/ENGINEERING_PRACTICES.md` (from the
 repository root). It adapts pinned Matt Pocock practices; provenance and the MIT

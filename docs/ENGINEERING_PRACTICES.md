@@ -29,6 +29,11 @@ before identifying gaps; these additions supplement rather than replace SDLC.
 
 ## Applied practices
 
+For task sizing, specification traceability, pragmatic DDD/BDD and operational
+readiness, use [engineering delivery](ENGINEERING_DELIVERY.md). The newer
+[research record](AI_WORKFLOW_RESEARCH.md) extends this pinned adaptation; the
+pilot and its historical evidence below remain unchanged.
+
 Consult the relevant paragraph for the task at hand. Authorization, delivery and
 merge gates have a single source of truth in the existing workflow skills.
 
