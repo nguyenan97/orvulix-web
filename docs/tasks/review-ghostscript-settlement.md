@@ -42,3 +42,12 @@ Build/typecheck (159 routes and 404), scoped read-only ESLint/style and audit pa
 Still needed: full local unit/security suites, full-diff review, integrate final
 develop after PDF lifecycle, exact-head CI then authorized merge/cleanup.
 R12 PR50 merged at f6fe6902. Next save this prepared slice and deliver PDF lifecycle.
+
+Integrated R12 current develop f6fe6902 at 256db60f. Full local suite passes
+167 files/1622 tests (maxWorkers=4, 75.42s), 26 security tests pass and scoped
+read-only ESLint passes. Prepared runtime 8afb02c retains build/native evidence;
+only shared ToolContent/current-error contract changed in the base. Two review
+passes: worker byte/header checks and asset failure channel, then UI current-job
+ownership/password privacy/resource cleanup. No blocking finding remains.
+Next integrate PDF lifecycle after PR51 merges, revalidate relevant interaction,
+push one PR and require exact-head CI before merge/cleanup.
