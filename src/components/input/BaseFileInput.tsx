@@ -11,7 +11,6 @@ import {
 import { globalInputHeight } from '../../config/uiConfig';
 import { CustomSnackBarContext } from '../../contexts/CustomSnackBarContext';
 import greyPattern from '@assets/grey-pattern.png';
-import { isArray } from 'lodash';
 import { useTranslation } from 'react-i18next';
 
 interface BaseFileInputComponentProps extends BaseFileInputProps {
@@ -56,7 +55,7 @@ export default function BaseFileInput({
   };
 
   const handleCopy = () => {
-    if (isArray(value)) {
+    if (Array.isArray(value)) {
       const blob = new Blob([value[0]], { type: value[0].type });
       const clipboardItem = new ClipboardItem({ [value[0].type]: blob });
 

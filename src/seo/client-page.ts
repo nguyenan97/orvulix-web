@@ -39,5 +39,5 @@ export function availableClientPage(input: SeoInput, pathname: string) {
     )
   )
     return null;
-  return resolveSeoPage(buildSeoSite(input).site, pathname);
+  return resolveSeoPage(buildSeoSite(input, pathname).site, pathname);
 }

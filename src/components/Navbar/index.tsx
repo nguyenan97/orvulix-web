@@ -69,11 +69,12 @@ const Navbar: React.FC<NavbarProps> = ({
   ];
 
   const languageSelector = (
-    <FormControl size="small" sx={{ minWidth: 120 }}>
+    <FormControl key="language" size="small" sx={{ minWidth: 120 }}>
       <Select
         value={i18n.language}
         onChange={handleLanguageChange}
         displayEmpty
+        inputProps={{ 'aria-label': 'Language' }}
         sx={{
           color: 'inherit',
           '& .MuiSelect-icon': {
@@ -101,26 +102,34 @@ const Navbar: React.FC<NavbarProps> = ({
 
   const buttons: ReactNode[] = [
     languageSelector,
-    <Icon
-      key={mode}
+    <IconButton
+      key="theme"
       onClick={onChangeMode}
-      style={{ cursor: 'pointer' }}
-      fontSize={30}
-      icon={
-        mode === 'dark'
-          ? 'ic:round-dark-mode'
-          : mode === 'light'
-            ? 'ic:round-light-mode'
-            : 'ic:round-contrast'
-      }
-    />
+      aria-label={`Color theme: ${mode}`}
+      color="inherit"
+    >
+      <Icon
+        width={30}
+        height={30}
+        icon={
+          mode === 'dark'
+            ? 'ic:round-dark-mode'
+            : mode === 'light'
+              ? 'ic:round-light-mode'
+              : 'ic:round-contrast'
+        }
+      />
+    </IconButton>
   ];
   const drawerList = (
     <List>
       {navItems.map((navItem) => (
         <ListItemButton
           key={navItem.path}
-          onClick={() => { navigate(navItem.path); setDrawerOpen(false); }}
+          onClick={() => {
+            navigate(navItem.path);
+            setDrawerOpen(false);
+          }}
         >
           <ListItemText primary={navItem.label} />
         </ListItemButton>
@@ -156,15 +165,39 @@ const Navbar: React.FC<NavbarProps> = ({
         <Stack direction="row" spacing={1.5} alignItems="center">
           <Link to="/">
             <Stack direction="row" spacing={1} alignItems="center">
-              <Box sx={{ width: 38, height: 38, borderRadius: '12px', background: 'linear-gradient(135deg, #0F766E, #2DD4BF)', color: 'white', display: 'grid', placeItems: 'center', fontWeight: 900, fontSize: 22 }}>O</Box>
-              <Typography sx={{ fontSize: { xs: 21, md: 25 }, fontWeight: 800, letterSpacing: '-0.04em', color: 'text.primary' }}>{brand.name}</Typography>
+              <Box
+                sx={{
+                  width: 38,
+                  height: 38,
+                  borderRadius: '12px',
+                  background: 'linear-gradient(135deg, #0F766E, #2DD4BF)',
+                  color: 'white',
+                  display: 'grid',
+                  placeItems: 'center',
+                  fontWeight: 900,
+                  fontSize: 22
+                }}
+              >
+                O
+              </Box>
+              <Typography
+                sx={{
+                  fontSize: { xs: 21, md: 25 },
+                  fontWeight: 800,
+                  letterSpacing: '-0.04em',
+                  color: 'text.primary'
+                }}
+              >
+                {brand.name}
+              </Typography>
             </Stack>
           </Link>
-          </Stack>
+        </Stack>
         {isMobile ? (
           <>
             <IconButton
               color="inherit"
+              aria-label="Open navigation"
               onClick={toggleDrawer(true)}
               sx={{
                 '&:hover': {
