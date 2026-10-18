@@ -1,7 +1,7 @@
 # Task checkpoint: review-pdf-conversion-lifecycle
 
-- Branch/base: feature/review-pdf-conversion-lifecycle / develop ec6abf15
-- Phase: developing; PR pending; delivery mode develop-merge.
+- Branch/base: feature/review-pdf-conversion-lifecycle / develop 4f56ef6c
+- Phase: reviewing; PR pending; delivery mode develop-merge.
 - Scope: confirmed R05/R06/R10, user requested all fixes.
 
 PNG/EPUB results currently survive Clear and late jobs. PNG null toBlob never
@@ -39,3 +39,26 @@ Existing EPUB mocks now provide real-contract cleanup/destroy methods; content
 assertions unchanged. Still needed: cap/deadline/render abort tests, native PDF
 artifacts/lifecycle, full build/unit/security and two full review passes.
 R04 PR48 merged at 4f56ef6c. Prepared R11/R12 are delivered before this slice.
+
+Current runtime evidence: 26 focused tests pass, including loading/render/encoder
+cancellation, 30s deadline, page/dimension/aggregate pixel admission, owned URL
+balance in StrictMode, stale success/error guards and EPUB XML fidelity. Native
+PNG ZIPs preserve exact two-page colors/order/dimensions; PNG/EPUB held I/O Clear,
+replacement, SPA unmount and invalid-input recovery plus existing EPUB fidelity
+pass Chromium/Firefox/WebKit 12/12, zero retries (r05-browser.json). I/O gates delay
+startup only; actual PDF.js/canvas/ZIP run. ZIP is mocked only in PNG unit resource
+tests; native downloads independently decode actual ZIP and PNG.
+
+Build/typecheck (159 routes and 404), scoped read-only ESLint/style, 26 security
+tests and audit gate pass. Full unit suite passes 166 files/1619 tests on this
+runtime (local maxWorkers=4, 89.76s). Subsequent additions are only cap tests and
+SEO/CI/docs; final integrated build/CI must cover those. Audit retains the exact
+temporary braces exception, no dependency/policy change.
+
+Two review passes found and fixed encoder-pending abort cleanup; final tests prove
+canvas dimensions reset even before a pending callback. Document loading tasks,
+page cleanup, timers and listeners have explicit owners. Native codec/resource
+proof retained; no hard memory/CPU or forcible JSZip/arrayBuffer cancellation claim.
+No remaining blocking finding. Self-review is not independent approval.
+Next: save prepared slice, deliver R12 after merged R11, integrate final develop,
+revalidate shared-contract interactions and final build, exact-head CI/merge.

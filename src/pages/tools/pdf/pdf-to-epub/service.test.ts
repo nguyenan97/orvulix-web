@@ -23,6 +23,12 @@ beforeEach(() => {
 });
 
 describe('PDF to EPUB XML fidelity', () => {
+  it('rejects excessive extracted text before building the archive', async () => {
+    fixture.text = 'x'.repeat(2 * 1024 * 1024);
+    await expect(
+      convertPdfToEpub(new File(['synthetic'], 'input.pdf'))
+    ).rejects.toThrow('PDF text limit');
+  });
   it('exports well-formed metadata and literal extracted text, not markup', async () => {
     const file = await convertPdfToEpub(
       new File(['synthetic'], 'R&D <draft>.pdf', { type: 'application/pdf' })

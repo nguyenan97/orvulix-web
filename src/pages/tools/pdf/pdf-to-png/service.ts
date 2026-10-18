@@ -8,6 +8,27 @@ import {
 } from '../../../../features/pdf-conversion/document';
 pdfjsLib.GlobalWorkerOptions.workerSrc = pdfjsWorker;
 
+function encode(canvas: HTMLCanvasElement, signal: AbortSignal): Promise<Blob> {
+  return new Promise((resolve, reject) => {
+    const abort = () => reject(signal.reason);
+    signal.addEventListener('abort', abort, { once: true });
+    try {
+      canvas.toBlob((blob) => {
+        signal.removeEventListener('abort', abort);
+        if (signal.aborted) reject(signal.reason);
+        else if (blob) resolve(blob);
+        else
+          reject(
+            new PdfConversionError('Canvas could not encode this PDF page.')
+          );
+      }, 'image/png');
+    } catch {
+      signal.removeEventListener('abort', abort);
+      reject(new PdfConversionError('Canvas could not encode this PDF page.'));
+    }
+  });
+}
+
 export async function convertPdfToPngImages(
   pdfFile: File,
   signal?: AbortSignal
@@ -59,19 +80,7 @@ export async function convertPdfToPngImages(
           active.removeEventListener('abort', cancelRender);
         }
         checkPdfActive(active);
-        const blob = await new Promise<Blob>((resolve, reject) =>
-          canvas!.toBlob(
-            (blob) =>
-              blob
-                ? resolve(blob)
-                : reject(
-                    new PdfConversionError(
-                      'Canvas could not encode this PDF page.'
-                    )
-                  ),
-            'image/png'
-          )
-        );
+        const blob = await encode(canvas, active);
         checkPdfActive(active);
         totalBytes += blob.size;
         if (totalBytes > 64 * 1024 * 1024)
