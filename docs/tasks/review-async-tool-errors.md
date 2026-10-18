@@ -1,6 +1,6 @@
 # Task checkpoint: review-async-tool-errors
 
-- Branch/base: feature/review-async-tool-errors / develop b368b48d
+- Branch/base: feature/review-async-tool-errors / develop 4f56ef6c
 - Phase: reviewing; delivery mode develop-merge; PR pending.
 - Scope: review R12, user requested all confirmed fixes.
 
@@ -37,3 +37,7 @@ loop; cleanup gates errors without suppressing rejection consumption; no process
 cancellation promise. ADR docs/decisions/tool-compute-errors.md. Self-review is not
 independent approval. Next: integrate latest develop after R04/R11 delivery, validate
 shared-contract interactions, exact-head CI then matched-head merge/cleanup.
+
+R04 merged; integrated 4f56ef6c while R11 PR49 runs CI. Combined ToolContent,
+derived CSV result, default clipboard and JSON comparison tests pass 37/37.
+Next: integrate R11 once merged (independent codec files), then push this PR.
