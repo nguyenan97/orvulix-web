@@ -210,8 +210,8 @@ an address, monitored mailbox or response SLA.
 
 ## Deferred follow-ups and acceptance criteria
 
-The dependency upgrades, audit gate, workflows and exposure documentation are
-implemented on this feature branch, not merged. Braces is temporarily accepted
+The dependency upgrades, audit gate, workflows and exposure documentation were
+merged in the original remediation and foundation tasks. Braces is temporarily accepted
 until 2026-11-13. The following tasks are planned, not implemented by this PR;
 owner nguyenan97 must review their scope and any required settings authorization.
 
@@ -236,7 +236,7 @@ owner nguyenan97 must review their scope and any required settings authorization
   triaged/enforced, with explicit authority for any repository settings. Done when
   a new high finding and escalation are detected by the chosen process, disposition
   changes are reviewable, and fork PRs remain isolated without privileged execution
-  or content leakage. Keep the current five findings visible; no blanket dismissal.
+  or content leakage. Keep reviewed findings visible; no blanket dismissal.
 - Markdown: define literal backslash/pipe/newline round-trip behavior and exported
   raw-HTML handling. Done when tests cover these cases, textarea output stays inert,
   and any supported downstream rendering uses an explicit safe policy. Do not
@@ -375,15 +375,26 @@ is universally safe. Related parent package findings inherit these advisories.
 | vite / [GHSA-fx2h-pf6j-xcff](https://github.com/advisories/GHSA-fx2h-pf6j-xcff) | high | `<=6.4.2` | 6.4.4 - resolved in audit |
 | vitest / [GHSA-5xrq-8626-4rwp](https://github.com/advisories/GHSA-5xrq-8626-4rwp) | critical | `<3.2.6` | 4.1.11 - resolved in audit |
 
-## CodeQL first-scan disposition
+## CodeQL finding dispositions
 
-CodeQL at head 4155794 reports five high-scored results. They are not silently
-suppressed or marked resolved. The token used for this task cannot read/manage
-code-scanning alerts via the REST API (403), so the runner's metadata-only SARIF
-summary is the review evidence. Rule score is not proof of a reachable exploit.
+Historical first-scan snapshot: head 4155794 reported five high-scored results.
+That task's token received REST 403, so its evidence was metadata-only SARIF.
+Those historical counts/access limits are not the current repository state.
+
+Reassessment on 2026-10-18: the explicit `refs/heads/develop` REST alert list at
+analysed commit `34da69933a2d36035446754bafd0f3f87a29a4b4` contains six open identities (#1-#6),
+analysis key `.github/workflows/security.yml:codeql`, category
+`/language:javascript-typescript`. Some PR analyses report five results for the
+same category, omitting #1; that ref-specific difference does not establish a fix
+or resolved branch alert. Compare exact ref, commit, category and alert identity,
+not counts across PR/develop runs. Rule score is not proof of a reachable exploit.
+No alert is suppressed, dismissed or marked resolved by this documentation change.
+At this read, develop had advanced to `226cf0a9`; its new analysis was pending.
+The snapshot identifies the analysed commit rather than claiming scan freshness.
 
 | Rule / source | Trigger and sink review | Disposition |
 | --- | --- | --- |
+| [#1 js/xss-through-dom](https://github.com/nguyenan97/orvulix-web/security/code-scanning/1) / src/features/web-conversion/sanitize.ts:131 | HTML textarea/file content from HtmlToImage enters template.innerHTML in a detached inert template. Its nodes are never appended directly to the application or preview. The code rebuilds an HTML namespace/tag/attribute/style allowlist, restricts embedded raster assets and applies DOMPurify before frameDocument. Preview/export frames use sandbox="allow-same-origin" without allow-scripts and a CSP denying scripts, external assets, connections, navigation base and forms. | Reviewed and retained for owner nguyenan97 triage. Existing hostile-markup/native asset tests observed no script execution or content-network requests; no reachable exploit identified in this flow. These defenses/tests do not prove all parser payloads safe. Reassess if raw nodes are attached, sanitizer/allowlists/assets change, or frame CSP/sandbox permissions change. Keep the alert visible; do not present this sink as a general safe HTML API. |
 | js/bad-tag-filter / scripts/seo/validate-html.mjs:260 | Regex excludes generated script blocks only for a placeholder-text check; its output feeds PLACEHOLDER.test and a problem array, never a DOM or published artifact. | Non-sanitizer validation utility; no app XSS sink identified. Keep the alert visible for owner triage. |
 | js/incomplete-multi-character-sanitization / scripts/seo/validate-html.mjs:260 | Same operation, potentially nested tag-like strings. This does not sanitize untrusted markup or promise removal of arbitrary active HTML. | Same bounded build-validator context; no security relaxation or regex rewrite to hide the alert. |
 | js/incomplete-multi-character-sanitization / scripts/pages/prepare.mjs:24 | Removes authored JSON-LD from generated build artifacts before adding dev metadata. Inputs come from the controlled static generator, not pasted/uploaded user HTML; Pages validation checks resulting metadata. | Build transform, not an HTML sanitizer. Do not reuse it for user content; retain canonical/noindex tests. |
@@ -394,3 +405,10 @@ No application/tool service changes are made merely to quiet these queries.
 Repository maintainers should review these individual dispositions in GitHub's
 Security UI and reassess if input provenance or sinks change. The scan does not
 replace the remaining runtime/hosting release decisions above.
+
+Identity map for this snapshot: #2 is bad-tag-filter in validate-html, #3 is the
+Pages transform, #4 is incomplete-multi-character-sanitization in validate-html,
+#5 is the test decoding helper and #6 is Markdown pipe escaping. Together with #1,
+all six REST identities have a disposition above. Retain this as dated evidence;
+at the next scan, re-read the explicit develop ref and review new identities or
+changed sinks individually. A green CodeQL analysis job is not a findings gate.
