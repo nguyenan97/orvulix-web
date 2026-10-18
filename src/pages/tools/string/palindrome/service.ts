@@ -1,10 +1,12 @@
 export type SplitOperatorType = 'symbol' | 'regex';
 
 function isPalindrome(word: string, left: number, right: number): boolean {
-  if (left >= right) return true;
-  if (word[left] !== word[right]) return false;
-
-  return isPalindrome(word, left + 1, right - 1);
+  while (left < right) {
+    if (word[left] !== word[right]) return false;
+    left++;
+    right--;
+  }
+  return true;
 }
 
 // check each word of the input and add the palindrome status in an array
