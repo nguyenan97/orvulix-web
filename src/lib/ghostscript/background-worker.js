@@ -1,171 +1,101 @@
 import { COMPRESS_ACTION, PROTECT_ACTION } from './worker-init';
 
-function loadScript() {
-  import('./gs-worker.js');
+let settled = false;
+function fail() {
+  if (settled) return;
+  settled = true;
+  self.postMessage({ ok: false });
 }
 
-var Module;
-
-function compressPdf(dataStruct, responseCallback) {
-  const compressionLevel = dataStruct.compressionLevel || 'medium';
-
-  // Set PDF settings based on compression level
-  let pdfSettings;
-  switch (compressionLevel) {
-    case 'low':
-      pdfSettings = '/printer'; // Higher quality, less compression
-      break;
-    case 'medium':
-      pdfSettings = '/ebook'; // Medium quality and compression
-      break;
-    case 'high':
-      pdfSettings = '/screen'; // Lower quality, higher compression
-      break;
-    default:
-      pdfSettings = '/ebook'; // Default to medium
+self.addEventListener('message', ({ data: request }) => {
+  if (request?.target !== 'wasm' || settled) return;
+  const data = request.data;
+  if (
+    !(data?.bytes instanceof ArrayBuffer) ||
+    !data.bytes.byteLength ||
+    data.bytes.byteLength > 32 * 1024 * 1024 ||
+    ![COMPRESS_ACTION, PROTECT_ACTION].includes(data.type)
+  ) {
+    fail();
+    return;
   }
-  // first download the ps data
-  var xhr = new XMLHttpRequest();
-  xhr.open('GET', dataStruct.psDataURL);
-  xhr.responseType = 'arraybuffer';
-  xhr.onload = function () {
-    console.log('onload');
-    // release the URL
-    self.URL.revokeObjectURL(dataStruct.psDataURL);
-    //set up EMScripten environment
-    Module = {
-      preRun: [
-        function () {
-          self.Module.FS.writeFile('input.pdf', new Uint8Array(xhr.response));
+  if (
+    data.type === PROTECT_ACTION &&
+    (typeof data.password !== 'string' || !data.password)
+  ) {
+    fail();
+    return;
+  }
+  const input = new Uint8Array(data.bytes);
+  const settings = { low: '/printer', medium: '/ebook', high: '/screen' };
+  const mode =
+    data.type === PROTECT_ACTION
+      ? [
+          `-sOwnerPassword=${data.password}`,
+          `-sUserPassword=${data.password}`,
+          '-dEncryptionPermissions=-4'
+        ]
+      : [`-dPDFSETTINGS=${settings[data.compressionLevel] || '/ebook'}`];
+  self.Module = {
+    preRun: [
+      () => {
+        try {
+          self.Module.FS.writeFile('input.pdf', input);
+        } catch {
+          fail();
         }
-      ],
-      postRun: [
-        function () {
-          var uarray = self.Module.FS.readFile('output.pdf', {
+      }
+    ],
+    postRun: [
+      () => {
+        if (settled) return;
+        try {
+          const output = self.Module.FS.readFile('output.pdf', {
             encoding: 'binary'
           });
-          var blob = new Blob([uarray], { type: 'application/octet-stream' });
-          var pdfDataURL = self.URL.createObjectURL(blob);
-          responseCallback({
-            pdfDataURL: pdfDataURL,
-            url: dataStruct.url,
-            type: COMPRESS_ACTION
-          });
+          if (!output.length || output.length > 64 * 1024 * 1024) {
+            fail();
+            return;
+          }
+          const bytes = Uint8Array.from(output).buffer;
+          self.postMessage({ ok: true, bytes }, [bytes]);
+          settled = true;
+        } catch {
+          fail();
         }
-      ],
-      arguments: [
-        '-sDEVICE=pdfwrite',
-        '-dCompatibilityLevel=1.4',
-        `-dPDFSETTINGS=${pdfSettings}`,
-        '-DNOPAUSE',
-        '-dQUIET',
-        '-dBATCH',
-        '-sOutputFile=output.pdf',
-        'input.pdf'
-      ],
-      print: function (text) {},
-      printErr: function (text) {},
-      totalDependencies: 0,
-      noExitRuntime: 1
-    };
-    // Module.setStatus("Loading Ghostscript...");
-    if (!self.Module) {
-      self.Module = Module;
-      loadScript();
-    } else {
-      self.Module['calledRun'] = false;
-      self.Module['postRun'] = Module.postRun;
-      self.Module['preRun'] = Module.preRun;
-      self.Module.callMain();
-    }
+      }
+    ],
+    arguments: [
+      '-sDEVICE=pdfwrite',
+      '-dCompatibilityLevel=1.4',
+      ...mode,
+      '-DNOPAUSE',
+      '-dQUIET',
+      '-dBATCH',
+      '-sOutputFile=output.pdf',
+      'input.pdf'
+    ],
+    print: () => {},
+    printErr: () => {},
+    onAbort: fail,
+    totalDependencies: 0,
+    noExitRuntime: 1
   };
-  xhr.send();
-}
-
-function protectPdf(dataStruct, responseCallback) {
-  const password = dataStruct.password || '';
-
-  // Validate password
-  if (!password) {
-    responseCallback({
-      error: 'Password is required for encryption',
-      url: dataStruct.url
+  // Only the codec asset is downloaded remotely. Never log arguments or input.
+  const load = async () => {
+    const response = await fetch('https://cdn-wasm.b-cdn.net/gs-worker.wasm', {
+      credentials: 'same-origin'
     });
-    return;
-  }
-  var xhr = new XMLHttpRequest();
-  xhr.open('GET', dataStruct.psDataURL);
-  xhr.responseType = 'arraybuffer';
-  xhr.onload = function () {
-    console.log('onload');
-    // release the URL
-    self.URL.revokeObjectURL(dataStruct.psDataURL);
-    //set up EMScripten environment
-    Module = {
-      preRun: [
-        function () {
-          self.Module.FS.writeFile('input.pdf', new Uint8Array(xhr.response));
-        }
-      ],
-      postRun: [
-        function () {
-          var uarray = self.Module.FS.readFile('output.pdf', {
-            encoding: 'binary'
-          });
-          var blob = new Blob([uarray], { type: 'application/octet-stream' });
-          var pdfDataURL = self.URL.createObjectURL(blob);
-          responseCallback({
-            pdfDataURL: pdfDataURL,
-            url: dataStruct.url,
-            type: PROTECT_ACTION
-          });
-        }
-      ],
-      arguments: [
-        '-sDEVICE=pdfwrite',
-        '-dCompatibilityLevel=1.4',
-        `-sOwnerPassword=${password}`,
-        `-sUserPassword=${password}`,
-        // Permissions (prevent copying/printing/etc)
-        '-dEncryptionPermissions=-4',
-        '-DNOPAUSE',
-        '-dQUIET',
-        '-dBATCH',
-        '-sOutputFile=output.pdf',
-        'input.pdf'
-      ],
-      print: function (text) {},
-      printErr: function (text) {},
-      totalDependencies: 0,
-      noExitRuntime: 1
-    };
-    // Module.setStatus("Loading Ghostscript...");
-    if (!self.Module) {
-      self.Module = Module;
-      loadScript();
-    } else {
-      self.Module['calledRun'] = false;
-      self.Module['postRun'] = Module.postRun;
-      self.Module['preRun'] = Module.preRun;
-      self.Module.callMain();
-    }
+    if (
+      !response.ok ||
+      Number(response.headers.get('content-length')) > 32 * 1024 * 1024
+    )
+      throw new Error('WASM asset unavailable.');
+    const bytes = await response.arrayBuffer();
+    if (!bytes.byteLength || bytes.byteLength > 32 * 1024 * 1024)
+      throw new Error('Invalid WASM asset size.');
+    self.Module.wasmBinary = new Uint8Array(bytes);
+    await import('./gs-worker.js');
   };
-  xhr.send();
-}
-
-self.addEventListener('message', function ({ data: e }) {
-  // e.data contains the message sent to the worker.
-  if (e.target !== 'wasm') {
-    return;
-  }
-  const responseCallback = ({ pdfDataURL, type }) => {
-    self.postMessage(pdfDataURL);
-  };
-  if (e.data.type === COMPRESS_ACTION) {
-    compressPdf(e.data, responseCallback);
-  } else if (e.data.type === PROTECT_ACTION) {
-    protectPdf(e.data, responseCallback);
-  }
+  load().catch(fail);
 });
-
-console.log('Worker ready');

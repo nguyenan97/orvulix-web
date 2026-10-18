@@ -1,14 +1,13 @@
-import { Box, Typography } from '@mui/material';
+import { Alert, Box, Typography } from '@mui/material';
 import React, { useState, useEffect, useContext } from 'react';
 import ToolContent from '@components/ToolContent';
 import { ToolComponentProps } from '@tools/defineTool';
 import { compressPdf } from './service';
+import { useGhostscriptJob } from '../../../../lib/ghostscript/useGhostscriptJob';
 import { InitialValuesType, CompressionLevel } from './types';
 import ToolPdfInput from '@components/input/ToolPdfInput';
-import { GetGroupsType } from '@components/options/ToolOptions';
 import ToolFileResult from '@components/result/ToolFileResult';
 import SimpleRadio from '@components/options/SimpleRadio';
-import { CardExampleType } from '@components/examples/ToolExamples';
 import { PDFDocument } from 'pdf-lib';
 import { CustomSnackBarContext } from '../../../../contexts/CustomSnackBarContext';
 import { useTranslation } from 'react-i18next';
@@ -17,45 +16,19 @@ const initialValues: InitialValuesType = {
   compressionLevel: 'low'
 };
 
-const exampleCards: CardExampleType<InitialValuesType>[] = [
-  {
-    title: 'Low Compression',
-    description: 'Minimal quality loss with slight file size reduction',
-    sampleText: '',
-    sampleResult: '',
-    sampleOptions: {
-      compressionLevel: 'low'
-    }
-  },
-  {
-    title: 'Medium Compression',
-    description: 'Balance between file size and quality',
-    sampleText: '',
-    sampleResult: '',
-    sampleOptions: {
-      compressionLevel: 'medium'
-    }
-  },
-  {
-    title: 'High Compression',
-    description: 'Maximum file size reduction with some quality loss',
-    sampleText: '',
-    sampleResult: '',
-    sampleOptions: {
-      compressionLevel: 'high'
-    }
-  }
-];
+const formatFileSize = (bytes: number): string => {
+  if (bytes === 0) return '0 Bytes';
 
-export default function CompressPdf({
-  title,
-  longDescription
-}: ToolComponentProps) {
+  const k = 1024;
+  const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+  const i = Math.floor(Math.log(bytes) / Math.log(k));
+
+  return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+};
+
+export default function CompressPdf({ title }: ToolComponentProps) {
   const { t } = useTranslation('pdf');
   const [input, setInput] = useState<File | null>(null);
-  const [result, setResult] = useState<File | null>(null);
-  const [resultSize, setResultSize] = useState<string>('');
-  const [isProcessing, setIsProcessing] = useState<boolean>(false);
   const [fileInfo, setFileInfo] = useState<{
     size: string;
     pages: number;
@@ -64,8 +37,10 @@ export default function CompressPdf({
 
   // Get the PDF info when a file is uploaded
   useEffect(() => {
+    let current = true;
+    setFileInfo(null);
     const getPdfInfo = async () => {
-      if (!input) {
+      if (!input || input.size > 32 * 1024 * 1024) {
         setFileInfo(null);
         return;
       }
@@ -76,52 +51,26 @@ export default function CompressPdf({
         const pages = pdf.getPageCount();
         const size = formatFileSize(input.size);
 
-        setFileInfo({ size, pages });
-      } catch (error) {
-        console.error('Error getting PDF info:', error);
+        if (current) setFileInfo({ size, pages });
+      } catch {
+        if (!current) return;
         setFileInfo(null);
         showSnackBar(t('compressPdf.errorReadingPdf'), 'error');
       }
     };
 
     getPdfInfo();
-  }, [input]);
+    return () => {
+      current = false;
+    };
+  }, [input, showSnackBar, t]);
 
-  const formatFileSize = (bytes: number): string => {
-    if (bytes === 0) return '0 Bytes';
-
-    const k = 1024;
-    const sizes = ['Bytes', 'KB', 'MB', 'GB'];
-    const i = Math.floor(Math.log(bytes) / Math.log(k));
-
-    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+  const job = useGhostscriptJob(compressPdf);
+  const changeInput = (file: File | null) => {
+    job.invalidate();
+    setInput(file);
   };
-
-  const compute = async (values: InitialValuesType, input: File | null) => {
-    if (!input) return;
-
-    try {
-      setIsProcessing(true);
-      const compressedPdf = await compressPdf(input, values);
-      setResult(compressedPdf);
-
-      // Log compression results
-      const compressionRatio = (compressedPdf.size / input.size) * 100;
-      console.log(`Compression Ratio: ${compressionRatio.toFixed(2)}%`);
-      setResultSize(formatFileSize(compressedPdf.size));
-    } catch (error) {
-      console.error('Error compressing PDF:', error);
-      showSnackBar(
-        t('compressPdf.errorCompressingPdf', {
-          error: error instanceof Error ? error.message : String(error)
-        }),
-        'error'
-      );
-      setResult(null);
-    } finally {
-      setIsProcessing(false);
-    }
-  };
+  const resultSize = job.result ? formatFileSize(job.result.size) : '';
 
   const compressionOptions: {
     value: CompressionLevel;
@@ -148,26 +97,38 @@ export default function CompressPdf({
   return (
     <ToolContent
       title={title}
+      toolInfo={{
+        title: 'PDF processing limits',
+        description:
+          'Input limit: 32 MiB. Output limit: 64 MiB. Worker startup and processing deadline: 30 seconds. Ghostscript downloads its WASM engine from cdn-wasm.b-cdn.net; PDF bytes stay in your browser. Clear or change options to cancel the current job.'
+      }}
       input={input}
       setInput={setInput}
       initialValues={initialValues}
-      compute={compute}
+      compute={job.compute}
       inputComponent={
         <ToolPdfInput
           value={input}
-          onChange={setInput}
+          onChange={changeInput}
           accept={['application/pdf']}
           title={t('compressPdf.inputTitle')}
         />
       }
       resultComponent={
-        <ToolFileResult
-          title={t('compressPdf.resultTitle')}
-          value={result}
-          extension={'pdf'}
-          loading={isProcessing}
-          loadingText={t('compressPdf.compressingPdf')}
-        />
+        <Box>
+          {job.error && (
+            <Alert severity="error" aria-label="PDF processing error">
+              {job.error}
+            </Alert>
+          )}
+          <ToolFileResult
+            title={t('compressPdf.resultTitle')}
+            value={job.result}
+            extension={'pdf'}
+            loading={job.loading}
+            loadingText={t('compressPdf.compressingPdf')}
+          />
+        </Box>
       }
       getGroups={({ values, updateField }) => [
         {
@@ -186,6 +147,7 @@ export default function CompressPdf({
                     description={option.description}
                     checked={values.compressionLevel === option.value}
                     onClick={() => {
+                      job.invalidate();
                       updateField('compressionLevel', option.value);
                     }}
                   />

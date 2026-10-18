@@ -1,5 +1,5 @@
-import { Box } from '@mui/material';
-import React, { useContext, useState } from 'react';
+import { Alert, Box } from '@mui/material';
+import React, { useState } from 'react';
 import ToolContent from '@components/ToolContent';
 import { ToolComponentProps } from '@tools/defineTool';
 import ToolPdfInput from '@components/input/ToolPdfInput';
@@ -7,78 +7,55 @@ import ToolFileResult from '@components/result/ToolFileResult';
 import { InitialValuesType } from './types';
 import { protectPdf } from './service';
 import TextFieldWithDesc from '@components/options/TextFieldWithDesc';
-import { CustomSnackBarContext } from '../../../../contexts/CustomSnackBarContext';
+import { useGhostscriptJob } from '../../../../lib/ghostscript/useGhostscriptJob';
 
 const initialValues: InitialValuesType = {
   password: '',
   confirmPassword: ''
 };
 
-export default function ProtectPdf({
-  title,
-  longDescription
-}: ToolComponentProps) {
+export default function ProtectPdf({ title }: ToolComponentProps) {
   const [input, setInput] = useState<File | null>(null);
-  const [result, setResult] = useState<File | null>(null);
-  const [isProcessing, setIsProcessing] = useState<boolean>(false);
-  const { showSnackBar } = useContext(CustomSnackBarContext);
-
-  const compute = async (values: InitialValuesType, input: File | null) => {
-    if (!input) return;
-
-    try {
-      // Validate passwords match
-      if (values.password !== values.confirmPassword) {
-        showSnackBar('Passwords do not match', 'error');
-        return;
-      }
-
-      // Validate password is not empty
-      if (!values.password) {
-        showSnackBar('Password cannot be empty', 'error');
-        return;
-      }
-
-      setIsProcessing(true);
-      const protectedPdf = await protectPdf(input, values);
-      setResult(protectedPdf);
-    } catch (error) {
-      console.error('Error protecting PDF:', error);
-      showSnackBar(
-        `Failed to protect PDF: ${
-          error instanceof Error ? error.message : String(error)
-        }`,
-        'error'
-      );
-      setResult(null);
-    } finally {
-      setIsProcessing(false);
-    }
+  const job = useGhostscriptJob(protectPdf);
+  const changeInput = (file: File | null) => {
+    job.invalidate();
+    setInput(file);
   };
 
   return (
     <ToolContent
       title={title}
+      toolInfo={{
+        title: 'PDF processing limits',
+        description:
+          'Input limit: 32 MiB. Output limit: 64 MiB. Worker startup and processing deadline: 30 seconds. Ghostscript downloads its WASM engine from cdn-wasm.b-cdn.net; PDF bytes and password stay in your browser. Clear or change options to cancel the current job.'
+      }}
       input={input}
-      setInput={setInput}
       initialValues={initialValues}
-      compute={compute}
+      compute={job.compute}
       inputComponent={
         <ToolPdfInput
           value={input}
-          onChange={setInput}
+          onChange={changeInput}
           accept={['application/pdf']}
           title={'Input PDF'}
         />
       }
       resultComponent={
-        <ToolFileResult
-          title={'Protected PDF'}
-          value={result}
-          extension={'pdf'}
-          loading={isProcessing}
-          loadingText={'Protecting PDF'}
-        />
+        <Box>
+          {job.error && (
+            <Alert severity="error" aria-label="PDF processing error">
+              {job.error}
+            </Alert>
+          )}
+          <ToolFileResult
+            title={'Protected PDF'}
+            value={job.result}
+            extension={'pdf'}
+            loading={job.loading}
+            loadingText={'Protecting PDF'}
+          />
+        </Box>
       }
       getGroups={({ values, updateField }) => [
         {
@@ -91,7 +68,10 @@ export default function ProtectPdf({
                 placeholder="Enter password"
                 type="password"
                 value={values.password}
-                onOwnChange={(value) => updateField('password', value)}
+                onOwnChange={(value) => {
+                  job.invalidate();
+                  updateField('password', value);
+                }}
               />
               <TextFieldWithDesc
                 title="Confirm Password"
@@ -99,7 +79,10 @@ export default function ProtectPdf({
                 placeholder="Confirm password"
                 type="password"
                 value={values.confirmPassword}
-                onOwnChange={(value) => updateField('confirmPassword', value)}
+                onOwnChange={(value) => {
+                  job.invalidate();
+                  updateField('confirmPassword', value);
+                }}
               />
             </Box>
           )
