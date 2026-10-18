@@ -1,3 +1,4 @@
+import useDebounce from '../../../../hooks/useDebounce';
 import { Box } from '@mui/material';
 import { useState, useCallback } from 'react';
 import ToolContent from '@components/ToolContent';
@@ -40,7 +41,7 @@ export default function Loop({ title }: ToolComponentProps) {
     }
   };
 
-  const debouncedCompute = useCallback(debounce(compute, 1000), []);
+  const debouncedCompute = useDebounce(compute, 1000);
 
   const getGroups: GetGroupsType<InitialValuesType> | null = ({
     values,

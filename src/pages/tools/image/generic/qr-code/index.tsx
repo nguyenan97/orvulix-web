@@ -1,3 +1,4 @@
+import useDebounce from '../../../../../hooks/useDebounce';
 import React, { useCallback, useState } from 'react';
 import { Box, MenuItem, TextField } from '@mui/material';
 import { useTranslation } from 'react-i18next';
@@ -430,7 +431,7 @@ export default function QRCodeGenerator({ title }: ToolComponentProps) {
     }
   };
 
-  const debouncedCompute = useCallback(debounce(compute, 1000), []);
+  const debouncedCompute = useDebounce(compute, 1000);
 
   return (
     <ToolContent

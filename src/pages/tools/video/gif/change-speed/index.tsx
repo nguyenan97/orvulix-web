@@ -1,3 +1,4 @@
+import useDebounce from '../../../../../hooks/useDebounce';
 import { Box, Typography, Slider } from '@mui/material';
 import React, { useState, useCallback } from 'react';
 import ToolFileResult from '@components/result/ToolFileResult';
@@ -36,7 +37,7 @@ export default function ChangeSpeed({ title }: ToolComponentProps) {
     }
   };
 
-  const debouncedCompute = useCallback(debounce(compute, 1000), []);
+  const debouncedCompute = useDebounce(compute, 1000);
 
   const getGroups: GetGroupsType<InitialValuesType> = ({
     values,

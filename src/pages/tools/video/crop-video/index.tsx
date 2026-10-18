@@ -1,3 +1,4 @@
+import useDebounce from '../../../../hooks/useDebounce';
 import { Box, Typography, TextField, Alert } from '@mui/material';
 import React, { useState, useMemo, useEffect } from 'react';
 import ToolContent from '@components/ToolContent';
@@ -84,10 +85,7 @@ export default function CropVideo({ title }: ToolComponentProps) {
     }
   };
 
-  const debouncedCompute = useMemo(
-    () => debounce(compute, 2000),
-    [videoDimensions]
-  );
+  const debouncedCompute = useDebounce(compute, 2000);
 
   useEffect(() => {
     return () => {

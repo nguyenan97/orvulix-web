@@ -1,3 +1,4 @@
+import useDebounce from '../../../../hooks/useDebounce';
 import { Box, FormControlLabel, Checkbox } from '@mui/material';
 import React, { useCallback, useState } from 'react';
 import * as Yup from 'yup';
@@ -65,7 +66,7 @@ export default function ResizeVideo({ title }: ToolComponentProps) {
     }
   };
 
-  const debouncedCompute = useCallback(debounce(compute, 1000), []);
+  const debouncedCompute = useDebounce(compute, 1000);
 
   const getGroups: GetGroupsType<typeof initialValues> = ({
     values,

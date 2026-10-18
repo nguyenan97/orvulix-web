@@ -1,3 +1,4 @@
+import useDebounce from '../../../../../hooks/useDebounce';
 import React, { useState, useMemo, useEffect } from 'react';
 import ToolImageInput from '@components/input/ToolImageInput';
 import ToolFileResult from '@components/result/ToolFileResult';
@@ -61,7 +62,7 @@ export default function ChangeOpacity({ title }: ToolComponentProps) {
     }
   };
 
-  const debouncedCompute = useMemo(() => debounce(compute, 1000), []);
+  const debouncedCompute = useDebounce(compute, 1000);
 
   useEffect(() => {
     return () => {

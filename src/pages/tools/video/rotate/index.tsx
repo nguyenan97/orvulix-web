@@ -1,3 +1,4 @@
+import useDebounce from '../../../../hooks/useDebounce';
 import { Box } from '@mui/material';
 import React, { useCallback, useState } from 'react';
 import * as Yup from 'yup';
@@ -50,7 +51,7 @@ export default function RotateVideo({ title }: ToolComponentProps) {
     }
   };
 
-  const debouncedCompute = useCallback(debounce(compute, 1000), []);
+  const debouncedCompute = useDebounce(compute, 1000);
 
   const getGroups: GetGroupsType<InitialValuesType> = ({
     values,

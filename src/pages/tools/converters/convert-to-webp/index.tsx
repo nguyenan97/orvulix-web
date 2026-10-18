@@ -1,3 +1,4 @@
+import useDebounce from '../../../../hooks/useDebounce';
 import { Box, Slider, Typography } from '@mui/material';
 import ColorSelector from 'components/options/ColorSelector';
 import ToolFileResult from 'components/result/ToolFileResult';
@@ -13,7 +14,6 @@ import ToolMultiFileResult from '@components/result/ToolMultiFileResult';
 import { CustomSnackBarContext } from '../../../../contexts/CustomSnackBarContext';
 import { convertToWebp } from './service';
 import { useTranslation } from 'react-i18next';
-import debounce from 'lodash/debounce';
 
 const initialValues: InitialValuesType = {
   backgroundColor: '#ffffff',
@@ -70,7 +70,7 @@ export default function ConvertToWebp({ title }: ToolComponentProps) {
     console.log('Images are processed');
   };
 
-  const debouncedCompute = useCallback(debounce(compute, 1000), []);
+  const debouncedCompute = useDebounce(compute, 1000);
 
   return (
     <ToolContent
