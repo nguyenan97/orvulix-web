@@ -1,7 +1,7 @@
 # Task checkpoint: review-string-regex-isolation
 
-- Branch/base: feature/review-string-regex-isolation / develop f6fe6902
-- Phase: developing; PR pending; develop-merge; user requested R08 among all fixes.
+- Branch/base: feature/review-string-regex-isolation / develop b7bf878f
+- Phase: reviewing; PR pending; develop-merge; user requested R08 among all fixes.
 
 Replacer/Split/Palindrome execute arbitrary regex on the UI thread. Existing list
 and assistant workers do not cover these routes. Native review measured a 26-char
@@ -49,3 +49,9 @@ potential capture/replacement expansion before execution. No blocking finding.
 Still required: full local unit suite, latest develop integration after prepared
 R07 delivery, affected checks and exact-head CI/merge/cleanup. Next save this slice,
 deliver Ghostscript on current PDF base, then resume full validation here.
+
+Integrated current PDF develop b7bf878f with additive CI entries. Full local unit
+suite passes 170 files/1652 tests (maxWorkers=4, 83.86s), no deadline/retry/CI change.
+The string runtime is unchanged from three-engine build/browser evidence 9a10a59;
+independent PDF.js services/preview files changed in base. Next: integrate R07 after
+PR52 merges, run affected checks, push one PR and require exact-head CI/merge.
