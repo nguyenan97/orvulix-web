@@ -1,38 +1,24 @@
-import { useCallback, useEffect, useRef } from 'react';
-import _ from 'lodash';
+import { useEffect, useMemo, useRef } from 'react';
+import debounce from 'lodash/debounce';
+import type { DebouncedFunc } from 'lodash';
 
-/**
- * Debounce hook.
- * @param {T} callback
- * @param {number} delay
- * @returns {T}
- */
-function useDebounce<T extends (...args: never[]) => void>(
+/** Stable queued work, latest callback, and owned pending-timer cleanup. */
+export default function useDebounce<T extends (...args: any[]) => any>(
   callback: T,
   delay: number
-): T {
-  const callbackRef = useRef<T>(callback);
-
-  // Update the current callback each time it changes.
+): DebouncedFunc<T> {
+  const callbackRef = useRef(callback);
   useEffect(() => {
     callbackRef.current = callback;
   }, [callback]);
-
-  const debouncedFn = useCallback(
-    _.debounce((...args: never[]) => {
-      callbackRef.current(...args);
-    }, delay),
+  const debounced = useMemo(
+    () =>
+      debounce(
+        (...args: Parameters<T>): ReturnType<T> => callbackRef.current(...args),
+        delay
+      ),
     [delay]
   );
-
-  useEffect(() => {
-    // Cleanup function to cancel any pending debounced calls
-    return () => {
-      debouncedFn.cancel();
-    };
-  }, [debouncedFn]);
-
-  return debouncedFn as unknown as T;
+  useEffect(() => () => debounced.cancel(), [debounced]);
+  return debounced;
 }
-
-export default useDebounce;

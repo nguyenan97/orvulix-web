@@ -37,7 +37,7 @@ export default function ChangeSpeed({ title }: ToolComponentProps) {
     try {
       const resultFile = await changeAudioSpeed(input, optionsValues);
       setResult(resultFile);
-    } catch (err) {
+    } catch {
       setResult(null);
     } finally {
       setLoading(false);

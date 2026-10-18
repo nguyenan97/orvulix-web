@@ -11,10 +11,7 @@ import Typography from '@mui/material/Typography';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { filterTools, getToolsByCategory } from '../../tools';
 import Hero from 'components/Hero';
-import {
-  getI18nNamespaceFromToolCategory,
-  getToolCategoryTitle
-} from '@utils/string';
+import { getToolCategoryTitle } from '@utils/string';
 import { Icon } from '@iconify/react';
 import { categoriesColors } from 'config/uiConfig';
 import React, { useEffect } from 'react';
@@ -25,7 +22,7 @@ import { Helmet } from 'react-helmet';
 import { brand } from '../../brand/config';
 import UserTypeFilter from '@components/UserTypeFilter';
 import { useTranslation } from 'react-i18next';
-import { I18nNamespaces, validNamespaces } from '../../i18n';
+import { validNamespaces } from '../../i18n';
 import { useUserTypeFilter } from '../../providers/UserTypeFilterProvider';
 
 const StyledLink = styled(Link)(({ theme }) => ({
@@ -66,9 +63,18 @@ export default function ToolsByCategory() {
     <Box sx={{ backgroundColor: 'background.default' }}>
       <Helmet>
         <title>{`${rawTitle} Tools - ${brand.name}`}</title>
-        <meta name="description" content={`Browse free ${rawTitle} tools on ${brand.name}. Use online utilities directly in your browser.`} />
-        <link rel="canonical" href={`https://orvulix.io.vn/categories/${categoryName}`} />
-        <meta property="og:url" content={`https://orvulix.io.vn/categories/${categoryName}`} />
+        <meta
+          name="description"
+          content={`Browse free ${rawTitle} tools on ${brand.name}. Use online utilities directly in your browser.`}
+        />
+        <link
+          rel="canonical"
+          href={`https://orvulix.io.vn/categories/${categoryName}`}
+        />
+        <meta
+          property="og:url"
+          content={`https://orvulix.io.vn/categories/${categoryName}`}
+        />
       </Helmet>
       <Box
         padding={{ xs: 1, md: 3, lg: 5 }}
@@ -87,7 +93,11 @@ export default function ToolsByCategory() {
             <IconButton onClick={() => navigate('/')}>
               <ArrowBackIcon color={'primary'} />
             </IconButton>
-            <Typography component="h1" fontSize={22} color={theme.palette.primary.main}>
+            <Typography
+              component="h1"
+              fontSize={22}
+              color={theme.palette.primary.main}
+            >
               {t('translation:toolLayout.allToolsTitle', { type: rawTitle })}
             </Typography>
           </Stack>

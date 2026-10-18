@@ -1,5 +1,5 @@
 import { useRef } from 'react';
-import { Box, IconButton, Tooltip, useTheme } from '@mui/material';
+import { Box, IconButton, Tooltip } from '@mui/material';
 import Typography from '@mui/material/Typography';
 import InputHeader from '../InputHeader';
 import InputFooter from './InputFooter';
@@ -30,7 +30,7 @@ export default function ToolMultipleAudioInput({
   type
 }: MultiAudioInputComponentProps) {
   const { t } = useTranslation();
-  const theme = useTheme();
+
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const importer = useMultiFileImport({
@@ -54,42 +54,6 @@ export default function ToolMultipleAudioInput({
     }
     return fileName;
   }
-
-  const sortList = () => {
-    const list = [...value];
-    list.sort((a, b) => a.order - b.order);
-    onChange(list);
-  };
-
-  const reorderList = (sourceIndex: number, destinationIndex: number) => {
-    if (destinationIndex === sourceIndex) {
-      return;
-    }
-    const list = [...value];
-
-    if (destinationIndex === 0) {
-      list[sourceIndex].order = list[0].order - 1;
-      sortList();
-      return;
-    }
-
-    if (destinationIndex === list.length - 1) {
-      list[sourceIndex].order = list[list.length - 1].order + 1;
-      sortList();
-      return;
-    }
-
-    if (destinationIndex < sourceIndex) {
-      list[sourceIndex].order =
-        (list[destinationIndex].order + list[destinationIndex - 1].order) / 2;
-      sortList();
-      return;
-    }
-
-    list[sourceIndex].order =
-      (list[destinationIndex].order + list[destinationIndex + 1].order) / 2;
-    sortList();
-  };
 
   return (
     <Box>

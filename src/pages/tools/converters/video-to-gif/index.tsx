@@ -1,5 +1,6 @@
+import useDebounce from '../../../../hooks/useDebounce';
 import { Box } from '@mui/material';
-import React, { useState, useCallback } from 'react';
+import React, { useState } from 'react';
 import ToolContent from '@components/ToolContent';
 import { ToolComponentProps } from '@tools/defineTool';
 import { GetGroupsType } from '@components/options/ToolOptions';
@@ -10,7 +11,7 @@ import ToolVideoInput from '@components/input/ToolVideoInput';
 import ToolFileResult from '@components/result/ToolFileResult';
 import SimpleRadio from '@components/options/SimpleRadio';
 import { useTranslation } from 'react-i18next';
-import { debounce } from 'lodash';
+
 import { videoToGif } from './service';
 
 const initialValues: InitialValuesType = {
@@ -39,7 +40,7 @@ export default function VideoToGif({ title }: ToolComponentProps) {
     }
   };
 
-  const debouncedCompute = useCallback(debounce(compute, 1000), []);
+  const debouncedCompute = useDebounce(compute, 1000);
 
   const getGroups: GetGroupsType<InitialValuesType> | null = ({
     values,

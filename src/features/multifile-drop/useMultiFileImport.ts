@@ -1,4 +1,10 @@
-import { useEffect, useLayoutEffect, useRef, useState } from 'react';
+import {
+  useCallback,
+  useEffect,
+  useLayoutEffect,
+  useRef,
+  useState
+} from 'react';
 import type { DragEvent, ChangeEvent } from 'react';
 import { FileKind, InputFile } from './policy';
 import { ImportSession } from './import-session';
@@ -19,6 +25,9 @@ export function useMultiFileImport({
   const [dragging, setDragging] = useState(false);
   const nesting = useRef(0);
   const epoch = useRef(0);
+  const advanceEpoch = useCallback(() => {
+    epoch.current++;
+  }, []);
   const mounted = useRef(true);
   const callbacks = useRef(onChange);
   callbacks.current = onChange;
@@ -38,12 +47,13 @@ export function useMultiFileImport({
   }, [value]);
   useEffect(() => {
     mounted.current = true;
+    const ownedSession = session.current!;
     return () => {
       mounted.current = false;
-      epoch.current++;
-      session.current!.dispose();
+      advanceEpoch();
+      ownedSession.dispose();
     };
-  }, []);
+  }, [advanceEpoch]);
   const add = async (files: File[]) => {
     const generation = epoch.current;
     setError('');

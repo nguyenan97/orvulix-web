@@ -88,7 +88,7 @@ export default function SortList({ title }: ToolComponentProps) {
           title: t('sort.inputItemSeparator'),
           component: (
             <Box>
-              {splitOperators.map(({ title, description, type }) => (
+              {splitOperators.map(({ type }) => (
                 <SimpleRadio
                   key={type}
                   onClick={() => updateField('splitSeparatorType', type)}

@@ -1,3 +1,4 @@
+import useDebounce from '../../../../../hooks/useDebounce';
 import React, { useState, useMemo, useEffect } from 'react';
 import ToolImageInput from '@components/input/ToolImageInput';
 import ToolFileResult from '@components/result/ToolFileResult';
@@ -12,7 +13,7 @@ import { updateNumberField } from '@utils/string';
 import { Box } from '@mui/material';
 import SimpleRadio from '@components/options/SimpleRadio';
 import { InitialValuesType } from './types';
-import { debounce } from 'lodash';
+
 import { useTranslation } from 'react-i18next';
 import { getImageDimensions, getMaxAreaPosition } from '@utils/image';
 
@@ -61,7 +62,7 @@ export default function ChangeOpacity({ title }: ToolComponentProps) {
     }
   };
 
-  const debouncedCompute = useMemo(() => debounce(compute, 1000), []);
+  const debouncedCompute = useDebounce(compute, 1000);
 
   useEffect(() => {
     return () => {

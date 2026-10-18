@@ -1,5 +1,6 @@
+import useDebounce from '../../../../hooks/useDebounce';
 import { Box, Typography, Slider } from '@mui/material';
-import React, { useEffect, useState, useCallback } from 'react';
+import React, { useEffect, useState } from 'react';
 import * as Yup from 'yup';
 import ToolFileResult from '@components/result/ToolFileResult';
 import ToolContent from '@components/ToolContent';
@@ -13,7 +14,6 @@ import TextFieldWithDesc from '@components/options/TextFieldWithDesc';
 import { useTranslation } from 'react-i18next';
 import { addAudioToVideo } from './service';
 import { AudioMode, initialValuesType } from './types';
-import debounce from 'lodash/debounce';
 
 const initialValues: initialValuesType = {
   mode: 'replace',
@@ -78,14 +78,14 @@ export default function AddAudio({ title }: ToolComponentProps) {
   };
 
   // debounced version for fast option changes
-  const debouncedCompute = useCallback(debounce(compute, 1000), []);
+  const debouncedCompute = useDebounce(compute, 1000);
 
   // automatically recompute whenever video, audio, or options change
   useEffect(() => {
     if (videoInput && audioInput) {
       debouncedCompute(videoInput, audioInput, currentValues);
     }
-  }, [videoInput, audioInput, currentValues]);
+  }, [videoInput, audioInput, currentValues, debouncedCompute]);
 
   const getGroups: GetGroupsType<typeof initialValues> = ({
     values,

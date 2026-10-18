@@ -1,0 +1,2 @@
+# Checked-in Emscripten output. See docs/GENERATED_ARTIFACTS.md; wrappers stay linted.
+src/lib/ghostscript/gs-worker.js

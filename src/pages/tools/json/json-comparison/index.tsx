@@ -6,7 +6,7 @@ import { compareJson } from './service';
 import { ToolComponentProps } from '@tools/defineTool';
 import { Grid } from '@mui/material';
 
-type InitialValuesType = {};
+type InitialValuesType = Record<string, never>;
 
 const initialValues: InitialValuesType = {};
 

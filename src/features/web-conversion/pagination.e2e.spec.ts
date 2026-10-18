@@ -370,10 +370,9 @@ test('cancel between page captures discards late canvas; new input and SPA unmou
     let calls = 0;
     HTMLCanvasElement.prototype.toBlob = function (callback, type, quality) {
       if (++calls === 2) {
-        const canvas = this;
-        Reflect.set(window, '__heldPage', canvas);
+        Reflect.set(window, '__heldPage', this);
         Reflect.set(window, '__releasePage', () =>
-          original.call(canvas, callback, type, quality)
+          original.call(this, callback, type, quality)
         );
       } else original.call(this, callback, type, quality);
     };

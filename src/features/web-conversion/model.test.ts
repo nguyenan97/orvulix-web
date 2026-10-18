@@ -59,7 +59,20 @@ describe('HTML image bounds', () => {
     ['Nguyễn An', 'png', 'Nguyễn An.png']
   ] as const)('sanitizes filename %s', (name, format, expected) => {
     const result = safeFilename(name, format);
-    if (name === '../../bad.png') expect(result).not.toMatch(/[\/\\]/);
+    if (name === '../../bad.png') expect(result).not.toMatch(/[/\\]/);
     else expect(result).toBe(expected);
+  });
+  it.each([...Array.from({ length: 32 }, (_, code) => code), 127])(
+    'replaces filename control code %i for both output kinds',
+    (code) => {
+      const name = `a${String.fromCharCode(code)}z`;
+      expect(safeFilename(name, 'png')).toBe('a-z.png');
+      expect(safeFilename(name, 'pdf')).toBe('a-z.pdf');
+    }
+  );
+  it('keeps Unicode code points while removing reserved filename characters', () => {
+    expect(safeFilename('report😀<>:"/\\|?*end', 'png')).toBe(
+      'report😀---------end.png'
+    );
   });
 });

@@ -70,8 +70,13 @@ export function safeFilename(
           '-'
         )
       : name;
-  const cleaned = input
-    .replace(/[\u0000-\u001f\u007f<>:"/\\|?*]/g, '-')
+  const cleaned = Array.from(input, (character) => {
+    const code = character.charCodeAt(0);
+    return code < 32 || code === 127 || '<>:"/\\|?*'.includes(character)
+      ? '-'
+      : character;
+  })
+    .join('')
     .replace(format === 'pdf' ? /\.(pdf|png|jpe?g)$/i : /\.(png|jpe?g)$/i, '')
     .replace(/^[.\s]+|[.\s]+$/g, '')
     .slice(0, 80);

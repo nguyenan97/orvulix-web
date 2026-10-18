@@ -1,5 +1,6 @@
+import useDebounce from '../../../../hooks/useDebounce';
 import { Box } from '@mui/material';
-import { useState, useCallback } from 'react';
+import { useState } from 'react';
 import ToolContent from '@components/ToolContent';
 import { ToolComponentProps } from '@tools/defineTool';
 import { GetGroupsType } from '@components/options/ToolOptions';
@@ -11,7 +12,7 @@ import TextFieldWithDesc from '@components/options/TextFieldWithDesc';
 import { updateNumberField } from '@utils/string';
 import * as Yup from 'yup';
 import { useTranslation } from 'react-i18next';
-import { debounce } from 'lodash';
+
 import { getFileExtension } from '@utils/file';
 
 const initialValues: InitialValuesType = {
@@ -41,7 +42,7 @@ export default function Loop({ title }: ToolComponentProps) {
     }
   };
 
-  const debouncedCompute = useCallback(debounce(compute, 1000), []);
+  const debouncedCompute = useDebounce(compute, 1000);
 
   const getGroups: GetGroupsType<InitialValuesType> | null = ({
     values,

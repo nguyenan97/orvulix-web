@@ -152,10 +152,9 @@ test('applying presets during a held capture aborts late output; mobile/dark/key
     const original = HTMLCanvasElement.prototype.toBlob;
     Reflect.set(window, '__presetBlob', original);
     HTMLCanvasElement.prototype.toBlob = function (cb, type, q) {
-      const c = this;
-      Reflect.set(window, '__presetCanvas', c);
+      Reflect.set(window, '__presetCanvas', this);
       Reflect.set(window, '__presetRelease', () =>
-        original.call(c, cb, type, q)
+        original.call(this, cb, type, q)
       );
     };
   });

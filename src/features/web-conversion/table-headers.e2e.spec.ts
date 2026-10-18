@@ -419,10 +419,9 @@ test('script/network isolation in repeated clone, mobile/dark/keyboard, cancel/e
     let calls = 0;
     HTMLCanvasElement.prototype.toBlob = function (cb, type, quality) {
       if (++calls === 2) {
-        const canvas = this;
-        Reflect.set(window, '__headerCanvas', canvas);
+        Reflect.set(window, '__headerCanvas', this);
         Reflect.set(window, '__releaseHeader', () =>
-          original.call(canvas, cb, type, quality)
+          original.call(this, cb, type, quality)
         );
       } else original.call(this, cb, type, quality);
     };
@@ -454,10 +453,9 @@ test('script/network isolation in repeated clone, mobile/dark/keyboard, cancel/e
     const original = HTMLCanvasElement.prototype.toBlob;
     Reflect.set(window, '__cancelBlob', original);
     HTMLCanvasElement.prototype.toBlob = function (callback, type, quality) {
-      const canvas = this;
-      Reflect.set(window, '__cancelCanvas', canvas);
+      Reflect.set(window, '__cancelCanvas', this);
       Reflect.set(window, '__cancelRelease', () =>
-        original.call(canvas, callback, type, quality)
+        original.call(this, callback, type, quality)
       );
     };
   });
@@ -643,10 +641,9 @@ test('large header plan enforces elapsed deadline after a held continuation capt
     let calls = 0;
     HTMLCanvasElement.prototype.toBlob = function (cb, type, quality) {
       if (++calls === 2) {
-        const canvas = this;
-        Reflect.set(window, '__deadlineCanvas', canvas);
+        Reflect.set(window, '__deadlineCanvas', this);
         Reflect.set(window, '__deadlineRelease', () =>
-          original.call(canvas, cb, type, quality)
+          original.call(this, cb, type, quality)
         );
       } else original.call(this, cb, type, quality);
     };

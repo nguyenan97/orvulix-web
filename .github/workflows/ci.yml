@@ -23,7 +23,10 @@ jobs:
           node-version: '24'
       - name: Install dependencies
         run: npm ci
-      - name: Run tests
+      - name: Check application lint
+        # Keep the existing required job; lint never mutates the checkout.
+        run: npm run lint:check
+      - name: Run unit tests
         run: npm run test -- --run
       - name: Build project
         run: npm run build

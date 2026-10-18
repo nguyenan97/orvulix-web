@@ -1,4 +1,4 @@
 export type InitialValuesType = {
-  start: Number;
+  start: number;
   end: number;
 };
