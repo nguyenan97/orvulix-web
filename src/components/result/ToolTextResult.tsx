@@ -15,13 +15,15 @@ export default function ToolTextResult({
   value,
   extension = 'txt',
   keepSpecialCharacters,
-  loading
+  loading,
+  disabled = false
 }: {
   title?: string;
   value: string;
   extension?: string;
   keepSpecialCharacters?: boolean;
   loading?: boolean;
+  disabled?: boolean;
 }) {
   const { t } = useTranslation();
   const { showSnackBar } = useContext(CustomSnackBarContext);
@@ -29,6 +31,7 @@ export default function ToolTextResult({
     keepSpecialCharacters ? value : replaceSpecialCharacters(value)
   ).replace(/\r\n?/g, '\n');
   const handleCopy = () => {
+    if (disabled) return;
     writeResultText(displayValue)
       .then(() => showSnackBar(t('toolTextResult.copied'), 'success'))
       .catch((err) => {
@@ -36,6 +39,7 @@ export default function ToolTextResult({
       });
   };
   const handleDownload = () => {
+    if (disabled) return;
     const filename = `${brand.downloadPrefix}.${extension}`;
 
     const mimeType = mime.getType(extension) || 'text/plain';
@@ -84,7 +88,11 @@ export default function ToolTextResult({
           inputProps={{ 'data-testid': 'text-result' }}
         />
       )}
-      <ResultFooter handleCopy={handleCopy} handleDownload={handleDownload} />
+      <ResultFooter
+        disabled={disabled}
+        handleCopy={handleCopy}
+        handleDownload={handleDownload}
+      />
     </Box>
   );
 }

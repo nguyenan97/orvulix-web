@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
 import ToolContent from '@components/ToolContent';
 import ToolCodeInput from '@components/input/ToolCodeInput';
-import ToolTextResult from '@components/result/ToolTextResult';
-import { convertTsvToJson } from './service';
+import {
+  DelimitedResult,
+  resultIsDerived
+} from '../../../../features/delimited-json/Result';
 import { CardExampleType } from '@components/examples/ToolExamples';
 import { GetGroupsType } from '@components/options/ToolOptions';
 import { ToolComponentProps } from '@tools/defineTool';
@@ -126,12 +128,6 @@ export default function TsvToJson({
   longDescription
 }: ToolComponentProps) {
   const [input, setInput] = useState<string>('');
-  const [result, setResult] = useState<string>('');
-
-  const compute = (values: InitialValuesType, input: string) => {
-    setResult(convertTsvToJson(input, values));
-  };
-
   const getGroups: GetGroupsType<InitialValuesType> | null = ({
     values,
     updateField
@@ -212,7 +208,7 @@ export default function TsvToJson({
       input={input}
       setInput={setInput}
       initialValues={initialValues}
-      compute={compute}
+      compute={resultIsDerived}
       exampleCards={exampleCards}
       getGroups={getGroups}
       inputComponent={
@@ -223,9 +219,7 @@ export default function TsvToJson({
           language="tsv"
         />
       }
-      resultComponent={
-        <ToolTextResult title="Output JSON" value={result} extension={'json'} />
-      }
+      resultComponent={<DelimitedResult title="Output JSON" input={input} />}
       toolInfo={{ title: `What is a ${title}?`, description: longDescription }}
     />
   );
