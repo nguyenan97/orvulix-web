@@ -154,12 +154,10 @@ function protectPdf(dataStruct, responseCallback) {
 }
 
 self.addEventListener('message', function ({ data: e }) {
-  console.log('message', e);
   // e.data contains the message sent to the worker.
   if (e.target !== 'wasm') {
     return;
   }
-  console.log('Message received from main script', e.data);
   const responseCallback = ({ pdfDataURL, type }) => {
     self.postMessage(pdfDataURL);
   };
