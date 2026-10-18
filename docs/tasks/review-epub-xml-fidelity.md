@@ -1,7 +1,7 @@
 # Task checkpoint: review-epub-xml-fidelity
 
 - Updated: 2026-10-18, Asia/Bangkok
-- Branch / base: feature/review-epub-xml-fidelity / develop 22e2a097
+- Branch / base: feature/review-epub-xml-fidelity / develop 0da95022
 - PR: pending
 - Phase: reviewing
 - Delivery mode: develop-merge
@@ -42,6 +42,9 @@ and paragraph contracts. No new dependency/network boundary or active app DOM.
 No open blocking finding for this slice. Self-review is not independent approval.
 Upstream hotspots: pdf-to-epub/service.ts and the focused Pages test entry.
 
-Next: refresh develop when R09 delivers; it changes independent Ghostscript files.
-Commit/push/open one PR, then final-head full CI and merge/cleanup under R01 gates.
+R09 merged through PR45 at 0da95022. Merged current develop into this feature;
+only independent Ghostscript logging/test/docs changed. Combined EPUB/privacy
+regressions pass 6/6. Existing browser/build evidence at prepared commit 2031815
+still covers unchanged EPUB runtime; latest-head CI must validate the merged tree.
+Next: push/open one PR, then final-head full CI and merge/cleanup under R01 gates.
 The current runtime tree is validated; this checkpoint update is docs only.
