@@ -1,7 +1,7 @@
 # Task checkpoint: review-delimited-json-integrity
 
 - Updated: 2026-10-18, Asia/Bangkok
-- Branch / base: feature/review-delimited-json-integrity / develop 0da95022
+- Branch / base: feature/review-delimited-json-integrity / develop b368b48d
 - PR: pending
 - Phase: reviewing
 - Delivery mode: develop-merge
@@ -52,3 +52,8 @@ docs/decisions/delimited-result-validity.md. Self-review is not independent appr
 Next: deliver prepared R03, merge latest develop into this branch, revalidate the
 affected full diff, then push one PR and require final-head CI before merge.
 R02 PR46 has merged at b368b48d. R03 branch awaits base integration/delivery.
+
+Base integration checkpoint: merged R02/R09 current develop at b368b48d into
+9444e2c and preserved the independent EPUB plus CSV/TSV CI steps. Full local unit
+and final build run on this integrated tree; inspect actual results before PR.
+R03 PR47 is running exact-head CI.
