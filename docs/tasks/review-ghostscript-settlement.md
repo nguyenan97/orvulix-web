@@ -1,7 +1,7 @@
 # Task checkpoint: review-ghostscript-settlement
 
-- Branch/base: feature/review-ghostscript-settlement / develop 3d3e9dee
-- Phase: developing; PR pending; develop-merge; user requested R07 among all fixes.
+- Branch/base: feature/review-ghostscript-settlement / develop b7bf878f
+- Phase: reviewing; PR pending; develop-merge; user requested R07 among all fixes.
 
 Worker only handles success. WASM/network/import/runtime/message failure leaves
 compression/protection pending forever; intermediate blob URLs and XHR have no
@@ -51,3 +51,12 @@ passes: worker byte/header checks and asset failure channel, then UI current-job
 ownership/password privacy/resource cleanup. No blocking finding remains.
 Next integrate PDF lifecycle after PR51 merges, revalidate relevant interaction,
 push one PR and require exact-head CI before merge/cleanup.
+
+PDF lifecycle PR51 merged at b7bf878f. Integrated current develop with no runtime
+conflict and all focused CI entries preserved. Its PDF.js converters/multi-file
+preview do not alter Ghostscript's single-file result path; reuse native/build
+evidence at 8afb02c with that scope. Latest-head full CI must validate the full
+integrated tree. Final review confirms explicit WASM HTTP checks, transferable
+bytes, input/output admission, single settlement, termination/listener cleanup,
+and current UI ownership. No open blocker; self-review is not independent approval.
+Next: push/open PR, require exact-head CI, matched-head merge and branch cleanup.
