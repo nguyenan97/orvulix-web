@@ -6,8 +6,29 @@ import { brand } from '../../../../brand/config'; // ORVULIX-BRAND
 // Set worker source for PDF.js
 pdfjsLib.GlobalWorkerOptions.workerSrc = pdfjsWorker;
 
+/** XML text context, not HTML sanitization: preserve every admitted character. */
+function escapeXmlText(value: string): string {
+  for (const character of value) {
+    const code = character.codePointAt(0)!;
+    if (
+      (code < 0x20 && ![0x9, 0xa, 0xd].includes(code)) ||
+      (code >= 0xd800 && code <= 0xdfff) ||
+      code === 0xfffe ||
+      code === 0xffff
+    ) {
+      throw new Error(
+        'The PDF title or text contains a character XML cannot represent.'
+      );
+    }
+  }
+  return value
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;');
+}
+
 function formatTextToParagraphs(raw: string): string {
-  return raw
+  return escapeXmlText(raw)
     .split(/\n{2,}|\r{2,}/g) // Split on double line breaks
     .map((p) => p.trim())
     .filter((p) => p.length > 0)
@@ -49,14 +70,15 @@ export async function convertPdfToEpub(pdfFile: File): Promise<File> {
   );
 
   const oebps = zip.folder('OEBPS');
-  const bookTitle = pdfFile.name.replace(/\.pdf$/i, '');
+  const bookTitle = escapeXmlText(pdfFile.name.replace(/\.pdf$/i, ''));
+  const bookId = Date.now().toString();
 
   const contentOpf = `<?xml version="1.0" encoding="UTF-8"?>
 <package xmlns="http://www.idpf.org/2007/opf" unique-identifier="bookid" version="2.0">
   <metadata xmlns:dc="http://purl.org/dc/elements/1.1/">
     <dc:title>${bookTitle}</dc:title>
-    <dc:creator>Converted by ${brand.name}</dc:creator>
-    <dc:identifier id="bookid">${Date.now()}</dc:identifier>
+    <dc:creator>Converted by ${escapeXmlText(brand.name)}</dc:creator>
+    <dc:identifier id="bookid">${bookId}</dc:identifier>
     <dc:language>en</dc:language>
   </metadata>
   <manifest>
@@ -82,7 +104,7 @@ export async function convertPdfToEpub(pdfFile: File): Promise<File> {
   const tocNcx = `<?xml version="1.0" encoding="UTF-8"?>
 <ncx xmlns="http://www.daisy.org/z3986/2005/ncx/" version="2005-1">
   <head>
-    <meta name="dtb:uid" content="${Date.now()}"/>
+    <meta name="dtb:uid" content="${bookId}"/>
     <meta name="dtb:depth" content="1"/>
     <meta name="dtb:totalPageCount" content="0"/>
     <meta name="dtb:maxPageNumber" content="0"/>
