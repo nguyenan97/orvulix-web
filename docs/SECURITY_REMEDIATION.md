@@ -210,8 +210,8 @@ an address, monitored mailbox or response SLA.
 
 ## Deferred follow-ups and acceptance criteria
 
-The dependency upgrades, audit gate, workflows and exposure documentation are
-implemented on this feature branch, not merged. Braces is temporarily accepted
+The dependency upgrades, audit gate, workflows and exposure documentation were
+merged in the original remediation and foundation tasks. Braces is temporarily accepted
 until 2026-11-13. The following tasks are planned, not implemented by this PR;
 owner nguyenan97 must review their scope and any required settings authorization.
 
@@ -236,7 +236,7 @@ owner nguyenan97 must review their scope and any required settings authorization
   triaged/enforced, with explicit authority for any repository settings. Done when
   a new high finding and escalation are detected by the chosen process, disposition
   changes are reviewable, and fork PRs remain isolated without privileged execution
-  or content leakage. Keep the current five findings visible; no blanket dismissal.
+  or content leakage. Keep reviewed findings visible; no blanket dismissal.
 - Markdown: define literal backslash/pipe/newline round-trip behavior and exported
   raw-HTML handling. Done when tests cover these cases, textarea output stays inert,
   and any supported downstream rendering uses an explicit safe policy. Do not
@@ -382,13 +382,15 @@ That task's token received REST 403, so its evidence was metadata-only SARIF.
 Those historical counts/access limits are not the current repository state.
 
 Reassessment on 2026-10-18: the explicit `refs/heads/develop` REST alert list at
-`b7bf878feb93d0c167d1da17dd8acf4dca1afc51` contains six open identities (#1-#6),
+analysed commit `34da69933a2d36035446754bafd0f3f87a29a4b4` contains six open identities (#1-#6),
 analysis key `.github/workflows/security.yml:codeql`, category
 `/language:javascript-typescript`. Some PR analyses report five results for the
 same category, omitting #1; that ref-specific difference does not establish a fix
 or resolved branch alert. Compare exact ref, commit, category and alert identity,
 not counts across PR/develop runs. Rule score is not proof of a reachable exploit.
 No alert is suppressed, dismissed or marked resolved by this documentation change.
+At this read, develop had advanced to `226cf0a9`; its new analysis was pending.
+The snapshot identifies the analysed commit rather than claiming scan freshness.
 
 | Rule / source | Trigger and sink review | Disposition |
 | --- | --- | --- |

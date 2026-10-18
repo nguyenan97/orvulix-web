@@ -1,6 +1,6 @@
 # Task checkpoint: review-codeql-dispositions
 
-- Branch/base: feature/review-codeql-dispositions / develop b7bf878f
+- Branch/base: feature/review-codeql-dispositions / develop 226cf0a9
 - Phase: reviewing; PR pending; develop-merge; user requested R13 among all fixes.
 
 The remediation ledger records five first-scan findings but develop currently has
@@ -27,3 +27,11 @@ and alert #1 API instance; no new exploitation claim. Two documentation review
 passes and style/diff checks pass. No runtime tests invented, policy weakened or
 alert dismissed. Next: integrate final develop after prepared R07/R08 delivery,
 refresh explicit-ref identity check if needed, one PR with exact-head CI/merge.
+
+R07/R08 merged through 226cf0a9 and integrated with no conflict. Refreshed explicit
+develop REST list still contains #1-#6, latest analysed commit 34da6993; new develop
+analysis is pending. Ledger now pins that actual analysed SHA and names the newer
+head separately. Corrected two stale prose statements about five findings and the
+already-merged original remediation. No sanitizer/sink changes in these worker
+slices. Final documentation review and style/diff checks apply to this full diff.
+Next: push one docs-only PR, require exact-head CI and matched-head merge/cleanup.
