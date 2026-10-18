@@ -1,0 +1,54 @@
+# Task checkpoint: review-delimited-json-integrity
+
+- Updated: 2026-10-18, Asia/Bangkok
+- Branch / base: feature/review-delimited-json-integrity / develop 0da95022
+- PR: pending
+- Phase: reviewing
+- Delivery mode: develop-merge
+- Authorization: fix R04; owner chose strict CSV/TSV rows and duplicate headers.
+
+## Behavioral contract
+
+Parse records across physical lines. Doubled quotes decode once; quoted whitespace,
+newlines, numeric identifiers and comment markers remain literal. Dynamic typing
+applies only to unquoted values; empty remains empty and unsafe integers stay text.
+Preserve unquoted whitespace. Comments only at record starts outside quotes.
+Reject missing/extra fields, duplicate headers, misplaced/unclosed quotes.
+Empty comment disables comments. Delimiter is one non-newline UTF-16 character;
+quote is one distinct character or empty to disable quoting.
+
+AC1: both services retain exact content in regression fixtures and native download.
+AC2: strict shape/quote failure has an inline error, empty output, disabled exports,
+and valid/empty input recovery without stale output.
+AC3: admission caps 1 Mi UTF-16 source units, 20,000 data records, 1,024 columns;
+bounded retained/serialized JSON at 2 Mi units, including repeated header cost.
+These are conservative acceptance limits, not hard heap/CPU quotas.
+
+Minimal boundary: route -> current Formik result -> shared bounded parser -> JSON
+text output. CSV/TSV share the actual duplicated state machine, not a new ETL
+framework. Existing service APIs remain thin adapters. Add opt-in text-result
+validity to match the existing code-result contract; default other consumers stay
+unchanged. No dependency, upload, storage or hosting changes.
+
+## Resume
+
+Baseline 19/19 service regressions failed, then passed with the shared parser.
+Expanded parser/derived-result/default clipboard regressions pass 37/37. Includes
+option validation, repeated-header output amplification, column/row/source caps,
+comments/empty records, strict shape and quote errors, and recovery.
+
+Actual FileReader imports and JSON downloads pass Chromium/Firefox/WebKit 6/6,
+zero retries (r04-browser.json outside repository). Initial browser test incorrectly
+looked for a nonexistent Clear button; corrected to empty file import, preserving
+the empty-input assertion. Both textarea and Monaco paths use native file input.
+Build (159 routes plus 404), typecheck, scoped read-only ESLint, 26 security tests,
+audit and style checks pass. SEO copy updated to the actual strict parser contract;
+the final base-integrated build still needs rerunning after this copy change.
+
+Two review passes: record grammar/typed values/prototype-named headers and output
+budgets, then current-input ownership/shared API defaults/download fidelity. No
+open blocking finding. Optional disabled flag matches ToolCodeResult; ADR is
+docs/decisions/delimited-result-validity.md. Self-review is not independent approval.
+Next: deliver prepared R03, merge latest develop into this branch, revalidate the
+affected full diff, then push one PR and require final-head CI before merge.
+R02 PR46 has merged at b368b48d. R03 branch awaits base integration/delivery.
