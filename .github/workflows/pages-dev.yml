@@ -58,6 +58,10 @@ jobs:
         run: npx playwright test src/features/pdf-conversion/conversion.e2e.spec.ts --project=chromium --workers=1
         env:
           PLAYWRIGHT_USE_EXISTING_BUILD: 'true'
+      - name: Verify async tool error reporting
+        run: npx playwright test src/components/async-errors.e2e.spec.ts --project=chromium --workers=1
+        env:
+          PLAYWRIGHT_USE_EXISTING_BUILD: 'true'
       - name: Verify WebP background pixels
         run: npx playwright test src/pages/tools/converters/convert-to-webp/background.e2e.spec.ts --project=chromium --workers=1
         env:
