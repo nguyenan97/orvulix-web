@@ -1,15 +1,4 @@
-/**
- * SEO content for /pdf/pdf-to-png. Every statement was checked against the code;
- * re-verify these sources when upstream changes the tool:
- * - src/pages/tools/pdf/pdf-to-png/service.ts:13-41
- * - src/pages/tools/pdf/pdf-to-png/service.ts:37-48
- * - src/pages/tools/pdf/pdf-to-png/service.ts:2-5
- * - node_modules/pdfjs-dist/build/pdf.mjs:967-1038 (pdfjs-dist 5.4.149)
- * - node_modules/pdfjs-dist/build/pdf.mjs:7143,7177,12579-12627; src/pages/tools/pdf/pdf-to-png/service.ts:18
- * - src/pages/tools/pdf/pdf-to-png/index.tsx:43-67
- * - src/components/result/ToolMultiFileResult.tsx:43-52,145-163
- * - src/components/input/BaseFileInput.tsx:72-99,163-196
- */
+/** SEO contract: PDF conversion service, features/pdf-conversion and owned result previews. */
 import type { ToolSeoOverride } from '../../types';
 
 const content: ToolSeoOverride = {
@@ -31,7 +20,9 @@ const content: ToolSeoOverride = {
   ],
   notes: [
     'Pages are rendered with PDF.js at scale 2, so each PDF point becomes 2 pixels.',
-    'Every page is converted; there are no options for page selection or resolution.',
+    'Every page is converted within the displayed limits; there are no options for page selection or resolution.',
+    'Input limits: 32 MiB and 500 pages. Conversion deadline: 30 seconds. Render limits: 4096 pixels per side, 8 Mi pixels per page and 32 Mi pixels total. PNG and ZIP output are each limited to 64 MiB. Large documents are rejected with an error; try fewer pages.',
+    'Clear or a replacement PDF cancels the current job and removes its output. Failed conversions show an error and can be retried.',
     'Images are named page-1.png, page-2.png and so on; the ZIP is named after the PDF with -pages.zip in place of .pdf.',
     "Rendering happens in the browser on a canvas; the PDF.js worker script is served from the site's own assets, and the tool sets no external font, CMap or WASM URLs."
   ],
