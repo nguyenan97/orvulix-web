@@ -73,3 +73,20 @@ the unused class, preserving inline slider layout. Empty options use explicit
 Record<string, never>. Existing CRLF-only JSON validator blob is normalized by
 the repository Git/format hooks; no logic change beyond the empty-options type.
 Next: await R13 CI/merge, integrate docs-only base, final required CI and cleanup.
+
+Final integrated validation on 83f4549 plus the test-only selector correction:
+175 files/1707 tests pass (maxWorkers=4,101.39s); production build/typecheck and
+159-route/404/sitemap validation pass. The added NumericInput test used a Playwright
+option unsupported by Testing Library's types; replaced exact:true with /^foot$/,
+preserving exact selection, and reran its test successfully. Worker audit and Pages
+preparation test pass. Runtime source is unchanged by that test correction.
+
+Integrated native string worker flows pass 9/9 across all engines, zero retries
+(r14-string-browser.json) on the final production build. Inherited 46 browser cases
+and custom 9 artifact flows above remain valid for unchanged affected runtime.
+Final lint passes and a frozen-source 1282-file fingerprint is identical before/
+after (r14-readonly.json); one intermediate fingerprint was invalidated by my own
+concurrent test edit, so it was rerun after edits finished rather than attributed
+to lint mutation. Final complete diff reviewed; no blocking finding remains.
+Next: integrate R13 after its CI/merge, open the final scoped PR and require its
+exact latest head CI before authorized merge and safe branch cleanup.

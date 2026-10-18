@@ -16,7 +16,7 @@ it('keeps the selected display unit across updates and resets on quantity-kind c
     />
   );
   fireEvent.mouseDown(screen.getAllByRole('combobox')[1]);
-  fireEvent.click(screen.getByRole('option', { name: 'foot', exact: true }));
+  fireEvent.click(screen.getByRole('option', { name: /^foot$/ }));
   expect(
     Number((screen.getByRole('spinbutton') as HTMLInputElement).value)
   ).toBeCloseTo(3.28084, 5);
