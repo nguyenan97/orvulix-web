@@ -62,3 +62,9 @@ proof retained; no hard memory/CPU or forcible JSZip/arrayBuffer cancellation cl
 No remaining blocking finding. Self-review is not independent approval.
 Next: save prepared slice, deliver R12 after merged R11, integrate final develop,
 revalidate shared-contract interactions and final build, exact-head CI/merge.
+
+Saved da96b04 and integrated merged R11 at b7d06a3 (develop 3d3e9dee), preserving
+both WebP and PDF browser CI steps. Final integrated build/typecheck including SEO
+limit copy passes 159 routes plus 404. Two additional output/text cap regressions
+pass, focused suite 28/28; unchanged full runtime suite remains 1619 tests above.
+R12 PR50 is running; integrate its ToolContent change before this PR delivery.
