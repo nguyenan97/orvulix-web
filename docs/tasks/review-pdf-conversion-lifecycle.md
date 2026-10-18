@@ -1,6 +1,6 @@
 # Task checkpoint: review-pdf-conversion-lifecycle
 
-- Branch/base: feature/review-pdf-conversion-lifecycle / develop 4f56ef6c
+- Branch/base: feature/review-pdf-conversion-lifecycle / develop f6fe6902
 - Phase: reviewing; PR pending; delivery mode develop-merge.
 - Scope: confirmed R05/R06/R10, user requested all fixes.
 
@@ -68,3 +68,12 @@ both WebP and PDF browser CI steps. Final integrated build/typecheck including S
 limit copy passes 159 routes plus 404. Two additional output/text cap regressions
 pass, focused suite 28/28; unchanged full runtime suite remains 1619 tests above.
 R12 PR50 is running; integrate its ToolContent change before this PR delivery.
+
+R12 PR50 merged at f6fe6902. Integrated at df20189, retaining all browser CI steps.
+Combined PDF/current async-contract tests pass 34/34; final integrated build and
+scoped read-only ESLint pass. Current Chromium artifacts/lifecycle/EPUB fidelity
+pass 4/4, zero retries, on that build. Earlier unchanged codec flows retain all
+three-engine evidence in r05-browser-three-engines.json. Final two-pass diff
+review: optional signals, null/geometry/output guards, current-job publication,
+PDF/page/canvas teardown, preview URL effects and current error UI are covered.
+No open blocking finding. Next: push/open one PR, exact-head CI, merge/cleanup.
