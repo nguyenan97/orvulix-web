@@ -1,14 +1,15 @@
 # Task checkpoint: docker-run-compose
 
-- Updated: 2026-10-17 Asia/Bangkok
+- Updated: 2026-10-18 Asia/Bangkok
 - Branch / base: feature/docker-run-compose / develop e61aac398e51cfb2bd3ef7c63dbfd5973d83e4d8
 - PR: https://github.com/nguyenan97/orvulix-web/pull/41
-- Phase: final affected validation, then exact-head CI
+- Phase: local acceptance/review complete, exact-head CI pending
 - Delivery mode: develop-merge. User requested plan, prompt and execution of the
   next task. One backlog item only; main/production/subsequent tasks excluded.
-- Last verified head: ffce82c5c12ccc828015843de59e2f39f12e3cbc. Uncommitted
-  follow-up makes bind create_host_path explicit, adds its literal unit/browser
-  assertion and updates docs. Resolve latest head/CI from Git/PR on resume.
+- Last verified runtime head: 5c4093934780e0107a967aa4da8a0382781f84ba,
+  including explicit bind creation and literal unit/browser assertions. This
+  checkpoint update changes documentation only. Resolve its containing SHA and
+  exact latest-head CI from Git/PR on resume.
 
 ## Scope and implementation
 
@@ -47,15 +48,16 @@ unsupported flags, host path/lifecycle differences and sensitive output are disc
   no-interpolate/no-normalize config retain independent checks.
 - Production typecheck/build/SEO/sitemap after bind follow-up passes: 159 indexable
   routes, 137 tools, 14 categories, 152 lastmod URLs and preserved 404.
-- Before bind follow-up: native production 21/21 (121.18s), Pages 21/21 (55.6s)
+- After bind follow-up: native production 21/21 (59.11s), Pages 21/21 (37.68s)
   across Chromium/Firefox/WebKit, retries=0 and zero skipped/flaky/unexpected.
-  Final native suite reruns the full mapping with bind in downloaded literal YAML;
-  its completion and final Pages rerun remain required before marking PR ready.
-- Pages build at ffce82c: 160 HTML files; root/tool/roadmap/404 checked for noindex,
-  no canonical and /orvulix-web/ assets. Final follow-up Pages build/suite pending.
+  Native download assertions include the exact bind mapping and creation flag.
+  Pages rerun completed on 2026-10-18 against runtime head5c409393 after resume.
+- Final Pages typecheck/build: 160 HTML files; root/tool/roadmap/404 checked for
+  noindex, no canonical and /orvulix-web/ assets. The preview exited after tests.
 - Desktop1440/mobile390 dark screenshots inspected, no horizontal overflow.
   UI sample is named-volume-only, unchanged by the bind follow-up.
-- ESLint passed before bind follow-up; rerun changed-source lint/style/diff checks.
+- Changed-source ESLint, text style and full diff whitespace checks pass after
+  the bind follow-up and resumed review.
   Security harness26, fresh audit gate and Pages prepare1 pass. Existing audit15
   package findings / 6 advisories / exact braces exception unchanged.
 - Initial-head Security CI39040235857 passes; CodeQL remains the same five
@@ -73,7 +75,9 @@ Requirements review: supported flags/quotes/empty argv/order/interpolation/names
 invalid input/recovery, budget boundaries, current exports, mobile keyboard,
 developer search and static route verified. Open upstream issue379/comments
 reviewed; no upstream acceptance claim. Unknown options never silently disappear.
-No task-blocking finding remains beyond completing final affected validation/CI.
+Resumed review on 2026-10-18 rechecked the full parser/serializer/UI, supported
+contracts, test oracles and integration diff against unchanged develop e61aac39.
+No new task-blocking finding; exact latest-head CI remains the final delivery gate.
 Self-review is not independent approval; inspect actual GitHub review requirements.
 
 Findings corrected: test oracle YAML escaping, unit matcher misuse, ambiguous browser
@@ -84,10 +88,10 @@ are documented rather than reported as application bug reproductions.
 
 ## Resume / delivery gates
 
-Final native browser session82168 is running; final production build84818 passed.
-After native preview exits, run final Pages build and prefixed 21 browser checks.
-Update PR body with final evidence, mark ready only after local gates. Commit/push
-follow-up on the same PR41; exact latest-head Pages/Security CI must finish green.
+All local acceptance and review gates are complete. Native/build/Pages sessions
+have exited. Commit this checkpoint and push the pending bind follow-up on the
+same PR41; update its evidence and mark ready. Exact latest-head Pages/Security CI
+must finish green; initial-head green CI is not sufficient for the final head.
 Re-fetch develop, review full diff/base/rules, matched-head merge into develop,
 verify ancestry/tree and safe task branch cleanup. No production/main release.
 PR metadata/run links are authoritative for gates completed after this checkpoint.
