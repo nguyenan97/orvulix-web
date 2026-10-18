@@ -1,7 +1,7 @@
 # Task checkpoint: review-json-comparison-integrity
 
 - Updated: 2026-10-18, Asia/Bangkok
-- Branch / base: feature/review-json-comparison-integrity / develop 22e2a097
+- Branch / base: feature/review-json-comparison-integrity / develop b368b48d
 - PR: pending
 - Phase: reviewing
 - Delivery mode: develop-merge
@@ -43,6 +43,11 @@ prototype. Input/depth/token and retained/final output are bounded. Keep native
 JSON.parse number semantics, not arbitrary precision. No task-blocking finding
 remains. Self-review is not independent approval.
 
-Next: commit prepared slice; deliver R02 first, then merge current develop into
-this branch, resolve the independent Pages test entry and run affected checks.
-Open one PR and require exact-head full CI before develop merge. No prod release.
+R02 PR46 merged at b368b48d. Merged latest develop into prepared c88b04c;
+resolved additive Pages test conflict by retaining both EPUB and JSON steps.
+Combined comparison/budget/EPUB/privacy regressions pass 32/32 on 3e03af9.
+No JSON runtime changed from the previously browser/build-verified c88b04c;
+the latest-head full CI must verify the integrated base and Pages build.
+Reviewed the full runtime diff again: lexical escape handling, own-key traversal,
+root mismatch messages and output admission remain covered. No blocking finding.
+Next: push/open one PR and require exact-head full CI before develop merge.
