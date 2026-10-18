@@ -42,6 +42,10 @@ jobs:
         run: npx playwright test src/features/initial-load/initial-load.e2e.spec.ts --project=chromium --workers=1
         env:
           PLAYWRIGHT_USE_EXISTING_BUILD: 'true'
+      - name: Verify JSON comparison integrity
+        run: npx playwright test src/pages/tools/json/json-comparison/integrity.e2e.spec.ts --project=chromium --workers=1
+        env:
+          PLAYWRIGHT_USE_EXISTING_BUILD: 'true'
       - name: Verify EPUB artifact text fidelity
         run: npx playwright test src/pages/tools/pdf/pdf-to-epub/fidelity.e2e.spec.ts --project=chromium --workers=1
         env:
