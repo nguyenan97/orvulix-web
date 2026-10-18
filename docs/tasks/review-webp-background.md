@@ -1,6 +1,6 @@
 # Task checkpoint: review-webp-background
 
-- Branch/base: feature/review-webp-background / develop b368b48d
+- Branch/base: feature/review-webp-background / develop 4f56ef6c
 - Delivery mode: develop-merge; user requested all confirmed fixes, R11 here.
 - Phase: reviewing; PR pending.
 
@@ -24,3 +24,9 @@ self-review found no blocker: existing alpha flattening/fallback/quality/ZIP and
 object URL cleanup remain intact; self-review is not independent approval.
 Next: integrate latest develop after prepared R03/R04 delivery, inspect full diff,
 then exact-head CI/merge/cleanup. No production release.
+
+R03/R04 merged. Integrated current develop 4f56ef6c with all focused Pages steps
+retained. Their independent JSON/CSV changes do not touch WebP service/route or
+ToolFileResult. Prepared runtime at f37ecf2 retains native output/build evidence;
+latest-head CI must validate the integrated full tree. Final full-diff review
+confirms only Color import/type/unused catch parameter and focused test/CI/docs.
