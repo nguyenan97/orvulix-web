@@ -1,4 +1,9 @@
 {
+  "fileChecksum": {
+    "title": "File Checksum Calculator",
+    "description": "Calculate SHA-256 or SHA-512 for a local file and compare an expected checksum without uploading its contents.",
+    "shortDescription": "Calculate and verify local file checksums"
+  },
   "textWorkflow": {
     "title": "Text Workflow Builder",
     "description": "Combine text transformations into reusable steps, inspect intermediate outputs and import or export recipes in your browser.",

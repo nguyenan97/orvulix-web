@@ -29,9 +29,11 @@ import { tool as stringEmailExtractor } from './email-extractor/meta';
 import { tool as stringBcrypt } from './bcrypt/meta';
 import { tool as stringTableTextConverter } from './table-text-converter/meta';
 import { tool as textWorkflow } from './text-workflow/meta';
+import { tool as fileChecksum } from './file-checksum/meta';
 
 export const stringTools = [
   textWorkflow,
+  fileChecksum,
   stringSplit,
   stringJoin,
   stringRemoveDuplicateLines,

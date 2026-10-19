@@ -76,6 +76,19 @@ const makeT = (dict: Record<string, string>): NamespacedT =>
   ((key: string) => dict[key] ?? key) as unknown as NamespacedT;
 
 describe('filterTools token-based search', () => {
+  it('discovers local checksum algorithms for developers and general users', () => {
+    for (const query of ['file checksum', 'sha256', 'sha512', 'sha-256']) {
+      for (const audience of ['developers', 'generalUsers'] as const)
+        expect(
+          filterTools(
+            registeredTools,
+            query,
+            [audience],
+            makeT(enTranslations)
+          ).map((tool) => tool.path)
+        ).toContain('string/file-checksum');
+    }
+  });
   it('discovers Docker for developers while preserving existing media-converter audiences', () => {
     const converters = registeredTools.filter(
       (tool) => tool.type === 'converters'

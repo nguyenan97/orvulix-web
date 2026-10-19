@@ -76,6 +76,13 @@ braces tooling exception remain outside that delivery.
 
 ## Ordered feature plan
 
+File Checksum Calculator's bounded local-file MVP is implemented in the current
+development change: SHA-256/SHA-512, expected-checksum comparison, copy and a
+cancellable worker with size/deadline budgets. See [execution prompt and
+contracts](FILE_CHECKSUM.md) and [checkpoint](tasks/file-checksum.md). Actual
+develop delivery follows PR metadata; production release, streaming larger files
+and batch hashing are separate.
+
 Docker Run to Compose's bounded Linux-container MVP is implemented in the current
 development change. The [plan, execution prompt and contracts](DOCKER_RUN_COMPOSE.md)
 define the whitelist, literal quoting/interpolation, unsupported syntax and budgets.
