@@ -38,12 +38,12 @@ describe('tool SEO overrides', () => {
   });
 
   it('keeps hand-written content complete and free of unverifiable wording', () => {
-    // 30 original editorial pages plus workflow, Docker, checksum and transfer time.
+    // 30 original editorial pages plus workflow, Docker, checksum and two calculators.
     const editorial = Object.keys(TOOL_OVERRIDES).filter(
       (path) => path !== 'pdf/editor'
     );
     expect(editorial.length).toBeGreaterThanOrEqual(20);
-    expect(editorial.length).toBe(34);
+    expect(editorial.length).toBe(35);
     expect(TOOL_OVERRIDES['string/text-workflow'].notes.join(' ')).toContain(
       'five-second deadline'
     );

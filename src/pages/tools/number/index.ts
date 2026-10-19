@@ -7,8 +7,10 @@ import { tool as numberByteConverter } from './byte-converter/meta';
 import { tool as numberNumberToWords } from './number-to-words/meta';
 import { tools as genericCalcTools } from './generic-calc/meta';
 import { tool as dataTransferTime } from './data-transfer-time/meta';
+import { tool as ipv4Subnet } from './ipv4-subnet-calculator/meta';
 
 export const numberTools = [
+  ipv4Subnet,
   dataTransferTime,
   numberSum,
   numberGenerate,

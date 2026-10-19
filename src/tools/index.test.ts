@@ -76,6 +76,23 @@ const makeT = (dict: Record<string, string>): NamespacedT =>
   ((key: string) => dict[key] ?? key) as unknown as NamespacedT;
 
 describe('filterTools token-based search', () => {
+  it('discovers IPv4 subnet calculations for the intended audiences', () => {
+    for (const query of [
+      'ipv4 subnet',
+      'cidr mask',
+      'network broadcast',
+      'host range'
+    ])
+      for (const audience of ['developers', 'generalUsers'] as const)
+        expect(
+          filterTools(
+            registeredTools,
+            query,
+            [audience],
+            makeT(enTranslations)
+          ).map((tool) => tool.path)
+        ).toContain('number/ipv4-subnet-calculator');
+  });
   it('discovers data-transfer estimates for both intended audiences', () => {
     for (const query of [
       'data transfer',

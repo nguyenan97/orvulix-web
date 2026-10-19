@@ -48,7 +48,14 @@ describe('public roadmap scope', () => {
         4,
         PLANNED_FEATURES[4].status
       )
-    ).toMatch(/^Planned\. Priority 5\./);
+    ).toMatch(/^IPv4 MVP implemented for development\. Priority 5\./);
+    expect(
+      plannedFeatureSummary(
+        PLANNED_FEATURES[5].benefit,
+        5,
+        PLANNED_FEATURES[5].status
+      )
+    ).toMatch(/^Planned\. Priority 6\./);
   });
   it('keeps feature names and proposed order aligned with the technical backlog', () => {
     const backlog = readFileSync('docs/FEATURE_BACKLOG.md', 'utf8');
