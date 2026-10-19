@@ -29,6 +29,7 @@ import stringBase64 from './tool-content/string/base64';
 import textWorkflow from './tool-content/string/text-workflow';
 import dockerRunCompose from './tool-content/converters/docker-run-to-compose';
 import fileChecksum from './tool-content/string/file-checksum';
+import dataTransferTime from './tool-content/number/data-transfer-time';
 import stringPasswordGenerator from './tool-content/string/password-generator';
 import stringTextCompare from './tool-content/string/text-compare';
 import htmlToImage from './tool-content/image-generic/html-to-image'; // ORVULIX-WEB-CONVERSION
@@ -41,6 +42,7 @@ import htmlToPdf from './tool-content/pdf/html-to-pdf'; // ORVULIX-WEB-CONVERSIO
  * generated from their English locale strings.
  */
 export const TOOL_OVERRIDES: Record<string, ToolSeoOverride> = {
+  'number/data-transfer-time': dataTransferTime,
   'string/file-checksum': fileChecksum,
   'converters/docker-run-to-compose': dockerRunCompose,
   'string/text-workflow': textWorkflow,

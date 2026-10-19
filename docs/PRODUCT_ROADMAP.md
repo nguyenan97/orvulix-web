@@ -11,6 +11,12 @@ Our approach is to make existing tools better first, then explore new capabiliti
 
 ## Verified development delivery
 
+Data Transfer Time Calculator has an implemented browser-local MVP: size, rate,
+decimal/binary bit/byte units and optional efficiency produce live duration
+estimates. See [prompt and contracts](DATA_TRANSFER_TIME.md) and
+[delivery checkpoint](tasks/data-transfer-time.md) for PR/CI status. No connection
+speed is measured; production release remains separate.
+
 File Checksum Calculator has an implemented SHA-256/SHA-512 MVP for one local
 file up to 64 MiB, with expected-value comparison, copy and cancellable worker
 processing. See [prompt and contracts](FILE_CHECKSUM.md) and
