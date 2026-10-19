@@ -2,11 +2,12 @@
 
 - Updated: 2026-10-19 Asia/Bangkok
 - Branch/base: feature/file-checksum / develop a9609e54
-- PR: not opened
-- Phase: reviewed / preparing draft PR
+- PR: https://github.com/nguyenan97/orvulix-web/pull/56
+- Phase: reviewed / CI
 - Delivery mode: develop-merge
 - Authorization: user delegates feature choice and implementation; current task only.
-- Last verified base: a9609e54; feature code/docs/tests are currently uncommitted.
+- Last verified implementation head: e00df15; base a9609e54. Only this checkpoint
+  update is uncommitted; implementation has been pushed.
 
 ## Scope and acceptance
 
@@ -28,8 +29,8 @@ Tests were added after initial implementation; no red-first product regression
 claim. No runtime dependency changes.
 
 Local evidence for this tree:
-- Typecheck and read-only ESLint passed before final browser-test/DOM-test edits;
-  repeated checks running. Scoped ESLint for final browser spec passed.
+- Typecheck and read-only ESLint passed again after final browser-test edits;
+  focused DOM suite also passed after its final extra test case.
 - Full suite: 179 files / 1730 tests passed. Subsequently added one algorithm
   cancellation case; focused Calculator suite 8/8 passed. Latest-head CI must
   validate the complete updated suite.
@@ -68,7 +69,10 @@ Review passes against base a9609e54 and full feature tree:
 
 ## Resume point
 
-Commit/push a draft PR into develop, mark ready after final review, inspect exact
-latest-head CI and CodeQL findings, fetch develop, matched-head merge and safe
-cleanup. Dev server session 59185 owns localhost:5173 until cleanup; browser
-previews already stopped. Production release remains outside scope.
+PR56 is draft. Commit this checkpoint, mark ready, inspect exact latest-head CI
+and CodeQL findings, fetch develop, matched-head merge and safe cleanup. Prior
+local build/native evidence applies to the unchanged runtime at e00df15; CI must
+match the new documentation head. Full staged diff reviewed before e00df15 and
+again after hooks; no task-blocking issue found. Dev server session 59185 owns
+localhost:5173 until cleanup; browser previews already stopped. Production
+release remains outside scope.
