@@ -11,6 +11,12 @@ Our approach is to make existing tools better first, then explore new capabiliti
 
 ## Verified development delivery
 
+File Checksum Calculator has an implemented SHA-256/SHA-512 MVP for one local
+file up to 64 MiB, with expected-value comparison, copy and cancellable worker
+processing. See [prompt and contracts](FILE_CHECKSUM.md) and
+[delivery checkpoint](tasks/file-checksum.md) for PR/CI status. Streaming larger
+files, batch processing and production release remain separate.
+
 Docker Run to Compose has a bounded browser-local implementation for a documented
 Linux-container command subset, including literal-safe YAML and current-result
 exports. [Plan and supported scope](DOCKER_RUN_COMPOSE.md) and

@@ -107,8 +107,9 @@ export const PLANNED_FEATURES: readonly {
   },
   {
     title: 'File Checksum Calculator',
+    status: 'Bounded local-file MVP implemented for development',
     benefit:
-      'Calculate SHA-256 or SHA-512 for local files and compare the result with an expected checksum.'
+      'Calculate SHA-256 or SHA-512 for one local file up to 64 MiB, compare an expected checksum and copy the result. Larger streaming files and batch processing remain separate.'
   },
   {
     title: 'Data Transfer Time Calculator',

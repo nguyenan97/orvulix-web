@@ -10,7 +10,7 @@ import {
 } from './roadmap';
 
 describe('public roadmap scope', () => {
-  it('distinguishes the implemented text MVP from broader planned workflows', () => {
+  it('distinguishes implemented development MVPs from broader planned features', () => {
     const feature = PLANNED_FEATURES[0];
     expect(plannedFeatureSummary(feature.benefit, 0, feature.status)).toBe(
       'Text-only MVP implemented for development. Priority 1. Six ordered transformations, intermediate previews and settings-only recipe import/export. Broader cross-tool and media workflows remain planned; production release is separate.'
@@ -30,7 +30,16 @@ describe('public roadmap scope', () => {
         2,
         PLANNED_FEATURES[2].status
       )
-    ).toMatch(/^Planned\. Priority 3\./);
+    ).toMatch(
+      /^Bounded local-file MVP implemented for development\. Priority 3\./
+    );
+    expect(
+      plannedFeatureSummary(
+        PLANNED_FEATURES[3].benefit,
+        3,
+        PLANNED_FEATURES[3].status
+      )
+    ).toMatch(/^Planned\. Priority 4\./);
   });
   it('keeps feature names and proposed order aligned with the technical backlog', () => {
     const backlog = readFileSync('docs/FEATURE_BACKLOG.md', 'utf8');
