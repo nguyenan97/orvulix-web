@@ -1,4 +1,9 @@
 {
+  "ipv4Subnet": {
+    "title": "IPv4 Subnet Calculator",
+    "description": "Calculate IPv4 network boundaries, masks, broadcast, host ranges and counts from CIDR or a dotted subnet mask.",
+    "shortDescription": "Inspect IPv4 subnets and host ranges"
+  },
   "dataTransferTime": {
     "title": "Data Transfer Time Calculator",
     "description": "Estimate download or upload duration from data size, transfer rate and efficiency with explicit decimal or binary bit and byte units.",

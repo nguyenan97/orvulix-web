@@ -11,6 +11,12 @@ Our approach is to make existing tools better first, then explore new capabiliti
 
 ## Verified development delivery
 
+Subnet Calculator has an implemented IPv4 MVP: CIDR or dotted masks produce
+network boundaries, broadcast and host ranges/counts, with explicit /31 and /32
+behavior. See [prompt and contracts](IPV4_SUBNET.md) and
+[delivery checkpoint](tasks/ipv4-subnet-calculator.md) for PR/CI state. IPv6,
+host enumeration and production release remain separate.
+
 Data Transfer Time Calculator has an implemented browser-local MVP: size, rate,
 decimal/binary bit/byte units and optional efficiency produce live duration
 estimates. See [prompt and contracts](DATA_TRANSFER_TIME.md) and

@@ -76,6 +76,12 @@ braces tooling exception remain outside that delivery.
 
 ## Ordered feature plan
 
+Subnet Calculator's IPv4 MVP is implemented in the current development change:
+CIDR or contiguous dotted masks, network/broadcast/host ranges and explicit
+/0, /31 and /32 semantics. See [prompt and contracts](IPV4_SUBNET.md) and
+[checkpoint](tasks/ipv4-subnet-calculator.md) for validation/PR status. IPv6,
+special-use filtering, host enumeration and production release remain separate.
+
 Data Transfer Time Calculator's MVP is implemented in the current development
 change: explicit decimal/binary bit and byte units, optional efficiency and
 live current-input duration estimates. See [prompt and contracts](DATA_TRANSFER_TIME.md)
