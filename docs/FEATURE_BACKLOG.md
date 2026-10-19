@@ -76,6 +76,12 @@ braces tooling exception remain outside that delivery.
 
 ## Ordered feature plan
 
+Data Transfer Time Calculator's MVP is implemented in the current development
+change: explicit decimal/binary bit and byte units, optional efficiency and
+live current-input duration estimates. See [prompt and contracts](DATA_TRANSFER_TIME.md)
+and [checkpoint](tasks/data-transfer-time.md) for validation/PR status. Measured
+bandwidth, varying-rate simulation and production release remain separate.
+
 File Checksum Calculator's bounded local-file MVP is implemented in the current
 development change: SHA-256/SHA-512, expected-checksum comparison, copy and a
 cancellable worker with size/deadline budgets. See [execution prompt and

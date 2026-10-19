@@ -113,8 +113,9 @@ export const PLANNED_FEATURES: readonly {
   },
   {
     title: 'Data Transfer Time Calculator',
+    status: 'Unit-aware estimator implemented for development',
     benefit:
-      'Estimate transfer time from file size and connection speed, with clear bits, bytes and unit choices.'
+      'Estimate duration from data size, transfer rate and efficiency, with explicit decimal/binary bit and byte units. Measured bandwidth and variable-rate simulation remain separate.'
   },
   {
     title: 'Subnet Calculator',

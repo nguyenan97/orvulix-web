@@ -39,7 +39,16 @@ describe('public roadmap scope', () => {
         3,
         PLANNED_FEATURES[3].status
       )
-    ).toMatch(/^Planned\. Priority 4\./);
+    ).toMatch(
+      /^Unit-aware estimator implemented for development\. Priority 4\./
+    );
+    expect(
+      plannedFeatureSummary(
+        PLANNED_FEATURES[4].benefit,
+        4,
+        PLANNED_FEATURES[4].status
+      )
+    ).toMatch(/^Planned\. Priority 5\./);
   });
   it('keeps feature names and proposed order aligned with the technical backlog', () => {
     const backlog = readFileSync('docs/FEATURE_BACKLOG.md', 'utf8');

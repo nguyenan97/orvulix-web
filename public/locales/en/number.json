@@ -1,4 +1,9 @@
 {
+  "dataTransferTime": {
+    "title": "Data Transfer Time Calculator",
+    "description": "Estimate download or upload duration from data size, transfer rate and efficiency with explicit decimal or binary bit and byte units.",
+    "shortDescription": "Estimate data transfer duration"
+  },
   "arithmeticSequence": {
     "commonDifferenceDescription": "Common difference between terms (d)",
     "description": "Generate arithmetic sequences with customizable parameters.",

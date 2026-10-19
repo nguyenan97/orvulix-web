@@ -76,6 +76,23 @@ const makeT = (dict: Record<string, string>): NamespacedT =>
   ((key: string) => dict[key] ?? key) as unknown as NamespacedT;
 
 describe('filterTools token-based search', () => {
+  it('discovers data-transfer estimates for both intended audiences', () => {
+    for (const query of [
+      'data transfer',
+      'download time',
+      'upload bandwidth',
+      'mbps'
+    ])
+      for (const audience of ['developers', 'generalUsers'] as const)
+        expect(
+          filterTools(
+            registeredTools,
+            query,
+            [audience],
+            makeT(enTranslations)
+          ).map((tool) => tool.path)
+        ).toContain('number/data-transfer-time');
+  });
   it('discovers local checksum algorithms for developers and general users', () => {
     for (const query of ['file checksum', 'sha256', 'sha512', 'sha-256']) {
       for (const audience of ['developers', 'generalUsers'] as const)

@@ -6,8 +6,10 @@ import { tool as numberArithmeticSequence } from './arithmetic-sequence/meta';
 import { tool as numberByteConverter } from './byte-converter/meta';
 import { tool as numberNumberToWords } from './number-to-words/meta';
 import { tools as genericCalcTools } from './generic-calc/meta';
+import { tool as dataTransferTime } from './data-transfer-time/meta';
 
 export const numberTools = [
+  dataTransferTime,
   numberSum,
   numberGenerate,
   numberArithmeticSequence,
