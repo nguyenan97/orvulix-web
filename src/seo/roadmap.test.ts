@@ -10,6 +10,16 @@ import {
 } from './roadmap';
 
 describe('public roadmap scope', () => {
+  it('records explicit GIF controls without claiming timing/quality optimization', () => {
+    const gif = PLANNED_FEATURES[7];
+    expect(gif.title).toBe('Images to GIF improvements');
+    expect(gif.status).toBe(
+      'Explicit Create and Cancel implemented for development'
+    );
+    expect(gif.benefit).toContain(
+      'timing UX and quality optimization remain separate'
+    );
+  });
   it('distinguishes implemented development MVPs from broader planned features', () => {
     const feature = PLANNED_FEATURES[0];
     expect(plannedFeatureSummary(feature.benefit, 0, feature.status)).toBe(

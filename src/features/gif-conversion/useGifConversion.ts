@@ -10,11 +10,18 @@ export function useGifConversion() {
     error: ''
   });
   const mounted = useRef(true);
+  const [busy, setBusy] = useState(false);
   const [job] = useState(
     () =>
-      new LatestGifJob((value) => {
-        if (mounted.current) setState(value);
-      }, imagesToGif)
+      new LatestGifJob(
+        (value) => {
+          if (mounted.current) setState(value);
+        },
+        imagesToGif,
+        (value) => {
+          if (mounted.current) setBusy(value);
+        }
+      )
   );
   useEffect(() => {
     mounted.current = true;
@@ -23,14 +30,14 @@ export function useGifConversion() {
       job.dispose();
     };
   }, [job]);
-  const compute = useCallback(
+  const create = useCallback(
     (options: InitialValuesType, input: MultiImageInput[]) =>
-      job.schedule(
+      void job.run(
         options,
         input.map((item) => item.file)
       ),
     [job]
   );
   const invalidate = useCallback(() => job.invalidate(), [job]);
-  return { ...state, compute, invalidate };
+  return { ...state, busy, create, invalidate };
 }

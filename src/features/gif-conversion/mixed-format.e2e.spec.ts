@@ -39,6 +39,7 @@ async function fixtures(
   );
 }
 async function result(page: Page) {
+  await page.getByRole('button', { name: 'Create GIF', exact: true }).click();
   await page.locator('img[alt=Result]').waitFor();
   const pending = page.waitForEvent('download', {
     predicate: (d) => d.suggestedFilename() === 'animated.gif'
@@ -123,6 +124,7 @@ test('unequal dimensions produce an actionable error, clear stale output and rec
     Jimp.MIME_JPEG
   );
   await page.locator('input[type=file]').setInputFiles(files);
+  await page.getByRole('button', { name: 'Create GIF', exact: true }).click();
   await page
     .getByRole('alert')
     .filter({ hasText: 'equal decoded pixel dimensions' })
@@ -183,6 +185,7 @@ for (const action of [
     await page
       .locator('input[type=file]')
       .setInputFiles(await fixtures(['png', 'jpeg']));
+    await page.getByRole('button', { name: 'Create GIF', exact: true }).click();
     await page.waitForFunction(
       () => document.documentElement.dataset.mixedStarted === 'yes'
     );
@@ -242,6 +245,7 @@ test('mixed pixel budget and third-codec policy reject real inputs, then recover
     Jimp.MIME_PNG
   );
   await page.locator('input[type=file]').setInputFiles(large);
+  await page.getByRole('button', { name: 'Create GIF', exact: true }).click();
   await page.getByRole('alert').filter({ hasText: '4 megapixels' }).waitFor();
   await expect(
     page.getByRole('button', { name: 'Download', exact: true })
@@ -257,6 +261,7 @@ test('mixed pixel budget and third-codec policy reject real inputs, then recover
       )
     }
   ]);
+  await page.getByRole('button', { name: 'Create GIF', exact: true }).click();
   await page
     .getByRole('alert')
     .filter({ hasText: 'Remove other image formats' })

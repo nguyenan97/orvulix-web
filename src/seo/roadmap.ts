@@ -135,8 +135,9 @@ export const PLANNED_FEATURES: readonly {
   },
   {
     title: 'Images to GIF improvements',
+    status: 'Explicit Create and Cancel implemented for development',
     benefit:
-      'Build on multi-file import and GIF reliability fixes in develop. Explicit Create, richer progress and further timing UX remain planned; quality optimization is separate.'
+      'Create only on demand, discard cancelled output and wait for prior work to settle before retrying. Richer progress, further timing UX and quality optimization remain separate.'
   },
   {
     title: 'Audio/Video Trim Timeline',

@@ -27,7 +27,7 @@ upstream issues. PR30-32 clipboard delivery and PR33 PDF consent are described b
 | Local HTML image/raster PDF and discovery | Develop PR #20/#22, `96d23b4`/`a32c133` | URL conversion paused; custom fonts/remote rendering deferred. |
 | PNG dimensions/non-inflation | Develop PR #24, `097d594` | Lossless pixel preservation/new encoder not delivered. |
 | Multi-file picker/drop | Develop PR #25, `d96ab5b` | Consumer conversion ownership is separate. |
-| GIF lifecycle/mixed PNG-JPEG fidelity | Develop PR #26/#27, `4a8489c`/`6fab3c3` | Explicit Create, richer progress, further timing UX and quality work remain. |
+| GIF lifecycle/mixed PNG-JPEG fidelity | Develop PR #26/#27, `4a8489c`/`6fab3c3` | Explicit Create/Cancel is implemented in the current task below; richer progress, further timing UX and quality work remain. |
 | Engineering practices | Develop PR #28, `fd1214d` | Instructions do not guarantee agent compliance or grant additional authority. |
 | Text-result clipboard | Develop PR #30, `ef29d62` | Other clipboard consumers/old Umbrel reports need their own verification. |
 | Code-result clipboard | Develop PR #31, `17c549d` | Input/file consumers and editor-wide HTTP gestures require separate work. |
@@ -75,6 +75,12 @@ braces tooling exception remain outside that delivery.
 | Clipboard regression triage (partial) | [#390](https://github.com/iib0011/omni-tools/issues/390). PR30 merged shared ToolTextResult display/copy alignment and API failure guidance. PR31 guards ToolCodeResult without changing formatted values; secure-copy and real insecure-origin policy are tested. This does not establish the root cause of every historical Umbrel report. Input/file clipboard consumers remain follow-ups. | Copied text equals the displayed formatted result; unsupported/denied clipboard access gets an actionable error. | [PR #452](https://github.com/iib0011/omni-tools/pull/452), [PR #430](https://github.com/iib0011/omni-tools/pull/430). |
 
 ## Ordered feature plan
+
+Images to GIF's explicit Create/Cancel slice is implemented in the current task:
+no automatic encoding on edits, current snapshot per gesture and no new run for
+the same owner until cancelled work settles. [Prompt and limits](GIF_EXPLICIT_CREATE.md)
+and [checkpoint](tasks/gif-explicit-create.md) identify validation/PR status. This
+does not complete quality, timing UX or richer progress, or release production.
 
 Subnet Calculator's IPv4 MVP is implemented in the current development change:
 CIDR or contiguous dotted masks, network/broadcast/host ranges and explicit
@@ -132,7 +138,7 @@ the whole milestone; use the verified delivery snapshot above.
 | 5 | **Subnet Calculator** - [#231](https://github.com/iib0011/omni-tools/issues/231) | IPv4 CIDR/mask, network, broadcast and host range. Test /0, /31 and /32 with documented semantics. IPv6 is a later phase, not a promised MVP capability. | Medium. Pure standalone arithmetic/parser; no DNS or remote API. |
 | 6 | **Lossless PNG Optimizer** - [#359](https://github.com/iib0011/omni-tools/issues/359), [#295](https://github.com/iib0011/omni-tools/issues/295) | Benchmark a local encoder/WASM first. Preserve dimensions and decoded pixels, define metadata handling, compare sizes and retain the original when output grows. Do not label palette quantization as lossless. Limits, cancellation and pixel-equality fixtures required. | Medium-high. Prefer an isolated optimizer rather than rewriting existing compression. Review [PR #461](https://github.com/iib0011/omni-tools/pull/461); preserving dimensions alone does not prove losslessness. |
 | 7 | **Batch OCR** - [#349](https://github.com/iib0011/omni-tools/issues/349) | Multiple images with language selection before processing, Vietnamese support if the model is available, progress/cancel and ordered TXT/ZIP output. PDF output and automatic language detection deferred. Verify cancellation and cleanup after errors. | Medium. Reuse Tesseract/JSZip already installed. Lazy model downloads and disclose network use. Keep a separate batch module with minimal OCR integration. |
-| 8 | **Images to GIF improvements** - [#433](https://github.com/iib0011/omni-tools/issues/433) | Partial in develop: bounded multi-file import (PR25), stale-result ownership (PR26), mixed PNG/JPEG fidelity (PR27); existing FPS/delay options remain. Explicit Create, richer progress and further timing UX are not completed. Preserve frame-order/timing/invalid-input tests. Quality/file-size optimization is a separate investigation. | Medium. Existing GIF tool is an upstream hotspot. Review [PR #458](https://github.com/iib0011/omni-tools/pull/458) before duplicating its work. |
+| 8 | **Images to GIF improvements** - [#433](https://github.com/iib0011/omni-tools/issues/433) | Partial in develop: bounded multi-file import (PR25), stale-result ownership (PR26), mixed PNG/JPEG fidelity (PR27); existing FPS/delay options remain. Explicit Create/Cancel is implemented in the current task. Richer progress and further timing UX remain separate. Preserve frame-order/timing/invalid-input tests. Quality/file-size optimization is a separate investigation. | Medium. Existing GIF tool is an upstream hotspot. [PR #458](https://github.com/iib0011/omni-tools/pull/458) merged drag/drop; the current Create slice is separate. |
 | 9 | **Audio/Video Trim Timeline** - [#268](https://github.com/iib0011/omni-tools/issues/268) | Keyboard-accessible start/end sliders synced to time inputs, selected-range preview and valid-range checks. Test duration boundaries and export accuracy; waveform generation is outside MVP. | Medium. Reusable timeline component with small adapters; review [PR #293](https://github.com/iib0011/omni-tools/pull/293). |
 | 10 | **Local PDF Form Builder** - [#106](https://github.com/iib0011/omni-tools/issues/106), [#244](https://github.com/iib0011/omni-tools/issues/244) | Add named text fields and checkboxes, position them on pages and export an AcroForm PDF. Verify round-trip fields/values, rotated-page coordinates and compatibility with selected PDF readers. No digital signatures or cloud saving. | High. Evaluate existing pdf-lib capability; do not implement through an undisclosed external embed. Review [PR #247](https://github.com/iib0011/omni-tools/pull/247). |
 | 11 | **OCR Table to CSV** - [#234](https://github.com/iib0011/omni-tools/issues/234) | Single-image table extraction with editable rows/columns before CSV download. Handle CSV quoting and warn about spreadsheet formula injection. Never claim perfect extraction. PDF batches and XLSX deferred. | High. Depends on OCR evaluation; use a standalone correction UI and test real table fixtures. |
@@ -255,7 +261,9 @@ PR25 multi-file inputs and PR26 consumer GIF lifecycle are merged into develop: 
 latest-result ownership, debounce unmount cleanup and optional cooperative queue/
 service cancellation. Encoding/timing/Create/quality remain unchanged. See
 GIF_CONVERSION_LIFECYCLE.md for limits, baseline evidence and the separate mixed-
-format normalization finding. Other conversion consumers remain follow-ups.
+format normalization finding. These are historical PR26 behaviors; the current
+explicit Create slice replaces debounce, as described in GIF_EXPLICIT_CREATE.md.
+Other conversion consumers remain follow-ups.
 
 ## GIF mixed PNG/JPEG fidelity
 
