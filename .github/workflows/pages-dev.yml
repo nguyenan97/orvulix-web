@@ -79,7 +79,7 @@ jobs:
         run: npx playwright test src/lib/ghostscript/settlement.e2e.spec.ts --project=chromium --workers=1
         env:
           PLAYWRIGHT_USE_EXISTING_BUILD: 'true'
-      - name: Verify explicit GIF Create and Cancel
+      - name: Verify GIF controls and frame ordering
         run: npx playwright test src/features/gif-conversion/explicit-create.e2e.spec.ts src/features/gif-conversion/frame-order.e2e.spec.ts --project=chromium --workers=1
         env:
           PLAYWRIGHT_USE_EXISTING_BUILD: 'true'

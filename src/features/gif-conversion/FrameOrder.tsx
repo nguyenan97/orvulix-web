@@ -43,7 +43,13 @@ export function FrameOrder({
       <Box
         component="ol"
         aria-label={t('gif.imagesToGif.frameOrderTitle')}
-        sx={{ pl: 3, m: 0, maxHeight: 360, overflow: 'auto' }}
+        sx={{
+          pl: 4,
+          m: 0,
+          maxHeight: 360,
+          overflow: 'auto',
+          listStyle: 'decimal'
+        }}
       >
         {frames.map((frame, index) => (
           <Box

@@ -70,6 +70,11 @@ test('keyboard reorders duplicate filenames, preserves preview URLs and encodes 
       await frame(thirdName, 0x00ff00ff)
     ]);
   await expect(order(page).getByRole('listitem')).toHaveCount(3);
+  await expect(order(page)).toHaveCSS('list-style-type', 'decimal');
+  await expect(order(page).getByRole('listitem').first()).toHaveCSS(
+    'list-style-type',
+    'decimal'
+  );
   const previews = page
     .getByRole('region', { name: 'File drop zone' })
     .locator('img');
