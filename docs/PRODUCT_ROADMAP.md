@@ -11,6 +11,13 @@ Our approach is to make existing tools better first, then explore new capabiliti
 
 ## Verified development delivery
 
+Images to GIF now has an explicit Create/Cancel implementation in the current
+development task. Edits do not automatically encode; cancelled output is discarded
+and another Create waits for the previous owned job to settle. See [prompt and
+contracts](GIF_EXPLICIT_CREATE.md) and [checkpoint](tasks/gif-explicit-create.md)
+for PR/CI status. Timing/quality redesign, richer progress and production release
+remain separate.
+
 Subnet Calculator has an implemented IPv4 MVP: CIDR or dotted masks produce
 network boundaries, broadcast and host ranges/counts, with explicit /31 and /32
 behavior. See [prompt and contracts](IPV4_SUBNET.md) and

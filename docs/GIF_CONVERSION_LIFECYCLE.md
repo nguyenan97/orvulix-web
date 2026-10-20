@@ -1,5 +1,9 @@
 # Images to GIF job ownership
 
+Current scheduling is described in [explicit Create and Cancel](GIF_EXPLICIT_CREATE.md).
+The original PR26 snapshot below records the earlier automatic debounce behavior;
+its encoder/queue cancellation boundaries still apply.
+
 Implementation snapshot on feature/gif-conversion-lifecycle, based on develop
 PR25/d96ab5b. Resolve final merge status through PR #26. Automatic
 1000ms debounce, FPS/delay options, FFmpeg arguments, animated.gif filename and

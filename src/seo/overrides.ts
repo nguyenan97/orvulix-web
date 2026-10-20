@@ -31,6 +31,7 @@ import dockerRunCompose from './tool-content/converters/docker-run-to-compose';
 import fileChecksum from './tool-content/string/file-checksum';
 import dataTransferTime from './tool-content/number/data-transfer-time';
 import ipv4Subnet from './tool-content/number/ipv4-subnet-calculator';
+import imagesToGif from './tool-content/gif/images-to-gif';
 import stringPasswordGenerator from './tool-content/string/password-generator';
 import stringTextCompare from './tool-content/string/text-compare';
 import htmlToImage from './tool-content/image-generic/html-to-image'; // ORVULIX-WEB-CONVERSION
@@ -43,6 +44,7 @@ import htmlToPdf from './tool-content/pdf/html-to-pdf'; // ORVULIX-WEB-CONVERSIO
  * generated from their English locale strings.
  */
 export const TOOL_OVERRIDES: Record<string, ToolSeoOverride> = {
+  'gif/images-to-gif': imagesToGif,
   'number/ipv4-subnet-calculator': ipv4Subnet,
   'number/data-transfer-time': dataTransferTime,
   'string/file-checksum': fileChecksum,

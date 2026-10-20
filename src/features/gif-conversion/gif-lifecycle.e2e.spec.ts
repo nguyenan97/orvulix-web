@@ -34,6 +34,7 @@ async function fixtures(format: 'png' | 'jpeg' = 'png', singleBlue = false) {
   );
 }
 async function download(page: Page) {
+  await page.getByRole('button', { name: 'Create GIF', exact: true }).click();
   await page.locator('img[alt=Result]').waitFor({ state: 'visible' });
   const button = page.getByRole('button', { name: 'Download', exact: true });
   await expect(button).toBeEnabled();
@@ -133,6 +134,7 @@ test('clear during genuine exec discards late output, then new images/options re
     document.documentElement.dataset.gifAction = 'clear';
   });
   await page.locator('input[type=file]').setInputFiles(await fixtures());
+  await page.getByRole('button', { name: 'Create GIF', exact: true }).click();
   await page.waitForFunction(
     () => document.documentElement.dataset.gifCompleted === 'yes'
   );
@@ -153,7 +155,7 @@ test('clear during genuine exec discards late output, then new images/options re
   for (const color of gif.colors) expect(color[2]).toBeGreaterThan(200);
   expect(errors).toEqual([]);
 });
-test('option/file edits disable old download immediately, clear before debounce and recover', async ({
+test('option/file edits disable old download immediately, clear before Create and recover', async ({
   page
 }) => {
   await engine(page);
@@ -189,6 +191,7 @@ test('SPA unmount at exec boundary ignores late completion and recovers on revis
     document.documentElement.dataset.gifAction = 'navigate';
   });
   await page.locator('input[type=file]').setInputFiles(await fixtures());
+  await page.getByRole('button', { name: 'Create GIF', exact: true }).click();
   await page.waitForFunction(
     () => document.documentElement.dataset.gifStarted === 'yes'
   );
@@ -235,6 +238,7 @@ test('asset-load failure shows a current error without download and valid retry 
   page.on('pageerror', (error) => errors.push(error.message));
   await page.goto('/gif/images-to-gif');
   await page.locator('input[type=file]').setInputFiles(await fixtures());
+  await page.getByRole('button', { name: 'Create GIF', exact: true }).click();
   await page
     .getByRole('alert')
     .filter({ hasText: 'GIF conversion failed' })

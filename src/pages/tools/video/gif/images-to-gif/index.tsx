@@ -1,4 +1,4 @@
-import { Alert, Box } from '@mui/material';
+import { Alert, Box, Button, Stack, Typography } from '@mui/material';
 import React, { useState } from 'react';
 import ToolFileResult from '@components/result/ToolFileResult';
 import TextFieldWithDesc from 'components/options/TextFieldWithDesc';
@@ -17,11 +17,25 @@ const initialValues: InitialValuesType = {
   frameRateMode: 'fps',
   frameRateValue: 10
 };
+// Keep shared Formik auto-compute unchanged for other tools; GIF runs by gesture.
+const skipAutomaticConversion = () => {};
 
 export default function ImagesToGif({ title }: ToolComponentProps) {
   const { t } = useTranslation('video');
   const [input, setFiles] = useState<MultiImageInput[]>([]);
-  const { result, loading, error, compute, invalidate } = useGifConversion();
+  const {
+    result,
+    loading,
+    error,
+    busy,
+    create,
+    invalidate: discard
+  } = useGifConversion();
+  const [cancelled, setCancelled] = useState(false);
+  const invalidate = () => {
+    setCancelled(false);
+    discard();
+  };
   const setInput: React.Dispatch<React.SetStateAction<MultiImageInput[]>> = (
     next
   ) => {
@@ -45,6 +59,20 @@ export default function ImagesToGif({ title }: ToolComponentProps) {
       resultComponent={
         <Box>
           {error && <Alert severity="error">{error}</Alert>}
+          {cancelled && (
+            <Alert severity="info">{t('gif.imagesToGif.cancelledText')}</Alert>
+          )}
+          <Typography role="status" sx={{ mb: 1 }}>
+            {t(
+              busy && !loading
+                ? 'gif.imagesToGif.settlingText'
+                : loading
+                  ? 'gif.imagesToGif.loadingText'
+                  : result
+                    ? 'gif.imagesToGif.readyText'
+                    : 'gif.imagesToGif.createHint'
+            )}
+          </Typography>
           <ToolFileResult
             title={t('gif.imagesToGif.resultTitle')}
             value={result}
@@ -113,11 +141,32 @@ export default function ImagesToGif({ title }: ToolComponentProps) {
                   value={values.frameRateValue}
                 />
               </Box>
+              <Stack direction="row" useFlexGap flexWrap="wrap" gap={1} mt={2}>
+                <Button
+                  variant="contained"
+                  disabled={!input.length || busy}
+                  onClick={() => {
+                    setCancelled(false);
+                    create(values, input);
+                  }}
+                >
+                  {t('gif.imagesToGif.createButton')}
+                </Button>
+                <Button
+                  disabled={!loading}
+                  onClick={() => {
+                    discard();
+                    setCancelled(true);
+                  }}
+                >
+                  {t('gif.imagesToGif.cancelButton')}
+                </Button>
+              </Stack>
             </Box>
           )
         }
       ]}
-      compute={compute}
+      compute={skipAutomaticConversion}
       setInput={setInput}
     />
   );

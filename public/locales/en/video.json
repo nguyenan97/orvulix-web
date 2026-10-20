@@ -104,8 +104,14 @@
       "title": "Change GIF Speed"
     },
     "imagesToGif": {
+      "createButton": "Create GIF",
+      "cancelButton": "Cancel GIF creation",
+      "createHint": "Choose images and timing, then select Create GIF. Changes do not encode automatically.",
+      "settlingText": "Previous GIF work is still finishing. Create becomes available when it settles.",
+      "cancelledText": "GIF creation cancelled. Output is discarded; active FFmpeg work may still finish.",
+      "readyText": "GIF ready. Editing images or timing clears this result; select Create GIF to regenerate.",
       "title": "Images to GIF",
-      "description": "Create animated GIFs from multiple images. Arrange your frames, adjust the timing, and generate a smooth animation in just a few clicks.",
+      "description": "Choose multiple images and frame timing, then select Create GIF. Cancel pending output or edit the inputs before creating again.",
       "shortDescription": "Convert multiple images into an animated GIF",
       "inputTitle": "Input Images",
       "resultTitle": "Animated GIF",
