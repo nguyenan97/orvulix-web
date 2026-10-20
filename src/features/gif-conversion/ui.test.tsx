@@ -3,7 +3,8 @@ import {
   cleanup,
   fireEvent,
   render,
-  screen
+  screen,
+  within
 } from '@testing-library/react';
 import { afterEach, beforeEach, expect, it, vi } from 'vitest';
 import ImagesToGif from '../../pages/tools/video/gif/images-to-gif';
@@ -50,6 +51,19 @@ vi.mock('../../components/input/ToolMultipleImageInput', () => ({
         Choose image
       </button>
       <button onClick={() => onChange([])}>Clear input</button>
+      <button
+        onClick={() =>
+          onChange(
+            ['a.png', 'b.png'].map((name, order) => ({
+              file: new File(['image'], name, { type: 'image/png' }),
+              order,
+              preview: `blob:input-${order}`
+            }))
+          )
+        }
+      >
+        Choose frames
+      </button>
     </>
   )
 }));
@@ -211,3 +225,85 @@ it('cancels a current run, ignores late completion and retries only after settle
     screen.getByRole('button', { name: 'resultFooter.download' })
   ).toBeEnabled();
 });
+it('invalidates completed output on a move, does not auto encode and snapshots the new order', async () => {
+  vi.mocked(imagesToGif).mockResolvedValue(output());
+  render(<ImagesToGif title="GIF" />);
+  fireEvent.click(screen.getByText('Choose frames'));
+  create();
+  await advance();
+  const order = screen.getByRole('list', {
+    name: 'gif.imagesToGif.frameOrderTitle'
+  });
+  const boundary = within(order).getAllByRole('button', {
+    name: 'gif.imagesToGif.moveEarlierLabel'
+  })[0];
+  expect(boundary).toBeDisabled();
+  fireEvent.click(boundary);
+  expect(
+    screen.getByRole('button', { name: 'resultFooter.download' })
+  ).toBeEnabled();
+  expect(URL.revokeObjectURL).not.toHaveBeenCalled();
+  fireEvent.click(
+    within(order).getAllByRole('button', {
+      name: 'gif.imagesToGif.moveLaterLabel'
+    })[0]
+  );
+  expect(
+    screen.getByRole('button', { name: 'resultFooter.download' })
+  ).toBeDisabled();
+  expect(URL.revokeObjectURL).toHaveBeenCalledWith('blob:1');
+  await advance();
+  expect(imagesToGif).toHaveBeenCalledOnce();
+  create();
+  await advance();
+  expect(
+    vi.mocked(imagesToGif).mock.calls[1][0].map((file) => file.name)
+  ).toEqual(['b.png', 'a.png']);
+});
+it.each(['resolve', 'reject'] as const)(
+  'reorder during encode blocks retry and ignores late %s',
+  async (outcome) => {
+    let finish!: (file: File) => void, fail!: (error: Error) => void;
+    vi.mocked(imagesToGif)
+      .mockImplementationOnce(
+        () =>
+          new Promise((resolve, reject) => {
+            finish = resolve;
+            fail = reject;
+          })
+      )
+      .mockResolvedValueOnce(output());
+    render(<ImagesToGif title="GIF" />);
+    fireEvent.click(screen.getByText('Choose frames'));
+    create();
+    const signal = vi.mocked(imagesToGif).mock.calls[0][2]!;
+    const order = screen.getByRole('list', {
+      name: 'gif.imagesToGif.frameOrderTitle'
+    });
+    fireEvent.click(
+      within(order).getAllByRole('button', {
+        name: 'gif.imagesToGif.moveEarlierLabel'
+      })[1]
+    );
+    expect(signal.aborted).toBe(true);
+    expect(
+      screen.getByRole('button', { name: 'gif.imagesToGif.createButton' })
+    ).toBeDisabled();
+    create();
+    expect(imagesToGif).toHaveBeenCalledOnce();
+    await act(async () => {
+      if (outcome === 'resolve') finish(output());
+      else fail(Error('old encoder'));
+    });
+    expect(screen.queryByRole('alert')).toBeNull();
+    expect(URL.createObjectURL).not.toHaveBeenCalled();
+    expect(
+      screen.getByRole('button', { name: 'gif.imagesToGif.createButton' })
+    ).toBeEnabled();
+    create();
+    await advance();
+    expect(
+      vi.mocked(imagesToGif).mock.calls[1][0].map((file) => file.name)
+    ).toEqual(['b.png', 'a.png']);
+  }
+);

@@ -27,6 +27,52 @@ afterEach(() => {
   session.dispose();
   vi.unstubAllGlobals();
 });
+it('external reordering cancels pending import, retains previews and appends with distinct identities', async () => {
+  await session.add(
+    [file('same.png'), file('same.png')],
+    'image',
+    ['image/png'],
+    identity
+  );
+  const original = publish.mock.calls.at(-1)![0];
+  let finish!: (file: File) => void;
+  const pending = session.add(
+    [file('late.png')],
+    'image',
+    ['image/png'],
+    () =>
+      new Promise((resolve) => {
+        finish = resolve;
+      })
+  );
+  await Promise.resolve();
+  const reordered = [original[1], original[0]];
+  expect(session.sync(reordered)).toBe(true);
+  expect(URL.revokeObjectURL).not.toHaveBeenCalled();
+  expect(busy).toHaveBeenLastCalledWith(false);
+  finish(file('late.png'));
+  await expect(pending).rejects.toMatchObject({ name: 'AbortError' });
+  expect(publish).toHaveBeenCalledOnce();
+  await session.add([file('last.png')], 'image', ['image/png'], identity);
+  const appended = publish.mock.calls.at(-1)![0];
+  expect(
+    appended.map((frame) => [frame.file.name, frame.order, frame.preview])
+  ).toEqual([
+    ['same.png', 1, 'blob:2'],
+    ['same.png', 0, 'blob:1'],
+    ['last.png', 2, 'blob:3']
+  ]);
+  expect(appended[0]).toBe(original[1]);
+  session.remove(1);
+  expect(URL.revokeObjectURL).toHaveBeenCalledWith('blob:1');
+  session.clear();
+  expect(
+    vi
+      .mocked(URL.revokeObjectURL)
+      .mock.calls.map(([url]) => url)
+      .sort()
+  ).toEqual(['blob:1', 'blob:2', 'blob:3']);
+});
 describe('picker/drop contract', () => {
   it('matches MIME, extension, wildcard and empty MIME without treating labels as content validation', () => {
     expect(isAcceptedFile(file('a.PNG', ''), ['image/png'])).toBe(true);

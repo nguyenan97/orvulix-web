@@ -135,9 +135,10 @@ export const PLANNED_FEATURES: readonly {
   },
   {
     title: 'Images to GIF improvements',
-    status: 'Explicit Create and Cancel implemented for development',
+    status:
+      'Explicit Create, Cancel and frame ordering implemented for development',
     benefit:
-      'Create only on demand, discard cancelled output and wait for prior work to settle before retrying. Richer progress, further timing UX and quality optimization remain separate.'
+      'Arrange frames with keyboard controls, create on demand and discard cancelled output before retrying. Richer progress, further timing UX and quality optimization remain separate.'
   },
   {
     title: 'Audio/Video Trim Timeline',
