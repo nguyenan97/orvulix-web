@@ -1,5 +1,8 @@
 # IPv4 Subnet Calculator
 
+This records the IPv4-only PR58 contract. The separate [IPv6 tool](IPV6_SUBNET.md)
+adds IPv6 without changing this route or its semantics.
+
 ## Execution prompt
 
 Implement the next unimplemented backlog MVP, IPv4 Subnet Calculator, in the

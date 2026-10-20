@@ -76,6 +76,23 @@ const makeT = (dict: Record<string, string>): NamespacedT =>
   ((key: string) => dict[key] ?? key) as unknown as NamespacedT;
 
 describe('filterTools token-based search', () => {
+  it('discovers IPv6 ranges for both audiences', () => {
+    for (const query of [
+      'ipv6 subnet',
+      'ipv6 cidr',
+      'ipv6 prefix',
+      'ipv6 range'
+    ])
+      for (const audience of ['developers', 'generalUsers'] as const)
+        expect(
+          filterTools(
+            registeredTools,
+            query,
+            [audience],
+            makeT(enTranslations)
+          ).map((tool) => tool.path)
+        ).toContain('number/ipv6-subnet-calculator');
+  });
   it('discovers IPv4 subnet calculations for the intended audiences', () => {
     for (const query of [
       'ipv4 subnet',

@@ -11,6 +11,12 @@ Our approach is to make existing tools better first, then explore new capabiliti
 
 ## Verified development delivery
 
+IPv6 Subnet Calculator is implemented in the current development task as a
+separate tool: bounded full/compressed/IPv4-tail parsing, exact address counts
+and /0 through /128 range boundaries. [Prompt and contracts](IPV6_SUBNET.md) and
+[checkpoint](tasks/ipv6-subnet-calculator.md) track validation/PR status. No
+assignability classification, address enumeration or production release.
+
 Images to GIF now has an explicit Create/Cancel implementation in the current
 development task. Edits do not automatically encode; cancelled output is discarded
 and another Create waits for the previous owned job to settle. See [prompt and

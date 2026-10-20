@@ -119,9 +119,9 @@ export const PLANNED_FEATURES: readonly {
   },
   {
     title: 'Subnet Calculator',
-    status: 'IPv4 MVP implemented for development',
+    status: 'IPv4 and IPv6 calculators implemented for development',
     benefit:
-      'Inspect IPv4 CIDR or dotted masks, network boundaries, broadcasts and host ranges with explicit /31 and /32 semantics. IPv6 and address enumeration remain separate.'
+      'Inspect IPv4 CIDR/masks and host ranges, or IPv6 prefixes and exact address counts in a separate tool. Address enumeration, allocation policy and subnet splitting remain separate.'
   },
   {
     title: 'Lossless PNG Optimizer',

@@ -1,4 +1,9 @@
 {
+  "ipv6Subnet": {
+    "title": "IPv6 Subnet Calculator",
+    "description": "Calculate IPv6 network boundaries and exact address counts from full or compressed IPv6 addresses and CIDR prefixes.",
+    "shortDescription": "Inspect IPv6 ranges and exact address counts"
+  },
   "ipv4Subnet": {
     "title": "IPv4 Subnet Calculator",
     "description": "Calculate IPv4 network boundaries, masks, broadcast, host ranges and counts from CIDR or a dotted subnet mask.",
