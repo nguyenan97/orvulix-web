@@ -11,6 +11,13 @@ Our approach is to make existing tools better first, then explore new capabiliti
 
 ## Verified development delivery
 
+Images to GIF frame ordering is implemented in the current development task:
+numbered full-filename list, keyboard Move earlier/later, immediate GIF invalidation
+and explicit regeneration in the chosen order. Reordering cancels unfinished
+imports while retaining accepted previews. See [prompt/contracts](GIF_FRAME_ORDER.md)
+and [checkpoint](tasks/gif-frame-order.md) for validation and PR status. Encoder,
+timing/quality and richer progress remain separate; no production release.
+
 IPv6 Subnet Calculator is implemented in the current development task as a
 separate tool: bounded full/compressed/IPv4-tail parsing, exact address counts
 and /0 through /128 range boundaries. [Prompt and contracts](IPV6_SUBNET.md) and

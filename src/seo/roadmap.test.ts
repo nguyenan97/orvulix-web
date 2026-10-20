@@ -14,7 +14,7 @@ describe('public roadmap scope', () => {
     const gif = PLANNED_FEATURES[7];
     expect(gif.title).toBe('Images to GIF improvements');
     expect(gif.status).toBe(
-      'Explicit Create and Cancel implemented for development'
+      'Explicit Create, Cancel and frame ordering implemented for development'
     );
     expect(gif.benefit).toContain(
       'timing UX and quality optimization remain separate'

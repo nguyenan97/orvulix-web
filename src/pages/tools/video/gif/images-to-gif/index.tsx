@@ -12,6 +12,7 @@ import { InitialValuesType } from './types';
 import { updateNumberField } from '@utils/string';
 import { useTranslation } from 'react-i18next';
 import { useGifConversion } from '../../../../../features/gif-conversion/useGifConversion'; // ORVULIX: latest GIF job ownership.
+import { FrameOrder } from '../../../../../features/gif-conversion/FrameOrder';
 
 const initialValues: InitialValuesType = {
   frameRateMode: 'fps',
@@ -48,13 +49,16 @@ export default function ImagesToGif({ title }: ToolComponentProps) {
       title={title}
       input={input}
       inputComponent={
-        <ToolMultipleImageInput
-          value={input}
-          onChange={setInput}
-          type="image"
-          accept={['image/*']}
-          title={t('gif.imagesToGif.inputTitle')}
-        />
+        <Box>
+          <ToolMultipleImageInput
+            value={input}
+            onChange={setInput}
+            type="image"
+            accept={['image/*']}
+            title={t('gif.imagesToGif.inputTitle')}
+          />
+          <FrameOrder frames={input} onChange={setInput} />
+        </Box>
       }
       resultComponent={
         <Box>

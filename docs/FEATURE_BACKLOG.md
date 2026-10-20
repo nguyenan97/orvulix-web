@@ -76,12 +76,18 @@ braces tooling exception remain outside that delivery.
 
 ## Ordered feature plan
 
+Images to GIF frame ordering is implemented in the current task as an Orvulix
+enhancement: adjacent keyboard moves, current-output invalidation and regeneration
+in the displayed order. [Prompt/contracts](GIF_FRAME_ORDER.md) and
+[checkpoint](tasks/gif-frame-order.md) track validation/PR status. This does not
+complete timing/quality/richer progress or release production.
+
 IPv6 Subnet Calculator is implemented in the current development task, extending
 PR58's IPv4-only MVP through a separate tool. See [prompt/contracts](IPV6_SUBNET.md)
 and [checkpoint](tasks/ipv6-subnet-calculator.md) for validation/PR status. Exact
 range capacity does not establish usable-host availability or allocation policy.
 
-Images to GIF's explicit Create/Cancel slice is implemented in the current task:
+Images to GIF's explicit Create/Cancel slice was delivered into develop in PR59:
 no automatic encoding on edits, current snapshot per gesture and no new run for
 the same owner until cancelled work settles. [Prompt and limits](GIF_EXPLICIT_CREATE.md)
 and [checkpoint](tasks/gif-explicit-create.md) identify validation/PR status. This
@@ -143,7 +149,7 @@ the whole milestone; use the verified delivery snapshot above.
 | 5 | **Subnet Calculator** - [#231](https://github.com/iib0011/omni-tools/issues/231) | IPv4 CIDR/mask, network, broadcast and host range delivered in PR58. Separate IPv6 range/count tool implemented in the current task, including /0 through /128 and compressed/IPv4-tail input. No host enumeration, subnet splitting or allocation policy. | Medium. Pure standalone arithmetic/parsers; no DNS or remote API. |
 | 6 | **Lossless PNG Optimizer** - [#359](https://github.com/iib0011/omni-tools/issues/359), [#295](https://github.com/iib0011/omni-tools/issues/295) | Benchmark a local encoder/WASM first. Preserve dimensions and decoded pixels, define metadata handling, compare sizes and retain the original when output grows. Do not label palette quantization as lossless. Limits, cancellation and pixel-equality fixtures required. | Medium-high. Prefer an isolated optimizer rather than rewriting existing compression. Review [PR #461](https://github.com/iib0011/omni-tools/pull/461); preserving dimensions alone does not prove losslessness. |
 | 7 | **Batch OCR** - [#349](https://github.com/iib0011/omni-tools/issues/349) | Multiple images with language selection before processing, Vietnamese support if the model is available, progress/cancel and ordered TXT/ZIP output. PDF output and automatic language detection deferred. Verify cancellation and cleanup after errors. | Medium. Reuse Tesseract/JSZip already installed. Lazy model downloads and disclose network use. Keep a separate batch module with minimal OCR integration. |
-| 8 | **Images to GIF improvements** - [#433](https://github.com/iib0011/omni-tools/issues/433) | Partial in develop: bounded multi-file import (PR25), stale-result ownership (PR26), mixed PNG/JPEG fidelity (PR27); existing FPS/delay options remain. Explicit Create/Cancel is implemented in the current task. Richer progress and further timing UX remain separate. Preserve frame-order/timing/invalid-input tests. Quality/file-size optimization is a separate investigation. | Medium. Existing GIF tool is an upstream hotspot. [PR #458](https://github.com/iib0011/omni-tools/pull/458) merged drag/drop; the current Create slice is separate. |
+| 8 | **Images to GIF improvements** - [#433](https://github.com/iib0011/omni-tools/issues/433) | Partial in develop: bounded multi-file import (PR25), stale-result ownership (PR26), mixed PNG/JPEG fidelity (PR27), explicit Create/Cancel (PR59); existing FPS/delay options remain. Frame ordering is implemented in the current task. Richer progress and further timing UX remain separate. Preserve frame-order/timing/invalid-input tests. Quality/file-size optimization is a separate investigation. | Medium. Existing GIF tool is an upstream hotspot. [PR #458](https://github.com/iib0011/omni-tools/pull/458) merged drag/drop; Orvulix ordering is separate. |
 | 9 | **Audio/Video Trim Timeline** - [#268](https://github.com/iib0011/omni-tools/issues/268) | Keyboard-accessible start/end sliders synced to time inputs, selected-range preview and valid-range checks. Test duration boundaries and export accuracy; waveform generation is outside MVP. | Medium. Reusable timeline component with small adapters; review [PR #293](https://github.com/iib0011/omni-tools/pull/293). |
 | 10 | **Local PDF Form Builder** - [#106](https://github.com/iib0011/omni-tools/issues/106), [#244](https://github.com/iib0011/omni-tools/issues/244) | Add named text fields and checkboxes, position them on pages and export an AcroForm PDF. Verify round-trip fields/values, rotated-page coordinates and compatibility with selected PDF readers. No digital signatures or cloud saving. | High. Evaluate existing pdf-lib capability; do not implement through an undisclosed external embed. Review [PR #247](https://github.com/iib0011/omni-tools/pull/247). |
 | 11 | **OCR Table to CSV** - [#234](https://github.com/iib0011/omni-tools/issues/234) | Single-image table extraction with editable rows/columns before CSV download. Handle CSV quoting and warn about spreadsheet formula injection. Never claim perfect extraction. PDF batches and XLSX deferred. | High. Depends on OCR evaluation; use a standalone correction UI and test real table fixtures. |

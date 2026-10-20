@@ -1,5 +1,9 @@
 # Images to GIF: explicit Create and Cancel
 
+This records PR59's scheduling contract. [Frame ordering](GIF_FRAME_ORDER.md)
+adds explicit adjacent moves on the existing accepted list; Create/Cancel and
+the cooperative cancellation limits below remain in effect.
+
 ## Execution prompt
 
 Change Images to GIF from automatic 1000ms debounced encoding to explicit Create
