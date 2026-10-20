@@ -58,7 +58,9 @@ describe('public roadmap scope', () => {
         4,
         PLANNED_FEATURES[4].status
       )
-    ).toMatch(/^IPv4 MVP implemented for development\. Priority 5\./);
+    ).toMatch(
+      /^IPv4 and IPv6 calculators implemented for development\. Priority 5\./
+    );
     expect(
       plannedFeatureSummary(
         PLANNED_FEATURES[5].benefit,

@@ -8,8 +8,10 @@ import { tool as numberNumberToWords } from './number-to-words/meta';
 import { tools as genericCalcTools } from './generic-calc/meta';
 import { tool as dataTransferTime } from './data-transfer-time/meta';
 import { tool as ipv4Subnet } from './ipv4-subnet-calculator/meta';
+import { tool as ipv6Subnet } from './ipv6-subnet-calculator/meta';
 
 export const numberTools = [
+  ipv6Subnet,
   ipv4Subnet,
   dataTransferTime,
   numberSum,

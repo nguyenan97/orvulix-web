@@ -44,7 +44,7 @@ jobs:
         env:
           PLAYWRIGHT_USE_EXISTING_BUILD: 'true'
       - name: Verify file checksum and local calculators
-        run: npx playwright test src/features/file-checksum/checksum.e2e.spec.ts src/features/data-transfer-time/transfer.e2e.spec.ts src/features/ipv4-subnet/subnet.e2e.spec.ts --project=chromium --workers=1
+        run: npx playwright test src/features/file-checksum/checksum.e2e.spec.ts src/features/data-transfer-time/transfer.e2e.spec.ts src/features/ipv4-subnet/subnet.e2e.spec.ts src/features/ipv6-subnet/subnet.e2e.spec.ts --project=chromium --workers=1
         env:
           PLAYWRIGHT_USE_EXISTING_BUILD: 'true'
       - name: Verify strict CSV and TSV conversion
