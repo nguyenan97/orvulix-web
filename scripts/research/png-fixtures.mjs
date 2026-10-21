@@ -77,8 +77,8 @@ function fixture(
     interlace = false,
     level = 0,
     metadata = false,
-    width = 256,
-    height = 192
+    width = 128,
+    height = 96
   } = {}
 ) {
   const header = Buffer.alloc(13);
@@ -171,7 +171,7 @@ export function fixtures() {
     fixture('metadata-opaque', flat, { metadata: true }),
     fixture(
       'rgba16-low-bits',
-      (x, y) => [x * 257 + (y % 2), y * 257 + (x % 2), 32769, 65535],
+      (x, y) => [x * 256 + (y % 2), y * 256 + (x % 2), 32769, 65535],
       { depth: 16 }
     ),
     fixture('indexed-2bit', flat, { indexed: true, width: 257 }),

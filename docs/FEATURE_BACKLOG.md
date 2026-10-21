@@ -76,6 +76,14 @@ braces tooling exception remain outside that delivery.
 
 ## Ordered feature plan
 
+The next PNG milestone has a completed research-only
+[lossless encoder feasibility benchmark](LOSSLESS_PNG_FEASIBILITY.md): native
+IDAT recompression preserved exact samples/chunks on nine synthetic fixtures in
+three engines, while the tested palette/canvas paths failed strict acceptance.
+Proceed only with a separately scoped, bounded worker/parser/UI implementation;
+already optimized files may not shrink. This is not a shipped Lossless PNG
+Optimizer or completion of milestone 6. PR metadata records development delivery.
+
 Images to GIF frame ordering is implemented in the current task as an Orvulix
 enhancement: adjacent keyboard moves, current-output invalidation and regeneration
 in the displayed order. [Prompt/contracts](GIF_FRAME_ORDER.md) and

@@ -70,6 +70,7 @@ const server = createServer((req, res) => {
 });
 const report = {
   schema: 1,
+  complete: false,
   generatedAt: new Date().toISOString(),
   node: process.version,
   library: {
@@ -141,9 +142,8 @@ try {
             worker = new Worker(url);
             worker.onmessage = ({ data }) => {
               cleanup();
-              data.error
-                ? reject(Error(data.error))
-                : accept(Array.from(data.bytes));
+              if (data.error) reject(Error(data.error));
+              else accept(Array.from(data.bytes));
             };
             worker.onerror = () => {
               cleanup();
@@ -336,12 +336,19 @@ try {
     await browser.close();
     browser = undefined;
   }
-  await mkdir(dirname(output), { recursive: true });
-  await writeFile(output, `${JSON.stringify(report, null, 2)}\n`);
-  console.log(`Wrote ${report.results.length} measured rows to ${output}`);
+  report.complete = true;
+} catch (error) {
+  report.failure = error.message;
+  throw error;
 } finally {
-  await browser?.close();
-  await new Promise((accept, reject) =>
-    server.close((error) => (error ? reject(error) : accept()))
-  );
+  try {
+    await browser?.close();
+  } finally {
+    await new Promise((accept, reject) =>
+      server.close((error) => (error ? reject(error) : accept()))
+    );
+    await mkdir(dirname(output), { recursive: true });
+    await writeFile(output, `${JSON.stringify(report, null, 2)}\n`);
+  }
 }
+console.log(`Wrote ${report.results.length} measured rows to ${output}`);
