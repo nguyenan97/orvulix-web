@@ -84,6 +84,12 @@ Proceed only with a separately scoped, bounded worker/parser/UI implementation;
 already optimized files may not shrink. This is not a shipped Lossless PNG
 Optimizer or completion of milestone 6. PR metadata records development delivery.
 
+Lossless PNG has a separate bounded IDAT recompression MVP implemented in the
+current development task. [Prompt/contracts](LOSSLESS_PNG_OPTIMIZER.md) and
+[checkpoint](tasks/lossless-png-optimizer.md) track actual validation/PR status.
+Exact sample/chunk preservation and original retention do not complete advanced
+filter/WASM optimization or release production.
+
 Images to GIF frame ordering is implemented in the current task as an Orvulix
 enhancement: adjacent keyboard moves, current-output invalidation and regeneration
 in the displayed order. [Prompt/contracts](GIF_FRAME_ORDER.md) and

@@ -125,8 +125,9 @@ export const PLANNED_FEATURES: readonly {
   },
   {
     title: 'Lossless PNG Optimizer',
+    status: 'Bounded IDAT recompression MVP implemented for development',
     benefit:
-      'Explore smaller PNG files while preserving dimensions and pixels, and keep the original when optimization does not help.'
+      'Recompress static PNG image data while preserving pixel samples and accepted metadata. Keep original bytes when they are smaller; advanced filter and codec optimization remain separate.'
   },
   {
     title: 'Batch OCR',
