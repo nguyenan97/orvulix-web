@@ -2,7 +2,7 @@
 
 - Updated: 2026-10-21 UTC
 - Branch / base: feature/batch-ocr / develop 467840fefe9cc7760d62259248c2d29b22302f06
-- PR: not opened; reconcile actual GitHub state when resuming
+- PR: [#64](https://github.com/nguyenan97/orvulix-web/pull/64), develop; reconcile actual head/CI when resuming
 - Phase: ready for exact-head CI
 - Delivery mode: develop-merge, user requested continuation based on develop;
   AGENTS.md standing authorization applies to this one task.
@@ -90,3 +90,14 @@ WebKit uses previously supplied native libraries. Only host library discovery is
 skipped locally after supplying those libraries; no assertions or TLS checks are
 skipped. CI uses its normal dependency installation and unchanged browser trust.
 No production action authorized. No next backlog task is part of this request.
+
+## Visual review follow-up before delivery
+
+At head 2084c3de, reinspection of the native mobile screenshot showed the global
+list reset hides ordered-list markers. Output order was correct, but the promised
+numbered input list was not visible. Set listStyleType explicitly on the local ol;
+no shared CSS or codec behavior changes. A fresh native mobile list screenshot
+visibly shows 1/2 markers; affected UI tests (3), lint, tsc and production build
+passed. Use new exact-head CI rather than the older run. PR #64 is the single current
+PR into develop; reconcile its current head/CI before merge. This is a pre-push
+follow-up checkpoint; remote exact-head CI is still pending.

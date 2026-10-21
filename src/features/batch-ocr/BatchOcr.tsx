@@ -136,7 +136,10 @@ export default function BatchOcr() {
         />
       </Box>
       {!!files.length && (
-        <Box component="ol" sx={{ overflowWrap: 'anywhere', pl: 3 }}>
+        <Box
+          component="ol"
+          sx={{ overflowWrap: 'anywhere', pl: 3, listStyleType: 'decimal' }}
+        >
           {files.map((file, i) => (
             <li key={i}>{file.name}</li>
           ))}
