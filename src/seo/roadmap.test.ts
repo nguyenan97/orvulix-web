@@ -10,14 +10,14 @@ import {
 } from './roadmap';
 
 describe('public roadmap scope', () => {
-  it('records explicit GIF controls without claiming timing/quality optimization', () => {
+  it('records explicit GIF controls without claiming richer progress or encoder optimization', () => {
     const gif = PLANNED_FEATURES[7];
     expect(gif.title).toBe('Images to GIF improvements');
     expect(gif.status).toBe(
-      'Explicit Create, Cancel and frame ordering implemented for development'
+      'Explicit Create, Cancel, frame ordering and timing controls implemented for development'
     );
     expect(gif.benefit).toContain(
-      'timing UX and quality optimization remain separate'
+      'Richer progress, per-frame timing and quality optimization remain separate'
     );
   });
   it('distinguishes implemented development MVPs from broader planned features', () => {

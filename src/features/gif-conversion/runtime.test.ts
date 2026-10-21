@@ -250,3 +250,19 @@ it.each([
     );
   }
 );
+it.each([
+  { frameRateMode: 'fps' as const, frameRateValue: 0 },
+  { frameRateMode: 'fps' as const, frameRateValue: Infinity },
+  { frameRateMode: 'delay' as const, frameRateValue: 10 },
+  { frameRateMode: 'delay' as const, frameRateValue: '' as const }
+])(
+  'rejects invalid timing before shared engine admission: %j',
+  async (options) => {
+    const { imagesToGif } = await import(
+      '../../pages/tools/video/gif/images-to-gif/service'
+    );
+    await expect(imagesToGif([file()], options)).rejects.toThrow();
+    expect(fake.load).not.toHaveBeenCalled();
+    expect(fake.exec).not.toHaveBeenCalled();
+  }
+);
