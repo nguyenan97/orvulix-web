@@ -131,8 +131,10 @@ export const PLANNED_FEATURES: readonly {
   },
   {
     title: 'Batch OCR',
+    status:
+      'Bounded English and Vietnamese batch MVP implemented for development',
     benefit:
-      'Extract text from multiple images with language selection, progress, cancellation and TXT or ZIP export.'
+      'Extract ordered text from bounded PNG/JPEG batches with English or Vietnamese selection, progress, cancellation and TXT/ZIP downloads. PDF output and automatic language detection remain separate.'
   },
   {
     title: 'Images to GIF improvements',

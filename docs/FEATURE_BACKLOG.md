@@ -74,6 +74,12 @@ braces tooling exception remain outside that delivery.
 | PDF Editor privacy audit | [#301](https://github.com/iib0011/omni-tools/issues/301). Verify SimplePDF requests with a local fixture; distinguish asset downloads, analytics, fingerprints and document uploads. Existing privacy copy is not a network audit. | Document observed behavior. If integration sends data, disclose exact categories and require opt-in before loading it. Do not claim local-only without verification. | Recheck SDK behavior/version and upstream discussion before changing it. |
 | Clipboard regression triage (partial) | [#390](https://github.com/iib0011/omni-tools/issues/390). PR30 merged shared ToolTextResult display/copy alignment and API failure guidance. PR31 guards ToolCodeResult without changing formatted values; secure-copy and real insecure-origin policy are tested. This does not establish the root cause of every historical Umbrel report. Input/file clipboard consumers remain follow-ups. | Copied text equals the displayed formatted result; unsupported/denied clipboard access gets an actionable error. | [PR #452](https://github.com/iib0011/omni-tools/pull/452), [PR #430](https://github.com/iib0011/omni-tools/pull/430). |
 
+Batch OCR now has a separate bounded English/Vietnamese development MVP at
+`/image-generic/batch-ocr`: explicit Run, sequential PNG/JPEG input, progress,
+cancellation and ordered TXT/ZIP downloads. See [contract](BATCH_OCR.md).
+PDF output and automatic language detection remain deferred; production release
+is separate.
+
 ## Ordered feature plan
 
 The next PNG milestone has a completed research-only
