@@ -1,3 +1,4 @@
+import losslessPng from './tool-content/png/lossless-png';
 import type { ToolSeoOverride } from './types';
 import jsonPrettify from './tool-content/json/prettify';
 import jsonValidatejson from './tool-content/json/validateJson';
@@ -45,6 +46,7 @@ import htmlToPdf from './tool-content/pdf/html-to-pdf'; // ORVULIX-WEB-CONVERSIO
  * generated from their English locale strings.
  */
 export const TOOL_OVERRIDES: Record<string, ToolSeoOverride> = {
+  'png/lossless-png': losslessPng,
   'number/ipv6-subnet-calculator': ipv6Subnet,
   'gif/images-to-gif': imagesToGif,
   'number/ipv4-subnet-calculator': ipv4Subnet,

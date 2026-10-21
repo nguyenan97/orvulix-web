@@ -11,6 +11,12 @@ Our approach is to make existing tools better first, then explore new capabiliti
 
 ## Verified development delivery
 
+Lossless PNG has a bounded native-IDAT recompression MVP in the current development
+task: explicit processing, worker cancellation, exact sample/accepted metadata
+preservation and original-file fallback. See [prompt/contracts](LOSSLESS_PNG_OPTIMIZER.md)
+and [checkpoint](tasks/lossless-png-optimizer.md) for PR/CI status. Advanced
+filter/codec optimization and production release remain separate.
+
 Images to GIF frame ordering is implemented in the current development task:
 numbered full-filename list, keyboard Move earlier/later, immediate GIF invalidation
 and explicit regeneration in the chosen order. Reordering cancels unfinished

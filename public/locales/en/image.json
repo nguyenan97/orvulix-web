@@ -381,5 +381,10 @@
       "longDescription": "An image watermark tool lets you add customizable text watermarks to one or more images. You can automatically use each image's filename as the watermark or apply the same custom text to every image. Watermarks help protect your work, identify ownership, promote your brand, and organize image collections. Customize the font size, opacity, color, and position while preserving the original image quality.",
       "title": "What is Watermark Images ?"
     }
+  },
+  "losslessPng": {
+    "title": "Lossless PNG Optimizer",
+    "description": "Recompress static PNG files without changing pixel samples or accepted metadata. Keep the original if recompression does not help.",
+    "shortDescription": "Lossless PNG recompression with original-file fallback."
   }
 }
