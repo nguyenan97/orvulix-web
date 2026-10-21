@@ -1,5 +1,5 @@
 // @vitest-environment node
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import {
   fixtures,
   chunk,
@@ -198,6 +198,55 @@ describe('lossless PNG admission', () => {
 });
 
 describe('native PNG recompression', () => {
+  it('accepts each legal color/depth combination, including tiny Adam7', async () => {
+    const modes = [
+      [0, 1, 2],
+      [0, 2, 2],
+      [0, 4, 2],
+      [0, 8, 2],
+      [0, 16, 3],
+      [2, 8, 4],
+      [2, 16, 7],
+      [3, 1, 2],
+      [3, 2, 2],
+      [3, 4, 2],
+      [3, 8, 2],
+      [4, 8, 3],
+      [4, 16, 5],
+      [6, 8, 5],
+      [6, 16, 9]
+    ];
+    for (const [color, depth, rowLength] of modes)
+      for (const interlace of [0, 1]) {
+        const h = Buffer.from(chunks(source())[0].data);
+        h.writeUInt32BE(1, 0);
+        h.writeUInt32BE(1, 4);
+        h[8] = depth;
+        h[9] = color;
+        h[12] = interlace;
+        const bytes = assemble([
+          { type: 'IHDR', data: h },
+          ...(color === 3
+            ? [{ type: 'PLTE', data: Buffer.from([0, 0, 0, 255, 255, 255]) }]
+            : []),
+          { type: 'IDAT', data: deflateSync(Buffer.alloc(rowLength)) },
+          { type: 'IEND', data: Buffer.alloc(0) }
+        ]);
+        const output = Buffer.from(await optimizePng(new Uint8Array(bytes)));
+        expect(filtered(output)).toEqual(Buffer.alloc(rowLength));
+        expect(nonIdat(output)).toEqual(nonIdat(bytes));
+      }
+  });
+  it('gives unsupported native API guidance without a lossy fallback', async () => {
+    vi.stubGlobal('CompressionStream', undefined);
+    try {
+      await expect(optimizePng(new Uint8Array(source()))).rejects.toThrow(
+        /updated browser/
+      );
+    } finally {
+      vi.unstubAllGlobals();
+    }
+  });
   it('preserves every scanline and non-IDAT byte across the corpus without inflation', async () => {
     for (const file of fixtures()) {
       const output = Buffer.from(await optimizePng(new Uint8Array(file.png)));

@@ -263,9 +263,12 @@ export function validateSamples(raw: Uint8Array, png: ParsedPng) {
           const a = i ? row[i - 1] : 0,
             b = previous[i],
             c = i ? previous[i - 1] : 0;
-          row[i] =
-            raw[offset + i] +
-            [0, a, b, Math.floor((a + b) / 2), paeth(a, b, c)][filter];
+          let prediction = 0;
+          if (filter === 1) prediction = a;
+          else if (filter === 2) prediction = b;
+          else if (filter === 3) prediction = Math.floor((a + b) / 2);
+          else if (filter === 4) prediction = paeth(a, b, c);
+          row[i] = raw[offset + i] + prediction;
         }
         for (let x = 0; x < pass.width; x++) {
           const bit = x * png.depth;

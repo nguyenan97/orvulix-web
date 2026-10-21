@@ -10,7 +10,7 @@ const content: ToolSeoOverride = {
     'Download the current PNG; changing the file removes old downloads.'
   ],
   notes: [
-    'Native streams recompress existing IDAT data without changing filters, color samples or accepted non-IDAT chunks. This is best-effort optimization, not palette reduction or a guaranteed size saving.',
+    'Native streams recompress existing IDAT data without changing filters, color samples or accepted non-IDAT chunks. The result may not be smaller; filters and color types are retained. No palette reduction is applied.',
     'Supports legal PNG color/depth combinations and Adam7 within 4096 pixels per side, 4 million pixels, 512 chunks and 32 MiB filtered data. The worker stops after 15 seconds. Byte limits are not a strict total heap quota.',
     'Animated PNG and unsupported unsafe-to-copy chunks are rejected. Common metadata is retained as opaque bytes, not decoded or fully validated as ICC/EXIF content.',
     'File contents stay in a disposable browser worker without upload or automatic saving. Requires native compression streams; no lossy fallback is used.'

@@ -43,7 +43,7 @@ describe('tool SEO overrides', () => {
       (path) => path !== 'pdf/editor'
     );
     expect(editorial.length).toBeGreaterThanOrEqual(20);
-    expect(editorial.length).toBe(37);
+    expect(editorial.length).toBe(38);
     expect(TOOL_OVERRIDES['string/text-workflow'].notes.join(' ')).toContain(
       'five-second deadline'
     );

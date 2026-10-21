@@ -22,6 +22,7 @@ test('downloads exact samples and metadata for static PNG corpus without inflati
   await page.goto(route);
   const choose = page.getByLabel('Choose a PNG (up to 4 MiB)'),
     optimize = page.getByRole('button', { name: 'Optimize PNG', exact: true });
+  const measurements: { fixture: string; elapsedMs: number }[] = [];
   for (const fixture of fixtures()) {
     await choose.setInputFiles({
       name: `ảnh-${fixture.name}.png`,
@@ -31,9 +32,14 @@ test('downloads exact samples and metadata for static PNG corpus without inflati
     await expect(page.getByRole('link', { name: 'Download PNG' })).toHaveCount(
       0
     );
+    const started = Date.now();
     await optimize.click();
     const link = page.getByRole('link', { name: 'Download PNG' });
     await expect(link).toBeVisible();
+    measurements.push({
+      fixture: fixture.name,
+      elapsedMs: Date.now() - started
+    });
     const pending = page.waitForEvent('download');
     await link.click();
     const download = await pending;
@@ -48,6 +54,7 @@ test('downloads exact samples and metadata for static PNG corpus without inflati
     if (fixture.name === 'flat-zlib9') expect(output).toEqual(fixture.png);
   }
   expect(posts).toEqual([]);
+  console.log('Built PNG worker timings', JSON.stringify(measurements));
 });
 
 test('rejects corrupt/overexpanded input then recovers with the same picker and keyboard on mobile', async ({

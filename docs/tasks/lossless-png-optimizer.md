@@ -2,11 +2,12 @@
 
 - Updated: 2026-10-21 Asia/Bangkok
 - Branch/base: feature/lossless-png-optimizer / develop 3f344d2c
-- PR: not opened
-- Phase: implementing, focused validation passed; native/full checks pending
+- PR: https://github.com/nguyenan97/orvulix-web/pull/63
+- Phase: reviewed; final artifact/Pages verification and exact-head CI pending
 - Delivery mode: develop-merge
 - Authorization: user requests the next project task prompt and execution from develop.
-- Last verified tree: 3f344d2c plus current uncommitted task files.
+- Last verified tree: dace39d0 plus uncommitted test/SEO updates and indexed
+  unfilter allocation cleanup. Resolve current head from Git/PR when resuming.
 
 ## Scope and acceptance
 
@@ -36,12 +37,55 @@ generic inference); corrected without runtime changes. Production build reached
 Vite packaging, so TypeScript now passes. Focused lint initially found while(true);
 replaced with equivalent for(;;). Full unit/lint/build running; audit passed with
 unchanged 15 findings/6 advisory IDs and existing exception, security tests26/26.
-Native tests cover real corpus downloads, corrupt/overexpanded/trailing data,
-worker cancellation/recovery, mobile/keyboard and navigation; not run yet.
+Native production flows passed9/9 across Chromium/Firefox/WebKit, workers1 and
+retries0, then passed9/9 again with real built-worker timing observations. Every
+fixture's downloaded scanlines/non-IDAT bytes and Jimp RGBA match input. Original
+optimized349-byte PNG stays byte-identical. Corrupt CRC, excessive inflate and
+trailing zlib data fail on all engines, followed by keyboard/mobile recovery.
+Held genuine worker messages verify Cancel, replacement, Clear and navigation
+termination plus recovery; queued success/error publication is covered in DOM tests.
+Screenshots inspected on all engines at390px: escaped full filename wraps and
+actions/download remain accessible. No content POST requests observed.
+
+Full unit run initially had1964 passing /2 failing: new route increases exact SEO
+override count37->38 and PNG status is now a bounded development MVP. Updated those
+specific expectations; kept wording/content gates. Removed best-effort wording
+from new SEO notes to satisfy the existing absolute-word matcher. Full rerun
+passed190 files/1973 tests. Added separate delayed success/error DOM cases,
+oversized replacement, every legal color/depth and tiny Adam7 plus unsupported
+stream guidance. Focused feature/SEO suite39/39 passes.
+
+Review found per-byte temporary predictor arrays in indexed unfilter; replaced
+with direct branches (no semantic change). Focused39/39 and changed lint pass
+after this cleanup; final production/Pages artifact reruns pending. Unaffected
+full-app evidence above is reused only for unchanged code. Prior production
+build passed164 indexable routes/142 tools, sitemap/404; Pages build passed165
+dev HTML files and retained prefix/noindex. Initial Pages browser harness served
+prefix assets as HTML due missing --base in scratch Vite preview command; HTTP
+probes proved root JS worked but prefixed JS returned text/html. Stopped that
+run, corrected scratch preview --base /orvulix-web/, kept assertions/deadlines
+and app routing unchanged; rerun pending.
+
+Requirements review: A1/A2 native corpus and parser boundaries evidenced;
+A3 runner/DOM/native termination and URL ownership evidenced; A4 keyboard/mobile
+and React text sinks reviewed; A5 production metadata/Pages build validated,
+correctly served prefix smoke still pending. Standards/security self-review:
+bounded worker-only binary processing, no preview/native image decoder path,
+preserved opaque metadata, explicit unsafe/APNG rejection, .png download suffix,
+no dependency/server/auth/persistence or hosting expansion. Original fallback
+requires successful sample validation. No remaining code finding; final checks
+must pass before merge. Self-review is not independent approval.
+
+First-head security CI passed; SARIF metadata has the same five documented PR
+rule/path findings (SEO validators/test helper, Pages transform and Markdown
+formatter), no new result in this feature. Recompare final head before merge;
+do not treat green CodeQL analysis as a findings gate.
 
 ## Resume point
 
-Open a draft PR at this reviewable checkpoint; finish production/native checks,
-inspect artifacts/mobile and full diff, then Pages build/smoke and exact-head CI.
-Resolve actual Git/PR state before resuming. Vite dev server is running locally
-on5173 and returned HTTP200; stop task-owned servers after verification.
+Finish artifact reruns on reviewed code, update same PR around final evidence,
+then required exact-head CI/rules/base/head and matched-head develop merge gates.
+Resolve actual Git/PR state before resuming. Vite dev server on5173 returned HTTP200;
+stop task-owned servers after verification. Playwright owns preview processes.
+Local WebKit uses libraries supplied in previous feasibility scratch and its
+documented host-probe workaround; actual native browser executes all assertions.

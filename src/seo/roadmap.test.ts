@@ -67,7 +67,9 @@ describe('public roadmap scope', () => {
         5,
         PLANNED_FEATURES[5].status
       )
-    ).toMatch(/^Planned\. Priority 6\./);
+    ).toMatch(
+      /^Bounded IDAT recompression MVP implemented for development\. Priority 6\./
+    );
   });
   it('keeps feature names and proposed order aligned with the technical backlog', () => {
     const backlog = readFileSync('docs/FEATURE_BACKLOG.md', 'utf8');
