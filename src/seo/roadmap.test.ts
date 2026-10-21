@@ -71,6 +71,14 @@ describe('public roadmap scope', () => {
       /^Bounded IDAT recompression MVP implemented for development\. Priority 6\./
     );
   });
+  it('reports the bounded batch OCR MVP without claiming PDF or detection', () => {
+    expect(PLANNED_FEATURES[6].status).toBe(
+      'Bounded English and Vietnamese batch MVP implemented for development'
+    );
+    expect(PLANNED_FEATURES[6].benefit).toContain(
+      'PDF output and automatic language detection remain separate'
+    );
+  });
   it('keeps feature names and proposed order aligned with the technical backlog', () => {
     const backlog = readFileSync('docs/FEATURE_BACKLOG.md', 'utf8');
     const table = backlog

@@ -386,5 +386,10 @@
     "title": "Lossless PNG Optimizer",
     "description": "Recompress static PNG files without changing pixel samples or accepted metadata. Keep the original if recompression does not help.",
     "shortDescription": "Lossless PNG recompression with original-file fallback."
+  },
+  "batchOcr": {
+    "title": "Batch OCR",
+    "description": "Extract ordered text from multiple PNG/JPEG images with English or Vietnamese OCR and TXT/ZIP downloads.",
+    "shortDescription": "Recognize text from multiple images"
   }
 }

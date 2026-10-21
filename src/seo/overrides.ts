@@ -1,3 +1,4 @@
+import batchOcr from './tool-content/image-generic/batch-ocr';
 import losslessPng from './tool-content/png/lossless-png';
 import type { ToolSeoOverride } from './types';
 import jsonPrettify from './tool-content/json/prettify';
@@ -46,6 +47,7 @@ import htmlToPdf from './tool-content/pdf/html-to-pdf'; // ORVULIX-WEB-CONVERSIO
  * generated from their English locale strings.
  */
 export const TOOL_OVERRIDES: Record<string, ToolSeoOverride> = {
+  'image-generic/batch-ocr': batchOcr,
   'png/lossless-png': losslessPng,
   'number/ipv6-subnet-calculator': ipv6Subnet,
   'gif/images-to-gif': imagesToGif,
