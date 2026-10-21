@@ -1,3 +1,4 @@
+import { timing } from '../../../../../features/gif-conversion/timing';
 import { runFFmpegTask } from 'lib/ffmpeg';
 import { fetchFile } from '@ffmpeg/util';
 import { InitialValuesType } from './types';
@@ -13,16 +14,16 @@ export async function imagesToGif(
   optionsValues: InitialValuesType,
   signal?: AbortSignal
 ): Promise<File> {
+  signal?.throwIfAborted();
+  const { delayMs } = timing(optionsValues);
   return runFFmpegTask(async ({ ffmpeg, tempFile }) => {
     signal?.throwIfAborted();
-    const { frameRateMode, frameRateValue } = optionsValues;
 
     const fileNames: string[] = [];
     const listName = tempFile('.txt');
     const outputName = tempFile('.gif');
 
-    const durationSeconds =
-      frameRateMode === 'fps' ? 1 / frameRateValue : frameRateValue / 1000;
+    const durationSeconds = delayMs / 1000;
 
     const normalized = await normalizeMixedGif(
       input,

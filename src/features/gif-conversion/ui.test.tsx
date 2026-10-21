@@ -307,3 +307,18 @@ it.each(['resolve', 'reject'] as const)(
     ).toEqual(['b.png', 'a.png']);
   }
 );
+it('preserves the interval when switching from 10 FPS to milliseconds', async () => {
+  render(<ImagesToGif title="GIF" />);
+  fireEvent.click(screen.getByText('Choose image'));
+  fireEvent.click(screen.getByText('gif.imagesToGif.frameDelay'));
+  expect(screen.getByRole('spinbutton')).toHaveValue(100);
+});
+it('keeps a cleared timing value editable and blocks Create instead of silently clamping', async () => {
+  render(<ImagesToGif title="GIF" />);
+  fireEvent.click(screen.getByText('Choose image'));
+  fireEvent.change(screen.getByRole('spinbutton'), { target: { value: '' } });
+  expect(screen.getByRole('spinbutton')).toHaveValue(null);
+  expect(
+    screen.getByRole('button', { name: 'gif.imagesToGif.createButton' })
+  ).toBeDisabled();
+});
