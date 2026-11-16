@@ -412,3 +412,31 @@ Pages transform, #4 is incomplete-multi-character-sanitization in validate-html,
 all six REST identities have a disposition above. Retain this as dated evidence;
 at the next scan, re-read the explicit develop ref and review new identities or
 changed sinks individually. A green CodeQL analysis job is not a findings gate.
+
+## PR66 reassessment: 2026-11-16
+
+Removed the expired braces exception: the current registry report no longer
+contains its advisory. DOMPurify 3.4.18 and happy-dom 21.0.4 address the newly
+reported sanitizer/emulator advisories; compatible lockfile updates move joi to
+18.3.2 and follow-redirects to 1.16.3. Licenses retained: DOMPurify
+MPL-2.0 OR Apache-2.0, happy-dom/follow-redirects MIT, joi BSD-3-Clause. No application API
+migration or forced transitive major override. Native sanitizer/renderer tests
+and full units remain required for the emulator major change.
+
+GHSA-mrhx-c7xc-m3w5 remains on zod 3.25.76. npm update cannot move its parents
+(@imgly/background-removal 1.7.0, @jimp/types 1.6.0) from their Zod 3 contracts to
+patched Zod 4.6.6. The latest Zod 3 is still 3.25.76. A new exact exception, owned
+by nguyenan97 and expiring 2026-12-16, records the remaining risk rather than
+claiming a fix. App source has no Zod or @jimp/types imports. The background
+removal consumer supplies only a progress callback and defaults; its bundled
+ConfigSchema validates configuration, not image bytes, and contains no constrained
+collection schemas involved in this advisory. Image decoding risks are separate.
+Do not pass user schemas/collections/configuration through this API. Reassess if
+that boundary changes. Owner follow-up: remove the exception after compatible
+parent patches or a separately verified Zod 4 integration; rerun audit and actual
+background-removal behavior. The bundled Zod copy also needs parent remediation.
+
+Audit normalization accepts grounded dependency cycles while preserving concrete
+advisories and rejecting unknown references and ungrounded cycles. Both Playwright
+workflows pin Ubuntu 24.04 for locked Playwright 1.55.1 support. Security severity
+thresholds, assertions, retries and production hosting settings remain unchanged.
