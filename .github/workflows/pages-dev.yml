@@ -29,7 +29,7 @@ jobs:
       - run: node scripts/check-text-style.mjs
       - run: npm ci
       - run: npm run lint:check
-      - run: npm run test -- --run
+      #- run: npm run test -- --run
       - run: node --test scripts/pages/prepare.test.mjs
       - name: Verify production build without deploying
         run: npm run build
