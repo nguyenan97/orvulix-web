@@ -44,6 +44,26 @@ describe('validateRouteHtml', () => {
     ).toEqual([]);
   });
 
+  it.each(['/privacy', '/terms'])(
+    'renders complete static legal content for %s',
+    async (path) => {
+      const site = await load();
+      const page = resolveSeoPage(site, path);
+      const html = renderDocument(TEMPLATE, page);
+
+      expect(html).toContain(page.intro);
+      expect(html).toContain('99shadow.friend99@gmail.com');
+      expect(page.sections.length).toBeGreaterThan(0);
+      for (const section of page.sections) {
+        expect(html).toContain(section.heading);
+        for (const paragraph of section.paragraphs ?? []) {
+          expect(html).toContain(paragraph);
+        }
+      }
+      expect(validateRouteHtml(html, page, SITE, path)).toEqual([]);
+    }
+  );
+
   it.each([
     [
       'a second canonical',

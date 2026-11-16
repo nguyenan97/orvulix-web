@@ -62,6 +62,16 @@ function SectionBody({ section }: { section: ContentSection }) {
           ))}
         </>
       );
+    case 'paragraphs':
+      return (
+        <>
+          {section.paragraphs?.map((paragraph) => (
+            <Typography component="p" key={paragraph}>
+              {paragraph}
+            </Typography>
+          ))}
+        </>
+      );
   }
 }
 
