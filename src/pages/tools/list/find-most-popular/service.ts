@@ -1,4 +1,4 @@
-import { itemCounter } from '@utils/string';
+import { itemCounter } from '../../../../workers/list-regex/pure-string';
 
 export type SplitOperatorType = 'symbol' | 'regex';
 export type DisplayFormat = 'count' | 'percentage' | 'total';

@@ -1,17 +1,18 @@
 import { Box } from '@mui/material';
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import ToolCodeInput from '@components/input/ToolCodeInput';
-import ToolCodeResult from '@components/result/ToolCodeResult';
-import { sortJson } from './service';
+import {
+  SortResult,
+  resultIsDerived
+} from '../../../../features/json-sort/SortResult'; // ORVULIX: current output ownership.
+import { inspectSortInput } from '../../../../features/json-sort/result'; // ORVULIX: bounded header discovery.
 import { CardExampleType } from '@components/examples/ToolExamples';
 import SelectWithDesc from '@components/options/SelectWithDesc';
 import { ToolComponentProps } from '@tools/defineTool';
 import ToolContent from '@components/ToolContent';
 import { InitialValuesType } from './types';
 import { GetGroupsType } from '@components/options/ToolOptions';
-import { getJsonHeaders } from '@utils/json';
 import { useTranslation } from 'react-i18next';
-import { JsonFormat } from '@utils/json';
 
 const initialValues: InitialValuesType = {
   mode: 'value',
@@ -61,24 +62,7 @@ export default function SortJson({
 }: ToolComponentProps) {
   const { t } = useTranslation('json');
   const [input, setInput] = useState<string>('');
-  const [result, setResult] = useState<string>('');
-  const [format, setFormat] = useState<JsonFormat>('json');
-
-  const compute = (values: InitialValuesType, input: string) => {
-    if (input) {
-      try {
-        const { result, format } = sortJson(input, values);
-        setResult(result);
-        setFormat(format);
-      } catch (error) {
-        setResult(
-          ` ${error instanceof Error ? error.message : 'Invalid JSON format'}`
-        );
-      }
-    }
-  };
-
-  const keys = getJsonHeaders(input);
+  const { keys, format } = useMemo(() => inspectSortInput(input), [input]);
   const keyOptions =
     keys.length > 0
       ? keys.map((item) => ({
@@ -156,15 +140,11 @@ export default function SortJson({
         />
       }
       resultComponent={
-        <ToolCodeResult
-          title={t('sortJson.resultTitle')}
-          value={result}
-          language={format}
-        />
+        <SortResult title={t('sortJson.resultTitle')} input={input} />
       }
       initialValues={initialValues}
       getGroups={getGroups}
-      compute={compute}
+      compute={resultIsDerived}
       input={input}
       setInput={setInput}
       exampleCards={exampleCards}

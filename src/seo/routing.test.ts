@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { readFileSync } from 'node:fs';
+import { resolve } from 'node:path';
 import { findCatchAllRewrites } from '../../scripts/seo/validate-dist.mjs';
 import { htmlFileForPath } from '../../scripts/seo/prerender.mjs';
 
@@ -27,12 +28,12 @@ describe('Netlify routing for prerendered pages', () => {
   });
 
   it('writes non-home routes as flat .html files to keep URLs without a trailing slash', () => {
-    expect(htmlFileForPath('/')).toMatch(/dist\/index\.html$/);
-    expect(htmlFileForPath('/string/uppercase')).toMatch(
-      /dist\/string\/uppercase\.html$/
+    expect(htmlFileForPath('/')).toBe(resolve('dist/index.html'));
+    expect(htmlFileForPath('/string/uppercase')).toBe(
+      resolve('dist/string/uppercase.html')
     );
-    expect(htmlFileForPath('/categories/json')).toMatch(
-      /dist\/categories\/json\.html$/
+    expect(htmlFileForPath('/categories/json')).toBe(
+      resolve('dist/categories/json.html')
     );
   });
 });

@@ -1,4 +1,5 @@
 import { PDFDocument } from 'pdf-lib';
+import { mergeDocuments } from '../../../../features/pdf-merge/merge'; // ORVULIX: bounded cooperative merge.
 
 /**
  * Parses a page range string and returns an array of page numbers
@@ -80,18 +81,9 @@ export async function splitPdf(
  * @param pdfFiles Array of PDF files to merge
  * @returns Promise resolving to a new PDF file with all pages combined
  */
-export async function mergePdf(pdfFiles: File[]): Promise<File> {
-  const mergedPdf = await PDFDocument.create();
-  for (const pdfFile of pdfFiles) {
-    const arrayBuffer = await pdfFile.arrayBuffer();
-    const pdf = await PDFDocument.load(arrayBuffer);
-    const copiedPages = await mergedPdf.copyPages(pdf, pdf.getPageIndices());
-    copiedPages.forEach((page) => mergedPdf.addPage(page));
-  }
-
-  const mergedPdfBytes = await mergedPdf.save();
-  const mergedFileName = 'merged.pdf';
-  return new File([mergedPdfBytes as any], mergedFileName, {
-    type: 'application/pdf'
-  });
+export async function mergePdf(
+  pdfFiles: File[],
+  signal?: AbortSignal
+): Promise<File> {
+  return mergeDocuments(pdfFiles, signal);
 }

@@ -1,5 +1,6 @@
+import useDebounce from '../../../../hooks/useDebounce';
 import { Box, Typography, TextField, Alert } from '@mui/material';
-import React, { useState, useMemo, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import ToolContent from '@components/ToolContent';
 import { ToolComponentProps } from '@tools/defineTool';
 import { cropVideo, getVideoDimensions } from './service';
@@ -7,7 +8,7 @@ import { InitialValuesType } from './types';
 import ToolVideoInput from '@components/input/ToolVideoInput';
 import { GetGroupsType } from '@components/options/ToolOptions';
 import ToolFileResult from '@components/result/ToolFileResult';
-import { debounce } from 'lodash';
+
 import { useTranslation } from 'react-i18next';
 
 const initialValues: InitialValuesType = {
@@ -84,10 +85,7 @@ export default function CropVideo({ title }: ToolComponentProps) {
     }
   };
 
-  const debouncedCompute = useMemo(
-    () => debounce(compute, 2000),
-    [videoDimensions]
-  );
+  const debouncedCompute = useDebounce(compute, 2000);
 
   useEffect(() => {
     return () => {

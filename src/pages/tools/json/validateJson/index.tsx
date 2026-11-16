@@ -8,7 +8,7 @@ import ToolContent from '@components/ToolContent';
 import { useTranslation } from 'react-i18next';
 import { JsonFormat } from '@utils/json';
 
-const exampleCards: CardExampleType<{}>[] = [
+const exampleCards: CardExampleType<Record<string, never>>[] = [
   {
     title: 'Valid JSON Object',
     description:

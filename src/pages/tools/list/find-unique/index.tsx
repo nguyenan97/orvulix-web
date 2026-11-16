@@ -2,7 +2,7 @@ import { Box } from '@mui/material';
 import React, { useState } from 'react';
 import ToolTextInput from '@components/input/ToolTextInput';
 import ToolTextResult from '@components/result/ToolTextResult';
-import ToolContent from '@components/ToolContent';
+import ToolContent from '../../../../workers/list-regex/BoundedListContent'; // ORVULIX-RELIABILITY
 import { findUniqueCompute, SplitOperatorType } from './service';
 import SimpleRadio from '@components/options/SimpleRadio';
 import TextFieldWithDesc from '@components/options/TextFieldWithDesc';
@@ -66,6 +66,8 @@ export default function FindUnique() {
 
   return (
     <ToolContent
+      workerOperation="find-unique"
+      setResult={setResult} // ORVULIX-RELIABILITY
       title={t('findUnique.title')}
       initialValues={initialValues}
       compute={compute}

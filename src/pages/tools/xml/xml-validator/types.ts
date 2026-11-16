@@ -1,3 +1,1 @@
-export type InitialValuesType = {
-  // splitSeparator: string;
-};
+export type InitialValuesType = Record<string, never>;

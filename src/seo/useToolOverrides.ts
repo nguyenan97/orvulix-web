@@ -16,10 +16,10 @@ export const loadToolOverrides = (): Promise<Overrides> => {
 };
 
 /** Override registry, or undefined until its chunk has loaded. */
-export const useToolOverrides = (): Overrides | undefined => {
+export const useToolOverrides = (enabled = true): Overrides | undefined => {
   const [overrides, setOverrides] = useState(cache);
   useEffect(() => {
-    if (overrides) return;
+    if (!enabled || overrides) return;
     let active = true;
     loadToolOverrides()
       .then((loaded) => {
@@ -31,6 +31,6 @@ export const useToolOverrides = (): Overrides | undefined => {
     return () => {
       active = false;
     };
-  }, [overrides]);
+  }, [overrides, enabled]);
   return overrides;
 };

@@ -1,4 +1,4 @@
-import { BrowserRouter, useRoutes } from 'react-router-dom';
+import { BrowserRouter, useLocation, useRoutes } from 'react-router-dom';
 import routesConfig from '../config/routesConfig';
 import Navbar from './Navbar';
 import Footer from './Footer';
@@ -15,15 +15,26 @@ import { I18nextProvider } from 'react-i18next';
 import i18n from '../i18n';
 import { UserTypeFilterProvider } from 'providers/UserTypeFilterProvider';
 import RouteSeo from '../seo/RouteSeo'; // ORVULIX-SEO
+import RouteErrorBoundary from '../features/initial-load/RouteErrorBoundary';
 
 export type Mode = 'dark' | 'light' | 'system';
 
+// Build elements, not function calls: only the matched route may run its hooks.
+const appRoutes = [
+  ...routesConfig,
+  ...tools.map((tool) => {
+    const Component = tool.component;
+    return { path: tool.path, element: <Component /> };
+  })
+];
 const AppRoutes = () => {
-  const updatedRoutesConfig = [...routesConfig];
-  tools.forEach((tool) => {
-    updatedRoutesConfig.push({ path: tool.path, element: tool.component() });
-  });
-  return useRoutes(updatedRoutesConfig);
+  const { pathname } = useLocation();
+  const route = useRoutes(appRoutes);
+  return (
+    <RouteErrorBoundary key={pathname}>
+      <Suspense fallback={<Loading />}>{route}</Suspense>
+    </RouteErrorBoundary>
+  );
 };
 
 function App() {
@@ -35,6 +46,7 @@ function App() {
 
   // Make sure to update the theme when the mode changes
   useEffect(() => {
+    if (mode !== 'system') return;
     const systemDarkModeQuery = window.matchMedia(
       '(prefers-color-scheme: dark)'
     );
@@ -46,7 +58,7 @@ function App() {
     return () => {
       systemDarkModeQuery.removeEventListener('change', handleThemeChange);
     };
-  }, []);
+  }, [mode]);
 
   return (
     <I18nextProvider i18n={i18n}>
@@ -69,13 +81,12 @@ function App() {
                 <Navbar
                   mode={mode}
                   onChangeMode={() => {
-                    setMode((prev) => nextMode(prev));
-                    localStorage.setItem('theme', nextMode(mode));
+                    const next = nextMode(mode);
+                    setMode(next);
+                    localStorage.setItem('theme', next);
                   }}
                 />
-                <Suspense fallback={<Loading />}>
-                  <AppRoutes />
-                </Suspense>
+                <AppRoutes />
                 <Footer />
               </BrowserRouter>
             </UserTypeFilterProvider>

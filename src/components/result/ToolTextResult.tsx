@@ -6,6 +6,7 @@ import ResultFooter from './ResultFooter';
 import { brand } from '../../brand/config'; // ORVULIX-BRAND
 import { replaceSpecialCharacters } from '@utils/string';
 import mime from 'mime';
+import { writeResultText } from '../../features/text-result-clipboard/write'; // ORVULIX: visible-result clipboard contract.
 import { globalInputHeight } from '../../config/uiConfig';
 import { useTranslation } from 'react-i18next';
 
@@ -14,25 +15,31 @@ export default function ToolTextResult({
   value,
   extension = 'txt',
   keepSpecialCharacters,
-  loading
+  loading,
+  disabled = false
 }: {
   title?: string;
   value: string;
   extension?: string;
   keepSpecialCharacters?: boolean;
   loading?: boolean;
+  disabled?: boolean;
 }) {
   const { t } = useTranslation();
   const { showSnackBar } = useContext(CustomSnackBarContext);
+  const displayValue = (
+    keepSpecialCharacters ? value : replaceSpecialCharacters(value)
+  ).replace(/\r\n?/g, '\n');
   const handleCopy = () => {
-    navigator.clipboard
-      .writeText(value)
+    if (disabled) return;
+    writeResultText(displayValue)
       .then(() => showSnackBar(t('toolTextResult.copied'), 'success'))
       .catch((err) => {
         showSnackBar(t('toolTextResult.copyFailed', { error: err }), 'error');
       });
   };
   const handleDownload = () => {
+    if (disabled) return;
     const filename = `${brand.downloadPrefix}.${extension}`;
 
     const mimeType = mime.getType(extension) || 'text/plain';
@@ -69,9 +76,7 @@ export default function ToolTextResult({
         </Box>
       ) : (
         <TextField
-          value={
-            keepSpecialCharacters ? value : replaceSpecialCharacters(value)
-          }
+          value={displayValue}
           fullWidth
           multiline
           sx={{
@@ -83,7 +88,11 @@ export default function ToolTextResult({
           inputProps={{ 'data-testid': 'text-result' }}
         />
       )}
-      <ResultFooter handleCopy={handleCopy} handleDownload={handleDownload} />
+      <ResultFooter
+        disabled={disabled}
+        handleCopy={handleCopy}
+        handleDownload={handleDownload}
+      />
     </Box>
   );
 }

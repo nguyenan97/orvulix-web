@@ -8,7 +8,7 @@ import SimpleRadio from '@components/options/SimpleRadio';
 import TextFieldWithDesc from '@components/options/TextFieldWithDesc';
 import { CardExampleType } from '@components/examples/ToolExamples';
 import { ToolComponentProps } from '@tools/defineTool';
-import ToolContent from '@components/ToolContent';
+import ToolContent from '../../../../workers/list-regex/BoundedListContent'; // ORVULIX-RELIABILITY
 import { useTranslation } from 'react-i18next';
 
 const initialValues = {
@@ -124,7 +124,7 @@ export default function Reverse({ title }: ToolComponentProps) {
       title: t('reverse.splitterMode'),
       component: (
         <Box>
-          {splitOperators.map(({ title, description, type }) => (
+          {splitOperators.map(({ type }) => (
             <SimpleRadio
               key={type}
               onClick={() => updateField('splitOperatorType', type)}
@@ -171,6 +171,8 @@ export default function Reverse({ title }: ToolComponentProps) {
 
   return (
     <ToolContent
+      workerOperation="reverse"
+      setResult={setResult} // ORVULIX-RELIABILITY
       title={title}
       initialValues={initialValues}
       getGroups={getGroups}

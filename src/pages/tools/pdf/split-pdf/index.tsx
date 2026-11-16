@@ -1,5 +1,13 @@
 import { Box, Typography } from '@mui/material';
-import { useEffect, useState } from 'react';
+import {
+  useContext,
+  useEffect,
+  useRef,
+  useState,
+  type Dispatch,
+  type SetStateAction
+} from 'react';
+import { CustomSnackBarContext } from '../../../../contexts/CustomSnackBarContext';
 import ToolFileResult from '@components/result/ToolFileResult';
 import TextFieldWithDesc from '@components/options/TextFieldWithDesc';
 import ToolContent from '@components/ToolContent';
@@ -55,9 +63,30 @@ export default function SplitPdf({ title }: ToolComponentProps) {
   const [isProcessing, setIsProcessing] = useState<boolean>(false);
   const [totalPages, setTotalPages] = useState<number>(0);
   const [pageRangePreview, setPageRangePreview] = useState<string>('');
+  const { showSnackBar } = useContext(CustomSnackBarContext);
+  const inputVersion = useRef(0);
+  const jobVersion = useRef(0);
+  const changeInput: Dispatch<SetStateAction<File | null>> = (file) => {
+    inputVersion.current++;
+    jobVersion.current++;
+    setInput(file);
+    setResult(null);
+    setIsProcessing(false);
+    setTotalPages(0);
+    setPageRangePreview('');
+  };
+  useEffect(
+    () => () => {
+      inputVersion.current++;
+      jobVersion.current++;
+    },
+    []
+  );
 
   // Get the total number of pages when a PDF is uploaded
   useEffect(() => {
+    let active = true;
+    const version = inputVersion.current;
     const getPdfInfo = async () => {
       if (!input) {
         setTotalPages(0);
@@ -67,14 +96,17 @@ export default function SplitPdf({ title }: ToolComponentProps) {
       try {
         const arrayBuffer = await input.arrayBuffer();
         const pdf = await PDFDocument.load(arrayBuffer);
-        setTotalPages(pdf.getPageCount());
-      } catch (error) {
-        console.error('Error getting PDF info:', error);
-        setTotalPages(0);
+        if (active && version === inputVersion.current)
+          setTotalPages(pdf.getPageCount());
+      } catch {
+        if (active && version === inputVersion.current) setTotalPages(0);
       }
     };
 
     getPdfInfo();
+    return () => {
+      active = false;
+    };
   }, [input]);
 
   const onValuesChange = (values: InitialValuesType) => {
@@ -91,22 +123,31 @@ export default function SplitPdf({ title }: ToolComponentProps) {
           plural: count === 1 ? '' : 's'
         })
       );
-    } catch (error) {
+    } catch {
       setPageRangePreview('');
     }
   };
 
   const compute = async (values: InitialValuesType, input: File | null) => {
-    if (!input) return;
+    const job = ++jobVersion.current;
+    setResult(null);
+    if (!input) {
+      setIsProcessing(false);
+      return;
+    }
 
     try {
       setIsProcessing(true);
       const splitResult = await splitPdf(input, values.pageRanges);
-      setResult(splitResult);
-    } catch (error) {
-      throw new Error('Error splitting PDF:' + error);
+      if (job === jobVersion.current) setResult(splitResult);
+    } catch {
+      if (job === jobVersion.current)
+        showSnackBar(
+          'Unable to split this PDF. Check the file and page ranges.',
+          'error'
+        );
     } finally {
-      setIsProcessing(false);
+      if (job === jobVersion.current) setIsProcessing(false);
     }
   };
 
@@ -114,14 +155,14 @@ export default function SplitPdf({ title }: ToolComponentProps) {
     <ToolContent
       title={title}
       input={input}
-      setInput={setInput}
+      setInput={changeInput}
       initialValues={initialValues}
       compute={compute}
       exampleCards={exampleCards}
       inputComponent={
         <ToolPdfInput
           value={input}
-          onChange={setInput}
+          onChange={changeInput}
           accept={['application/pdf']}
           title={t('splitPdf.inputTitle')}
         />

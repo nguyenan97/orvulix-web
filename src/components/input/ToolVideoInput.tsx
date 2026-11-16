@@ -94,10 +94,7 @@ export default function ToolVideoInput({
                 </Typography>
               </Box>
               <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-                <div
-                  className="range-slider-container"
-                  style={{ margin: '20px 0', width: '100%' }}
-                >
+                <div style={{ margin: '20px 0', width: '100%' }}>
                   <Slider
                     range
                     min={0}

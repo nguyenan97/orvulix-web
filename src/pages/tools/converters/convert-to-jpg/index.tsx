@@ -1,3 +1,4 @@
+import useDebounce from '../../../../hooks/useDebounce';
 import { Box, Slider, Typography } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import ToolMultipleImageInput, {
@@ -6,14 +7,13 @@ import ToolMultipleImageInput, {
 import ColorSelector from 'components/options/ColorSelector';
 import ToolFileResult from '@components/result/ToolFileResult';
 import ToolMultiFileResult from '@components/result/ToolMultiFileResult';
-import React, { useState, useContext, useCallback } from 'react';
+import React, { useState, useContext } from 'react';
 import * as Yup from 'yup';
 import ToolContent from '@components/ToolContent';
 import { ToolComponentProps } from '@tools/defineTool';
 import InitialValuesType from './types';
 import { convertToJPG } from './service';
 import { CustomSnackBarContext } from 'contexts/CustomSnackBarContext';
-import debounce from 'lodash/debounce';
 
 const initialValues: InitialValuesType = {
   quality: 85,
@@ -65,7 +65,7 @@ export default function ConvertToJpg({ title }: ToolComponentProps) {
     }
   };
 
-  const debouncedCompute = useCallback(debounce(compute, 1000), []);
+  const debouncedCompute = useDebounce(compute, 1000);
 
   return (
     <ToolContent

@@ -1,124 +1,129 @@
-import { Box } from '@mui/material';
-import React, { useState, useCallback } from 'react';
+import { TimingControls } from '../../../../../features/gif-conversion/TimingControls';
+import { timingError } from '../../../../../features/gif-conversion/timing';
+import { Alert, Box, Button, Stack, Typography } from '@mui/material';
+import React, { useState } from 'react';
 import ToolFileResult from '@components/result/ToolFileResult';
-import TextFieldWithDesc from 'components/options/TextFieldWithDesc';
 import ToolContent from '@components/ToolContent';
 import { ToolComponentProps } from '@tools/defineTool';
 import ToolMultipleImageInput, {
   MultiImageInput
 } from '@components/input/ToolMultipleImageInput';
-import SimpleRadio from '@components/options/SimpleRadio';
 import { InitialValuesType } from './types';
-import { updateNumberField } from '@utils/string';
 import { useTranslation } from 'react-i18next';
-import { imagesToGif } from './service';
-import { debounce } from 'lodash';
+import { useGifConversion } from '../../../../../features/gif-conversion/useGifConversion'; // ORVULIX: latest GIF job ownership.
+import { FrameOrder } from '../../../../../features/gif-conversion/FrameOrder';
 
 const initialValues: InitialValuesType = {
   frameRateMode: 'fps',
   frameRateValue: 10
 };
+// Keep shared Formik auto-compute unchanged for other tools; GIF runs by gesture.
+const skipAutomaticConversion = () => {};
 
 export default function ImagesToGif({ title }: ToolComponentProps) {
   const { t } = useTranslation('video');
-  const [input, setInput] = useState<MultiImageInput[]>([]);
-  const [result, setResult] = useState<File | null>(null);
-  const [loading, setLoading] = useState(false);
-
-  const compute = async (
-    optionsValues: InitialValuesType,
-    input: MultiImageInput[]
-  ) => {
-    if (!input || input.length === 0) return;
-    setLoading(true);
-    try {
-      const convertedGif = await imagesToGif(
-        input.map((item) => item.file),
-        optionsValues
-      );
-      setResult(convertedGif);
-    } catch (error) {
-      console.error('Error cropping video:', error);
-    } finally {
-      setLoading(false);
-    }
+  const [input, setFiles] = useState<MultiImageInput[]>([]);
+  const {
+    result,
+    loading,
+    error,
+    busy,
+    create,
+    invalidate: discard
+  } = useGifConversion();
+  const [cancelled, setCancelled] = useState(false);
+  const invalidate = () => {
+    setCancelled(false);
+    discard();
   };
-
-  const debouncedCompute = useCallback(debounce(compute, 1000), []);
+  const setInput: React.Dispatch<React.SetStateAction<MultiImageInput[]>> = (
+    next
+  ) => {
+    invalidate();
+    setFiles(next);
+  };
 
   return (
     <ToolContent
       title={title}
       input={input}
       inputComponent={
-        <ToolMultipleImageInput
-          value={input}
-          onChange={setInput}
-          type="image"
-          accept={['image/*']}
-          title={t('gif.imagesToGif.inputTitle')}
-        />
+        <Box>
+          <ToolMultipleImageInput
+            value={input}
+            onChange={setInput}
+            type="image"
+            accept={['image/*']}
+            title={t('gif.imagesToGif.inputTitle')}
+          />
+          <FrameOrder frames={input} onChange={setInput} />
+        </Box>
       }
       resultComponent={
-        <ToolFileResult
-          title={t('gif.imagesToGif.resultTitle')}
-          value={result}
-          extension="gif"
-          loading={loading}
-          loadingText={t('gif.imagesToGif.loadingText')}
-        />
+        <Box>
+          {error && <Alert severity="error">{error}</Alert>}
+          {cancelled && (
+            <Alert severity="info">{t('gif.imagesToGif.cancelledText')}</Alert>
+          )}
+          <Typography role="status" sx={{ mb: 1 }}>
+            {t(
+              busy && !loading
+                ? 'gif.imagesToGif.settlingText'
+                : loading
+                  ? 'gif.imagesToGif.loadingText'
+                  : result
+                    ? 'gif.imagesToGif.readyText'
+                    : 'gif.imagesToGif.createHint'
+            )}
+          </Typography>
+          <ToolFileResult
+            title={t('gif.imagesToGif.resultTitle')}
+            value={result}
+            extension="gif"
+            loading={loading}
+            loadingText={t('gif.imagesToGif.loadingText')}
+          />
+        </Box>
       }
       initialValues={initialValues}
-      getGroups={({ values, updateField }) => [
+      getGroups={({ values, setValues }) => [
         {
           title: t('gif.imagesToGif.frameOptions'),
           component: (
             <Box>
-              <SimpleRadio
-                checked={values.frameRateMode === 'fps'}
-                title={t('gif.imagesToGif.frameRate')}
-                description={t('gif.imagesToGif.frameRateDescription')}
-                onClick={() => updateField('frameRateMode', 'fps')}
+              <TimingControls
+                values={values}
+                onChange={(next) => {
+                  invalidate();
+                  void setValues(next);
+                }}
               />
-
-              <SimpleRadio
-                checked={values.frameRateMode === 'delay'}
-                title={t('gif.imagesToGif.frameDelay')}
-                description={t('gif.imagesToGif.frameDelayDescription')}
-                onClick={() => updateField('frameRateMode', 'delay')}
-              />
-
-              <Box mt={2}>
-                <TextFieldWithDesc
-                  name="frameRate"
-                  type="number"
-                  inputProps={
-                    values.frameRateMode === 'fps'
-                      ? { min: 1, max: 60, step: 1 }
-                      : { min: 50, max: 10000, step: 50 }
-                  }
-                  description={t('gif.imagesToGif.frameRateValueDescription')}
-                  onOwnChange={(value) => {
-                    const { min, max } =
-                      values.frameRateMode === 'fps'
-                        ? { min: 1, max: 60 }
-                        : { min: 50, max: 10000 };
-
-                    const clamped = Math.min(
-                      max,
-                      Math.max(min, Number(value))
-                    ).toString();
-
-                    updateNumberField(clamped, 'frameRateValue', updateField);
+              <Stack direction="row" useFlexGap flexWrap="wrap" gap={1} mt={2}>
+                <Button
+                  variant="contained"
+                  disabled={!input.length || busy || !!timingError(values)}
+                  onClick={() => {
+                    setCancelled(false);
+                    if (!timingError(values)) create(values, input);
                   }}
-                  value={values.frameRateValue}
-                />
-              </Box>
+                >
+                  {t('gif.imagesToGif.createButton')}
+                </Button>
+                <Button
+                  disabled={!loading}
+                  onClick={() => {
+                    discard();
+                    setCancelled(true);
+                  }}
+                >
+                  {t('gif.imagesToGif.cancelButton')}
+                </Button>
+              </Stack>
             </Box>
           )
         }
       ]}
-      compute={debouncedCompute}
+      compute={skipAutomaticConversion}
       setInput={setInput}
     />
   );

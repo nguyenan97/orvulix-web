@@ -1,19 +1,4 @@
-/**
- * SEO content for /csv/csv-to-json. Every statement was checked against the code;
- * re-verify these sources when upstream changes the tool:
- * - src/pages/tools/csv/csv-to-json/service.ts lines 24-37 and 100-103
- * - src/pages/tools/csv/csv-to-json/service.ts lines 44-62
- * - src/pages/tools/csv/csv-to-json/service.ts lines 54-57
- * - src/pages/tools/csv/csv-to-json/service.ts lines 39-41 and 64
- * - src/pages/tools/csv/csv-to-json/service.ts lines 67-87; src/components/options/TextFieldWithDesc.tsx (value passed through unchanged)
- * - src/pages/tools/csv/csv-to-json/service.ts lines 89-98
- * - src/pages/tools/csv/csv-to-json/service.ts lines 55-56 and 89-92; src/pages/tools/csv/csv-to-json/index.tsx lines 132-139
- * - src/pages/tools/csv/csv-to-json/index.tsx lines 24-33
- * - src/pages/tools/csv/csv-to-json/index.tsx lines 152-214; public/locales/en/csv.json lines 13-37
- * - src/components/input/ToolTextInput.tsx lines 31-43 and 67; src/components/input/InputFooter.tsx line 22; src/pages/tools/csv/csv-to-json/index.tsx lines 160-164; src/components/result/ToolTextResult.tsx lines 26-50
- * - src/components/ToolContent.tsx lines 26-33; src/pages/tools/csv/csv-to-json/service.ts (no imports); src/components/input/ToolTextInput.tsx; src/components/result/ToolTextResult.tsx; grep of src and index.html for fetch/XMLHttpRequest/sendBeacon/analytics
- * - src/pages/tools/csv/csv-to-json/index.tsx lines 35-78; service.ts lines 44-64 and 89-98
- */
+/** SEO contract: features/delimited-json/convert.ts and Result.tsx; recheck on parser changes. */
 import type { ToolSeoOverride } from '../../types';
 
 const content: ToolSeoOverride = {
@@ -44,27 +29,28 @@ const content: ToolSeoOverride = {
     }
   ],
   notes: [
-    'With Use Headers on, the first line that is not blank or a comment provides the keys and every later line becomes an object. With it off, every line becomes an array of values.',
-    'Dynamic Types turns true and false (any letter case) into booleans, lowercase null into null, and numeric text into numbers. 007 becomes 7 and an empty cell becomes 0. Turn it off to keep every value as a string.',
-    'The input is split at line breaks, so a quoted field cannot span several lines. Quote characters are removed from values, a doubled quote inside a field is not kept as a literal quote, and spaces around each value are trimmed.',
-    'The separator is compared one character at a time, so it must be a single character. Typing \\t (a backslash and a t) is not treated as a tab. Lines whose first non-space character is the Comment Symbol are skipped. The output is a JSON array indented with 2 spaces.',
+    'With Use Headers on, the first logical record provides unique keys and every later record becomes an object. With it off, every record becomes an array of values.',
+    'Dynamic Types turns true and false (any letter case) into booleans, lowercase null into null, and unquoted numeric text into numbers. Quoted values, empty cells and unsafe integers stay strings. Turn it off to keep every value as a string.',
+    'Quoted fields may contain line breaks and doubled quotes. Whitespace is preserved. Missing or extra fields, duplicate headers and malformed quotes produce an error and disable export.',
+    'The separator is compared one character at a time, so it must be a single character. Typing \\t (a backslash and a t) is not treated as a tab. Records starting with the Comment Symbol outside quotes are skipped. An empty Comment Symbol disables comments. The output is a JSON array indented with 2 spaces.',
+    'Input is limited to 1 Mi UTF-16 units, 20000 data records, 1024 columns and 2 Mi UTF-16 units of JSON output. Numeric conversion uses JavaScript number precision.',
     "The conversion runs as JavaScript in your browser. The tool's code does not send your CSV over the network."
   ],
   faq: [
     {
       question: 'What does Skip Empty Lines do?',
       answer:
-        'Completely blank lines are always ignored. With Skip Empty Lines on, lines that contain only separators and spaces (such as ,,) are ignored too. With it off, such a line becomes a record with empty values, or 0s when Dynamic Types is on.'
+        'With Skip Empty Lines on, records containing only unquoted whitespace or separators are ignored. Quoted empty cells are retained. With it off, empty records must match the expected column count.'
     },
     {
       question: 'What happens if a row has fewer values than the header?',
       answer:
-        "With Dynamic Types on, the tool shows an error instead of JSON. With it off, the missing keys are left out of that row's object. Values beyond the number of headers are dropped in both cases."
+        'The tool rejects missing or extra fields with an error instead of silently dropping data, regardless of Dynamic Types.'
     },
     {
       question: 'How do I keep leading zeros in IDs or zip codes?',
       answer:
-        'Turn off Dynamic Types. When it is on, numeric text is converted to a number, so 01234 becomes 1234 and an empty cell becomes 0.'
+        'Quote the value or turn off Dynamic Types. Unquoted 01234 becomes 1234 when Dynamic Types is on; an empty cell stays an empty string.'
     }
   ]
 };

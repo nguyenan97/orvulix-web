@@ -40,7 +40,11 @@ test('roadmap shows planned features in static HTML and after React renders', as
       await expect(
         staticPage.getByRole('heading', { name: feature.title, exact: true })
       ).toBeVisible();
-      const summary = plannedFeatureSummary(feature.benefit, index);
+      const summary = plannedFeatureSummary(
+        feature.benefit,
+        index,
+        feature.status
+      );
       await expect(section.getByText(summary, { exact: true })).toBeVisible();
       await expect(
         staticPage.getByText(summary, { exact: true })

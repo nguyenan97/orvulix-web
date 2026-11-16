@@ -7,6 +7,8 @@ import { brand } from '../../brand/config'; // ORVULIX-BRAND
 import { useTranslation } from 'react-i18next';
 import Editor from '@monaco-editor/react';
 import mime from 'mime';
+import { guardCodeClipboardGesture } from '../../features/text-result-clipboard/code-gesture'; // ORVULIX: unsupported Monaco gesture isolation.
+import { writeResultText } from '../../features/text-result-clipboard/write'; // ORVULIX: guarded native code-result copy.
 import {
   globalInputHeight,
   codeInputHeightOffset
@@ -17,21 +19,23 @@ export default function ToolCodeResult({
   value,
   language,
   extension = language,
-  loading
+  loading,
+  disabled = false
 }: {
   title?: string;
   value: string;
   language: string;
   extension?: string;
   loading?: boolean;
+  disabled?: boolean; // ORVULIX: opt-in validity of a derived result.
 }) {
   const { t } = useTranslation();
   const { showSnackBar } = useContext(CustomSnackBarContext);
   const theme = useTheme();
 
   const handleCopy = () => {
-    navigator.clipboard
-      .writeText(value)
+    if (disabled) return;
+    writeResultText(value)
       .then(() => showSnackBar(t('toolTextResult.copied'), 'success'))
       .catch((err) => {
         showSnackBar(t('toolTextResult.copyFailed', { error: err }), 'error');
@@ -39,6 +43,7 @@ export default function ToolCodeResult({
   };
 
   const handleDownload = () => {
+    if (disabled) return;
     const filename = `${brand.downloadPrefix}.${extension}`;
 
     const mimeType = mime.getType(extension) || 'text/plain';
@@ -141,7 +146,16 @@ export default function ToolCodeResult({
             />
           </Box>
         )}
-        <ResultFooter handleCopy={handleCopy} handleDownload={handleDownload} />
+        <Box
+          onClick={guardCodeClipboardGesture}
+          onKeyDown={guardCodeClipboardGesture}
+        >
+          <ResultFooter
+            handleCopy={handleCopy}
+            disabled={disabled}
+            handleDownload={handleDownload}
+          />
+        </Box>
       </Box>
     </Box>
   );

@@ -5,6 +5,20 @@ Before editing, committing, pushing, opening a PR, or deploying, read and follow
 `.agents/skills/development-workflow/SKILL.md`.
 Read `.agents/skills/project-communication/SKILL.md` for project context,
 communication, technical recommendations and review standards on every task.
+Read `.agents/skills/sdlc-task-loop/SKILL.md` for scoped implementation tasks and
+resuming interrupted work. The owner requested this end-to-end workflow on
+2026-10-14: one task, one feature branch, one PR into `develop`, with repeated
+development/tests/review before merge.
+
+- For user-requested implementation tasks, complete and merge the current task's
+  PR into `develop` after the SDLC acceptance/review/exact-head CI gates pass.
+  This is standing authorization for development delivery only. It does not
+  authorize other open PRs, starting the next backlog task or changing protections.
+- Review-only requests never authorize changes or merges. An explicit instruction
+  to stop at a PR, wait for review or not merge overrides the default for that task.
+- Save branch-specific checkpoints after meaningful steps; resume from actual
+  Git/PR/CI state. Instructions cannot read Codex quota or schedule automatic
+  continuation after a reset. Never claim a quota/reset setting was configured.
 
 - Create `feature/*` from `develop` for new tasks and open PRs only into `develop`; do not push task changes directly to `develop`. Never develop or commit on `main`, a detached HEAD, or an unrelated branch.
 - Feature PRs target `develop`. Only an explicit user request to release authorizes a `develop` -> `main` release PR and merge.

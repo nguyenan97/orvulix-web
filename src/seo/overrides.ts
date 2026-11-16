@@ -1,3 +1,5 @@
+import batchOcr from './tool-content/image-generic/batch-ocr';
+import losslessPng from './tool-content/png/lossless-png';
 import type { ToolSeoOverride } from './types';
 import jsonPrettify from './tool-content/json/prettify';
 import jsonValidatejson from './tool-content/json/validateJson';
@@ -8,6 +10,7 @@ import jsonJsonToCsv from './tool-content/json/json-to-csv';
 import csvCsvToJson from './tool-content/csv/csv-to-json';
 import timeConvertUnixToDate from './tool-content/time/convert-unix-to-date';
 import timeCrontabGuru from './tool-content/time/crontab-guru';
+import pdfEditor from './tool-content/pdf/editor'; // ORVULIX-PRIVACY
 import pdfMergePdf from './tool-content/pdf/merge-pdf';
 import pdfSplitPdf from './tool-content/pdf/split-pdf';
 import pdfCompressPdf from './tool-content/pdf/compress-pdf';
@@ -25,8 +28,17 @@ import imageGenericImageToText from './tool-content/image-generic/image-to-text'
 import videoCompress from './tool-content/video/compress';
 import convertersVideoToGif from './tool-content/converters/video-to-gif';
 import stringBase64 from './tool-content/string/base64';
+import textWorkflow from './tool-content/string/text-workflow';
+import dockerRunCompose from './tool-content/converters/docker-run-to-compose';
+import fileChecksum from './tool-content/string/file-checksum';
+import dataTransferTime from './tool-content/number/data-transfer-time';
+import ipv4Subnet from './tool-content/number/ipv4-subnet-calculator';
+import ipv6Subnet from './tool-content/number/ipv6-subnet-calculator';
+import imagesToGif from './tool-content/gif/images-to-gif';
 import stringPasswordGenerator from './tool-content/string/password-generator';
 import stringTextCompare from './tool-content/string/text-compare';
+import htmlToImage from './tool-content/image-generic/html-to-image'; // ORVULIX-WEB-CONVERSION
+import htmlToPdf from './tool-content/pdf/html-to-pdf'; // ORVULIX-WEB-CONVERSION
 
 /**
  * Hand-written SEO metadata and content, keyed by tool route path without
@@ -35,6 +47,17 @@ import stringTextCompare from './tool-content/string/text-compare';
  * generated from their English locale strings.
  */
 export const TOOL_OVERRIDES: Record<string, ToolSeoOverride> = {
+  'image-generic/batch-ocr': batchOcr,
+  'png/lossless-png': losslessPng,
+  'number/ipv6-subnet-calculator': ipv6Subnet,
+  'gif/images-to-gif': imagesToGif,
+  'number/ipv4-subnet-calculator': ipv4Subnet,
+  'number/data-transfer-time': dataTransferTime,
+  'string/file-checksum': fileChecksum,
+  'converters/docker-run-to-compose': dockerRunCompose,
+  'string/text-workflow': textWorkflow,
+  'pdf/html-to-pdf': htmlToPdf, // ORVULIX-WEB-CONVERSION
+  'image-generic/html-to-image': htmlToImage, // ORVULIX-WEB-CONVERSION
   'json/prettify': jsonPrettify,
   'json/validateJson': jsonValidatejson,
   'json/minify': jsonMinify,
@@ -44,6 +67,7 @@ export const TOOL_OVERRIDES: Record<string, ToolSeoOverride> = {
   'csv/csv-to-json': csvCsvToJson,
   'time/convert-unix-to-date': timeConvertUnixToDate,
   'time/crontab-guru': timeCrontabGuru,
+  'pdf/editor': pdfEditor, // ORVULIX-PRIVACY
   'pdf/merge-pdf': pdfMergePdf,
   'pdf/split-pdf': pdfSplitPdf,
   'pdf/compress-pdf': pdfCompressPdf,

@@ -15,7 +15,9 @@ const contentFiles = (directory: string): string[] =>
 describe('tool SEO overrides', () => {
   it('registers every tool-content file under its own route path', () => {
     const files = contentFiles(CONTENT_DIR)
-      .map((file) => relative(CONTENT_DIR, file).replace(/\.ts$/, ''))
+      .map((file) =>
+        relative(CONTENT_DIR, file).replace(/\\/g, '/').replace(/\.ts$/, '')
+      )
       .sort();
     expect(Object.keys(TOOL_OVERRIDES).sort()).toEqual(files);
   });
@@ -27,9 +29,24 @@ describe('tool SEO overrides', () => {
     }
   });
 
+  it('requires the separate PDF editor external-service disclosure', () => {
+    const disclosure = TOOL_OVERRIDES['pdf/editor'];
+    expect(disclosure).toBeDefined();
+    expect(disclosure.description).toContain('external PDF editor');
+    expect(disclosure.notes.join(' ')).toContain('document fingerprint');
+    expect(disclosure.notes.join(' ')).toContain('until you enable it');
+  });
+
   it('keeps hand-written content complete and free of unverifiable wording', () => {
-    expect(Object.keys(TOOL_OVERRIDES).length).toBeGreaterThanOrEqual(20);
-    expect(Object.keys(TOOL_OVERRIDES).length).toBeLessThanOrEqual(30);
+    // Original editorial pages plus scoped feature overrides; PDF disclosure is separate.
+    const editorial = Object.keys(TOOL_OVERRIDES).filter(
+      (path) => path !== 'pdf/editor'
+    );
+    expect(editorial.length).toBeGreaterThanOrEqual(20);
+    expect(editorial.length).toBe(39);
+    expect(TOOL_OVERRIDES['string/text-workflow'].notes.join(' ')).toContain(
+      'five-second deadline'
+    );
     for (const [path, override] of Object.entries(TOOL_OVERRIDES)) {
       expect(override.title.endsWith(' | Orvulix'), path).toBe(true);
       expect(override.howTo.length, path).toBeGreaterThanOrEqual(3);

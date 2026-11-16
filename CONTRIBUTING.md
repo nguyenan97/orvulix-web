@@ -35,6 +35,14 @@ npm run test -- --run
 
 ## Pull requests
 
+Use the [engineering delivery guide](docs/ENGINEERING_DELIVERY.md) for task sizing,
+behavioral specs, domain boundaries, BDD/TDD and review evidence. The
+[security control matrix](docs/SECURE_DELIVERY.md) distinguishes active scans,
+blocking checks and readiness gaps. Maintainers and AI assistants use the same
+repository artifacts; a reader should not need the originating chat to review a PR.
+Feature PRs target `develop`; production releases require separate authorization
+under AGENTS.md and the [release checklist](docs/RELEASE_CHECKLIST.md).
+
 - Keep changes focused and explain the problem and solution.
 - Document user-visible behavior changes.
 - Include relevant tests or explain why tests are not applicable.

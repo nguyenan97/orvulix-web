@@ -1,5 +1,5 @@
 import { Box } from '@mui/material';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import ToolContent from '@components/ToolContent';
 import { ToolComponentProps } from '@tools/defineTool';
 import { GetGroupsType } from '@components/options/ToolOptions';
@@ -21,13 +21,13 @@ export default function TextCompare({ title }: ToolComponentProps) {
   const [level, setLevel] = useState<level>('word');
   const [result, setResult] = useState<string>('');
 
-  const compute = () => {
+  const compute = useCallback(() => {
     setResult(compareTextsHtml(inputA, inputB, level));
-  };
+  }, [inputA, inputB, level]);
 
   useEffect(() => {
     compute();
-  }, [inputA, inputB, level]);
+  }, [compute]);
 
   const getGroups: GetGroupsType<InitialValuesType> = ({
     values,

@@ -1,4 +1,4 @@
-import React, { ReactNode, useContext, useEffect } from 'react';
+import React, { ReactNode, useContext, useEffect, useRef } from 'react';
 import { Box } from '@mui/material';
 import { Formik, FormikValues, useFormikContext } from 'formik';
 import ToolOptions, { GetGroupsType } from '@components/options/ToolOptions';
@@ -17,19 +17,35 @@ const FormikListenerComponent = <T,>({
   onValuesChange
 }: {
   input: any;
-  compute: (optionsValues: T, input: any) => void;
+  compute: (optionsValues: T, input: any) => unknown;
   onValuesChange?: (values: T) => void;
 }) => {
   const { values } = useFormikContext<T>();
   const { showSnackBar } = useContext(CustomSnackBarContext);
+  const computeRef = useRef(compute);
+  useEffect(() => {
+    computeRef.current = compute;
+  }, [compute]);
 
   React.useEffect(() => {
+    let current = true;
+    const report = (exception: unknown) => {
+      if (current)
+        showSnackBar(
+          exception instanceof Error
+            ? exception.message
+            : 'Tool processing failed.',
+          'error'
+        );
+    };
     try {
-      compute(values, input);
+      Promise.resolve(computeRef.current(values, input)).catch(report);
     } catch (exception: unknown) {
-      if (exception instanceof Error) showSnackBar(exception.message, 'error');
-      else console.error(exception);
+      report(exception);
     }
+    return () => {
+      current = false;
+    };
   }, [values, input, showSnackBar]);
 
   useEffect(() => {
@@ -50,7 +66,8 @@ interface ToolContentProps<Options, Input> extends ToolComponentProps {
    * should return non-empty array or null
    */
   getGroups: GetGroupsType<Options> | null;
-  compute: (optionsValues: Options, input: Input) => void;
+  /** Returned promises are observed; returned values are otherwise ignored. */
+  compute: (optionsValues: Options, input: Input) => unknown;
   toolInfo?: {
     title: string;
     description?: string;

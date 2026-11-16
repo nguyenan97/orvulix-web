@@ -18,7 +18,6 @@ export function shuffleList(
   length?: number //  "?" is to handle the case the user let the input blank
 ): string {
   let array: string[];
-  let shuffledArray: string[];
   switch (splitOperatorType) {
     case 'symbol':
       array = input.split(splitSeparator);
@@ -27,7 +26,7 @@ export function shuffleList(
       array = input.split(new RegExp(splitSeparator));
       break;
   }
-  shuffledArray = shuffleArray(array);
+  const shuffledArray = shuffleArray(array);
   if (length !== undefined) {
     if (length <= 0) {
       throw new Error('Length value must be a positive number.');

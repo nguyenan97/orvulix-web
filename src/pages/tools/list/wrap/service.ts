@@ -14,7 +14,6 @@ export function wrapList(
   right: string = ''
 ): string {
   let array: string[];
-  let wrappedArray: string[];
   switch (splitOperatorType) {
     case 'symbol':
       array = input.split(splitSeparator);
@@ -26,6 +25,6 @@ export function wrapList(
   if (deleteEmptyItems) {
     array = array.filter(Boolean);
   }
-  wrappedArray = wrap(array, left, right);
+  const wrappedArray = wrap(array, left, right);
   return wrappedArray.join(joinSeparator);
 }

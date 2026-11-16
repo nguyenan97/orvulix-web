@@ -64,7 +64,12 @@ export default function ToolLayout({
     >
       <Helmet>
         <title>{`${toolTitle} - ${brand.name}`}</title>
-        <meta name="description" content={`${toolDescription} - Free online ${toolTitle.toLowerCase()} tool on ${brand.name}.`} />
+        <meta
+          name="description"
+          content={`${toolDescription} - Free online ${toolTitle.toLowerCase()} tool on ${
+            brand.name
+          }.`}
+        />
         <link rel="canonical" href={`https://orvulix.io.vn/${fullPath}`} />
         <meta property="og:title" content={`${toolTitle} - ${brand.name}`} />
         <meta property="og:description" content={toolDescription} />

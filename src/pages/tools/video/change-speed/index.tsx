@@ -1,5 +1,6 @@
+import useDebounce from '../../../../hooks/useDebounce';
 import { Box, Slider, Typography } from '@mui/material';
-import React, { useState, useCallback } from 'react';
+import React, { useState } from 'react';
 import ToolContent from '@components/ToolContent';
 import { ToolComponentProps } from '@tools/defineTool';
 import { GetGroupsType } from '@components/options/ToolOptions';
@@ -8,7 +9,6 @@ import ToolVideoInput from '@components/input/ToolVideoInput';
 import ToolFileResult from '@components/result/ToolFileResult';
 import { ChangeVideoSpeed } from './service';
 import { useTranslation } from 'react-i18next';
-import debounce from 'lodash/debounce';
 
 const initialValues: InitialValuesType = {
   speed: 2
@@ -38,7 +38,7 @@ export default function ChangeSpeed({ title }: ToolComponentProps) {
     }
   };
 
-  const debouncedCompute = useCallback(debounce(compute, 1000), []);
+  const debouncedCompute = useDebounce(compute, 1000);
 
   const getGroups: GetGroupsType<InitialValuesType> | null = ({
     values,

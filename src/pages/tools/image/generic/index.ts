@@ -1,3 +1,4 @@
+import { tool as batchOcr } from './batch-ocr/meta';
 import { tool as splitImage } from './split/meta';
 import { tool as resizeImage } from './resize/meta';
 import { tool as compressImage } from './compress/meta';
@@ -11,8 +12,11 @@ import { tool as qrCodeGenerator } from './qr-code/meta';
 import { tool as rotateImage } from './rotate/meta';
 import { tool as imageEditor } from './editor/meta';
 import { tool as watermark } from './watermark/meta';
+import { tool as htmlToImage } from './html-to-image/meta'; // ORVULIX-WEB-CONVERSION
 
 export const imageGenericTools = [
+  batchOcr,
+  htmlToImage, // ORVULIX-WEB-CONVERSION
   imageEditor,
   resizeImage,
   compressImage,

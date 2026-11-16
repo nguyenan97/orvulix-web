@@ -51,7 +51,7 @@ export default function ChangeColorsInImage({ title }: ToolComponentProps) {
         ...Color(toColor).rgb().array(),
         Color(toColor).alpha() * 255
       ] as [number, number, number, number];
-    } catch (err) {
+    } catch {
       return;
     }
 

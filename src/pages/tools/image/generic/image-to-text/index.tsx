@@ -8,7 +8,7 @@ import ToolContent from '@components/ToolContent';
 import { ToolComponentProps } from '@tools/defineTool';
 import SelectWithDesc from '@components/options/SelectWithDesc';
 import CheckboxWithDesc from '@components/options/CheckboxWithDesc';
-import CircularProgress from '@mui/material/CircularProgress';
+
 import { extractTextFromImage, getAvailableLanguages } from './service';
 import { InitialValuesType } from './types';
 import { CustomSnackBarContext } from '../../../../../contexts/CustomSnackBarContext';

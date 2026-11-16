@@ -1,15 +1,14 @@
-import { Box } from '@mui/material';
-import React, { useRef, useState } from 'react';
+import React, { useState } from 'react';
 import ToolTextInput from '@components/input/ToolTextInput';
-import ToolTextResult from '@components/result/ToolTextResult';
-import { compute, SplitOperatorType } from './service';
+import {
+  StringResult,
+  resultIsOwned
+} from '../../../../features/string-regex/Result';
+import { SplitOperatorType } from './service';
 import RadioWithTextField from '@components/options/RadioWithTextField';
 import TextFieldWithDesc from '@components/options/TextFieldWithDesc';
-import ToolExamples, {
-  CardExampleType
-} from '@components/examples/ToolExamples';
+import { CardExampleType } from '@components/examples/ToolExamples';
 import { ToolComponentProps } from '@tools/defineTool';
-import { FormikProps } from 'formik';
 import ToolContent from '@components/ToolContent';
 import { useTranslation } from 'react-i18next';
 import { ParseKeys } from 'i18next';
@@ -126,45 +125,17 @@ easy`,
 export default function SplitText({ title }: ToolComponentProps) {
   const { t } = useTranslation('string');
   const [input, setInput] = useState<string>('');
-  const [result, setResult] = useState<string>('');
-
-  const computeExternal = (
-    optionsValues: typeof initialValues,
-    input: string
-  ) => {
-    const {
-      splitSeparatorType,
-      outputSeparator,
-      charBeforeChunk,
-      charAfterChunk,
-      chunksValue,
-      symbolValue,
-      regexValue,
-      lengthValue
-    } = optionsValues;
-
-    setResult(
-      compute(
-        splitSeparatorType,
-        input,
-        symbolValue,
-        regexValue,
-        Number(lengthValue),
-        Number(chunksValue),
-        charBeforeChunk,
-        charAfterChunk,
-        outputSeparator
-      )
-    );
-  };
-
   return (
     <ToolContent
       title={title}
       input={input}
       inputComponent={<ToolTextInput value={input} onChange={setInput} />}
       resultComponent={
-        <ToolTextResult title={t('split.resultTitle')} value={result} />
+        <StringResult
+          tool="split"
+          title={t('split.resultTitle')}
+          input={input}
+        />
       }
       initialValues={initialValues}
       getGroups={({ values, updateField }) => [
@@ -195,7 +166,7 @@ export default function SplitText({ title }: ToolComponentProps) {
           ))
         }
       ]}
-      compute={computeExternal}
+      compute={resultIsOwned}
       setInput={setInput}
       exampleCards={exampleCards}
     />

@@ -111,7 +111,14 @@ const basePage = (
  * page definitions and overrides. The build-time generator and the client
  * both call this function, so their output cannot drift apart.
  */
-export const buildSeoSite = (input: SeoInput): SeoBuildResult => {
+export const buildSeoSite = (
+  input: SeoInput,
+  pathname?: string
+): SeoBuildResult => {
+  // Build-time callers validate the full site; the browser needs one route only.
+  // Keep the same page constructors so client metadata cannot drift from HTML.
+  const requested =
+    pathname === undefined ? undefined : normalizePath(pathname);
   const { language, translate, overrides } = input;
   const english = language === SITE.language;
   const issues: string[] = [];
@@ -146,6 +153,13 @@ export const buildSeoSite = (input: SeoInput): SeoBuildResult => {
   }
 
   const categories = [...new Set(tools.map((tool) => tool.category))].sort();
+  const selectedCategory =
+    tools.find((tool) => toolPath(tool) === requested)?.category ??
+    categories.find((category) => categoryPath(category) === requested);
+  const activeCategories =
+    requested === undefined || requested === '/'
+      ? categories
+      : categories.filter((category) => category === selectedCategory);
   for (const category of Object.keys(CATEGORY_SEO_OVERRIDES)) {
     if (!categories.includes(category)) {
       issues.push(
@@ -154,7 +168,7 @@ export const buildSeoSite = (input: SeoInput): SeoBuildResult => {
     }
   }
   const categoryInfo = new Map(
-    categories.map((category) => {
+    activeCategories.map((category) => {
       const route = categoryPath(category);
       const title = text(categoryTitleKey(category), route);
       // Subject words ("Text" from "Text Tools") enrich English templates;
@@ -171,19 +185,25 @@ export const buildSeoSite = (input: SeoInput): SeoBuildResult => {
     })
   );
 
-  const toolLinks = tools.map((tool) => ({
-    tool,
-    link: {
-      name: text(tool.nameKey, toolPath(tool)),
-      path: toolPath(tool),
-      description: text(tool.shortDescriptionKey, toolPath(tool))
-    }
-  }));
+  const toolLinks = tools
+    .filter(
+      (tool) => requested === undefined || tool.category === selectedCategory
+    )
+    .map((tool) => ({
+      tool,
+      link: {
+        name: text(tool.nameKey, toolPath(tool)),
+        path: toolPath(tool),
+        description: text(tool.shortDescriptionKey, toolPath(tool))
+      }
+    }));
 
   const homeLinks: SeoLink[] = [];
-  for (const category of categories) {
+  for (const category of activeCategories) {
     const info = categoryInfo.get(category)!;
     const path = categoryPath(category);
+    homeLinks.push({ name: info.title, path, description: info.description });
+    if (requested !== undefined && requested !== path) continue;
     const url = absoluteUrl(path);
     const override = english ? CATEGORY_SEO_OVERRIDES[category] : undefined;
     const title = override?.title
@@ -217,7 +237,6 @@ export const buildSeoSite = (input: SeoInput): SeoBuildResult => {
       .map(({ link }) => link)
       .sort((a, b) => compareText(a.name, b.name));
     const breadcrumbs = [home, { name: info.title, path }];
-    homeLinks.push({ name: info.title, path, description: info.description });
     pages.push(
       basePage({
         kind: 'category',
@@ -246,6 +265,7 @@ export const buildSeoSite = (input: SeoInput): SeoBuildResult => {
 
   for (const { tool, link } of toolLinks) {
     const path = toolPath(tool);
+    if (requested !== undefined && requested !== path) continue;
     const url = absoluteUrl(path);
     const info = categoryInfo.get(tool.category)!;
     const subject = info.subject;
@@ -322,6 +342,7 @@ export const buildSeoSite = (input: SeoInput): SeoBuildResult => {
   }
 
   for (const [path, seo] of Object.entries(INFO_PAGES_SEO)) {
+    if (requested !== undefined && requested !== path) continue;
     const url = absoluteUrl(path);
     const breadcrumbs = [home, { name: seo.heading, path }];
     pages.push(
@@ -350,23 +371,24 @@ export const buildSeoSite = (input: SeoInput): SeoBuildResult => {
     );
   }
 
-  pages.push(
-    basePage({
-      kind: 'home',
-      path: '/',
-      indexable: true,
-      language: SITE.language,
-      title: HOME_SEO.title,
-      description: HOME_SEO.description,
-      heading: HOME_SEO.heading,
-      intro: HOME_SEO.intro,
-      breadcrumbs: [],
-      linksHeading: HOME_SEO.linksHeading,
-      links: homeLinks,
-      sections: [],
-      jsonLd: homeJsonLd(HOME_SEO.description, SITE.language)
-    })
-  );
+  if (requested === undefined || requested === '/')
+    pages.push(
+      basePage({
+        kind: 'home',
+        path: '/',
+        indexable: true,
+        language: SITE.language,
+        title: HOME_SEO.title,
+        description: HOME_SEO.description,
+        heading: HOME_SEO.heading,
+        intro: HOME_SEO.intro,
+        breadcrumbs: [],
+        linksHeading: HOME_SEO.linksHeading,
+        links: homeLinks,
+        sections: [],
+        jsonLd: homeJsonLd(HOME_SEO.description, SITE.language)
+      })
+    );
 
   const notFound = basePage({
     kind: 'not-found',

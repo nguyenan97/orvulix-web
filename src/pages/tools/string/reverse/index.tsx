@@ -1,16 +1,13 @@
-import { Box } from '@mui/material';
-import React, { useState, useRef } from 'react';
+import React, { useState } from 'react';
 import ToolTextInput from '@components/input/ToolTextInput';
 import ToolTextResult from '@components/result/ToolTextResult';
-import ToolOptions, { GetGroupsType } from '@components/options/ToolOptions';
+import { GetGroupsType } from '@components/options/ToolOptions';
 import { stringReverser } from './service';
 import CheckboxWithDesc from '@components/options/CheckboxWithDesc';
-import ToolInputAndResult from '@components/ToolInputAndResult';
-import ToolExamples, {
-  CardExampleType
-} from '@components/examples/ToolExamples';
+
+import { CardExampleType } from '@components/examples/ToolExamples';
 import { ToolComponentProps } from '@tools/defineTool';
-import { FormikProps } from 'formik';
+
 import ToolContent from '@components/ToolContent';
 import { useTranslation } from 'react-i18next';
 

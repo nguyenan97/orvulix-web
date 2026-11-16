@@ -1,0 +1,69 @@
+{
+  "main": {
+    "name": "main-review-gate",
+    "target": "branch",
+    "enforcement": "active",
+    "bypass_actors": [],
+    "conditions": {
+      "ref_name": { "include": ["refs/heads/main"], "exclude": [] }
+    },
+    "rules": [
+      {
+        "type": "pull_request",
+        "parameters": {
+          "required_approving_review_count": 0,
+          "dismiss_stale_reviews_on_push": true,
+          "require_code_owner_review": false,
+          "require_last_push_approval": false,
+          "required_review_thread_resolution": true
+        }
+      },
+      {
+        "type": "required_status_checks",
+        "parameters": {
+          "strict_required_status_checks_policy": true,
+          "required_status_checks": [
+            { "context": "test-and-build", "integration_id": 15368 },
+            { "context": "Playwright Tests", "integration_id": 15368 },
+            { "context": "secret-scan", "integration_id": 15368 },
+            { "context": "dependency-audit", "integration_id": 15368 },
+            { "context": "codeql", "integration_id": 15368 }
+          ]
+        }
+      }
+    ]
+  },
+  "develop": {
+    "name": "develop-review-gate",
+    "target": "branch",
+    "enforcement": "active",
+    "bypass_actors": [],
+    "conditions": {
+      "ref_name": { "include": ["refs/heads/develop"], "exclude": [] }
+    },
+    "rules": [
+      {
+        "type": "pull_request",
+        "parameters": {
+          "required_approving_review_count": 0,
+          "dismiss_stale_reviews_on_push": true,
+          "require_code_owner_review": false,
+          "require_last_push_approval": false,
+          "required_review_thread_resolution": true
+        }
+      },
+      {
+        "type": "required_status_checks",
+        "parameters": {
+          "strict_required_status_checks_policy": true,
+          "required_status_checks": [
+            { "context": "build", "integration_id": 15368 },
+            { "context": "secret-scan", "integration_id": 15368 },
+            { "context": "dependency-audit", "integration_id": 15368 },
+            { "context": "codeql", "integration_id": 15368 }
+          ]
+        }
+      }
+    ]
+  }
+}

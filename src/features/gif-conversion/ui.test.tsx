@@ -1,0 +1,324 @@
+import {
+  act,
+  cleanup,
+  fireEvent,
+  render,
+  screen,
+  within
+} from '@testing-library/react';
+import { afterEach, beforeEach, expect, it, vi } from 'vitest';
+import ImagesToGif from '../../pages/tools/video/gif/images-to-gif';
+import { imagesToGif } from '../../pages/tools/video/gif/images-to-gif/service';
+import type { MultiImageInput } from '../../components/input/ToolMultipleImageInput';
+vi.mock('../../pages/tools/video/gif/images-to-gif/service', () => ({
+  imagesToGif: vi.fn()
+}));
+vi.mock('react-i18next', async (importOriginal) => ({
+  ...(await importOriginal<typeof import('react-i18next')>()),
+  useTranslation: () => ({ t: (key: string) => key })
+}));
+// Keep application i18n network/bootstrap timers out of lifecycle fake-timer tests.
+vi.mock('../../i18n', () => ({
+  validNamespaces: [
+    'string',
+    'number',
+    'video',
+    'list',
+    'json',
+    'time',
+    'csv',
+    'pdf',
+    'audio',
+    'xml',
+    'translation',
+    'image',
+    'converters'
+  ]
+}));
+vi.mock('../../components/input/ToolMultipleImageInput', () => ({
+  default: ({ onChange }: { onChange: (files: MultiImageInput[]) => void }) => (
+    <>
+      <button
+        onClick={() =>
+          onChange([
+            {
+              file: new File(['image'], 'a.png', { type: 'image/png' }),
+              order: 0
+            }
+          ])
+        }
+      >
+        Choose image
+      </button>
+      <button onClick={() => onChange([])}>Clear input</button>
+      <button
+        onClick={() =>
+          onChange(
+            ['a.png', 'b.png'].map((name, order) => ({
+              file: new File(['image'], name, { type: 'image/png' }),
+              order,
+              preview: `blob:input-${order}`
+            }))
+          )
+        }
+      >
+        Choose frames
+      </button>
+    </>
+  )
+}));
+beforeEach(() => {
+  vi.useFakeTimers();
+  let index = 0;
+  vi.stubGlobal(
+    'URL',
+    class extends URL {
+      static createObjectURL = vi.fn(() => `blob:${++index}`);
+      static revokeObjectURL = vi.fn();
+    }
+  );
+});
+afterEach(() => {
+  cleanup();
+  vi.resetAllMocks();
+  vi.useRealTimers();
+  vi.unstubAllGlobals();
+});
+const output = () => new File(['gif'], 'animated.gif', { type: 'image/gif' });
+const advance = () =>
+  act(async () => {
+    await vi.advanceTimersByTimeAsync(1000);
+  });
+const create = () =>
+  fireEvent.click(
+    screen.getByRole('button', { name: 'gif.imagesToGif.createButton' })
+  );
+it('does not encode selected images automatically after the former debounce', async () => {
+  vi.mocked(imagesToGif).mockResolvedValue(output());
+  render(<ImagesToGif title="GIF" />);
+  fireEvent.click(screen.getByText('Choose image'));
+  await advance();
+  expect(imagesToGif).not.toHaveBeenCalled();
+  expect(
+    screen.getByRole('button', { name: 'gif.imagesToGif.createButton' })
+  ).toBeEnabled();
+});
+it('clears current output immediately on file/options edits, and unchanged option clicks retain it', async () => {
+  vi.mocked(imagesToGif).mockResolvedValue(output());
+  render(<ImagesToGif title="GIF" />);
+  fireEvent.click(screen.getByText('Choose image'));
+  create();
+  await advance();
+  expect(
+    screen.getByRole('button', { name: 'resultFooter.download' })
+  ).toBeEnabled();
+  fireEvent.click(screen.getByText('gif.imagesToGif.frameRate'));
+  expect(
+    screen.getByRole('button', { name: 'resultFooter.download' })
+  ).toBeEnabled();
+  fireEvent.change(screen.getByRole('spinbutton'), { target: { value: '20' } });
+  expect(
+    screen.getByRole('button', { name: 'resultFooter.download' })
+  ).toBeDisabled();
+  expect(URL.revokeObjectURL).toHaveBeenCalledWith('blob:1');
+  await advance();
+  expect(imagesToGif).toHaveBeenCalledOnce();
+  create();
+  await advance();
+  expect(vi.mocked(imagesToGif).mock.calls.at(-1)![1].frameRateValue).toBe(20);
+  expect(
+    screen.getByRole('button', { name: 'resultFooter.download' })
+  ).toBeEnabled();
+  fireEvent.click(screen.getByText('Clear input'));
+  expect(
+    screen.getByRole('button', { name: 'resultFooter.download' })
+  ).toBeDisabled();
+});
+it('ignores late results after clear, blocks Create until settlement and aborts on unmount', async () => {
+  const finishes: ((file: File) => void)[] = [];
+  vi.mocked(imagesToGif).mockImplementation(
+    () => new Promise((resolve) => finishes.push(resolve))
+  );
+  const { unmount } = render(<ImagesToGif title="GIF" />);
+  fireEvent.click(screen.getByText('Choose image'));
+  create();
+  await advance();
+  const signal = vi.mocked(imagesToGif).mock.calls[0][2]!;
+  fireEvent.click(screen.getByText('Clear input'));
+  expect(signal.aborted).toBe(true);
+  expect(
+    screen.getByRole('button', { name: 'gif.imagesToGif.createButton' })
+  ).toBeDisabled();
+  await act(async () => {
+    finishes[0](output());
+  });
+  expect(
+    screen.getByRole('button', { name: 'resultFooter.download' })
+  ).toBeDisabled();
+  expect(URL.createObjectURL).not.toHaveBeenCalled();
+  fireEvent.click(screen.getByText('Choose image'));
+  create();
+  unmount();
+  await advance();
+  expect(imagesToGif).toHaveBeenCalledTimes(2);
+  expect(vi.mocked(imagesToGif).mock.calls[1][2]!.aborted).toBe(true);
+  await act(async () => finishes[1](output()));
+  expect(vi.getTimerCount()).toBe(0);
+});
+it('shows current errors without stale download and recovers with owned output URL cleanup', async () => {
+  vi.mocked(imagesToGif)
+    .mockRejectedValueOnce(Error('encoder failed'))
+    .mockResolvedValueOnce(output());
+  const { unmount } = render(<ImagesToGif title="GIF" />);
+  fireEvent.click(screen.getByText('Choose image'));
+  create();
+  await advance();
+  expect(screen.getByRole('alert')).toHaveTextContent('supported images');
+  expect(
+    screen.getByRole('button', { name: 'resultFooter.download' })
+  ).toBeDisabled();
+  fireEvent.click(screen.getByText('Choose image'));
+  create();
+  await advance();
+  expect(screen.queryByRole('alert')).toBeNull();
+  expect(
+    screen.getByRole('button', { name: 'resultFooter.download' })
+  ).toBeEnabled();
+  unmount();
+  expect(URL.revokeObjectURL).toHaveBeenCalledWith('blob:1');
+});
+it('cancels a current run, ignores late completion and retries only after settlement', async () => {
+  let finish!: (file: File) => void;
+  vi.mocked(imagesToGif)
+    .mockImplementationOnce(
+      () =>
+        new Promise((resolve) => {
+          finish = resolve;
+        })
+    )
+    .mockResolvedValueOnce(output());
+  render(<ImagesToGif title="GIF" />);
+  fireEvent.click(screen.getByText('Choose image'));
+  create();
+  expect(imagesToGif).toHaveBeenCalledOnce();
+  fireEvent.click(
+    screen.getByRole('button', { name: 'gif.imagesToGif.cancelButton' })
+  );
+  expect(vi.mocked(imagesToGif).mock.calls[0][2]!.aborted).toBe(true);
+  expect(screen.getByRole('status')).toHaveTextContent(
+    'gif.imagesToGif.settlingText'
+  );
+  expect(
+    screen.getByRole('button', { name: 'gif.imagesToGif.createButton' })
+  ).toBeDisabled();
+  create();
+  expect(imagesToGif).toHaveBeenCalledOnce();
+  await act(async () => finish(output()));
+  expect(URL.createObjectURL).not.toHaveBeenCalled();
+  expect(
+    screen.getByRole('button', { name: 'gif.imagesToGif.createButton' })
+  ).toBeEnabled();
+  create();
+  await advance();
+  expect(imagesToGif).toHaveBeenCalledTimes(2);
+  expect(
+    screen.getByRole('button', { name: 'resultFooter.download' })
+  ).toBeEnabled();
+});
+it('invalidates completed output on a move, does not auto encode and snapshots the new order', async () => {
+  vi.mocked(imagesToGif).mockResolvedValue(output());
+  render(<ImagesToGif title="GIF" />);
+  fireEvent.click(screen.getByText('Choose frames'));
+  create();
+  await advance();
+  const order = screen.getByRole('list', {
+    name: 'gif.imagesToGif.frameOrderTitle'
+  });
+  const boundary = within(order).getAllByRole('button', {
+    name: 'gif.imagesToGif.moveEarlierLabel'
+  })[0];
+  expect(boundary).toBeDisabled();
+  fireEvent.click(boundary);
+  expect(
+    screen.getByRole('button', { name: 'resultFooter.download' })
+  ).toBeEnabled();
+  expect(URL.revokeObjectURL).not.toHaveBeenCalled();
+  fireEvent.click(
+    within(order).getAllByRole('button', {
+      name: 'gif.imagesToGif.moveLaterLabel'
+    })[0]
+  );
+  expect(
+    screen.getByRole('button', { name: 'resultFooter.download' })
+  ).toBeDisabled();
+  expect(URL.revokeObjectURL).toHaveBeenCalledWith('blob:1');
+  await advance();
+  expect(imagesToGif).toHaveBeenCalledOnce();
+  create();
+  await advance();
+  expect(
+    vi.mocked(imagesToGif).mock.calls[1][0].map((file) => file.name)
+  ).toEqual(['b.png', 'a.png']);
+});
+it.each(['resolve', 'reject'] as const)(
+  'reorder during encode blocks retry and ignores late %s',
+  async (outcome) => {
+    let finish!: (file: File) => void, fail!: (error: Error) => void;
+    vi.mocked(imagesToGif)
+      .mockImplementationOnce(
+        () =>
+          new Promise((resolve, reject) => {
+            finish = resolve;
+            fail = reject;
+          })
+      )
+      .mockResolvedValueOnce(output());
+    render(<ImagesToGif title="GIF" />);
+    fireEvent.click(screen.getByText('Choose frames'));
+    create();
+    const signal = vi.mocked(imagesToGif).mock.calls[0][2]!;
+    const order = screen.getByRole('list', {
+      name: 'gif.imagesToGif.frameOrderTitle'
+    });
+    fireEvent.click(
+      within(order).getAllByRole('button', {
+        name: 'gif.imagesToGif.moveEarlierLabel'
+      })[1]
+    );
+    expect(signal.aborted).toBe(true);
+    expect(
+      screen.getByRole('button', { name: 'gif.imagesToGif.createButton' })
+    ).toBeDisabled();
+    create();
+    expect(imagesToGif).toHaveBeenCalledOnce();
+    await act(async () => {
+      if (outcome === 'resolve') finish(output());
+      else fail(Error('old encoder'));
+    });
+    expect(screen.queryByRole('alert')).toBeNull();
+    expect(URL.createObjectURL).not.toHaveBeenCalled();
+    expect(
+      screen.getByRole('button', { name: 'gif.imagesToGif.createButton' })
+    ).toBeEnabled();
+    create();
+    await advance();
+    expect(
+      vi.mocked(imagesToGif).mock.calls[1][0].map((file) => file.name)
+    ).toEqual(['b.png', 'a.png']);
+  }
+);
+it('preserves the interval when switching from 10 FPS to milliseconds', async () => {
+  render(<ImagesToGif title="GIF" />);
+  fireEvent.click(screen.getByText('Choose image'));
+  fireEvent.click(screen.getByText('gif.imagesToGif.frameDelay'));
+  expect(screen.getByRole('spinbutton')).toHaveValue(100);
+});
+it('keeps a cleared timing value editable and blocks Create instead of silently clamping', async () => {
+  render(<ImagesToGif title="GIF" />);
+  fireEvent.click(screen.getByText('Choose image'));
+  fireEvent.change(screen.getByRole('spinbutton'), { target: { value: '' } });
+  expect(screen.getByRole('spinbutton')).toHaveValue(null);
+  expect(
+    screen.getByRole('button', { name: 'gif.imagesToGif.createButton' })
+  ).toBeDisabled();
+});

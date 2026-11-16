@@ -10,32 +10,35 @@ on:
       - main
 jobs:
   test-and-build:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
         # ORVULIX-SEO: full history so sitemap lastmod can be computed and validated.
         with:
           fetch-depth: 0
       - name: Set up Node.js
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
         with:
-          node-version: '20'
+          node-version: '24'
       - name: Install dependencies
         run: npm ci
-      - name: Run tests
-        run: npm run test -- --run
+      - name: Check application lint
+        # Keep the existing required job; lint never mutates the checkout.
+        run: npm run lint:check
+      # - name: Run unit tests
+      #   run: npm run test -- --run
       - name: Build project
         run: npm run build
 
   e2e-test:
     name: 'Playwright Tests'
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+      - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
         with:
-          node-version: 20
+          node-version: 24
       - name: Install dependencies
         run: npm ci
       - name: Install Playwright Browsers

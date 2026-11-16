@@ -1,6 +1,10 @@
 import { describe, it, expect } from 'vitest';
 import type { TFunction } from 'i18next';
-import { filterTools } from './index';
+import {
+  filterTools,
+  filterToolsByUserTypes,
+  tools as registeredTools
+} from './index';
 import type { DefinedTool } from './defineTool';
 import type { FullI18nKey, I18nNamespaces } from '../i18n';
 
@@ -72,6 +76,99 @@ const makeT = (dict: Record<string, string>): NamespacedT =>
   ((key: string) => dict[key] ?? key) as unknown as NamespacedT;
 
 describe('filterTools token-based search', () => {
+  it('discovers IPv6 ranges for both audiences', () => {
+    for (const query of [
+      'ipv6 subnet',
+      'ipv6 cidr',
+      'ipv6 prefix',
+      'ipv6 range'
+    ])
+      for (const audience of ['developers', 'generalUsers'] as const)
+        expect(
+          filterTools(
+            registeredTools,
+            query,
+            [audience],
+            makeT(enTranslations)
+          ).map((tool) => tool.path)
+        ).toContain('number/ipv6-subnet-calculator');
+  });
+  it('discovers IPv4 subnet calculations for the intended audiences', () => {
+    for (const query of [
+      'ipv4 subnet',
+      'cidr mask',
+      'network broadcast',
+      'host range'
+    ])
+      for (const audience of ['developers', 'generalUsers'] as const)
+        expect(
+          filterTools(
+            registeredTools,
+            query,
+            [audience],
+            makeT(enTranslations)
+          ).map((tool) => tool.path)
+        ).toContain('number/ipv4-subnet-calculator');
+  });
+  it('discovers data-transfer estimates for both intended audiences', () => {
+    for (const query of [
+      'data transfer',
+      'download time',
+      'upload bandwidth',
+      'mbps'
+    ])
+      for (const audience of ['developers', 'generalUsers'] as const)
+        expect(
+          filterTools(
+            registeredTools,
+            query,
+            [audience],
+            makeT(enTranslations)
+          ).map((tool) => tool.path)
+        ).toContain('number/data-transfer-time');
+  });
+  it('discovers local checksum algorithms for developers and general users', () => {
+    for (const query of ['file checksum', 'sha256', 'sha512', 'sha-256']) {
+      for (const audience of ['developers', 'generalUsers'] as const)
+        expect(
+          filterTools(
+            registeredTools,
+            query,
+            [audience],
+            makeT(enTranslations)
+          ).map((tool) => tool.path)
+        ).toContain('string/file-checksum');
+    }
+  });
+  it('discovers Docker for developers while preserving existing media-converter audiences', () => {
+    const converters = registeredTools.filter(
+      (tool) => tool.type === 'converters'
+    );
+    expect(
+      filterToolsByUserTypes(converters, ['developers']).map(
+        (tool) => tool.path
+      )
+    ).toEqual(['converters/docker-run-to-compose']);
+    expect(
+      filterToolsByUserTypes(converters, ['generalUsers']).map(
+        (tool) => tool.path
+      )
+    ).toEqual([
+      'converters/audio-converter',
+      'converters/convert-to-webp',
+      'converters/convert-to-jpg',
+      'converters/video-to-gif'
+    ]);
+    expect(filterToolsByUserTypes(converters, [])).toEqual(converters);
+    expect(
+      filterTools(
+        registeredTools,
+        'docker compose',
+        ['developers'],
+        makeT(enTranslations)
+      ).map((tool) => tool.path)
+    ).toContain('converters/docker-run-to-compose');
+  });
   const tools = [mergePdfTool, base64Tool, otherPdfTool];
   const tEn = makeT(enTranslations);
   const tEs = makeT(esTranslations);

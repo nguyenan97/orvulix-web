@@ -37,7 +37,7 @@ export default function CreateTransparent({ title }: ToolComponentProps) {
       fromRgb = Color(fromColor).rgb().array();
       //@ts-ignore
       bgRgb = Color(backgroundColor).rgb().array();
-    } catch (err) {
+    } catch {
       return;
     }
     const processImage = async (

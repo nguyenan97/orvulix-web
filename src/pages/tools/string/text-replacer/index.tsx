@@ -1,8 +1,10 @@
 import { Box } from '@mui/material';
 import { useState } from 'react';
-import ToolTextResult from '@components/result/ToolTextResult';
+import {
+  StringResult,
+  resultIsOwned
+} from '../../../../features/string-regex/Result';
 import { GetGroupsType } from '@components/options/ToolOptions';
-import { replaceText } from './service';
 import TextFieldWithDesc from '@components/options/TextFieldWithDesc';
 import ToolTextInput from '@components/input/ToolTextInput';
 import SimpleRadio from '@components/options/SimpleRadio';
@@ -63,12 +65,6 @@ const exampleCards: CardExampleType<InitialValuesType>[] = [
 export default function Replacer({ title }: ToolComponentProps) {
   const { t } = useTranslation('string');
   const [input, setInput] = useState<string>('');
-  const [result, setResult] = useState<string>('');
-
-  function compute(optionsValues: InitialValuesType, input: string) {
-    setResult(replaceText(optionsValues, input));
-  }
-
   const getGroups: GetGroupsType<InitialValuesType> = ({
     values,
     updateField
@@ -123,7 +119,7 @@ export default function Replacer({ title }: ToolComponentProps) {
       title={title}
       initialValues={initialValues}
       getGroups={getGroups}
-      compute={compute}
+      compute={resultIsOwned}
       input={input}
       setInput={setInput}
       inputComponent={
@@ -134,7 +130,11 @@ export default function Replacer({ title }: ToolComponentProps) {
         />
       }
       resultComponent={
-        <ToolTextResult title={t('textReplacer.resultTitle')} value={result} />
+        <StringResult
+          tool="replace"
+          title={t('textReplacer.resultTitle')}
+          input={input}
+        />
       }
       toolInfo={{
         title: t('textReplacer.toolInfo.title'),

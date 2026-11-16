@@ -55,7 +55,9 @@ const SingleCategory = function ({
           borderRadius: '20px',
           border: '1px solid',
           borderColor: hovered ? 'primary.main' : 'divider',
-          boxShadow: hovered ? '0 12px 32px rgba(15,118,110,0.10)' : '0 4px 16px rgba(15,23,42,0.04)',
+          boxShadow: hovered
+            ? '0 12px 32px rgba(15,118,110,0.10)'
+            : '0 4px 16px rgba(15,23,42,0.04)',
           transition: 'all 180ms ease',
           backgroundColor: 'background.paper'
         }}

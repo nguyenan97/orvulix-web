@@ -88,7 +88,7 @@ export default function NumericInputWithUnit(props: {
       setInputValue(props.value.value);
       setUnit(props.value.unit);
     }
-  }, [props.value.value, props.value.unit, unit]);
+  }, [props.value.value, props.value.unit, unit, unitKind, userSelectedUnit]);
 
   const handleUserValueChange = (newValue: number) => {
     setInputValue(newValue);

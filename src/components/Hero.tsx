@@ -99,7 +99,7 @@ export default function Hero() {
   ];
 
   const handleInputChange = (
-    _event: React.ChangeEvent<{}>,
+    _event: React.SyntheticEvent,
     newInputValue: string
   ) => {
     setInputValue(newInputValue);

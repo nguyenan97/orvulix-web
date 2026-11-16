@@ -119,10 +119,7 @@ Chevrolet,Malibu,2021,28000`,
     }
   }
 ];
-export default function InsertCsvColumns({
-  title,
-  longDescription
-}: ToolComponentProps) {
+export default function InsertCsvColumns({ title }: ToolComponentProps) {
   const { t } = useTranslation('csv');
   const [input, setInput] = useState<string>('');
   const [result, setResult] = useState<string>('');

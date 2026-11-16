@@ -33,7 +33,7 @@ export default function MergeVideo({
       const resultFile = await mergeVideos(input.map((item) => item.file));
 
       setResult(resultFile);
-    } catch (err) {
+    } catch {
       setResult(null);
     } finally {
       setLoading(false);

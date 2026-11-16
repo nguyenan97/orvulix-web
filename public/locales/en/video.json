@@ -104,8 +104,21 @@
       "title": "Change GIF Speed"
     },
     "imagesToGif": {
+      "frameOrderTitle": "Frame order",
+      "frameOrderHint": "Frames play from top to bottom. Moving a frame clears the GIF and cancels any unfinished import. Select Create GIF to encode the new order.",
+      "frameLabel": "Frame {{position}}: {{name}}",
+      "moveEarlier": "Move earlier",
+      "moveLater": "Move later",
+      "moveEarlierLabel": "Move frame {{position}} earlier: {{name}}",
+      "moveLaterLabel": "Move frame {{position}} later: {{name}}",
+      "createButton": "Create GIF",
+      "cancelButton": "Cancel GIF creation",
+      "createHint": "Choose images and timing, then select Create GIF. Changes do not encode automatically.",
+      "settlingText": "Previous GIF work is still finishing. Create becomes available when it settles.",
+      "cancelledText": "GIF creation cancelled. Output is discarded; active FFmpeg work may still finish.",
+      "readyText": "GIF ready. Editing images, order or timing clears this result; select Create GIF to regenerate.",
       "title": "Images to GIF",
-      "description": "Create animated GIFs from multiple images. Arrange your frames, adjust the timing, and generate a smooth animation in just a few clicks.",
+      "description": "Reorder image frames, choose timing and select Create GIF. Cancel pending output or edit the inputs before creating again.",
       "shortDescription": "Convert multiple images into an animated GIF",
       "inputTitle": "Input Images",
       "resultTitle": "Animated GIF",
@@ -115,7 +128,15 @@
       "frameRateDescription": "Set the animation speed in frames per second (FPS)",
       "frameRateValueDescription": "Set the desired value",
       "frameDelay": "Frame delay",
-      "frameRate": "Frames per second (FPS)"
+      "frameRate": "Frames per second (FPS)",
+      "timingMode": "Timing mode",
+      "fpsValueLabel": "Frame rate (FPS)",
+      "delayValueLabel": "Frame delay (ms)",
+      "fpsRangeHint": "Enter 1 to 60 frames per second. Fractional values are allowed.",
+      "delayRangeHint": "Enter 50 to 10000 milliseconds per source frame. Fractional values are allowed.",
+      "timingAdjusted": "The previous timing was invalid or outside this mode’s range. It has been adjusted to a valid value shown below.",
+      "timingSummary": "Requested timing: {{delay}} ms per source frame ({{fps}} FPS).",
+      "timingPrecision": "GIF stores timing in 10 ms ticks. The encoder can round timing and repeat the final frame, so actual frame count and playback duration can differ. Mode changes preserve the requested interval approximately where both ranges allow it."
     }
   },
   "loop": {

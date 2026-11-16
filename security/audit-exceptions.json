@@ -1,0 +1,17 @@
+{
+  "version": 1,
+  "exceptions": [
+    {
+      "id": "GHSA-mrhx-c7xc-m3w5",
+      "package": "zod",
+      "version": "3.25.76",
+      "path": "node_modules/zod",
+      "severity": "high",
+      "scope": "browser-runtime",
+      "reason": "Parents @imgly/background-removal 1.7.0 and @jimp/types 1.6.0 require Zod 3; latest 3.x is 3.25.76. Patched 4.6.6 is an incompatible major.",
+      "mitigation": "No application Zod import or user-controlled collection schema. Background removal validates fixed application configuration (progress callback and defaults), not image bytes, with no constrained collection schema. @jimp/types has no source imports. Reassess any configuration/schema exposure; isolated CI without secrets.",
+      "owner": "nguyenan97",
+      "expires": "2026-12-16"
+    }
+  ]
+}

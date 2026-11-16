@@ -1,4 +1,15 @@
 {
+  "htmlToImage": {
+    "title": "HTML to Image",
+    "description": "Experimental local HTML file/snippet conversion to PNG or JPEG. Upload a .html file or paste markup; website URL conversion is not supported.",
+    "shortDescription": "Experimental HTML file/snippet to PNG or JPEG; no website URLs.",
+    "experimentalNotice": "Experimental local HTML conversion for snippets and files, not website URLs. Complex layouts may differ from the original; preview before exporting.",
+    "inputTitle": "HTML input",
+    "inputHint": "Upload a local .html file, paste an HTML snippet, or load the example. You do not need to paste markup if you already have a file. Only supported static content and embedded PNG/JPEG images are rendered.",
+    "uploadLabel": "Upload HTML",
+    "uploadAriaLabel": "Upload HTML file",
+    "exampleLabel": "Load example"
+  },
   "changeColors": {
     "description": "Change specific colors in an image by selecting a source color and replacing it with a new one.",
     "fromColor": {
@@ -68,6 +79,9 @@
     "title": "Compress Images"
   },
   "compressPng": {
+    "dimensionsNotice": "Keeps image dimensions; palette colors may change. The 1 MiB size target is best effort. Static PNG only: up to 16 MiB, 4096 px per side and 8 megapixels.",
+    "paletteQuality": "Palette quality (1-100)",
+    "paletteHint": "Lower values reduce palette colors, not image dimensions. Compression is not guaranteed lossless.",
     "description": "This is a program that compresses PNG pictures. As soon as you paste your PNG picture in the input area, the program will compress it and show the result in the output area. In the options, you can adjust the compression level, as well as find the old and new picture file sizes.",
     "shortDescription": "Quickly compress a PNG",
     "title": "Compress png"
@@ -367,5 +381,15 @@
       "longDescription": "An image watermark tool lets you add customizable text watermarks to one or more images. You can automatically use each image's filename as the watermark or apply the same custom text to every image. Watermarks help protect your work, identify ownership, promote your brand, and organize image collections. Customize the font size, opacity, color, and position while preserving the original image quality.",
       "title": "What is Watermark Images ?"
     }
+  },
+  "losslessPng": {
+    "title": "Lossless PNG Optimizer",
+    "description": "Recompress static PNG files without changing pixel samples or accepted metadata. Keep the original if recompression does not help.",
+    "shortDescription": "Lossless PNG recompression with original-file fallback."
+  },
+  "batchOcr": {
+    "title": "Batch OCR",
+    "description": "Extract ordered text from multiple PNG/JPEG images with English or Vietnamese OCR and TXT/ZIP downloads.",
+    "shortDescription": "Recognize text from multiple images"
   }
 }

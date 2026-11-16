@@ -3,12 +3,12 @@ import { Helmet } from 'react-helmet';
 import { useTranslation } from 'react-i18next';
 import { useLocation } from 'react-router-dom';
 import { tools } from '@tools/index';
-import { validNamespaces } from '../i18n';
+import type { I18nNamespaces } from '../i18n';
 import { applyHeadTags } from './dom';
 import { getHeadTags } from './head';
 import { developmentHeadTags } from './pages-dev';
 import { normalizePath, resolveSeoPage } from './model';
-import { availableClientPage } from './client-page';
+import { availableClientPage, requiredSeoKeys } from './client-page';
 import { SITE, absoluteUrl } from './config';
 import { toolRecordsFromRegistry } from './records';
 import { loadToolOverrides, useToolOverrides } from './useToolOverrides';
@@ -27,19 +27,34 @@ const records = toolRecordsFromRegistry(tools);
  */
 export default function RouteSeo() {
   const { pathname } = useLocation();
-  const { i18n } = useTranslation(validNamespaces, {
+  const namespaces = useMemo(
+    () =>
+      [
+        ...new Set([
+          'translation',
+          ...requiredSeoKeys(records, pathname).map((key) => key.split(':')[0])
+        ])
+      ] as I18nNamespaces[],
+    [pathname]
+  );
+  const { i18n, ready } = useTranslation(namespaces, {
     useSuspense: false
   });
-  const overrides = useToolOverrides();
+  const overrides = useToolOverrides(
+    records.some((tool) => '/' + tool.path === normalizePath(pathname))
+  );
   const language = i18n.resolvedLanguage ?? i18n.language;
   // Rebuild when translations arrive later (e.g. the English fallback for a
   // non-English UI), since `ready` can be true before they are loaded.
   const [resourcesVersion, setResourcesVersion] = useState(0);
   useEffect(() => {
-    const onAdded = () => setResourcesVersion((version) => version + 1);
+    const onAdded = (_language: string, namespace: string) => {
+      if (namespaces.includes(namespace as I18nNamespaces))
+        setResourcesVersion((version) => version + 1);
+    };
     i18n.store.on('added', onAdded);
     return () => i18n.store.off('added', onAdded);
-  }, [i18n]);
+  }, [i18n, namespaces]);
 
   const page = useMemo(() => {
     // Keys come from tool metadata at runtime, so the typed key union of
@@ -101,18 +116,41 @@ export default function RouteSeo() {
           SITE.language
         );
       }
-      Promise.all([
-        import('./english-fallback'),
-        loadToolOverrides().catch(() => ({}))
-      ])
-        .then(([fallback, loaded]) =>
+      // A correct direct-load head can wait for its normal namespace request.
+      // Navigation needs a fresh identity even while the HTTP backend retries.
+      if (!ready && canonical === absoluteUrl(path))
+        return () => {
+          active = false;
+        };
+      loadToolOverrides()
+        .catch(() => ({}))
+        .then(async (loaded) => {
+          if (!active) return;
+          const t = i18n.getFixedT(language) as unknown as (
+            key: string
+          ) => string;
+          const translated = availableClientPage(
+            {
+              tools: records,
+              translate: (key) =>
+                i18n.exists(key, { lng: language }) ? t(key) : undefined,
+              language,
+              overrides: loaded
+            },
+            pathname
+          );
+          if (translated) {
+            apply(translated);
+            return;
+          }
+          const fallback = await import('./english-fallback');
           apply(
             resolveSeoPage(
               fallback.englishFallbackSite(records, loaded),
               pathname
             )
-          )
-        )
+          );
+        })
         .catch(() => {
           /* Correct initial metadata or neutral head is retained; never reuse another route. */
         });
@@ -120,7 +158,7 @@ export default function RouteSeo() {
     return () => {
       active = false;
     };
-  }, [page, pathname]);
+  }, [page, pathname, ready, i18n, language]);
 
   return null;
 }

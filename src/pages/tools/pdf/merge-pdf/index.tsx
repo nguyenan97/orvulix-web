@@ -1,8 +1,9 @@
 import { useState } from 'react';
+import { Alert, Box, Typography } from '@mui/material';
+import { usePdfMerge } from '../../../../features/pdf-merge/usePdfMerge'; // ORVULIX: merge output ownership.
 import ToolFileResult from '@components/result/ToolFileResult';
 import ToolContent from '@components/ToolContent';
 import { ToolComponentProps } from '@tools/defineTool';
-import { mergePdf } from './service';
 import ToolMultiPdfInput, {
   MultiPdfInput
 } from '@components/input/ToolMultiplePdfInput';
@@ -10,24 +11,13 @@ import { useTranslation } from 'react-i18next';
 
 export default function MergePdf({ title }: ToolComponentProps) {
   const { t } = useTranslation('pdf');
-  const [input, setInput] = useState<MultiPdfInput[]>([]);
-  const [result, setResult] = useState<File | null>(null);
-  const [isProcessing, setIsProcessing] = useState<boolean>(false);
-
-  const compute = async (values: File[], input: MultiPdfInput[]) => {
-    if (input.length === 0) {
-      return;
-    }
-
-    try {
-      setIsProcessing(true);
-      const mergeResult = await mergePdf(input.map((i) => i.file));
-      setResult(mergeResult);
-    } catch (error) {
-      throw new Error('Error merging PDF:' + error);
-    } finally {
-      setIsProcessing(false);
-    }
+  const [input, setFiles] = useState<MultiPdfInput[]>([]);
+  const { result, loading, error, compute, invalidate } = usePdfMerge();
+  const setInput: React.Dispatch<React.SetStateAction<MultiPdfInput[]>> = (
+    next
+  ) => {
+    invalidate();
+    setFiles(next);
   };
 
   return (
@@ -40,9 +30,7 @@ export default function MergePdf({ title }: ToolComponentProps) {
       inputComponent={
         <ToolMultiPdfInput
           value={input}
-          onChange={(pdfInputs) => {
-            setInput(pdfInputs);
-          }}
+          onChange={setInput}
           accept={['application/pdf']}
           title={t('merge.inputTitle')}
           type="pdf"
@@ -50,13 +38,21 @@ export default function MergePdf({ title }: ToolComponentProps) {
       }
       getGroups={null}
       resultComponent={
-        <ToolFileResult
-          title={t('merge.resultTitle')}
-          value={result}
-          extension={'pdf'}
-          loading={isProcessing}
-          loadingText={t('merge.loadingText')}
-        />
+        <Box>
+          {error && <Alert severity="error">{error}</Alert>}
+          <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
+            Up to 20 PDFs, 32 MiB each, 128 MiB combined, 500 pages and 64 MiB
+            output. Clear cancels the current result; processing stops at the
+            next safe checkpoint.
+          </Typography>
+          <ToolFileResult
+            title={t('merge.resultTitle')}
+            value={result}
+            extension={'pdf'}
+            loading={loading}
+            loadingText={t('merge.loadingText')}
+          />
+        </Box>
       }
       toolInfo={{
         title: t('merge.toolInfo.title'),

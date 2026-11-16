@@ -68,6 +68,22 @@ description: Communication, project context and technical review standards for a
   practical correction. Report blockers first. Do not promise merges are risk-free
   or claim instruction files enforce behavior across every client.
 - Delivery summaries should state what changed, why, validation and the PR/commit
-  link. Creating a PR into `develop` does not itself authorize merging it or
-  releasing into `main`. Follow `development-workflow` for branch creation,
-  merge authorization and safe cleanup.
+  link. The standing SDLC workflow authorizes merging the current implementation
+  task into `develop` only after its gates pass; creating a PR alone is not a
+  completion gate. Review-only/stop-at-PR instructions override the default.
+  Releasing into `main` still requires explicit authorization. Follow
+  `development-workflow` and `sdlc-task-loop` for delivery and safe cleanup.
+
+# Engineering discipline reference
+
+For maintainers and AI assistants, [engineering delivery](../../../docs/ENGINEERING_DELIVERY.md)
+connects specs, domain boundaries, BDD/TDD, review and operation. Its
+[research record](../../../docs/AI_WORKFLOW_RESEARCH.md) documents pinned upstream
+sources and adopt/defer/reject decisions. Select applicable security controls from
+[secure delivery](../../../docs/SECURE_DELIVERY.md); distinguish executed scans,
+blocking checks, reviewed findings and externally configured protections.
+
+For test design, bug diagnosis, behavior-preserving refactors and diff reviews,
+consult the Applied practices section of `docs/ENGINEERING_PRACTICES.md` (from the
+repository root). It adapts pinned Matt Pocock practices; provenance and the MIT
+notice are linked there. Its techniques do not expand workflow authorization.

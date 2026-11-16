@@ -17,25 +17,79 @@ concurrency:
 jobs:
   build:
     if: github.event_name == 'pull_request' || github.ref == 'refs/heads/develop'
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
         with:
           fetch-depth: 0
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
         with:
-          node-version: '20'
+          node-version: '24'
           cache: npm
       - run: node scripts/check-text-style.mjs
       - run: npm ci
-      - run: npm run test -- --run
+      - run: npm run lint:check
+      #- run: npm run test -- --run
       - run: node --test scripts/pages/prepare.test.mjs
       - name: Verify production build without deploying
         run: npm run build
+      - run: node scripts/validate-list-worker.mjs
       - name: Install focused browser
         run: npx playwright install --with-deps chromium
-      - name: Verify SEO navigation, local demos and image downloads
-        run: npx playwright test src/seo/seo.e2e.spec.ts src/ai/json-assistant/json-assistant.e2e.spec.ts src/ai/regex-assistant/regex-assistant.e2e.spec.ts src/pages/tools/image/png/convert-jgp-to-png/convert-jgp-to-png.e2e.spec.ts --project=chromium
+      - name: Verify CLS metric aggregation
+        # Metric aggregation is deterministic; wall-clock budgets stay out of CI.
+        run: node --test scripts/performance/metrics.test.mjs
+      - name: Verify initial-load browser regressions
+        run: npx playwright test src/features/initial-load/initial-load.e2e.spec.ts --project=chromium --workers=1
+        env:
+          PLAYWRIGHT_USE_EXISTING_BUILD: 'true'
+      - name: Verify local file tools and calculators
+        run: npx playwright test src/features/lossless-png/optimizer.e2e.spec.ts src/features/file-checksum/checksum.e2e.spec.ts src/features/data-transfer-time/transfer.e2e.spec.ts src/features/ipv4-subnet/subnet.e2e.spec.ts src/features/ipv6-subnet/subnet.e2e.spec.ts --project=chromium --workers=1
+        env:
+          PLAYWRIGHT_USE_EXISTING_BUILD: 'true'
+      - name: Verify strict CSV and TSV conversion
+        run: npx playwright test src/features/delimited-json/integrity.e2e.spec.ts --project=chromium --workers=1
+        env:
+          PLAYWRIGHT_USE_EXISTING_BUILD: 'true'
+      - name: Verify JSON comparison integrity
+        run: npx playwright test src/pages/tools/json/json-comparison/integrity.e2e.spec.ts --project=chromium --workers=1
+        env:
+          PLAYWRIGHT_USE_EXISTING_BUILD: 'true'
+      - name: Verify Batch OCR artifacts and startup cancellation
+        run: npx playwright test src/features/batch-ocr/batch.e2e.spec.ts --project=chromium --workers=1
+        env:
+          PLAYWRIGHT_USE_EXISTING_BUILD: 'true'
+      - name: Verify EPUB artifact text fidelity
+        run: npx playwright test src/pages/tools/pdf/pdf-to-epub/fidelity.e2e.spec.ts --project=chromium --workers=1
+        env:
+          PLAYWRIGHT_USE_EXISTING_BUILD: 'true'
+      - name: Verify PDF conversion artifacts and lifecycle
+        run: npx playwright test src/features/pdf-conversion/conversion.e2e.spec.ts --project=chromium --workers=1
+        env:
+          PLAYWRIGHT_USE_EXISTING_BUILD: 'true'
+      - name: Verify async tool error reporting
+        run: npx playwright test src/components/async-errors.e2e.spec.ts --project=chromium --workers=1
+        env:
+          PLAYWRIGHT_USE_EXISTING_BUILD: 'true'
+      - name: Verify WebP background pixels
+        run: npx playwright test src/pages/tools/converters/convert-to-webp/background.e2e.spec.ts --project=chromium --workers=1
+        env:
+          PLAYWRIGHT_USE_EXISTING_BUILD: 'true'
+      - name: Verify bounded string processing
+        run: npx playwright test src/features/string-regex/isolation.e2e.spec.ts --project=chromium --workers=1
+        env:
+          PLAYWRIGHT_USE_EXISTING_BUILD: 'true'
+      - name: Verify Ghostscript startup failure recovery
+        run: npx playwright test src/lib/ghostscript/settlement.e2e.spec.ts --project=chromium --workers=1
+        env:
+          PLAYWRIGHT_USE_EXISTING_BUILD: 'true'
+      - name: Verify GIF controls and frame ordering
+        run: npx playwright test src/features/gif-conversion/explicit-create.e2e.spec.ts src/features/gif-conversion/frame-order.e2e.spec.ts src/features/gif-conversion/timing.e2e.spec.ts --project=chromium --workers=1
+        env:
+          PLAYWRIGHT_USE_EXISTING_BUILD: 'true'
+      # Worker deadlines include startup; isolate ReDoS cases from other worker startups.
+      - name: Verify SEO, local demos, image downloads and bounded list processing
+        run: npx playwright test src/features/docker-run-compose/docker.e2e.spec.ts src/features/text-workflow/workflow.e2e.spec.ts src/pages/tools/string/remove-duplicate-lines/remove-duplicate-lines.e2e.spec.ts src/features/text-file-import/import.e2e.spec.ts src/features/pdf-editor-consent/editor.e2e.spec.ts src/features/text-result-clipboard/code-result.e2e.spec.ts src/features/text-result-clipboard/clipboard.e2e.spec.ts src/features/pdf-merge/merge.e2e.spec.ts src/features/gif-conversion/mixed-format.e2e.spec.ts src/features/gif-conversion/gif-lifecycle.e2e.spec.ts src/features/multifile-drop/multifile-drop.e2e.spec.ts src/features/png-compression/png-compression.e2e.spec.ts src/features/tool-discovery/discovery.e2e.spec.ts src/security/security.e2e.spec.ts src/seo/seo.e2e.spec.ts src/ai/json-assistant/json-assistant.e2e.spec.ts src/ai/regex-assistant/regex-assistant.e2e.spec.ts src/pages/tools/image/png/convert-jgp-to-png/convert-jgp-to-png.e2e.spec.ts src/workers/list-regex/list-regex.e2e.spec.ts src/features/web-conversion/html-to-image.e2e.spec.ts src/features/web-conversion/html-pdf.e2e.spec.ts src/features/web-conversion/pagination.e2e.spec.ts src/features/web-conversion/page-ranges.e2e.spec.ts src/features/web-conversion/table-headers.e2e.spec.ts src/features/web-conversion/presets.e2e.spec.ts src/features/web-conversion/deadline.e2e.spec.ts src/features/web-conversion/pdf-baseline/pdf-baseline.e2e.spec.ts --project=chromium --workers=1
         env:
           PLAYWRIGHT_USE_EXISTING_BUILD: 'true'
       - name: Build development site
@@ -50,7 +104,7 @@ jobs:
   deploy:
     if: github.ref == 'refs/heads/develop' && github.event_name != 'pull_request'
     needs: build
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     permissions:
       pages: write
       id-token: write

@@ -1,12 +1,14 @@
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import ToolContent from '@components/ToolContent';
 import ToolCodeInput from '@components/input/ToolCodeInput';
-import ToolCodeResult from '@components/result/ToolCodeResult';
-import { minifyJson } from './service';
+import {
+  evaluateMinify,
+  resultIsDerived
+} from '../../../../features/json-minify/result'; // ORVULIX: current result ownership.
+import { MinifyOutput } from '../../../../features/json-minify/MinifyOutput'; // ORVULIX: current inline validation.
 import { CardExampleType } from '@components/examples/ToolExamples';
 import { ToolComponentProps } from '@tools/defineTool';
 import { useTranslation } from 'react-i18next';
-import { JsonFormat } from '@utils/json';
 
 type InitialValuesType = Record<string, never>;
 
@@ -51,22 +53,7 @@ const exampleCards: CardExampleType<InitialValuesType>[] = [
 export default function MinifyJson({ title }: ToolComponentProps) {
   const { t } = useTranslation('json');
   const [input, setInput] = useState<string>('');
-  const [result, setResult] = useState<string>('');
-  const [format, setFormat] = useState<JsonFormat>('json');
-
-  const compute = (_: InitialValuesType, input: string) => {
-    if (input) {
-      try {
-        const { result, format } = minifyJson(input);
-        setResult(result);
-        setFormat(format);
-      } catch (error) {
-        setResult(
-          ` ${error instanceof Error ? error.message : 'Invalid JSON format'}`
-        );
-      }
-    }
-  };
+  const outcome = useMemo(() => evaluateMinify(input), [input]); // ORVULIX: source and output share one render.
 
   return (
     <ToolContent
@@ -76,15 +63,11 @@ export default function MinifyJson({ title }: ToolComponentProps) {
           title={t('minify.inputTitle')}
           value={input}
           onChange={setInput}
-          language={format}
+          language={outcome.format}
         />
       }
       resultComponent={
-        <ToolCodeResult
-          title={t('minify.resultTitle')}
-          value={result}
-          language={format}
-        />
+        <MinifyOutput title={t('minify.resultTitle')} outcome={outcome} />
       }
       initialValues={initialValues}
       getGroups={null}
@@ -95,7 +78,7 @@ export default function MinifyJson({ title }: ToolComponentProps) {
       exampleCards={exampleCards}
       input={input}
       setInput={setInput}
-      compute={compute}
+      compute={resultIsDerived}
     />
   );
 }

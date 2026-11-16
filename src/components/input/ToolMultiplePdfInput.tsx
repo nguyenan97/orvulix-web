@@ -1,11 +1,13 @@
 import { useRef } from 'react';
-import { Box, IconButton, Tooltip, useTheme } from '@mui/material';
+import { Box, IconButton, Tooltip } from '@mui/material';
 import Typography from '@mui/material/Typography';
 import InputHeader from '../InputHeader';
 import InputFooter from './InputFooter';
 import ClearIcon from '@mui/icons-material/Clear';
 import PictureAsPdfIcon from '@mui/icons-material/PictureAsPdf';
 import { useTranslation } from 'react-i18next';
+import { useMultiFileImport } from '../../features/multifile-drop/useMultiFileImport'; // ORVULIX-UPSTREAM: selective #458 adaptation.
+import { ImportStatus } from '../../features/multifile-drop/ImportStatus';
 
 interface MultiPdfInputComponentProps {
   accept: string[];
@@ -28,25 +30,17 @@ export default function ToolMultiFileInput({
   type
 }: MultiPdfInputComponentProps) {
   const { t } = useTranslation();
-  const theme = useTheme();
+
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const files = event.target.files;
-    if (files)
-      onChange([
-        ...value,
-        ...Array.from(files).map((file) => ({ file, order: value.length }))
-      ]);
-  };
+  const importer = useMultiFileImport({ value, onChange, accept, kind: 'pdf' });
+  const handleFileChange = importer.pick;
 
   const handleImportClick = () => {
     fileInputRef.current?.click();
   };
 
-  function handleClear() {
-    onChange([]);
-  }
+  const handleClear = importer.clear;
 
   function fileNameTruncate(fileName: string) {
     const maxLength = 10;
@@ -55,42 +49,6 @@ export default function ToolMultiFileInput({
     }
     return fileName;
   }
-
-  const sortList = () => {
-    const list = [...value];
-    list.sort((a, b) => a.order - b.order);
-    onChange(list);
-  };
-
-  const reorderList = (sourceIndex: number, destinationIndex: number) => {
-    if (destinationIndex === sourceIndex) {
-      return;
-    }
-    const list = [...value];
-
-    if (destinationIndex === 0) {
-      list[sourceIndex].order = list[0].order - 1;
-      sortList();
-      return;
-    }
-
-    if (destinationIndex === list.length - 1) {
-      list[sourceIndex].order = list[list.length - 1].order + 1;
-      sortList();
-      return;
-    }
-
-    if (destinationIndex < sourceIndex) {
-      list[sourceIndex].order =
-        (list[destinationIndex].order + list[destinationIndex - 1].order) / 2;
-      sortList();
-      return;
-    }
-
-    list[sourceIndex].order =
-      (list[destinationIndex].order + list[destinationIndex + 1].order) / 2;
-    sortList();
-  };
 
   return (
     <Box>
@@ -103,7 +61,13 @@ export default function ToolMultiFileInput({
         }
       />
       <Box
+        {...importer.handlers}
+        role="region"
+        aria-label="File drop zone"
+        aria-busy={importer.processing}
         sx={{
+          display: 'flex',
+          flexDirection: 'column',
           width: '100%',
           height: '300px',
 
@@ -114,9 +78,11 @@ export default function ToolMultiFileInput({
           position: 'relative'
         }}
       >
+        <ImportStatus kind="pdf" {...importer} />
         <Box
           width="100%"
-          height="100%"
+          flex={1}
+          minHeight={0}
           sx={{
             overflow: 'auto',
             display: 'flex',
@@ -167,8 +133,7 @@ export default function ToolMultiFileInput({
                     size="small"
                     aria-label={t('toolMultipleInput.deleteFile')}
                     onClick={() => {
-                      const updatedFiles = value.filter((_, i) => i !== index);
-                      onChange(updatedFiles);
+                      importer.remove(index);
                     }}
                   >
                     <ClearIcon fontSize="small" />

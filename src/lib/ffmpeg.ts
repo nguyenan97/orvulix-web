@@ -62,13 +62,17 @@ export function resetFFmpeg(): void {
 let taskQueue: Promise<unknown> = Promise.resolve();
 
 export async function runFFmpegTask<T>(
-  task: (context: FFmpegTaskContext) => Promise<T>
+  task: (context: FFmpegTaskContext) => Promise<T>,
+  signal?: AbortSignal
 ): Promise<T> {
+  signal?.throwIfAborted(); // Opt-in cancellation: existing callers retain their contract.
   const ffmpeg = await getFFmpeg();
+  signal?.throwIfAborted();
 
   const run = taskQueue
     .catch(() => {})
     .then(async () => {
+      signal?.throwIfAborted(); // Skip obsolete queued callbacks without resetting the shared worker.
       const tempFiles = new Set<string>();
 
       const tempFile = (extension: string) => {
@@ -79,16 +83,20 @@ export async function runFFmpegTask<T>(
         return filename;
       };
 
+      let result: T;
       try {
-        return await task({
+        result = await task({
           ffmpeg,
           tempFile
         });
+        signal?.throwIfAborted();
       } finally {
         await Promise.all(
           [...tempFiles].map((file) => ffmpeg.deleteFile(file).catch(() => {}))
         );
       }
+      signal?.throwIfAborted();
+      return result;
     });
 
   taskQueue = run.catch(() => {});

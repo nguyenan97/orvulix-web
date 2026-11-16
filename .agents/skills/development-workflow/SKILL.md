@@ -18,7 +18,12 @@ description: Mandatory Git and Netlify workflow for every development, commit, p
    built site. Build-generated files must be reviewed before staging.
 5. Commit only task files on the allowed branch. Push to the matching remote
    branch. Feature PRs must target `develop`, never `main`.
-6. Stop after development delivery. Do not release as an implicit final step.
+6. Follow `../sdlc-task-loop/SKILL.md` for development delivery. The owner's
+   standing instruction in AGENTS.md authorizes merging only the current scoped
+   implementation task into `develop` after acceptance/review/exact-head CI gates.
+   Review-only or explicit stop-at-PR instructions override this default. Do not
+   merge other open PRs or start another backlog task implicitly. Production
+   release remains a separate explicit authorization.
    Development hosting is GitHub Pages at
    https://nguyenan97.github.io/orvulix-web/, built from `develop`. Feature PRs
    only run checks; merging into `develop` triggers the Pages dev deployment
@@ -64,6 +69,9 @@ description: Mandatory Git and Netlify workflow for every development, commit, p
   authorization for that action. These are not substitutes for local testing.
 - No changes to production branch, branch-deploy policy, Deploy Previews,
   auto-publishing, or build status unless requested.
+- No merges based only on green CI or a checkpoint's claimed completion. Apply
+  the SDLC acceptance and review gates against the latest head/base. Never bypass
+  required independent approvals or post a fabricated approval to satisfy them.
 
 # Hook setup and limits
 

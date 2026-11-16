@@ -1,3 +1,9 @@
+import { isNumber } from '../workers/list-regex/pure-string'; // ORVULIX-RELIABILITY
+export {
+  isNumber,
+  specialCharMap,
+  itemCounter
+} from '../workers/list-regex/pure-string';
 import { UpdateField } from '@components/options/ToolOptions';
 import { getToolsByCategory } from '@tools/index';
 import { ToolCategory } from '@tools/defineTool';
@@ -11,25 +17,11 @@ import { TFunction } from 'i18next';
  * It is useful for displaying strings in a more readable format, especially in tools
  **/
 
-export const specialCharMap: { [key: string]: string } = {
-  '': '␀',
-  ' ': '␣',
-  '\n': '↲',
-  '\t': '⇥',
-  '\r': '␍',
-  '\f': '␌',
-  '\v': '␋'
-};
-
 // Here starting the utility functions for string manipulation.
 
 export function capitalizeFirstLetter(string: string | undefined) {
   if (!string) return '';
   return string.charAt(0).toUpperCase() + string.slice(1);
-}
-
-export function isNumber(number: any): boolean {
-  return !isNaN(parseFloat(number)) && isFinite(number);
 }
 
 export const updateNumberField = <T>(
@@ -85,29 +77,6 @@ export function unquoteIfQuoted(value: string, quoteCharacter: string): string {
     return value.slice(1, -1); // Remove first and last character
   }
   return value;
-}
-
-/**
- * Count the occurence of items.
- * @param array - array get from user with a custom delimiter.
- * @param ignoreItemCase - boolean status to ignore the case i .
- * @returns Dict of Items count {[Item]: occcurence}.
- */
-export function itemCounter(
-  array: string[],
-  ignoreItemCase: boolean
-): { [key: string]: number } {
-  const dict: { [key: string]: number } = {};
-  for (const item of array) {
-    let key = ignoreItemCase ? item.toLowerCase() : item;
-
-    if (key in specialCharMap) {
-      key = specialCharMap[key];
-    }
-
-    dict[key] = (dict[key] || 0) + 1;
-  }
-  return dict;
 }
 
 export const getToolCategoryTitle = (

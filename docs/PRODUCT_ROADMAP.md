@@ -2,11 +2,78 @@
 
 **Simple tools. Smarter workflows. Better productivity.**
 
-**Status:** Public roadmap. Planned and exploratory features are not available yet. Updated: October 2026.
+**Status:** Public roadmap with separate development delivery and planned scope.
+Reconciled October 15, 2026. Develop changes are not a production release.
 
 Orvulix is an open-source workspace for useful browser-based tools. We want to help developers, students, creators, and everyday users work with data, documents, images, and text without unnecessary setup.
 
 Our approach is to make existing tools better first, then explore new capabilities that solve meaningful problems. This roadmap describes priorities, not fixed delivery dates.
+
+## Verified development delivery
+
+Lossless PNG has a bounded native-IDAT recompression MVP in the current development
+task: explicit processing, worker cancellation, exact sample/accepted metadata
+preservation and original-file fallback. See [prompt/contracts](LOSSLESS_PNG_OPTIMIZER.md)
+and [checkpoint](tasks/lossless-png-optimizer.md) for PR/CI status. Advanced
+filter/codec optimization and production release remain separate.
+
+Images to GIF frame ordering is implemented in the current development task:
+numbered full-filename list, keyboard Move earlier/later, immediate GIF invalidation
+and explicit regeneration in the chosen order. Reordering cancels unfinished
+imports while retaining accepted previews. See [prompt/contracts](GIF_FRAME_ORDER.md)
+and [checkpoint](tasks/gif-frame-order.md) for validation and PR status. Encoder,
+timing/quality and richer progress remain separate; no production release.
+
+IPv6 Subnet Calculator is implemented in the current development task as a
+separate tool: bounded full/compressed/IPv4-tail parsing, exact address counts
+and /0 through /128 range boundaries. [Prompt and contracts](IPV6_SUBNET.md) and
+[checkpoint](tasks/ipv6-subnet-calculator.md) track validation/PR status. No
+assignability classification, address enumeration or production release.
+
+Images to GIF now has an explicit Create/Cancel implementation in the current
+development task. Edits do not automatically encode; cancelled output is discarded
+and another Create waits for the previous owned job to settle. See [prompt and
+contracts](GIF_EXPLICIT_CREATE.md) and [checkpoint](tasks/gif-explicit-create.md)
+for PR/CI status. Timing/quality redesign, richer progress and production release
+remain separate.
+
+Subnet Calculator has an implemented IPv4 MVP: CIDR or dotted masks produce
+network boundaries, broadcast and host ranges/counts, with explicit /31 and /32
+behavior. See [prompt and contracts](IPV4_SUBNET.md) and
+[delivery checkpoint](tasks/ipv4-subnet-calculator.md) for PR/CI state. IPv6,
+host enumeration and production release remain separate.
+
+Data Transfer Time Calculator has an implemented browser-local MVP: size, rate,
+decimal/binary bit/byte units and optional efficiency produce live duration
+estimates. See [prompt and contracts](DATA_TRANSFER_TIME.md) and
+[delivery checkpoint](tasks/data-transfer-time.md) for PR/CI status. No connection
+speed is measured; production release remains separate.
+
+File Checksum Calculator has an implemented SHA-256/SHA-512 MVP for one local
+file up to 64 MiB, with expected-value comparison, copy and cancellable worker
+processing. See [prompt and contracts](FILE_CHECKSUM.md) and
+[delivery checkpoint](tasks/file-checksum.md) for PR/CI status. Streaming larger
+files, batch processing and production release remain separate.
+
+Docker Run to Compose has a bounded browser-local implementation for a documented
+Linux-container command subset, including literal-safe YAML and current-result
+exports. [Plan and supported scope](DOCKER_RUN_COMPOSE.md) and
+[delivery checkpoint](tasks/docker-run-compose.md) distinguish the actual PR/CI
+delivery state from full Docker CLI support and production rollout.
+
+Text Workflow Builder now has an implemented text-only MVP in the current
+development change. Six transformations run in a bounded, cancellable worker with
+intermediate previews and settings-only JSON recipes. See [contracts and limits](TEXT_WORKFLOW.md)
+and [delivery checkpoint](tasks/text-workflow-builder.md); PR metadata/CI record
+actual develop delivery. Cross-tool/media workflows and production release remain
+separate. This does not change the dated delivery snapshot below.
+
+Reconciled 2026-10-16 against develop `2c91155` and main `96494b8`. PR19/20/22
+and PR24-34 are merged into develop, not released to main. These cover bounded
+list regex, local HTML conversion/discovery, PNG dimensions, multi-file input,
+GIF reliability, engineering practices, Merge PDF ownership and text/code-result clipboard reliability. The authoritative
+[delivery snapshot](FEATURE_BACKLOG.md#verified-delivery-snapshot) records PRs,
+merge commits and remaining scope. PR33 PDF Editor opt-in and its bounded audit are tracked below.
 
 ## 1. Better everyday tools
 
@@ -16,7 +83,17 @@ Our approach is to make existing tools better first, then explore new capabiliti
 - Make tools easier to find through clearer categories, navigation, and search.
 - Add practical examples, instructions, and actionable error messages.
 - Strengthen accessibility, automated testing, and reliability.
+  PR19 merged regex splitting in all 11 list tools with
+  [bounded workers](BOUNDED_LIST_REGEX.md), with numeric guards for Group and Duplicate
+  and preflight checks for Group padding separator expansion.
 - Improve search visibility with helpful, original content for individual tools.
+- Web/HTML conversion follows a [separate phased plan](WEB_CONVERSION_PLAN.md).
+  PR20 is merged into develop: experimental local HTML to PNG/JPEG/raster PDF,
+  safe static input, bounded embedded images, system fonts, crop warnings,
+  pagination, ranges, supported repeated table headers and presets. PDF text is
+  not searchable/selectable. Custom fonts, complex layouts and URL rendering
+  remain deferred. PR21 security remediation is merged; production approval and
+  remote renderer isolation/operation require separate decisions.
 
 **Outcome we want:** People can find the right tool quickly, complete their task, and confidently return when they need it again.
 
@@ -73,7 +150,7 @@ We will prioritize previewable changes, clear confirmation, and workflows that c
 
 See [the prioritized upstream issue backlog](FEATURE_BACKLOG.md) for MVP scope,
 acceptance criteria and upstream PRs to review before implementation. These items
-are planned, not shipped. Each implementation uses a feature branch from `develop`
+are planned or partial; verified development subscopes are listed above. Each implementation uses a feature branch from `develop`
 and a PR into `develop`; production releases require separate authorization.
 
 ## How we prioritize
@@ -105,3 +182,172 @@ We welcome practical suggestions and contributions.
 - **Contact:** founder@orvulix.io.vn
 
 Orvulix is independently maintained as a fork of [OmniTools](https://github.com/iib0011/omni-tools), with original attribution and licensing preserved.
+
+
+PR20 pagination gate: merged into develop via PR20. Explicit
+Paginated width-fit uses bounded sequential captures and protected block/row
+boundaries, rejecting oversized/unsafe layout. One page remains default. Review
+actual PDF bytes, cross-browser page seams, deadlines/cleanup and Pages smoke
+for the merged implementation; header repetition is merged into develop via PR20. Custom fonts remain deferred.
+
+
+Page ranges (PR20): merged into develop via PR20. Explicit
+All pages/Custom ranges select original source pages without reflow or bypassing
+full-document limits. Invalid input is rejected, normalized selection is visible,
+selected capture is cancellable and PDF source/output order is tested with actual
+bytes/pixels. Repeated table headers are merged into develop via PR20. Custom fonts/URL rendering remain deferred.
+
+
+Local Web/HTML conversion MVP (PR20) is merged and verified on develop via PR20, including six option presets without content/settings storage.
+The full Web conversion feature remains incomplete. See the
+[deferred register](WEB_CONVERSION_DEFERRED.md) for font/security gates, remote
+service prerequisites and future URL outputs/automation. No backend or paid API
+is added by the local delivery.
+
+PR20 local reliability review: monotonic capture/asset acceptance deadlines and
+late-result cleanup regressions are implemented on the develop via merged PR20.
+The separate HTML to PDF tool is described as implemented raster output, while
+fonts, URL rendering and automation remain deferred. Release still follows the
+normal develop review and separately authorized main workflow.
+
+PR20 pagination fidelity corrections retain painted border-only boxes and reject
+left-of-viewport content instead of silently cropping it. These are local MVP
+reliability fixes merged into develop in PR20, not a change to remote conversion scope.
+
+## URL-first Web conversion discovery update
+
+PR20 local HTML conversion and PR21 security remediation are merged into develop,
+not evidence of a production release or URL conversion availability. PR22 merged
+the experimental local-tool discovery/copy correction into develop. Local HTML tools retain upload/paste/sample/export but are not homepage
+category CTA examples and appear after other browse/related tools. Search remains
+available and unchanged.
+
+Next milestones: renderer architecture/security/measured cost decision -> actual
+URL to PDF MVP -> URL to Image/advanced options. These remain deferred; no backend
+or fake URL input exists. See WEB_CONVERSION_PLAN.md for gates and sync hotspots.
+
+## Selective upstream integration
+
+Follow UPSTREAM_SYNC.md: compare upstream/main against Orvulix develop and port
+one bounded improvement at a time, preserving branding/SEO/Pages/security rules.
+PR24 merged PNG dimension correctness (#461) into develop,
+not a complete encoder/batch migration or lossless optimizer. PR25/26/27 merged bounded drop and GIF reliability work; remaining GIF UX/quality
+and generic image compression need separate acceptance/tests. Owner has
+paused Web/URL conversion; retain existing local HTML tools without extending them.
+
+### Shared file-input reliability
+
+Multi-file drop adaptation merged into develop in PR25 covers image/audio/
+video/PDF inputs, including queued budgets, invalid batch recovery and owned URL
+cleanup. It preserves existing tool conversion behavior and does not extend Web/
+URL conversion. PR25 is verified merged;
+consumer conversion cancellation requires a separate reliability task.
+
+### GIF output ownership
+
+PR26 merged into develop and addresses output reappearing after
+Clear during conversion, without changing existing auto-generation or GIF timing.
+Merge verified at 4a8489c; see GIF_CONVERSION_LIFECYCLE.md. This does not
+complete GIF quality/timing work, mixed-format fidelity or other converters.
+
+### Mixed-format GIF reliability
+
+PR27 merged into develop and fixes missing JPEG/PNG content in mixed concat
+jobs using bounded sequential normalization, with PR26 lifecycle retained.
+Merge verified at 6fab3c3. Different-size
+padding/resizing, other formats and quality/timing remain separate work; see
+GIF_MIXED_FORMAT.md.
+
+## Merge PDF output ownership
+
+Merged into develop through [PR #29](https://github.com/nguyenan97/orvulix-web/pull/29). A reproduced Clear
+during merge could republish an old PDF. The bounded owner now invalidates on
+selection edits/Clear/unmount, ignores late completion/error and exposes current
+failures with recovery. File/page order, geometry and automatic merge remain.
+See [scope, budgets and validation](PDF_MERGE_LIFECYCLE.md). This does not extend
+Split PDF or other conversion consumers; release to main is separate.
+
+## Shared text-result copy reliability
+
+PR30 merged a change that aligns copied text with the displayed ToolTextResult value and
+adds manual-copy guidance when native clipboard access fails. Downloads retain
+the original data. PR30 is merged into develop; this is not a production
+release or completion of JSON prettify/other clipboard investigations. Public
+/roadmap separates verified development delivery through PR32 from planned features;
+see FEATURE_BACKLOG.md for the current partial foundation scope.
+
+### Code-result follow-up
+
+PR31 merged the same native clipboard failure guidance into code results
+without transforming formatted code. Secure-origin JSON copy and insecure-origin
+manual-copy guidance are validated separately. PR31 is merged into develop, not main; historical issue390 and input/file consumer investigation are not marked
+fully resolved. No production release, HTTP fallback or formatter rewrite.
+
+
+### Shared input footer follow-up
+
+PR32 merged guarded native copy into text/code input footers,
+retaining exact source text, editing and file import. This is merged into develop,
+not released to main. Actual-origin/code-editor tests and delivery are tracked in
+tasks/input-clipboard.md. Other clipboard consumers and editor-wide HTTP gestures
+remain follow-ups; there is no deprecated fallback or wider issue390 claim.
+
+
+## PDF Editor external-service consent
+
+PR33 (`663b0dc`) merged into develop and requires enabling SimplePDF before loading its external editor
+and discloses observed analytics/document metadata. Closing removes the embed;
+consent is not persisted. This is a bounded privacy correction, not a new local
+PDF editor or full provider audit. See PDF_EDITOR_PRIVACY.md for measured scope,
+limits and save/share follow-ups; delivery is development-only; production release is separate.
+
+
+## Shared text/code file-import ownership
+
+Implementation on `feature/text-file-import-ownership` (PR #34): a shared native
+FileReader owner cancels old reads on edits, replacement files, external value
+changes and unmount. Queued callbacks cannot overwrite newer content. Read errors
+get retry guidance and the picker permits reselecting the same file. Existing
+readAsText decoding and empty files are retained. See
+[tasks/text-file-import-ownership.md](tasks/text-file-import-ownership.md).
+Merge status is authoritative in PR #34; this is not a production release.
+Whole-file allocation/decoding limits, other file input components and pending
+clipboard notification ownership remain separate follow-ups. JSON Prettify
+result ownership was separately delivered in PR35.
+
+
+## JSON Prettify result ownership
+
+Merged into develop in PR #35 (`18634f7`):
+empty/invalid source has no stale output and cannot be copied/downloaded. Inline
+validation reflects current input and disappears on recovery. Output derives
+synchronously from the current source/Formik options using the existing formatter.
+This does not migrate shared ToolContent, other tools, parser precision or resource
+limits. See [task checkpoint](tasks/json-prettify-result-ownership.md). PR34 file
+import ownership is merged into develop; this result-ownership correction is
+separate and not released to production.
+
+
+## JSON Minify result ownership
+
+Merged into develop in PR #36 (`5937a46`): empty/invalid input
+clears output and disables export, with current inline errors and valid recovery.
+JSON/JSONL format, extensions and the existing service semantics are retained.
+See [JSON_MINIFY.md](JSON_MINIFY.md) and
+[task checkpoint](tasks/json-minify-result-ownership.md) for evidence and limits.
+PR metadata records merge status; this is not a production release. Whole-input
+resource limits and other tool/result/clipboard migrations remain separate.
+Public roadmap now records verified PR36 delivery at develop `5937a46`,
+separate from production and the 12 planned feature milestones.
+
+
+## JSON Sort own-key preservation
+
+Implementation on `feature/json-sort-own-keys`: key sorting preserves literal
+`__proto__` data in objects, object-array rows and JSONL rather than silently
+omitting it during export. Existing shallow sorting, order, formatting and value
+mode remain unchanged. This is a data-integrity fix, not a global prototype
+pollution claim or completion of JSON Sort lifecycle/resource work.
+See [JSON_SORT_INTEGRITY.md](JSON_SORT_INTEGRITY.md) and
+[task checkpoint](tasks/json-sort-own-keys.md). PR metadata records merge status;
+this is not a production release. Public roadmap reconciles already merged PR36.

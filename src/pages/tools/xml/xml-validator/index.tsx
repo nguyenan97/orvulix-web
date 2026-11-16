@@ -1,4 +1,3 @@
-import { Box } from '@mui/material';
 import React, { useState } from 'react';
 import ToolContent from '@components/ToolContent';
 import { ToolComponentProps } from '@tools/defineTool';
@@ -28,10 +27,7 @@ const exampleCards: CardExampleType<InitialValuesType>[] = [
   }
 ];
 
-export default function XmlValidator({
-  title,
-  longDescription
-}: ToolComponentProps) {
+export default function XmlValidator({ title }: ToolComponentProps) {
   const { t } = useTranslation('xml');
   const [input, setInput] = useState<string>('');
   const [result, setResult] = useState<string>('');

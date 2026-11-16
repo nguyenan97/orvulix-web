@@ -1,11 +1,13 @@
 import React, { useRef } from 'react';
-import { Box } from '@mui/material';
+import { Box, IconButton } from '@mui/material';
 import Typography from '@mui/material/Typography';
 import InputHeader from '../InputHeader';
 import InputFooter from './InputFooter';
 import ImageIcon from '@mui/icons-material/Image';
 import { useTranslation } from 'react-i18next';
-import { heicTo, isHeic } from 'heic-to';
+
+import { useMultiFileImport } from '../../features/multifile-drop/useMultiFileImport'; // ORVULIX-UPSTREAM: selective #458 adaptation.
+import { ImportStatus } from '../../features/multifile-drop/ImportStatus';
 
 interface MultiImageInputComponentProps {
   accept: string[];
@@ -31,66 +33,20 @@ export default function ToolMultiImageInput({
   const { t } = useTranslation();
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const handleFileChange = async (
-    event: React.ChangeEvent<HTMLInputElement>
-  ) => {
-    const files = event.target.files;
-    if (!files) return;
-
-    const newFiles: MultiImageInput[] = await Promise.all(
-      Array.from(files).map(async (file, index) => {
-        let processedFile = file;
-
-        try {
-          if (await isHeic(file)) {
-            const convertedBlob = await heicTo({
-              blob: file,
-              type: 'image/jpeg'
-            });
-
-            processedFile = new File(
-              [convertedBlob],
-              file.name.replace(/\.[^/.]+$/, '') + '.jpg',
-              { type: 'image/jpeg' }
-            );
-          }
-        } catch (err) {
-          console.warn('HEIC conversion failed:', file.name, err);
-        }
-
-        return {
-          file: processedFile,
-          order: value.length + index,
-          preview: URL.createObjectURL(processedFile)
-        };
-      })
-    );
-
-    onChange([...value, ...newFiles]);
-
-    event.target.value = '';
-  };
+  const importer = useMultiFileImport({
+    value,
+    onChange,
+    accept,
+    kind: 'image'
+  });
+  const handleFileChange = importer.pick;
 
   const handleImportClick = () => {
     fileInputRef.current?.click();
   };
 
-  function handleClear() {
-    value.forEach((f) => {
-      if (f.preview) URL.revokeObjectURL(f.preview);
-    });
-    onChange([]);
-  }
-
-  function handleRemove(index: number) {
-    const fileToRemove = value[index];
-    if (fileToRemove?.preview) {
-      URL.revokeObjectURL(fileToRemove.preview);
-    }
-
-    const updatedFiles = value.filter((_, i) => i !== index);
-    onChange(updatedFiles);
-  }
+  const handleClear = importer.clear;
+  const handleRemove = importer.remove;
 
   function fileNameTruncate(fileName: string) {
     const maxLength = 10;
@@ -110,7 +66,13 @@ export default function ToolMultiImageInput({
         }
       />
       <Box
+        {...importer.handlers}
+        role="region"
+        aria-label="File drop zone"
+        aria-busy={importer.processing}
         sx={{
+          display: 'flex',
+          flexDirection: 'column',
           width: '100%',
           height: '300px',
           border: value?.length ? 0 : 1,
@@ -120,9 +82,11 @@ export default function ToolMultiImageInput({
           position: 'relative'
         }}
       >
+        <ImportStatus kind="image" {...importer} />
         <Box
           width="100%"
-          height="100%"
+          flex={1}
+          minHeight={0}
           sx={{
             overflow: 'auto',
             display: 'flex',
@@ -176,12 +140,13 @@ export default function ToolMultiImageInput({
                   <Typography variant="caption">
                     {fileNameTruncate(file.file.name)}
                   </Typography>
-                  <Box
-                    sx={{ cursor: 'pointer' }}
+                  <IconButton
+                    size="small"
+                    aria-label={t('toolMultipleInput.deleteFile')}
                     onClick={() => handleRemove(index)}
                   >
                     ✖
-                  </Box>
+                  </IconButton>
                 </Box>
               </Box>
             ))

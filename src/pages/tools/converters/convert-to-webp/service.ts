@@ -1,4 +1,5 @@
 import JSZip from 'jszip';
+import Color from 'color';
 
 export const convertToWebp = async (
   files: File[],
@@ -71,11 +72,10 @@ async function processImage(
     canvas.height = img.height;
 
     // Fill background with selected color (important for transparency)
-    let bgColor: [number, number, number];
+    let bgColor: number[];
     try {
-      //@ts-ignore
       bgColor = Color(backgroundColor).rgb().array();
-    } catch (err) {
+    } catch {
       bgColor = [255, 255, 255]; // Default to white
     }
 

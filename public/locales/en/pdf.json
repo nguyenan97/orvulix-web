@@ -1,4 +1,9 @@
 {
+  "htmlToPdf": {
+    "title": "HTML to PDF",
+    "description": "Experimental local HTML file/snippet to raster PDF. Upload a .html file or paste markup; no website URLs. PDF text is not searchable or selectable.",
+    "shortDescription": "Experimental HTML file/snippet to raster PDF; no website URLs."
+  },
   "compressPdf": {
     "compressedFileSize": "Compressed File Size",
     "compressingPdf": "Compressing PDF...",

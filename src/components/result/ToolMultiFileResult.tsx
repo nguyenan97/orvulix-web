@@ -9,9 +9,9 @@ import InputHeader from '../InputHeader';
 import greyPattern from '@assets/grey-pattern.png';
 import { globalInputHeight } from '../../config/uiConfig';
 import ResultFooter from './ResultFooter';
+import { FilePreview } from './FilePreview';
 import { useTranslation } from 'react-i18next';
-import React, { useContext } from 'react';
-import { CustomSnackBarContext } from '../../contexts/CustomSnackBarContext';
+import React from 'react';
 
 export default function ToolMultiFileResult({
   title = 'Result',
@@ -28,7 +28,6 @@ export default function ToolMultiFileResult({
 }) {
   const { t } = useTranslation();
   const theme = useTheme();
-  const { showSnackBar } = useContext(CustomSnackBarContext);
 
   const getFileType = (
     file: File
@@ -49,22 +48,6 @@ export default function ToolMultiFileResult({
     a.click();
     document.body.removeChild(a);
     URL.revokeObjectURL(url);
-  };
-
-  const handleCopy = () => {
-    if (zipFile) {
-      const blob = new Blob([zipFile], { type: zipFile.type });
-      const clipboardItem = new ClipboardItem({ [zipFile.type]: blob });
-      navigator.clipboard
-        .write([clipboardItem])
-        .then(() => showSnackBar(t('toolMultiFileResult.copied'), 'success'))
-        .catch((err) => {
-          showSnackBar(
-            t('toolMultiFileResult.copyFailed', { error: err }),
-            'error'
-          );
-        });
-    }
   };
 
   return (
@@ -104,7 +87,6 @@ export default function ToolMultiFileResult({
         ) : (
           value.length > 0 &&
           value.map((file, idx) => {
-            const preview = URL.createObjectURL(file);
             const fileType = getFileType(file);
 
             return (
@@ -123,25 +105,7 @@ export default function ToolMultiFileResult({
                   alignItems: 'center'
                 }}
               >
-                {fileType === 'image' && (
-                  <img
-                    src={preview}
-                    alt={`Preview ${idx}`}
-                    style={{ maxWidth: '100%', maxHeight: 300 }}
-                  />
-                )}
-                {fileType === 'video' && (
-                  <video src={preview} controls style={{ maxWidth: '100%' }} />
-                )}
-                {fileType === 'audio' && (
-                  <audio src={preview} controls style={{ width: '100%' }} />
-                )}
-                {fileType === 'pdf' && (
-                  <iframe src={preview} width="100%" height="400px" />
-                )}
-                {fileType === 'unknown' && (
-                  <Typography>File ready. Click below to download.</Typography>
-                )}
+                <FilePreview file={file} type={fileType} index={idx} />
                 <Button
                   onClick={() => handleDownload(file)}
                   size="small"

@@ -1,6 +1,73 @@
 import { compareJson } from './service';
 
 describe('compareJson', () => {
+  it('does not rewrite commas or brackets inside JSON strings', () => {
+    expect(compareJson('{"v":"x,}"}', '{"v":"x}"}', 'text')).toContain(
+      'Mismatch'
+    );
+    const plain = JSON.stringify({
+      text: 'comma,} quote" slash\\',
+      list: [1, 2]
+    });
+    const trailing = plain.slice(0, -1) + ',}';
+    expect(compareJson(trailing, plain, 'text')).toBe('No differences found');
+    expect(compareJson('{"a":[1,2,],}', '{"a":[1,2]}', 'text')).toBe(
+      'No differences found'
+    );
+  });
+
+  it.each([
+    ['1', '2'],
+    ['null', '{}'],
+    ['[]', '{}'],
+    ['false', '0'],
+    ['{"a":null}', '{"a":{}}']
+  ])('compares value and type at every level: %s vs %s', (a, b) => {
+    expect(compareJson(a, b, 'text')).toContain('Mismatch');
+    expect(compareJson(a, b, 'json')).not.toBe('{}');
+  });
+
+  it('uses deep value equality in JSON output mode', () => {
+    expect(
+      compareJson('{"a":{"b":[1,null]}}', '{"a":{"b":[1,null]}}', 'json')
+    ).toBe('{}');
+    expect(
+      JSON.parse(compareJson('{"a":{"b":1}}', '{"a":{"b":2}}', 'json'))
+    ).toEqual({ 'a.b': 'Mismatch: 1 != 2' });
+  });
+
+  it('compares own prototype-named keys and keeps them in JSON output', () => {
+    const result = JSON.parse(
+      compareJson('{"__proto__":1,"toString":2,"constructor":3}', '{}', 'json')
+    );
+    expect(Object.keys(result)).toEqual([
+      '__proto__',
+      'toString',
+      'constructor'
+    ]);
+    expect(result.__proto__).toBe('Missing in second JSON');
+  });
+
+  it('distinguishes literal dotted keys from nested paths', () => {
+    const result = JSON.parse(
+      compareJson('{"a.b":1,"a":{"b":1}}', '{"a.b":2,"a":{"b":2}}', 'json')
+    );
+    expect(Object.keys(result)).toHaveLength(2);
+  });
+
+  it.each(['{"a":,}', '[,]', '[1,,]', '{"a":1,,}'])(
+    'rejects malformed input %s without repairing missing values',
+    (source) => {
+      expect(() => compareJson(source, '{}', 'text')).toThrow();
+    }
+  );
+
+  it('rejects excessive nesting before comparison and recovers', () => {
+    expect(() =>
+      compareJson('['.repeat(65) + '0' + ']'.repeat(65), '[]', 'text')
+    ).toThrow(/nesting/i);
+    expect(compareJson('1', '1', 'text')).toBe('No differences found');
+  });
   it('should identify missing properties', () => {
     const json1 = '{"name": "John", "age": 30}';
     const json2 = '{"name": "John"}';

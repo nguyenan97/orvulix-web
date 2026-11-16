@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import * as Yup from 'yup';
+
 import ToolTextInput from '@components/input/ToolTextInput';
 import ToolTextResult from '@components/result/ToolTextResult';
 import ToolContent from '@components/ToolContent';
@@ -17,11 +17,6 @@ const initialValues = {
   deleteTrailing: true
 };
 type InitialValuesType = typeof initialValues;
-const validationSchema = Yup.object().shape({
-  joinCharacter: Yup.string().required('Join character is required'),
-  deleteBlank: Yup.boolean().required('Delete blank is required'),
-  deleteTrailing: Yup.boolean().required('Delete trailing is required')
-});
 
 const mergeOptions = {
   placeholder: 'Join Character',

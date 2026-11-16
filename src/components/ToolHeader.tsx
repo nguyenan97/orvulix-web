@@ -1,7 +1,6 @@
 import { Box, Button, Stack, styled, useTheme } from '@mui/material';
 import Typography from '@mui/material/Typography';
 import ToolBreadcrumb from './ToolBreadcrumb';
-import { capitalizeFirstLetter } from '../utils/string';
 import Grid from '@mui/material/Grid';
 import { Icon, IconifyIcon } from '@iconify/react';
 import { categoriesColors } from '../config/uiConfig';
@@ -11,7 +10,6 @@ import { isBookmarked, toggleBookmarked } from '@utils/bookmark';
 import IconButton from '@mui/material/IconButton';
 import { useTranslation } from 'react-i18next';
 import useMediaQuery from '@mui/material/useMediaQuery';
-import { validNamespaces } from '../i18n';
 
 const StyledButton = styled(Button)(({ theme }) => ({
   backgroundColor: 'white',
@@ -118,7 +116,9 @@ export default function ToolHeader({
               {title}
             </Typography>
             <IconButton
-              onClick={(e) => {
+              sx={{ width: 46, height: 46 }}
+              aria-label={bookmarked ? 'Remove bookmark' : 'Bookmark tool'}
+              onClick={() => {
                 toggleBookmarked(path);
                 setBookmarked(!bookmarked);
               }}
@@ -140,10 +140,17 @@ export default function ToolHeader({
 
         {icon && (
           <Grid item xs={12} md={4}>
-            <Box sx={{ display: 'flex', justifyContent: 'center' }}>
+            <Box
+              sx={{
+                display: 'flex',
+                justifyContent: 'center',
+                height: { xs: 96, md: 250 }
+              }}
+            >
               <Icon
                 icon={icon}
-                fontSize={'250'}
+                width="100%"
+                height="100%"
                 color={
                   categoriesColors[
                     Math.floor(Math.random() * categoriesColors.length)

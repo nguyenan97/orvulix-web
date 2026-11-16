@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Box } from '@mui/material';
-import ToolContent from '@components/ToolContent';
+import ToolContent from '../../../../workers/list-regex/BoundedListContent'; // ORVULIX-RELIABILITY
 import ToolTextInput from '@components/input/ToolTextInput';
 import ToolTextResult from '@components/result/ToolTextResult';
 import { SplitOperatorType, wrapList } from './service';
@@ -171,6 +171,8 @@ export default function Wrap({ title }: ToolComponentProps) {
 
   return (
     <ToolContent
+      workerOperation="wrap"
+      setResult={setResult} // ORVULIX-RELIABILITY
       title={title}
       inputComponent={
         <ToolTextInput

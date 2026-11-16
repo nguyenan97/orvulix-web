@@ -1,16 +1,14 @@
-import { Box } from '@mui/material';
-import React, { useState, useRef } from 'react';
+import React, { useState } from 'react';
 import ToolTextInput from '@components/input/ToolTextInput';
-import ToolTextResult from '@components/result/ToolTextResult';
-import ToolOptions, { GetGroupsType } from '@components/options/ToolOptions';
-import { palindromeList, SplitOperatorType } from './service';
+import {
+  StringResult,
+  resultIsOwned
+} from '../../../../features/string-regex/Result';
+import { GetGroupsType } from '@components/options/ToolOptions';
+import { SplitOperatorType } from './service';
 import RadioWithTextField from '@components/options/RadioWithTextField';
-import ToolInputAndResult from '@components/ToolInputAndResult';
-import ToolExamples, {
-  CardExampleType
-} from '@components/examples/ToolExamples';
+import { CardExampleType } from '@components/examples/ToolExamples';
 import { ToolComponentProps } from '@tools/defineTool';
-import { FormikProps } from 'formik';
 import ToolContent from '@components/ToolContent';
 
 const initialValues = {
@@ -76,17 +74,6 @@ const exampleCards: CardExampleType<typeof initialValues>[] = [
 
 export default function Palindrome({ title }: ToolComponentProps) {
   const [input, setInput] = useState<string>('');
-  const [result, setResult] = useState<string>('');
-
-  const computeExternal = (
-    optionsValues: typeof initialValues,
-    input: string
-  ) => {
-    const { splitOperatorType, symbolValue, regexValue } = optionsValues;
-    const separator = splitOperatorType === 'symbol' ? symbolValue : regexValue;
-    setResult(palindromeList(splitOperatorType, input, separator));
-  };
-
   const getGroups: GetGroupsType<typeof initialValues> = ({
     values,
     updateField
@@ -113,12 +100,16 @@ export default function Palindrome({ title }: ToolComponentProps) {
       title={title}
       initialValues={initialValues}
       getGroups={getGroups}
-      compute={computeExternal}
+      compute={resultIsOwned}
       input={input}
       setInput={setInput}
       inputComponent={<ToolTextInput value={input} onChange={setInput} />}
       resultComponent={
-        <ToolTextResult title={'Palindrome results'} value={result} />
+        <StringResult
+          tool="palindrome"
+          title={'Palindrome results'}
+          input={input}
+        />
       }
       exampleCards={exampleCards}
     />

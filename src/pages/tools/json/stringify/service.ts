@@ -10,7 +10,7 @@ export const stringifyJson = (
   try {
     // Json5 safer than eval
     parsedInput = JSON5.parse(input);
-  } catch (e) {
+  } catch {
     throw new Error('Invalid JavaScript object/array');
   }
 

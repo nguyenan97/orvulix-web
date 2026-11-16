@@ -1,9 +1,11 @@
 import { Box, TextField } from '@mui/material';
-import React, { useContext, useRef } from 'react';
+import { useContext, useRef } from 'react';
+import { useTextFileImport } from '../../features/text-file-import/useTextFileImport'; // ORVULIX: cancel stale file reads.
 import { CustomSnackBarContext } from '../../contexts/CustomSnackBarContext';
 import InputHeader from '../InputHeader';
 import InputFooter from './InputFooter';
 import { useTranslation } from 'react-i18next';
+import { writeResultText } from '../../features/text-result-clipboard/write'; // ORVULIX: guarded native input copy.
 
 export default function ToolTextInput({
   value,
@@ -21,26 +23,15 @@ export default function ToolTextInput({
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleCopy = () => {
-    navigator.clipboard
-      .writeText(value)
+    writeResultText(value)
       .then(() => showSnackBar(t('toolTextInput.copied'), 'success'))
       .catch((err) => {
         showSnackBar(t('toolTextInput.copyFailed', { error: err }), 'error');
       });
   };
-  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        const text = e.target?.result;
-        if (typeof text === 'string') {
-          onChange(text);
-        }
-      };
-      reader.readAsText(file);
-    }
-  };
+  const importer = useTextFileImport(value, onChange, (message) =>
+    showSnackBar(message, 'error')
+  );
 
   const handleImportClick = () => {
     fileInputRef.current?.click();
@@ -50,7 +41,7 @@ export default function ToolTextInput({
       <InputHeader title={title || t('toolTextInput.input')} />
       <TextField
         value={value}
-        onChange={(event) => onChange(event.target.value)}
+        onChange={(event) => importer.edit(event.target.value)}
         fullWidth
         multiline
         rows={10}
@@ -70,7 +61,7 @@ export default function ToolTextInput({
         accept="*"
         ref={fileInputRef}
         style={{ display: 'none' }}
-        onChange={handleFileChange}
+        onChange={importer.pick}
       />
     </Box>
   );
