@@ -358,7 +358,8 @@ export const buildSeoSite = (
         breadcrumbs,
         linksHeading: '',
         links: [],
-        sections: path === '/roadmap' ? roadmapSections() : [],
+        sections:
+          seo.sections ?? (path === '/roadmap' ? roadmapSections() : []),
         jsonLd: infoJsonLd({
           schemaType: seo.schemaType,
           url,
