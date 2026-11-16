@@ -44,3 +44,34 @@ gate passes (26 package findings / 18 advisories; 0 unaccepted high/critical,
 1 temporary exception). All 29 security tests, lint, typecheck and style pass.
 Full units/build/browser checks pending. Local browser dependency installer lacked
 root access; browser-only downloads attempted next. No test outcome assumed.
+
+## Validation checkpoint (implementation 04b6a327)
+
+- Full units: 195 files / 2022 tests passed, including happy-dom 21 migration.
+- Security scripts: 29 tests passed; unchanged audit gate passed with one Zod exception.
+- Lint/typecheck/production build/style/diff checks passed.
+- Pages build: 166 HTML files validated at /orvulix-web/; prepare tests and emitted
+  list worker audit passed. First overlapping Pages attempt was stopped, then
+  rerun sequentially after production browser checks and passed.
+- Native sanitizer/security/HTML image/PDF: 46 Chromium/Firefox tests passed.
+  WebKit default launch blocked by host libraries. Downloaded Debian libraries
+  into /workspace/work/browser-libs without system installation; direct bundled
+  WebKit launch and text rendering passed. Local-only config points to that same
+  executable with LD_LIBRARY_PATH. Initial rerun used Pages output against tests
+  with root-only routes, so it was stopped; restore production output before retry.
+- CI at 04b6a327: audit, secret scan, CodeQL passed; Pages build/E2E pending.
+- CodeQL metadata: five rule/location pairs match existing dispositions in
+  SECURITY_REMEDIATION.md (table-text converter, SEO validator, Pages prepare,
+  test entity decoding). No new rule/location in summary. Alert API/protection
+  API returned 403; no claim of complete alert state or changed protections.
+
+Self-review: grounded traversal validates all entries before reachability, retaining
+concrete severities, deduplication and exact exceptions. No assertions, deadlines,
+retries or severity policy weakened. Dependency license changes: none; existing
+licenses documented in remediation. No app sink or networking behavior changed.
+
+PR: https://github.com/nguyenan97/orvulix-web/pull/67 (draft)
+Phase: CI. Remaining: WebKit regressions on restored production output, latest-head
+CI, mark ready and normal matched-head develop merge only if gates allow. Do not
+merge release PR66 or deploy production. Later documentation-only commit reuses
+04b6a327 implementation evidence; resolve actual head from GitHub.
