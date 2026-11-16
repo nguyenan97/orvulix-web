@@ -243,3 +243,40 @@ test('audit invocation is bounded, uses no shell and can omit dev dependencies',
     return { status: 0, stdout: JSON.stringify(clean()) };
   });
 });
+
+function cyclicFixture() {
+  const r = fixture(),
+    l = structuredClone(lock);
+  r.vulnerabilities.parent = {
+    name: 'parent',
+    severity: 'high',
+    nodes: ['node_modules/parent'],
+    via: ['example']
+  };
+  r.vulnerabilities.example.via.unshift('parent');
+  r.metadata.vulnerabilities.high = r.metadata.vulnerabilities.total = 2;
+  l.packages['node_modules/parent'] = { version: '2.0.0' };
+  return { r, l };
+}
+test('grounded audit cycles preserve concrete advisories in either entry order', () => {
+  const { r, l } = cyclicFixture();
+  for (const vulnerabilities of [
+    r.vulnerabilities,
+    Object.fromEntries(Object.entries(r.vulnerabilities).reverse())
+  ]) {
+    const audit = normalizeAudit({ ...r, vulnerabilities }, l);
+    assert.equal(audit.findings.length, 1);
+    assert.equal(audit.findings[0].id, id.toUpperCase());
+    assert.equal(evaluateAudit(audit, policy()).blocked.length, 1);
+  }
+});
+test('cycles with no reachable concrete advisory still fail closed', () => {
+  const { r, l } = cyclicFixture();
+  r.vulnerabilities.example.via = ['parent'];
+  assert.throws(() => normalizeAudit(r, l), /concrete advisory/);
+});
+test('grounded cycles do not hide unresolved references', () => {
+  const { r, l } = cyclicFixture();
+  r.vulnerabilities.parent.via.push('missing');
+  assert.throws(() => normalizeAudit(r, l), /unresolved/);
+});

@@ -39,7 +39,7 @@ export function normalizeAudit(report, lock) {
   const findings = new Map();
   const resolved = new Set();
   const walk = (name, visiting = new Set()) => {
-    if (visiting.has(name)) fail('Cyclic audit advisory references.');
+    if (visiting.has(name)) return; // npm may report real dependency cycles.
     if (resolved.has(name)) return;
     const value = report.vulnerabilities[name];
     if (
@@ -106,6 +106,29 @@ export function normalizeAudit(report, lock) {
   for (const [name, value] of entries) {
     walk(name);
     counts[value.severity]++;
+  }
+  // Every reported package must lead to a validated concrete advisory. Check
+  // after traversal so grounding is independent of entry/edge order in cycles.
+  const concrete = new Set([...findings.values()].map((f) => f.package));
+  for (const [name] of entries) {
+    const pending = [name],
+      seen = new Set();
+    let grounded = false;
+    while (pending.length) {
+      const current = pending.pop();
+      if (seen.has(current)) continue;
+      seen.add(current);
+      if (concrete.has(current)) {
+        grounded = true;
+        break;
+      }
+      pending.push(
+        ...report.vulnerabilities[current].via.filter(
+          (v) => typeof v === 'string'
+        )
+      );
+    }
+    if (!grounded) fail('Audit reference has no reachable concrete advisory.');
   }
   for (const level of levels)
     if (report.metadata.vulnerabilities[level] !== counts[level])
