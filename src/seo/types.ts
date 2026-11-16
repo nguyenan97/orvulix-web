@@ -43,11 +43,12 @@ export interface ToolSeoOverride {
 
 export interface ContentSection {
   heading: string;
-  kind: 'steps' | 'list' | 'examples' | 'faq';
+  kind: 'steps' | 'list' | 'examples' | 'faq' | 'paragraphs';
   steps?: string[];
   items?: string[];
   examples?: ToolExample[];
   faq?: ToolFaq[];
+  paragraphs?: string[];
 }
 
 export interface SeoLink {
