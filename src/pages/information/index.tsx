@@ -80,40 +80,26 @@ const content: Record<Page, { title: string; paragraphs: string[] }> = {
   privacy: {
     title: 'Privacy Policy',
     paragraphs: [
-      'This policy describes how Orvulix handles information when you visit the website and use its tools. Orvulix does not currently require an account. Processing and network behavior vary by tool, so review the tool-specific notes before using sensitive information.',
-      'Information and tool inputs',
-      'Many tools process your input in your browser. Orvulix does not operate a general-purpose upload service for every tool, but some optional features and third-party integrations may send information to an external provider for processing. Do not enter confidential, sensitive, or regulated information unless you have checked how that specific feature works.',
-      'The local JSON Assistant and Regex Assistant demos keep input in page memory and do not persist it to browser storage or send it to an AI provider. Regex testing uses a local worker. Sample explanations and suggestions are authored, not AI-generated; a live Claude integration is not available.',
-      'The PDF Editor has an optional SimplePDF integration that stays off until you enable it. When enabled, SimplePDF may process your document and receives analytics and document metadata, including a document fingerprint. Review SimplePDF’s privacy policy before using it with sensitive files. Closing the editor cannot recall information already sent.',
-      'Browser storage',
-      'Orvulix stores interface settings and selections in your browser’s local storage, including theme, language, tool filters, and bookmarked tools. This information remains in that browser until you clear its site data. It is not an account profile.',
-      'Hosting and third-party resources',
-      'The hosting and content delivery providers serving the website may process technical request information such as IP address, requested page, referrer, timestamps, and browser or device details. Their privacy policies describe their own handling and retention practices.',
-      'Some tools load third-party scripts, libraries, models, or workers. A request to download one of these resources may expose technical request information to its provider, but downloading a resource does not by itself mean your tool input was uploaded. Whether input leaves your browser depends on the particular tool or integration.',
-      'Retention and your choices',
-      'Input handled only in a page or browser worker is generally kept in that page’s memory while you use the tool. Information sent to a third party is subject to that provider’s retention practices. You can clear Orvulix’s saved preferences by clearing this site’s local storage in your browser.',
-      'Orvulix does not currently offer user accounts or a dedicated privacy request form. For privacy questions or requests, email 99shadow.friend99@gmail.com. This policy may be updated as the service changes. Last updated: November 16, 2026.'
+      'Orvulix provides a collection of browser-based utilities. Many tools process inputs in your browser, but behavior varies by tool and some features may use external services.',
+      'Do not enter confidential, sensitive or regulated information unless you have verified how the particular tool processes it.',
+      'The site may store interface preferences, such as theme and language, in browser local storage.',
+      'Hosting infrastructure may process technical request data such as IP addresses and browser information. Refer to the hosting provider’s privacy documentation for its processing practices.',
+      'Some utilities may load third-party scripts, libraries, models, or other resources. Data processing and network behavior may differ between tools; review the specific tool and avoid sensitive inputs unless you understand its behavior.',
+      'Downloading a library, worker or model from a third-party CDN is different from uploading your input. Those providers may receive technical request data when resources are fetched; whether your content leaves the browser depends on the specific tool and must be checked separately.',
+      'The local JSON Assistant and Regex Assistant demos keep input in page memory and, for regex testing, a local worker. They do not persist inputs to browser storage or send them to an AI provider. Sample explanations and suggestions are authored, not AI-generated. A live Claude integration is not available; any future provider connection will require separate disclosures and consent before sending data.',
+      'PDF Editor uses an optional SimplePDF integration. It stays off until you enable it. SimplePDF receives analytics and document metadata, including a document fingerprint. Review its privacy policy before opening sensitive files; closing the editor cannot recall data already sent.', // ORVULIX-PRIVACY
+      'We do not currently offer user accounts or a dedicated privacy request form. For privacy questions, email founder@orvulix.io.vn.',
+      'This policy may be updated as features and integrations change. Last updated: October 16, 2026.'
     ]
   },
   terms: {
-    title: 'Terms and Conditions',
+    title: 'Terms of Use',
     paragraphs: [
-      'By accessing or using Orvulix, you agree to these terms. If you do not agree, do not use the website or its tools.',
-      'Using the tools',
-      'Orvulix provides browser-based utilities for general informational and productivity purposes. Features may change, be suspended, or become unavailable. You are responsible for having the rights and permissions needed to use any information or files you provide to a tool.',
-      'Tool processing varies. Some tools work in your browser, while optional features may use third-party services. Review the relevant tool notes and the Privacy Policy before using sensitive data. You are responsible for keeping copies of important inputs and outputs.',
-      'Acceptable use',
-      'You may not use Orvulix to violate applicable laws or another person’s rights, distribute malicious code, interfere with or disrupt the website, probe or bypass its security controls, or impose an unreasonable load on the service.',
-      'Outputs and professional advice',
-      'Tools and their outputs are provided for convenience and may be incomplete, inaccurate, or unsuitable for your situation. Check results before relying on them. Orvulix does not provide legal, medical, financial, or other professional advice, and you should consult a qualified professional for decisions that require it.',
-      'Third-party services',
-      'Some features link to or integrate with services operated by others, including the optional SimplePDF integration in the PDF Editor. Those services have their own terms and privacy policies. Orvulix does not control their services or the information they process.',
-      'Intellectual property',
-      'Orvulix and third-party software, content, and assets may be subject to separate copyright and license terms. Nothing in these terms changes the applicable open-source licenses or grants rights to third-party materials.',
-      'Disclaimer and liability',
-      'To the extent permitted by law, Orvulix is provided on an “as is” and “as available” basis, without warranties of accuracy, availability, or fitness for a particular purpose. To the extent permitted by law, Orvulix is not liable for indirect or consequential loss, loss of data, or loss arising from your use of or inability to use the service.',
-      'Changes and contact',
-      'These terms may be updated as Orvulix changes. The latest version will be posted on this page. For questions about these terms, email 99shadow.friend99@gmail.com. Last updated: November 16, 2026.'
+      'Orvulix tools are provided for general informational and productivity purposes on an as-is basis, without warranties of accuracy, availability or fitness for a particular purpose.',
+      'You are responsible for reviewing outputs before relying on them, especially for financial, legal, medical or security-sensitive decisions.',
+      'Do not use the website for unlawful activities or to interfere with its availability or security.',
+      'Third-party tools and services, when linked or integrated, may have their own terms.',
+      'These terms may change as the service evolves. Last updated: October 8, 2026.'
     ]
   },
   'not-found': {
@@ -128,10 +114,6 @@ export default function InformationPage({ page }: { page: Page }) {
   const { pathname } = useLocation();
   const details = content[page];
   const url = 'https://orvulix.io.vn' + pathname;
-  const contactEmail =
-    page === 'privacy' || page === 'terms'
-      ? '99shadow.friend99@gmail.com'
-      : 'founder@orvulix.io.vn';
   return (
     <Container maxWidth="md" sx={{ py: { xs: 5, md: 9 }, minHeight: '65vh' }}>
       <Helmet>
@@ -147,11 +129,7 @@ export default function InformationPage({ page }: { page: Page }) {
                 ? 'Learn about Orvulix, a free open-source workspace for browser-based JSON, PDF, image, text, and data tools.'
                 : page === 'contact'
                   ? 'Contact Orvulix with feedback, feature suggestions, bug reports, and collaboration inquiries.'
-                  : page === 'privacy'
-                    ? 'Learn what information Orvulix browser-based tools and third-party integrations may process, and how browser storage is used.'
-                    : page === 'terms'
-                      ? 'Read the terms and conditions for using Orvulix and its browser-based tools.'
-                      : details.paragraphs[0]
+                  : details.paragraphs[0]
           }
         />
         {page === 'not-found' ? (
@@ -202,21 +180,6 @@ export default function InformationPage({ page }: { page: Page }) {
               'Privacy and Responsible Communication',
               'Response Expectations',
               'Thank You for Being Part of Orvulix'
-            ],
-            privacy: [
-              'Information and tool inputs',
-              'Browser storage',
-              'Hosting and third-party resources',
-              'Retention and your choices'
-            ],
-            terms: [
-              'Using the tools',
-              'Acceptable use',
-              'Outputs and professional advice',
-              'Third-party services',
-              'Intellectual property',
-              'Disclaimer and liability',
-              'Changes and contact'
             ]
           };
           const isHeading = headings[page]?.includes(paragraph) ?? false;
@@ -239,9 +202,10 @@ export default function InformationPage({ page }: { page: Page }) {
         {(page === 'about' ||
           page === 'roadmap' ||
           page === 'contact' ||
-          page === 'privacy' ||
-          page === 'terms') && (
-          <MuiLink href={`mailto:${contactEmail}`}>{contactEmail}</MuiLink>
+          page === 'privacy') && (
+          <MuiLink href="mailto:founder@orvulix.io.vn">
+            founder@orvulix.io.vn
+          </MuiLink>
         )}
         {page === 'roadmap' && (
           <MuiLink component={Link} to="/json-assistant">
