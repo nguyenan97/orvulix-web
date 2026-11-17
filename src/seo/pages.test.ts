@@ -1,6 +1,10 @@
 import { describe, expect, it } from 'vitest';
 import { readFileSync } from 'node:fs';
 import { HOME_SEO, INFO_PAGES_SEO, NOT_FOUND_SEO } from './pages';
+import {
+  privacyPolicy,
+  termsAndConditions
+} from '../pages/information/legal-content';
 import { splitSentences } from './text';
 
 const normalize = (value: string) => value.replace(/\s+/g, ' ');
@@ -28,9 +32,27 @@ describe('static page copy matches what React renders', () => {
         expect(demo).toContain(page.intro);
         continue;
       }
+      if (path === '/privacy' || path === '/terms') {
+        expect(info).toContain(
+          path === '/privacy'
+            ? 'privacyPolicy.title'
+            : 'termsAndConditions.title'
+        );
+        continue;
+      }
       expect(info, path).toContain(`'${page.heading}'`);
       expect(info, path).toContain(page.intro);
     }
     expect(info).toContain(NOT_FOUND_SEO.intro);
+  });
+
+  it('uses the same legal copy in the React pages and static HTML definitions', () => {
+    expect(INFO_PAGES_SEO['/privacy'].sections).toEqual(privacyPolicy.sections);
+    expect(INFO_PAGES_SEO['/terms'].sections).toEqual(
+      termsAndConditions.sections
+    );
+    expect(INFO_PAGES_SEO['/terms'].heading).toBe('Terms and Conditions');
+    expect(privacyPolicy.contactEmail).toBe('99shadow.friend99@gmail.com');
+    expect(termsAndConditions.contactEmail).toBe('99shadow.friend99@gmail.com');
   });
 });
