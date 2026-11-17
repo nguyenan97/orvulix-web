@@ -89,6 +89,12 @@ export const renderStaticRoot = (page: SeoPage): string => {
     );
     parts.push(`<section>${heading}<ul>${items.join('')}</ul></section>`);
   }
+  parts.push(
+    `<nav aria-label="Legal">${link('/privacy', 'Privacy Policy')} | ${link(
+      '/terms',
+      'Terms and Conditions'
+    )}</nav>`
+  );
   return `<div data-seo-static>${parts.join('')}</div>`;
 };
 
