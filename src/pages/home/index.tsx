@@ -67,12 +67,31 @@ export default function Home() {
           processing, and data conversion into one place. Browse the tool
           categories above to choose the right utility for your task. Features
           and file handling vary by tool; review each tool before using
-          sensitive information. Shadow Friend is an Orvulix feature for
-          managing YouTube videos and playlists. It uses YouTube Data API v3
-          after Google OAuth authorization to view video and playlist metadata,
-          upload videos, update video metadata, manage playlists, and delete
-          videos. The feature requests the Google OAuth scope
-          https://www.googleapis.com/auth/youtube.
+          sensitive information.
+        </Typography>
+        <Typography variant="h5" component="h2" fontWeight={700} sx={{ mt: 3 }}>
+          Shadow Friend for YouTube
+        </Typography>
+        <Typography
+          variant="body1"
+          color="text.secondary"
+          sx={{ lineHeight: 1.8 }}
+        >
+          Shadow Friend is an Orvulix feature for managing a user’s YouTube
+          videos and playlists. After Google OAuth authorization, it uses
+          YouTube Data API v3 and requests the scope
+          https://www.googleapis.com/auth/youtube to view video and playlist
+          metadata, upload videos, update video metadata, manage playlists, and
+          delete videos. The requested access is used to carry out these YouTube
+          management functions.
+        </Typography>
+        <Typography variant="body1" color="text.secondary" sx={{ mt: 1 }}>
+          Read the{' '}
+          <MuiLink component={Link} to="/privacy">
+            Orvulix Privacy Policy
+          </MuiLink>{' '}
+          for details about Google account data and how Shadow Friend handles
+          it.
         </Typography>
         <Typography variant="body2" sx={{ mt: 2 }}>
           Curious about upcoming developer features?{' '}
