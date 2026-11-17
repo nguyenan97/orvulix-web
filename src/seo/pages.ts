@@ -7,6 +7,11 @@
 
 import { DEMO_HEADING, DEMO_INTRO } from '../ai/json-assistant/copy';
 import { REGEX_HEADING, REGEX_INTRO } from '../ai/regex-assistant/copy';
+import {
+  privacyPolicy,
+  termsAndConditions
+} from '../pages/information/legal-content';
+import type { ContentSection } from './types';
 
 export interface StaticPageSeo {
   title: string;
@@ -15,6 +20,7 @@ export interface StaticPageSeo {
   intro: string;
   /** schema.org type of the page. */
   schemaType: 'WebPage' | 'AboutPage' | 'ContactPage';
+  sections?: ContentSection[];
 }
 
 /**
@@ -82,22 +88,20 @@ export const INFO_PAGES_SEO: Record<string, StaticPageSeo> = {
     schemaType: 'ContactPage'
   },
   '/privacy': {
-    title: 'Privacy Policy | Orvulix',
-    description:
-      'Read the Orvulix privacy policy: how browser-based tools, local preference storage, hosting request data and third-party resources are handled.',
-    heading: 'Privacy Policy',
-    intro:
-      'Orvulix provides a collection of browser-based utilities. Many tools process inputs in your browser, but behavior varies by tool and some features may use external services.',
-    schemaType: 'WebPage'
+    title: `${privacyPolicy.title} | Orvulix`,
+    description: privacyPolicy.description,
+    heading: privacyPolicy.title,
+    intro: privacyPolicy.intro,
+    schemaType: 'WebPage',
+    sections: privacyPolicy.sections
   },
   '/terms': {
-    title: 'Terms of Use | Orvulix',
-    description:
-      'Read the Orvulix terms of use: tools are provided as-is without warranties, review outputs before relying on them, and do not use the site unlawfully.',
-    heading: 'Terms of Use',
-    intro:
-      'Orvulix tools are provided for general informational and productivity purposes on an as-is basis, without warranties of accuracy, availability or fitness for a particular purpose.',
-    schemaType: 'WebPage'
+    title: `${termsAndConditions.title} | Orvulix`,
+    description: termsAndConditions.description,
+    heading: termsAndConditions.title,
+    intro: termsAndConditions.intro,
+    schemaType: 'WebPage',
+    sections: termsAndConditions.sections
   }
 };
 

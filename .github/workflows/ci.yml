@@ -10,7 +10,7 @@ on:
       - main
 jobs:
   test-and-build:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
@@ -30,7 +30,7 @@ jobs:
 
   e2e-test:
     name: 'Playwright Tests'
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4

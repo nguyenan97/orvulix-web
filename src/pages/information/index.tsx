@@ -9,8 +9,20 @@ import { Link, useLocation } from 'react-router-dom';
 import { Helmet } from 'react-helmet';
 import { brand } from '../../brand/config';
 import RoadmapBacklog from '../../seo/RoadmapBacklog'; // ORVULIX-ROADMAP
+import { privacyPolicy, termsAndConditions } from './legal-content';
 
 type Page = 'about' | 'roadmap' | 'contact' | 'privacy' | 'terms' | 'not-found';
+const legalParagraphs = (document: {
+  intro: string;
+  sections: { heading: string; paragraphs?: string[] }[];
+}) => [
+  document.intro,
+  ...document.sections.flatMap(({ heading, paragraphs }) => [
+    heading,
+    ...(paragraphs ?? [])
+  ])
+];
+
 const content: Record<Page, { title: string; paragraphs: string[] }> = {
   about: {
     title: 'About Orvulix',
@@ -78,28 +90,12 @@ const content: Record<Page, { title: string; paragraphs: string[] }> = {
     ]
   },
   privacy: {
-    title: 'Privacy Policy',
-    paragraphs: [
-      'Orvulix provides a collection of browser-based utilities. Many tools process inputs in your browser, but behavior varies by tool and some features may use external services.',
-      'Do not enter confidential, sensitive or regulated information unless you have verified how the particular tool processes it.',
-      'The site may store interface preferences, such as theme and language, in browser local storage.',
-      'Hosting infrastructure may process technical request data such as IP addresses and browser information. Refer to the hosting provider’s privacy documentation for its processing practices.',
-      'Some utilities may load third-party scripts, libraries, models, or other resources. Data processing and network behavior may differ between tools; review the specific tool and avoid sensitive inputs unless you understand its behavior.',
-      'Downloading a library, worker or model from a third-party CDN is different from uploading your input. Those providers may receive technical request data when resources are fetched; whether your content leaves the browser depends on the specific tool and must be checked separately.',
-      'The local JSON Assistant and Regex Assistant demos keep input in page memory and, for regex testing, a local worker. They do not persist inputs to browser storage or send them to an AI provider. Sample explanations and suggestions are authored, not AI-generated. A live Claude integration is not available; any future provider connection will require separate disclosures and consent before sending data.',
-      'We do not currently offer user accounts or a dedicated privacy request form. For privacy questions, email founder@orvulix.io.vn.',
-      'This policy may be updated as features and integrations change. Last updated: October 11, 2026.'
-    ]
+    title: privacyPolicy.title,
+    paragraphs: legalParagraphs(privacyPolicy)
   },
   terms: {
-    title: 'Terms of Use',
-    paragraphs: [
-      'Orvulix tools are provided for general informational and productivity purposes on an as-is basis, without warranties of accuracy, availability or fitness for a particular purpose.',
-      'You are responsible for reviewing outputs before relying on them, especially for financial, legal, medical or security-sensitive decisions.',
-      'Do not use the website for unlawful activities or to interfere with its availability or security.',
-      'Third-party tools and services, when linked or integrated, may have their own terms.',
-      'These terms may change as the service evolves. Last updated: October 8, 2026.'
-    ]
+    title: termsAndConditions.title,
+    paragraphs: legalParagraphs(termsAndConditions)
   },
   'not-found': {
     title: 'Page not found',
@@ -113,6 +109,12 @@ export default function InformationPage({ page }: { page: Page }) {
   const { pathname } = useLocation();
   const details = content[page];
   const url = 'https://orvulix.io.vn' + pathname;
+  const contactEmail =
+    page === 'privacy'
+      ? privacyPolicy.contactEmail
+      : page === 'terms'
+        ? termsAndConditions.contactEmail
+        : 'founder@orvulix.io.vn';
   return (
     <Container maxWidth="md" sx={{ py: { xs: 5, md: 9 }, minHeight: '65vh' }}>
       <Helmet>
@@ -179,7 +181,9 @@ export default function InformationPage({ page }: { page: Page }) {
               'Privacy and Responsible Communication',
               'Response Expectations',
               'Thank You for Being Part of Orvulix'
-            ]
+            ],
+            privacy: privacyPolicy.sections.map((section) => section.heading),
+            terms: termsAndConditions.sections.map((section) => section.heading)
           };
           const isHeading = headings[page]?.includes(paragraph) ?? false;
           const isTagline =
@@ -201,10 +205,9 @@ export default function InformationPage({ page }: { page: Page }) {
         {(page === 'about' ||
           page === 'roadmap' ||
           page === 'contact' ||
-          page === 'privacy') && (
-          <MuiLink href="mailto:founder@orvulix.io.vn">
-            founder@orvulix.io.vn
-          </MuiLink>
+          page === 'privacy' ||
+          page === 'terms') && (
+          <MuiLink href={`mailto:${contactEmail}`}>{contactEmail}</MuiLink>
         )}
         {page === 'roadmap' && (
           <MuiLink component={Link} to="/json-assistant">

@@ -45,6 +45,10 @@ const renderSection = (section: ContentSection): string => {
             )}</p>`
         )
         .join('')}</section>`;
+    case 'paragraphs':
+      return `<section>${heading}${(section.paragraphs ?? [])
+        .map((paragraph) => `<p>${escapeHtml(paragraph)}</p>`)
+        .join('')}</section>`;
   }
 };
 
@@ -61,6 +65,9 @@ export const renderNoscript = (page: SeoPage): string =>
 /** Content placed inside #root until React renders. Contains no H1. */
 export const renderStaticRoot = (page: SeoPage): string => {
   const parts: string[] = [];
+  if (page.kind === 'info') {
+    parts.push(`<p>${escapeHtml(page.intro)}</p>`);
+  }
   if (page.breadcrumbs.length > 1) {
     const items = page.breadcrumbs.map((crumb, index) =>
       index === page.breadcrumbs.length - 1
