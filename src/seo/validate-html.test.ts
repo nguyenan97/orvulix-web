@@ -64,6 +64,18 @@ describe('validateRouteHtml', () => {
     }
   );
 
+  it('includes the app purpose and Google API scope in static homepage HTML', async () => {
+    const site = await load();
+    const page = resolveSeoPage(site, '/');
+    const html = renderDocument(TEMPLATE, page);
+
+    expect(page.title).toContain('Orvulix');
+    expect(html).toContain(page.intro);
+    expect(html).toContain('uses YouTube Data API v3');
+    expect(html).toContain('https://www.googleapis.com/auth/youtube');
+    expect(validateRouteHtml(html, page, SITE, '/')).toEqual([]);
+  });
+
   it.each([
     [
       'a second canonical',

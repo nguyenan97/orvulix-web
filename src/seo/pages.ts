@@ -40,7 +40,7 @@ export const HOME_SEO = {
     'Free online tools for JSON formatting, PDF tasks, images, text, data conversion and developer workflows. Explore Orvulix in your browser.',
   heading: 'Everyday tools. Everywhere.',
   intro:
-    'Orvulix brings JSON utilities, document tools, image tools, text processing, and data conversion into one place. Features and file handling vary by tool; review each tool before using sensitive information.',
+    'Orvulix brings JSON utilities, document tools, image tools, text processing, and data conversion into one place. Features and file handling vary by tool; review each tool before using sensitive information. Shadow Friend is an Orvulix feature for managing YouTube videos and playlists. It uses YouTube Data API v3 after Google OAuth authorization to view video and playlist metadata, upload videos, update video metadata, manage playlists, and delete videos. The feature requests the Google OAuth scope https://www.googleapis.com/auth/youtube.',
   linksHeading: 'Tool categories'
 } as const;
 

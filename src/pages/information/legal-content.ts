@@ -3,12 +3,20 @@ import type { ContentSection } from '../../seo/types';
 export const privacyPolicy = {
   title: 'Privacy Policy',
   description:
-    'Read the Orvulix privacy policy: how browser-based tools, local preference storage, hosting request data and third-party resources are handled.',
+    'Read how Orvulix handles browser data, YouTube Data API access, Google account data, local preferences, hosting requests and third-party resources.',
   intro:
-    'This policy explains how Orvulix handles information when you visit the website and use its tools. Orvulix does not currently require an account. Processing and network behavior vary by tool, so review the tool-specific notes before using sensitive information.',
+    'This policy explains how Orvulix handles information when you visit the website and use its tools. Orvulix provides browser-based utilities for JSON, documents, images, text, and data conversion. Orvulix does not require a separate Orvulix account; Shadow Friend requires authorization through a Google Account. Processing and network behavior vary by tool, so review the tool-specific notes before using sensitive information.',
   contactEmail: '99shadow.friend99@gmail.com',
-  updated: 'November 16, 2026',
+  updated: 'November 17, 2026',
   sections: [
+    {
+      heading: 'Google APIs and account access',
+      kind: 'paragraphs',
+      paragraphs: [
+        'Shadow Friend is an Orvulix feature for managing a user’s YouTube videos and playlists. After the user authorizes access with Google, the feature uses YouTube Data API v3 and requests the Google OAuth scope https://www.googleapis.com/auth/youtube. It can view video and playlist metadata, upload videos, update video metadata, manage playlists, and delete videos. The feature uses the scope to perform only the YouTube operations requested by the user.',
+        'For these operations, the Orvulix backend processes the access token, video or playlist metadata, and video files selected for upload. Access tokens are not stored. Video files and metadata are processed for the request and deleted when it is complete; sensitive data is not written to logs. Orvulix does not send this data to other third-party services. The authorized API requests and data needed to perform them are sent to Google, which processes them under its own terms and privacy policies. Users can revoke the app’s access from their Google Account.'
+      ]
+    },
     {
       heading: 'Information and tool inputs',
       kind: 'paragraphs',
@@ -37,7 +45,7 @@ export const privacyPolicy = {
       kind: 'paragraphs',
       paragraphs: [
         'Input handled only in a page or browser worker is generally kept in that page’s memory while you use the tool. Information sent to a third party is subject to that provider’s retention practices. You can clear Orvulix’s saved preferences by clearing this site’s local storage in your browser.',
-        'Orvulix does not currently offer user accounts or a dedicated privacy request form. For privacy questions or requests, email 99shadow.friend99@gmail.com. This policy may be updated as features and integrations change. Last updated: November 16, 2026.'
+        'Orvulix does not currently offer user accounts or a dedicated privacy request form. For privacy questions or requests, email 99shadow.friend99@gmail.com. This policy may be updated as features and integrations change. Last updated: November 17, 2026.'
       ]
     }
   ] satisfies ContentSection[]
@@ -50,7 +58,7 @@ export const termsAndConditions = {
   intro:
     'By accessing or using Orvulix, you agree to these terms. If you do not agree, do not use the website or its tools.',
   contactEmail: '99shadow.friend99@gmail.com',
-  updated: 'November 16, 2026',
+  updated: 'November 17, 2026',
   sections: [
     {
       heading: 'Using the tools',
@@ -58,6 +66,13 @@ export const termsAndConditions = {
       paragraphs: [
         'Orvulix provides browser-based utilities for general informational and productivity purposes. Features may change, be suspended, or become unavailable. You are responsible for having the rights and permissions needed to use any information or files you provide to a tool.',
         'Tool processing varies. Some tools work in your browser, while optional features may use third-party services. Review the relevant tool notes and the Privacy Policy before using sensitive data. You are responsible for keeping copies of important inputs and outputs.'
+      ]
+    },
+    {
+      heading: 'Google services',
+      kind: 'paragraphs',
+      paragraphs: [
+        'Shadow Friend is an Orvulix feature that uses YouTube Data API v3 after the user authorizes Google OAuth access with the scope https://www.googleapis.com/auth/youtube. The feature lets users view video and playlist metadata, upload videos, update video metadata, manage playlists, and delete videos on their YouTube account. You are responsible for the content and account you authorize and for reviewing requested changes. Deleting videos may be irreversible. Google’s terms apply to your use of YouTube and its API.'
       ]
     },
     {
@@ -99,7 +114,7 @@ export const termsAndConditions = {
       heading: 'Changes and contact',
       kind: 'paragraphs',
       paragraphs: [
-        'These terms may be updated as Orvulix changes. The latest version will be posted on this page. For questions about these terms, email 99shadow.friend99@gmail.com. Last updated: November 16, 2026.'
+        'These terms may be updated as Orvulix changes. The latest version will be posted on this page. For questions about these terms, email 99shadow.friend99@gmail.com. Last updated: November 17, 2026.'
       ]
     }
   ] satisfies ContentSection[]
