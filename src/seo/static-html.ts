@@ -1,4 +1,5 @@
 import { SITE } from './config';
+import { legalNotice } from '../pages/information/legal-content';
 import { getHeadTags, renderHeadTags } from './head';
 import { escapeHtml } from './text';
 import type { ContentSection, SeoPage } from './types';
@@ -88,6 +89,13 @@ export const renderStaticRoot = (page: SeoPage): string => {
         }</li>`
     );
     parts.push(`<section>${heading}<ul>${items.join('')}</ul></section>`);
+  }
+  if (page.kind === 'home') {
+    parts.push(
+      `<section aria-labelledby="home-legal-heading"><h2 id="home-legal-heading">${escapeHtml(
+        legalNotice.heading
+      )}</h2><p>${escapeHtml(legalNotice.description)}</p></section>`
+    );
   }
   parts.push(
     `<nav aria-label="Legal">${link('/privacy', 'Privacy Policy')} | ${link(
