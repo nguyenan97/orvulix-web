@@ -351,6 +351,13 @@ export const buildSeoSite = (input: SeoInput): SeoBuildResult => {
     );
   }
 
+  homeLinks.push({
+    name: 'Privacy Policy',
+    path: '/privacy',
+    description:
+      'How Orvulix handles Google account data for the Shadow Friend YouTube feature.'
+  });
+
   pages.push(
     basePage({
       kind: 'home',

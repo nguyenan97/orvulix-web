@@ -73,6 +73,7 @@ describe('validateRouteHtml', () => {
     expect(html).toContain(page.intro);
     expect(html).toContain('uses YouTube Data API v3');
     expect(html).toContain('https://www.googleapis.com/auth/youtube');
+    expect(html).toContain('<a href="/privacy">Privacy Policy</a>');
     expect(validateRouteHtml(html, page, SITE, '/')).toEqual([]);
   });
 
