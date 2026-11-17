@@ -104,3 +104,9 @@ export const termsAndConditions = {
     }
   ] satisfies ContentSection[]
 };
+
+export const legalNotice = {
+  heading: 'Privacy and terms',
+  description:
+    'Learn how Orvulix handles tool inputs, browser storage and third-party services, and review the terms that apply when you use our tools.'
+};

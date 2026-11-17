@@ -44,6 +44,14 @@ describe('validateRouteHtml', () => {
     ).toEqual([]);
   });
 
+  it('includes public legal links in homepage HTML without JavaScript', async () => {
+    const site = await load();
+    const html = renderDocument(TEMPLATE, resolveSeoPage(site, '/'));
+    expect(html).toContain('<nav aria-label="Legal">');
+    expect(html).toContain('<a href="/privacy">Privacy Policy</a>');
+    expect(html).toContain('<a href="/terms">Terms and Conditions</a>');
+  });
+
   it.each(['/privacy', '/terms'])(
     'renders complete static legal content for %s',
     async (path) => {

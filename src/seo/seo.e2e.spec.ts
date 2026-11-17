@@ -180,3 +180,51 @@ test('the active tool receives local English fallback after its translation requ
   );
   await expect(page).toHaveTitle(/Uppercase/);
 });
+
+test('public legal content is visible with and without JavaScript', async ({
+  browser
+}) => {
+  for (const javaScriptEnabled of [false, true]) {
+    const context = await browser.newContext({ javaScriptEnabled });
+    try {
+      const page = await context.newPage();
+      await page.goto('http://localhost:4173/');
+      await expect(
+        page.getByRole('heading', { name: 'Privacy and terms', exact: true })
+      ).toBeVisible();
+      const legal = page.getByRole('navigation', {
+        name: 'Legal',
+        exact: true
+      });
+      await expect(legal).toBeVisible();
+      await legal
+        .getByRole('link', { name: 'Privacy Policy', exact: true })
+        .click();
+      await expect(
+        page.getByRole('heading', { name: 'Privacy Policy', exact: true })
+      ).toBeVisible();
+      await expect(
+        page.getByRole('heading', {
+          name: 'Information and tool inputs',
+          exact: true
+        })
+      ).toBeVisible();
+      await expect(
+        page.getByText(/For privacy questions or requests/)
+      ).toBeVisible();
+      await page.goto('http://localhost:4173/');
+      await page
+        .getByRole('navigation', { name: 'Legal', exact: true })
+        .getByRole('link', { name: 'Terms and Conditions', exact: true })
+        .click();
+      await expect(
+        page.getByRole('heading', { name: 'Terms and Conditions', exact: true })
+      ).toBeVisible();
+      await expect(
+        page.getByRole('heading', { name: 'Acceptable use', exact: true })
+      ).toBeVisible();
+    } finally {
+      await context.close();
+    }
+  }
+});
